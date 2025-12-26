@@ -26,17 +26,10 @@ A crowdsourced vending machine discovery app for iOS & Android.
 
 3. Start Expo dev server:
    ```bash
-   npx expo start
+   npx expo start --tunnel
    ```
 
 4. Scan the QR code with Expo Go (Android) or Camera app (iOS).
-
-### WSL2 Users
-
-If the QR code doesn't connect, use tunnel mode:
-```bash
-npx expo start --tunnel
-```
 
 ## Scripts
 
