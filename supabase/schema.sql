@@ -102,8 +102,7 @@ CREATE TABLE visits (
     still_exists BOOLEAN,
     checkin_location GEOGRAPHY(Point, 4326),
     distance_meters DOUBLE PRECISION,
-    visited_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (user_id, machine_id, (visited_at::date))
+    visited_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Saved Machines
@@ -166,6 +165,7 @@ CREATE INDEX idx_machine_photos_primary ON machine_photos (machine_id) WHERE is_
 CREATE INDEX idx_visits_user ON visits (user_id);
 CREATE INDEX idx_visits_machine ON visits (machine_id);
 CREATE INDEX idx_visits_visited_at ON visits (visited_at DESC);
+CREATE UNIQUE INDEX idx_visits_unique_daily ON visits (user_id, machine_id, (visited_at::date));
 CREATE INDEX idx_saved_machines_user ON saved_machines (user_id);
 CREATE INDEX idx_user_badges_user ON user_badges (user_id);
 CREATE INDEX idx_flags_machine ON flags (machine_id) WHERE status = 'pending';
