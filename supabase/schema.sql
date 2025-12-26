@@ -1,6 +1,10 @@
--- JidouNavi Database Schema v2
+-- JidouNavi Database Schema v2.1
 -- Run in Supabase SQL Editor
 -- ================================
+-- Changes from v2:
+-- - Fixed IMMUTABLE error: lat/lng now set via trigger instead of GENERATED columns
+-- - Fixed IMMUTABLE error: visits unique index now uses explicit UTC timezone
+--
 -- Changes from v1:
 -- - Flag threshold changed from 2 to 3
 -- - Added photo_status enum for soft deletes
@@ -53,8 +57,8 @@ CREATE TABLE profiles (
 CREATE TABLE machines (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     location GEOGRAPHY(Point, 4326) NOT NULL,
-    latitude DOUBLE PRECISION GENERATED ALWAYS AS (ST_Y(location::geometry)) STORED,
-    longitude DOUBLE PRECISION GENERATED ALWAYS AS (ST_X(location::geometry)) STORED,
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
     name VARCHAR(200),
     description TEXT,
     address TEXT,
@@ -165,7 +169,7 @@ CREATE INDEX idx_machine_photos_primary ON machine_photos (machine_id) WHERE is_
 CREATE INDEX idx_visits_user ON visits (user_id);
 CREATE INDEX idx_visits_machine ON visits (machine_id);
 CREATE INDEX idx_visits_visited_at ON visits (visited_at DESC);
-CREATE UNIQUE INDEX idx_visits_unique_daily ON visits (user_id, machine_id, (visited_at::date));
+CREATE UNIQUE INDEX idx_visits_unique_daily ON visits (user_id, machine_id, (timezone('UTC', visited_at)::date));
 CREATE INDEX idx_saved_machines_user ON saved_machines (user_id);
 CREATE INDEX idx_user_badges_user ON user_badges (user_id);
 CREATE INDEX idx_flags_machine ON flags (machine_id) WHERE status = 'pending';
@@ -178,6 +182,16 @@ CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Auto-set lat/lng from location
+CREATE OR REPLACE FUNCTION set_machine_lat_lng()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.latitude := ST_Y(NEW.location::geometry);
+    NEW.longitude := ST_X(NEW.location::geometry);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -315,6 +329,10 @@ CREATE TRIGGER trigger_profiles_updated_at
 CREATE TRIGGER trigger_machines_updated_at
     BEFORE UPDATE ON machines
     FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+CREATE TRIGGER trigger_machines_lat_lng
+    BEFORE INSERT OR UPDATE OF location ON machines
+    FOR EACH ROW EXECUTE FUNCTION set_machine_lat_lng();
 
 CREATE TRIGGER trigger_machines_profile_count
     AFTER INSERT OR DELETE ON machines
