@@ -52,3 +52,6 @@ yarn-error.*
 
 # Environment
 .env
+
+# Claude context
+claude.md
