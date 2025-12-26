@@ -34,12 +34,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "@rnmapbox/maps",
-        {
-          "RNMapboxMapsDownloadToken": "sk.placeholder"
-        }
-      ]
+      "@rnmapbox/maps"
     ]
   }
 }
