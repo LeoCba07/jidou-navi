@@ -18,6 +18,14 @@ A crowdsourced vending machine discovery app for iOS & Android.
 npm install
 
 # Start Expo dev server
-npx expo start
+npm start
 ```
 
+Then scan the QR code with Expo Go (Android) or Camera app (iOS).
+
+## Scripts
+
+- `npm start` - Start Expo dev server
+- `npm run android` - Start on Android emulator
+- `npm run ios` - Start on iOS simulator (macOS only)
+- `npm run web` - Start web version
