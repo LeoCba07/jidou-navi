@@ -13,19 +13,28 @@ A crowdsourced vending machine discovery app for iOS & Android.
 
 ## Getting Started
 
-```bash
-# Install dependencies
-npm install
+1. Copy environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Then fill in the values (get them from the team).
 
-# Start Expo dev server
-npm start
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Then scan the QR code with Expo Go (Android) or Camera app (iOS).
+3. Start Expo dev server:
+   ```bash
+   npx expo start --tunnel
+   ```
+
+4. Scan the QR code with Expo Go (Android) or Camera app (iOS).
 
 ## Scripts
 
-- `npm start` - Start Expo dev server
-- `npm run android` - Start on Android emulator
-- `npm run ios` - Start on iOS simulator (macOS only)
-- `npm run web` - Start web version
+- `npx expo start` - Start Expo dev server
+- `npx expo start --tunnel` - Start with tunnel (for WSL2)
+- `npx expo start --android` - Start on Android emulator
+- `npx expo start --ios` - Start on iOS simulator (macOS only)
+- `npx expo start --web` - Start web version
