@@ -15,7 +15,9 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "JidouNavi needs your location to show nearby vending machines."
+        "NSLocationWhenInUseUsageDescription": "JidouNavi needs your location to show nearby vending machines.",
+        "NSCameraUsageDescription": "JidouNavi needs camera access to take photos of vending machines.",
+        "NSPhotoLibraryUsageDescription": "JidouNavi needs photo library access to select vending machine photos."
       }
     },
     "android": {
@@ -27,7 +29,9 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -35,7 +39,8 @@
     },
     "plugins": [
       "@rnmapbox/maps",
-      "expo-router"
+      "expo-router",
+      "expo-image-picker"
     ],
     "extra": {
       "router": {},
