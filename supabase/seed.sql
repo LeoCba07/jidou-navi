@@ -207,7 +207,7 @@ WITH cat_ids AS (
   SELECT id, slug FROM categories
 )
 INSERT INTO machine_categories (machine_id, category_id)
-SELECT m.id, c.id
+SELECT m.id::uuid, c.id
 FROM (VALUES
   -- Horror Corner machines
   ('11111111-1111-1111-1111-111111111101', 'weird'),
