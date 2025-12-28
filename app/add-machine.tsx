@@ -1,5 +1,5 @@
 // Add Machine screen
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,9 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { supabase } from '../src/lib/supabase';
 
 const CATEGORIES = [
@@ -24,12 +25,23 @@ const CATEGORIES = [
 ];
 
 export default function AddMachineScreen() {
-  const params = useLocalSearchParams<{ latitude: string; longitude: string }>();
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
+  // Get current location on mount
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === 'granted') {
+        const loc = await Location.getCurrentPositionAsync({});
+        setLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
+      }
+    })();
+  }, []);
 
   async function pickImage(useCamera: boolean) {
     const permission = useCamera
@@ -71,18 +83,32 @@ export default function AddMachineScreen() {
       Alert.alert('Photo required', 'Please take or select a photo.');
       return;
     }
+    if (!name.trim()) {
+      Alert.alert('Name required', 'Please enter a name for the machine.');
+      return;
+    }
+    if (!description.trim()) {
+      Alert.alert('Description required', 'Please add a description.');
+      return;
+    }
 
     setSubmitting(true);
 
     try {
       // Upload photo to Supabase Storage
       const fileName = `machine_${Date.now()}.jpg`;
-      const response = await fetch(photo);
-      const blob = await response.blob();
+
+      // Create form data for React Native
+      const formData = new FormData();
+      formData.append('file', {
+        uri: photo,
+        name: fileName,
+        type: 'image/jpeg',
+      } as any);
 
       const { error: uploadError } = await supabase.storage
         .from('machine-photos')
-        .upload(fileName, blob, { contentType: 'image/jpeg' });
+        .upload(fileName, formData, { contentType: 'multipart/form-data' });
 
       if (uploadError) throw uploadError;
 
@@ -92,24 +118,34 @@ export default function AddMachineScreen() {
         .getPublicUrl(fileName);
 
       // Insert machine record
-      const { error: insertError } = await supabase.from('machines').insert({
-        name: name || null,
-        description: description || null,
-        latitude: parseFloat(params.latitude),
-        longitude: parseFloat(params.longitude),
-        categories: selectedCategories,
-        primary_photo_url: urlData.publicUrl,
+      const { data: machine, error: insertError } = await supabase.from('machines').insert({
+        name: name,
+        description: description,
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+        location: `POINT(${location?.longitude} ${location?.latitude})`,
         status: 'active',
-      });
+      }).select('id').single();
 
       if (insertError) throw insertError;
+
+      // Insert photo record
+      const { error: photoError } = await supabase.from('machine_photos').insert({
+        machine_id: machine.id,
+        photo_url: urlData.publicUrl,
+        is_primary: true,
+        status: 'active',
+        uploaded_by: null,
+      });
+
+      if (photoError) console.error('Photo insert error:', photoError);
 
       Alert.alert('Success', 'Machine added!', [
         { text: 'OK', onPress: () => router.back() },
       ]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Submit error:', error);
-      Alert.alert('Error', 'Failed to add machine. Please try again.');
+      Alert.alert('Error', error?.message || 'Failed to add machine. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -148,7 +184,7 @@ export default function AddMachineScreen() {
 
         {/* Name */}
         <View style={styles.field}>
-          <Text style={styles.label}>Name (optional)</Text>
+          <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input}
             value={name}
@@ -186,7 +222,7 @@ export default function AddMachineScreen() {
 
         {/* Description */}
         <View style={styles.field}>
-          <Text style={styles.label}>Description (optional)</Text>
+          <Text style={styles.label}>Description</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
@@ -202,7 +238,7 @@ export default function AddMachineScreen() {
         <View style={styles.locationInfo}>
           <Text style={styles.locationLabel}>Location</Text>
           <Text style={styles.locationText}>
-            {params.latitude}, {params.longitude}
+            {location ? `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}` : 'Getting location...'}
           </Text>
         </View>
 
@@ -345,7 +381,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 70,
   },
   submitButtonDisabled: {
     opacity: 0.6,

@@ -1,6 +1,5 @@
 // Bottom tabs: Map (index.tsx) and Profile (profile.tsx)
-// FAB for adding machines - TODO: wire up in Issue #8
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { View, Pressable, StyleSheet } from 'react-native';
 
@@ -28,7 +27,7 @@ export default function TabLayout() {
         />
       </Tabs>
 
-      <Pressable style={styles.fab} onPress={() => console.log('Add machine')}>
+      <Pressable style={styles.fab} onPress={() => router.push('/add-machine')}>
         <Ionicons name="add" size={32} color="white" />
       </Pressable>
     </View>

@@ -1,6 +1,6 @@
 // Map screen - shows Mapbox map with machine pins
 import { useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
 import { router } from 'expo-router';
@@ -115,20 +115,6 @@ export default function MapScreen() {
           onClose={() => setSelectedMachine(null)}
         />
       )}
-
-      {/* FAB - Add Machine */}
-      <Pressable
-        style={styles.fab}
-        onPress={() => router.push({
-          pathname: '/add-machine',
-          params: {
-            latitude: String(location?.latitude || center.latitude),
-            longitude: String(location?.longitude || center.longitude),
-          },
-        })}
-      >
-        <Text style={styles.fabText}>+</Text>
-      </Pressable>
     </View>
   );
 }
@@ -144,27 +130,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4B4B',
     borderWidth: 3,
     borderColor: 'white',
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 100,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FF4B4B',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  fabText: {
-    fontSize: 32,
-    color: 'white',
-    fontWeight: '300',
-    marginTop: -2,
   },
 });

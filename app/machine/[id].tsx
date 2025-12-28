@@ -177,6 +177,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     padding: 16,
+    paddingBottom: 60,
     gap: 12,
   },
   primaryButton: {
