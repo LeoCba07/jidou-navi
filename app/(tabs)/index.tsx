@@ -1,9 +1,10 @@
 // Map screen - shows Mapbox map with machine pins
 import { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
 import { fetchNearbyMachines, NearbyMachine } from '../../src/lib/machines';
+import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
 
 // Initialize Mapbox with token from env
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '');
@@ -15,6 +16,7 @@ export default function MapScreen() {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [machines, setMachines] = useState<NearbyMachine[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedMachine, setSelectedMachine] = useState<NearbyMachine | null>(null);
   const mapRef = useRef<MapView>(null);
 
   // Get user location on mount
@@ -45,6 +47,7 @@ export default function MapScreen() {
   // Reload machines when map stops moving
   async function handleRegionChange() {
     if (!mapRef.current) return;
+    setSelectedMachine(null); // Close preview when panning
     const center = await mapRef.current.getCenter();
     if (center) {
       loadMachines(center[1], center[0]); // [lng, lat] -> lat, lng
@@ -80,11 +83,24 @@ export default function MapScreen() {
             key={machine.id}
             id={machine.id}
             coordinate={[machine.longitude, machine.latitude]}
+            onSelected={() => setSelectedMachine(machine)}
           >
             <View style={styles.pin} />
           </PointAnnotation>
         ))}
       </MapView>
+
+      {/* Preview card */}
+      {selectedMachine && (
+        <MachinePreviewCard
+          machine={selectedMachine}
+          onPress={() => {
+            // TODO: Navigate to machine detail screen
+            console.log('Navigate to machine:', selectedMachine.id);
+          }}
+          onClose={() => setSelectedMachine(null)}
+        />
+      )}
     </View>
   );
 }
