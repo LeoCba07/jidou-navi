@@ -1,6 +1,7 @@
 // Map screen - shows Mapbox map with machine pins
 import { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
 import { router } from 'expo-router';
@@ -19,6 +20,7 @@ export default function MapScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedMachine, setSelectedMachine] = useState<NearbyMachine | null>(null);
   const mapRef = useRef<MapView>(null);
+  const cameraRef = useRef<Camera>(null);
 
   // Get user location on mount
   useEffect(() => {
@@ -55,6 +57,16 @@ export default function MapScreen() {
     }
   }
 
+  // Center map on user's current location
+  function centerOnUser() {
+    if (!location || !cameraRef.current) return;
+    cameraRef.current.setCamera({
+      centerCoordinate: [location.longitude, location.latitude],
+      zoomLevel: 14,
+      animationDuration: 1000,
+    });
+  }
+
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -73,6 +85,7 @@ export default function MapScreen() {
         onRegionDidChange={handleRegionChange}
       >
         <Camera
+          ref={cameraRef}
           centerCoordinate={[center.longitude, center.latitude]}
           zoomLevel={14}
         />
@@ -90,6 +103,11 @@ export default function MapScreen() {
           </PointAnnotation>
         ))}
       </MapView>
+
+      {/* Recenter button */}
+      <Pressable style={styles.recenterButton} onPress={centerOnUser}>
+        <Ionicons name="locate" size={24} color="#333" />
+      </Pressable>
 
       {/* Preview card */}
       {selectedMachine && (
@@ -130,5 +148,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4B4B',
     borderWidth: 3,
     borderColor: 'white',
+  },
+  recenterButton: {
+    position: 'absolute',
+    bottom: 120,
+    right: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
