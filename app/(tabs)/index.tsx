@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
+import { router } from 'expo-router';
 import { fetchNearbyMachines, NearbyMachine } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
 
@@ -95,8 +96,21 @@ export default function MapScreen() {
         <MachinePreviewCard
           machine={selectedMachine}
           onPress={() => {
-            // TODO: Navigate to machine detail screen
-            console.log('Navigate to machine:', selectedMachine.id);
+            router.push({
+              pathname: '/machine/[id]',
+              params: {
+                id: selectedMachine.id,
+                name: selectedMachine.name || '',
+                description: selectedMachine.description || '',
+                address: selectedMachine.address || '',
+                latitude: String(selectedMachine.latitude),
+                longitude: String(selectedMachine.longitude),
+                distance_meters: String(selectedMachine.distance_meters),
+                primary_photo_url: selectedMachine.primary_photo_url || '',
+                visit_count: String(selectedMachine.visit_count),
+                status: selectedMachine.status || '',
+              },
+            });
           }}
           onClose={() => setSelectedMachine(null)}
         />
