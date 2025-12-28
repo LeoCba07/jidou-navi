@@ -34,9 +34,11 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@rnmapbox/maps"
+      "@rnmapbox/maps",
+      "expo-router"
     ],
     "extra": {
+      "router": {},
       "eas": {
         "projectId": "af5ac775-17e4-43e3-984a-6218423c6bb3"
       }
