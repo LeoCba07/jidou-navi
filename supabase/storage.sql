@@ -1,5 +1,5 @@
 -- Storage bucket for machine photos
--- Run this in Supabase SQL Editor (only once)
+-- Already ran in Supabase SQL Editor (only once)
 
 -- Create the bucket
 INSERT INTO storage.buckets (id, name, public)
