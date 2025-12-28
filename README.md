@@ -13,28 +13,68 @@ A crowdsourced vending machine discovery app for iOS & Android.
 
 ## Getting Started
 
-1. Copy environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Then fill in the values (get them from the team).
+### 1. Environment Setup
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+cp .env.example .env
+```
 
-3. Start Expo dev server:
-   ```bash
-   npx expo start --tunnel
-   ```
+Fill in the values:
+- `EXPO_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
+- `EXPO_PUBLIC_MAPBOX_TOKEN` - Mapbox public token (pk.xxx)
+- `RNMAPBOX_MAPS_DOWNLOAD_TOKEN` - Mapbox secret token (sk.xxx)
 
-4. Scan the QR code with Expo Go (Android) or Camera app (iOS).
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Database Setup
+
+Run these SQL files in Supabase SQL Editor (in order):
+1. `supabase/schema.sql` - Creates tables and functions
+2. `supabase/seed.sql` - Adds test data (Akihabara machines)
+
+### 4. Running the App
+
+**Note:** This app uses Mapbox which requires native code. Expo Go won't work - you need a development build.
+
+#### Android (EAS Build)
+```bash
+eas build --profile development --platform android
+```
+Install the APK on your device, then:
+```bash
+npm start -- --tunnel
+```
+
+#### iOS (Mac only)
+```bash
+npx expo run:ios
+```
 
 ## Scripts
 
-- `npx expo start` - Start Expo dev server
-- `npx expo start --tunnel` - Start with tunnel (for WSL2)
-- `npx expo start --android` - Start on Android emulator
-- `npx expo start --ios` - Start on iOS simulator (macOS only)
-- `npx expo start --web` - Start web version
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start Metro bundler |
+| `npm start -- --tunnel` | Start with tunnel (for WSL/remote) |
+| `eas build --profile development --platform android` | Build Android dev APK |
+| `npx expo run:ios` | Build and run on iOS Simulator |
+
+## Project Structure
+
+```
+app/                  # Expo Router screens
+  (tabs)/            # Tab navigation
+    index.tsx        # Map screen
+    profile.tsx      # Profile screen
+src/
+  lib/               # Supabase client, API functions
+  store/             # Zustand stores
+supabase/
+  schema.sql         # Database schema
+  seed.sql           # Test data
+```
