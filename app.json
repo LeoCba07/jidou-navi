@@ -37,6 +37,12 @@
     "plugins": [
       "@rnmapbox/maps",
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "af5ac775-17e4-43e3-984a-6218423c6bb3"
+      }
+    },
+    "owner": "jidou-navi-organization"
   }
 }
