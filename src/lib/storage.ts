@@ -1,5 +1,5 @@
 // Storage helpers for machine photos
-// Bucket must be created first - run supabase/storage.sql
+// Bucket must be created first - already ran supabase/storage.sql in Supabase
 import { supabase } from './supabase';
 
 const BUCKET = 'machine-photos';
