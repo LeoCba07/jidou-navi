@@ -40,9 +40,6 @@ yarn-error.*
 /ios
 /android
 
-# Confidential docs
-*.pdf
-
 # Windows
 *.Identifier
 
