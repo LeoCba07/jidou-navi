@@ -15,6 +15,7 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { supabase } from '../src/lib/supabase';
+import { useAuthStore } from '../src/store/authStore';
 
 const CATEGORIES = [
   { id: 'drinks', label: 'Drinks' },
@@ -25,6 +26,7 @@ const CATEGORIES = [
 ];
 
 export default function AddMachineScreen() {
+  const { user } = useAuthStore();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [name, setName] = useState('');
@@ -91,6 +93,10 @@ export default function AddMachineScreen() {
       Alert.alert('Description required', 'Please add a description.');
       return;
     }
+    if (!location) {
+      Alert.alert('Location required', 'Please wait for GPS location or enable location services.');
+      return;
+    }
 
     setSubmitting(true);
 
@@ -125,6 +131,7 @@ export default function AddMachineScreen() {
         longitude: location?.longitude,
         location: `POINT(${location?.longitude} ${location?.latitude})`,
         status: 'active',
+        contributor_id: user?.id,
       }).select('id').single();
 
       if (insertError) throw insertError;
@@ -135,7 +142,7 @@ export default function AddMachineScreen() {
         photo_url: urlData.publicUrl,
         is_primary: true,
         status: 'active',
-        uploaded_by: null,
+        uploaded_by: user?.id,
       });
 
       if (photoError) console.error('Photo insert error:', photoError);
