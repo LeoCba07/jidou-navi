@@ -68,18 +68,7 @@ export default function SignupScreen() {
       return;
     }
 
-    // Create profile (trigger on auth.users may not work in Supabase hosted)
-    if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').upsert({
-        id: data.user.id,
-        username: username.trim(),
-      });
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // Don't block signup - profile can be created on first login via _layout.tsx safety net
-      }
-    }
+    // Profile is created automatically by database trigger on auth.users
 
     setLoading(false);
     Alert.alert(
