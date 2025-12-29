@@ -48,7 +48,7 @@ export async function fetchNearbyMachines(
   return data || [];
 }
 
-// Search machines by name or description (fuzzy search)
+// Search machines by name, description, or address (fuzzy search)
 export async function searchMachines(
   searchTerm: string,
   limit: number = 20

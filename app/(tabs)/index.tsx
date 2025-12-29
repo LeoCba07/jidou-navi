@@ -71,6 +71,8 @@ export default function MapScreen() {
   // Handle search result selection - center map on result
   function handleSearchResult(result: SearchResult) {
     if (!cameraRef.current) return;
+    // Clear any open preview card
+    setSelectedMachine(null);
     cameraRef.current.setCamera({
       centerCoordinate: [result.longitude, result.latitude],
       zoomLevel: 16,

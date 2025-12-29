@@ -1,5 +1,5 @@
 // Search bar component for finding machines
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -17,27 +17,67 @@ type SearchBarProps = {
   onResultSelect?: (result: SearchResult) => void;
 };
 
+const DEBOUNCE_MS = 300;
+
 export function SearchBar({ onResultSelect }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
 
-  // Debounced search
-  const handleSearch = useCallback(async (text: string) => {
+  // Refs for debounce and race condition handling
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const latestQueryRef = useRef<string>("");
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
+
+  // Debounced search with race condition handling
+  const handleSearch = useCallback((text: string) => {
     setQuery(text);
+    latestQueryRef.current = text;
+
+    // Clear previous debounce
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
 
     if (text.trim().length < 2) {
       setResults([]);
       setShowResults(false);
+      setIsSearching(false);
       return;
     }
 
     setIsSearching(true);
-    const data = await searchMachines(text);
-    setResults(data);
-    setShowResults(true);
-    setIsSearching(false);
+
+    // Debounce the actual search
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const data = await searchMachines(text);
+        // Only update if this is still the latest query (race condition fix)
+        if (latestQueryRef.current === text) {
+          setResults(data);
+          setShowResults(true);
+        }
+      } catch (error) {
+        // Handle error gracefully
+        if (latestQueryRef.current === text) {
+          setResults([]);
+          setShowResults(false);
+        }
+      } finally {
+        if (latestQueryRef.current === text) {
+          setIsSearching(false);
+        }
+      }
+    }, DEBOUNCE_MS);
   }, []);
 
   const handleResultPress = (result: SearchResult) => {
@@ -60,6 +100,8 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
           longitude: String(result.longitude),
           visit_count: String(result.visit_count),
           status: result.status || "",
+          distance_meters: "",
+          primary_photo_url: "",
         },
       });
     }
@@ -69,68 +111,109 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
     setQuery("");
     setResults([]);
     setShowResults(false);
+    latestQueryRef.current = "";
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+  };
+
+  const dismissResults = () => {
+    Keyboard.dismiss();
+    setShowResults(false);
   };
 
   return (
-    <View style={styles.container}>
-      {/* Search input */}
-      <View style={styles.inputContainer}>
-        <Ionicons name="search" size={20} color="#999" style={styles.icon} />
-        <TextInput
-          style={styles.input}
-          value={query}
-          onChangeText={handleSearch}
-          placeholder="Search machines..."
-          placeholderTextColor="#999"
-          returnKeyType="search"
-          autoCorrect={false}
-          autoCapitalize="none"
+    <>
+      {/* Overlay to dismiss results when tapping outside */}
+      {showResults && (
+        <Pressable
+          style={styles.overlay}
+          onPress={dismissResults}
+          accessibilityLabel="Dismiss search results"
         />
-        {query.length > 0 && (
-          <Pressable onPress={handleClear} style={styles.clearButton}>
-            <Ionicons name="close-circle" size={20} color="#999" />
-          </Pressable>
+      )}
+
+      <View style={styles.container}>
+        {/* Search input */}
+        <View style={styles.inputContainer}>
+          <Ionicons name="search" size={20} color="#999" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            value={query}
+            onChangeText={handleSearch}
+            placeholder="Search machines..."
+            placeholderTextColor="#999"
+            returnKeyType="search"
+            autoCorrect={false}
+            autoCapitalize="none"
+            accessibilityLabel="Search for vending machines"
+            accessibilityHint="Enter machine name, description, or address"
+          />
+          {query.length > 0 && (
+            <Pressable
+              onPress={handleClear}
+              style={styles.clearButton}
+              accessibilityLabel="Clear search"
+              accessibilityRole="button"
+            >
+              <Ionicons name="close-circle" size={20} color="#999" />
+            </Pressable>
+          )}
+        </View>
+
+        {/* Results dropdown */}
+        {showResults && results.length > 0 && (
+          <View style={styles.resultsContainer}>
+            <FlatList
+              data={results}
+              keyExtractor={(item) => item.id}
+              keyboardShouldPersistTaps="handled"
+              removeClippedSubviews={true}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={styles.resultItem}
+                  onPress={() => handleResultPress(item)}
+                  accessibilityLabel={`${item.name}, ${item.address}`}
+                  accessibilityRole="button"
+                  accessibilityHint="Tap to view on map"
+                >
+                  <View style={styles.resultContent}>
+                    <Text style={styles.resultName} numberOfLines={1}>
+                      {item.name}
+                    </Text>
+                    <Text style={styles.resultAddress} numberOfLines={1}>
+                      {item.address}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                </Pressable>
+              )}
+            />
+          </View>
+        )}
+
+        {/* No results message */}
+        {showResults && results.length === 0 && query.length >= 2 && !isSearching && (
+          <View style={styles.resultsContainer}>
+            <Text style={styles.noResults}>No machines found</Text>
+          </View>
         )}
       </View>
-
-      {/* Results dropdown */}
-      {showResults && results.length > 0 && (
-        <View style={styles.resultsContainer}>
-          <FlatList
-            data={results}
-            keyExtractor={(item) => item.id}
-            keyboardShouldPersistTaps="handled"
-            renderItem={({ item }) => (
-              <Pressable
-                style={styles.resultItem}
-                onPress={() => handleResultPress(item)}
-              >
-                <View style={styles.resultContent}>
-                  <Text style={styles.resultName} numberOfLines={1}>
-                    {item.name}
-                  </Text>
-                  <Text style={styles.resultAddress} numberOfLines={1}>
-                    {item.address}
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
-              </Pressable>
-            )}
-          />
-        </View>
-      )}
-
-      {/* No results message */}
-      {showResults && results.length === 0 && query.length >= 2 && !isSearching && (
-        <View style={styles.resultsContainer}>
-          <Text style={styles.noResults}>No machines found</Text>
-        </View>
-      )}
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 15,
+  },
   container: {
     position: "absolute",
     top: 60,
