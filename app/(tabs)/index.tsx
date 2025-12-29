@@ -5,8 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
 import { router } from 'expo-router';
-import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine } from '../../src/lib/machines';
+import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine, SearchResult } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
+import { SearchBar } from '../../src/components/SearchBar';
 import { CategoryFilterBar } from '../../src/components/CategoryFilterBar';
 import { useUIStore } from '../../src/store';
 
@@ -90,6 +91,20 @@ export default function MapScreen() {
     });
   }
 
+  // Handle search result selection - center map on result
+  function handleSearchResult(result: SearchResult) {
+    if (!cameraRef.current) return;
+    // Clear any open preview card
+    setSelectedMachine(null);
+    cameraRef.current.setCamera({
+      centerCoordinate: [result.longitude, result.latitude],
+      zoomLevel: 16,
+      animationDuration: 1000,
+    });
+    // Reload machines around the selected location
+    loadMachines(result.latitude, result.longitude);
+  }
+
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -126,6 +141,9 @@ export default function MapScreen() {
           </PointAnnotation>
         ))}
       </MapView>
+
+      {/* Search bar */}
+      <SearchBar onResultSelect={handleSearchResult} />
 
       {/* Category filter bar */}
       <CategoryFilterBar />
