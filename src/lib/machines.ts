@@ -1,6 +1,13 @@
 // API functions for fetching machines from Supabase
 import { supabase } from './supabase';
 
+export type MachineCategory = {
+  id: string;
+  slug: string;
+  name: string;
+  color: string;
+};
+
 export type NearbyMachine = {
   id: string;
   name: string;
@@ -9,7 +16,7 @@ export type NearbyMachine = {
   latitude: number;
   longitude: number;
   distance_meters: number;
-  categories: unknown;
+  categories: MachineCategory[] | null;
   primary_photo_url: string;
   status: string;
   visit_count: number;
@@ -34,4 +41,19 @@ export async function fetchNearbyMachines(
   }
 
   return data || [];
+}
+
+// Filter machines by selected categories (OR logic)
+export function filterMachinesByCategories(
+  machines: NearbyMachine[],
+  selectedCategories: string[]
+): NearbyMachine[] {
+  if (selectedCategories.length === 0) {
+    return machines;
+  }
+
+  return machines.filter((machine) => {
+    const cats = machine.categories || [];
+    return cats.some((cat) => selectedCategories.includes(cat.slug));
+  });
 }

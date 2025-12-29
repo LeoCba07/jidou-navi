@@ -1,12 +1,14 @@
 // Map screen - shows Mapbox map with machine pins
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
 import { router } from 'expo-router';
-import { fetchNearbyMachines, NearbyMachine } from '../../src/lib/machines';
+import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
+import { CategoryFilterBar } from '../../src/components/CategoryFilterBar';
+import { useUIStore } from '../../src/store';
 
 // Initialize Mapbox with token from env
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '');
@@ -21,6 +23,27 @@ export default function MapScreen() {
   const [selectedMachine, setSelectedMachine] = useState<NearbyMachine | null>(null);
   const mapRef = useRef<MapView>(null);
   const cameraRef = useRef<Camera>(null);
+
+  // Category filter state from Zustand
+  const selectedCategories = useUIStore((state) => state.selectedCategories);
+
+  // Filter machines by selected categories
+  const filteredMachines = useMemo(() => {
+    return filterMachinesByCategories(machines, selectedCategories);
+  }, [machines, selectedCategories]);
+
+  // Clear selected machine if it's no longer visible after filtering
+  useEffect(() => {
+    if (!selectedMachine) return;
+
+    const stillVisible = filteredMachines.some(
+      (machine) => machine.id === selectedMachine.id
+    );
+
+    if (!stillVisible) {
+      setSelectedMachine(null);
+    }
+  }, [filteredMachines, selectedMachine]);
 
   // Get user location on mount
   useEffect(() => {
@@ -92,7 +115,7 @@ export default function MapScreen() {
         <LocationPuck puckBearing="heading" puckBearingEnabled />
 
         {/* Machine pins */}
-        {machines.map((machine) => (
+        {filteredMachines.map((machine) => (
           <PointAnnotation
             key={machine.id}
             id={machine.id}
@@ -103,6 +126,9 @@ export default function MapScreen() {
           </PointAnnotation>
         ))}
       </MapView>
+
+      {/* Category filter bar */}
+      <CategoryFilterBar />
 
       {/* Recenter button */}
       <Pressable style={styles.recenterButton} onPress={centerOnUser}>
