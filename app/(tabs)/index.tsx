@@ -32,6 +32,19 @@ export default function MapScreen() {
     return filterMachinesByCategories(machines, selectedCategories);
   }, [machines, selectedCategories]);
 
+  // Clear selected machine if it's no longer visible after filtering
+  useEffect(() => {
+    if (!selectedMachine) return;
+
+    const stillVisible = filteredMachines.some(
+      (machine) => machine.id === selectedMachine.id
+    );
+
+    if (!stillVisible) {
+      setSelectedMachine(null);
+    }
+  }, [filteredMachines, selectedMachine]);
+
   // Get user location on mount
   useEffect(() => {
     (async () => {

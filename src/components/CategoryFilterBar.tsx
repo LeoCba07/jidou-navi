@@ -2,6 +2,7 @@
 import { View, ScrollView, Pressable, Text, StyleSheet } from "react-native";
 import { useUIStore } from "../store";
 
+// TODO: Consider fetching categories from database for consistency
 const CATEGORIES = [
   { slug: "drinks", name: "Drinks", color: "#3C91E6" },
   { slug: "food", name: "Food", color: "#FF4B4B" },
@@ -31,6 +32,8 @@ export function CategoryFilterBar() {
         <Pressable
           style={[styles.chip, isAllSelected && styles.chipSelected]}
           onPress={clearCategories}
+          accessibilityLabel="Show all categories"
+          accessibilityRole="button"
         >
           <Text
             style={[styles.chipText, isAllSelected && styles.chipTextSelected]}
@@ -50,6 +53,9 @@ export function CategoryFilterBar() {
                 isSelected && { backgroundColor: cat.color },
               ]}
               onPress={() => toggleCategory(cat.slug)}
+              accessibilityLabel={`Filter by ${cat.name} category`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isSelected }}
             >
               <Text
                 style={[styles.chipText, isSelected && styles.chipTextSelected]}
@@ -67,7 +73,7 @@ export function CategoryFilterBar() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 100,
+    top: 115,
     left: 0,
     right: 0,
     zIndex: 10,
