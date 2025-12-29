@@ -1,6 +1,18 @@
 // API functions for fetching machines from Supabase
 import { supabase } from './supabase';
 
+export type SearchResult = {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  status: string;
+  visit_count: number;
+  similarity_score: number;
+};
+
 export type NearbyMachine = {
   id: string;
   name: string;
@@ -30,6 +42,28 @@ export async function fetchNearbyMachines(
 
   if (error) {
     console.error('Error fetching nearby machines:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+// Search machines by name or description (fuzzy search)
+export async function searchMachines(
+  searchTerm: string,
+  limit: number = 20
+): Promise<SearchResult[]> {
+  if (!searchTerm.trim()) {
+    return [];
+  }
+
+  const { data, error } = await supabase.rpc('search_machines', {
+    search_term: searchTerm.trim(),
+    limit_count: limit,
+  });
+
+  if (error) {
+    console.error('Error searching machines:', error);
     return [];
   }
 

@@ -5,8 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
 import { router } from 'expo-router';
-import { fetchNearbyMachines, NearbyMachine } from '../../src/lib/machines';
+import { fetchNearbyMachines, NearbyMachine, SearchResult } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
+import { SearchBar } from '../../src/components/SearchBar';
 
 // Initialize Mapbox with token from env
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '');
@@ -67,6 +68,18 @@ export default function MapScreen() {
     });
   }
 
+  // Handle search result selection - center map on result
+  function handleSearchResult(result: SearchResult) {
+    if (!cameraRef.current) return;
+    cameraRef.current.setCamera({
+      centerCoordinate: [result.longitude, result.latitude],
+      zoomLevel: 16,
+      animationDuration: 1000,
+    });
+    // Reload machines around the selected location
+    loadMachines(result.latitude, result.longitude);
+  }
+
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -103,6 +116,9 @@ export default function MapScreen() {
           </PointAnnotation>
         ))}
       </MapView>
+
+      {/* Search bar */}
+      <SearchBar onResultSelect={handleSearchResult} />
 
       {/* Recenter button */}
       <Pressable style={styles.recenterButton} onPress={centerOnUser}>
