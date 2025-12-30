@@ -125,7 +125,13 @@ export default function MapScreen() {
         ref={mapRef}
         style={styles.map}
         onRegionDidChange={handleRegionChange}
-        onPress={handleMapPress}
+        onPress={(event) => {
+          // Ignore presses on rendered features (markers) to prevent conflict with marker handlers
+          if (event && Array.isArray((event as any).features) && (event as any).features.length > 0) {
+            return;
+          }
+          handleMapPress();
+        }}
       >
         <Camera
           ref={cameraRef}

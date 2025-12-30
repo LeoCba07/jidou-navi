@@ -92,6 +92,14 @@ export default function MachineDetailScreen() {
         }
       }
     } catch (err) {
+      // Revert optimistic update on unexpected error
+      if (isSaved) {
+        // Originally saved: we removed optimistically, so add back
+        addSaved(params.id);
+      } else {
+        // Originally not saved: we added optimistically, so remove
+        removeSaved(params.id);
+      }
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setSaving(false);

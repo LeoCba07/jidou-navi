@@ -133,10 +133,18 @@ export async function saveMachine(machineId: string): Promise<boolean> {
 
 // Unsave a machine (remove bookmark)
 export async function unsaveMachine(machineId: string): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    console.error('Error unsaving machine: No authenticated user');
+    return false;
+  }
+
   const { error } = await supabase
     .from('saved_machines')
     .delete()
-    .eq('machine_id', machineId);
+    .eq('machine_id', machineId)
+    .eq('user_id', user.id);
 
   if (error) {
     console.error('Error unsaving machine:', error);
@@ -148,9 +156,16 @@ export async function unsaveMachine(machineId: string): Promise<boolean> {
 
 // Fetch all saved machine IDs for current user (for quick lookup)
 export async function fetchSavedMachineIds(): Promise<string[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
   const { data, error } = await supabase
     .from('saved_machines')
-    .select('machine_id');
+    .select('machine_id')
+    .eq('user_id', user.id);
 
   if (error) {
     console.error('Error fetching saved machine IDs:', error);

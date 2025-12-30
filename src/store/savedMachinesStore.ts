@@ -17,9 +17,11 @@ export const useSavedMachinesStore = create<SavedMachinesState>((set, get) => ({
   isLoading: false,
   setSavedMachineIds: (ids) => set({ savedMachineIds: new Set(ids) }),
   addSaved: (machineId) =>
-    set((state) => ({
-      savedMachineIds: new Set([...state.savedMachineIds, machineId]),
-    })),
+    set((state) => {
+      const newSet = new Set(state.savedMachineIds);
+      newSet.add(machineId);
+      return { savedMachineIds: newSet };
+    }),
   removeSaved: (machineId) =>
     set((state) => {
       const newSet = new Set(state.savedMachineIds);
