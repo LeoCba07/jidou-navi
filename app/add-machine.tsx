@@ -168,16 +168,19 @@ export default function AddMachineScreen() {
 
       if (photoError) console.error('Photo insert error:', photoError);
 
+      // Small delay to allow DB triggers (profile contribution counts) to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Check for badge unlocks (contributor badges)
       const newBadges = await checkAndAwardBadges(machine.id);
 
       if (newBadges.length > 0) {
-        const badge = newBadges[0];
-        Alert.alert(
-          '🏆 Badge Earned!',
-          `Machine added!\n\nYou earned "${badge.name}"!\n${badge.description}`,
-          [{ text: 'Awesome!', onPress: () => router.back() }]
-        );
+        const title = newBadges.length === 1 ? '🏆 Badge Earned!' : '🏆 Badges Earned!';
+        const badgeList = newBadges
+          .map((badge) => `• "${badge.name}" – ${badge.description}`)
+          .join('\n');
+        const message = `Machine added!\n\nYou earned:\n${badgeList}`;
+        Alert.alert(title, message, [{ text: 'Awesome!', onPress: () => router.back() }]);
       } else {
         Alert.alert('Success', 'Machine added!', [
           { text: 'OK', onPress: () => router.back() },

@@ -63,7 +63,7 @@ export async function checkAndAwardBadges(
   const earnedBadgeIds = new Set(earnedBadges?.map((b) => b.badge_id) || []);
 
   // Check which badges user now qualifies for
-  const newlyEarned: NewlyEarnedBadge[] = [];
+  const qualifiedBadges: Badge[] = [];
 
   for (const badge of allBadges) {
     // Skip if already earned
@@ -81,31 +81,40 @@ export async function checkAndAwardBadges(
     });
 
     if (isEarned) {
-      // Award the badge
-      const { error: insertError } = await supabase
-        .from('user_badges')
-        .insert({
-          user_id: user.id,
-          badge_id: badge.id,
-          trigger_machine_id: machineId || null,
-        });
-
-      if (insertError) {
-        // Might be duplicate, skip
-        if (insertError.code !== '23505') {
-          console.error('Error awarding badge:', insertError);
-        }
-        continue;
-      }
-
-      newlyEarned.push({
-        ...typedBadge,
-        unlocked_at: new Date().toISOString(),
-      });
+      qualifiedBadges.push(typedBadge);
     }
   }
 
-  return newlyEarned;
+  // No new badges to award
+  if (qualifiedBadges.length === 0) {
+    return [];
+  }
+
+  // Batch insert all newly earned badges
+  const badgesToInsert = qualifiedBadges.map((badge) => ({
+    user_id: user.id,
+    badge_id: badge.id,
+    trigger_machine_id: machineId || null,
+  }));
+
+  const { error: insertError } = await supabase
+    .from('user_badges')
+    .insert(badgesToInsert);
+
+  if (insertError) {
+    // Log error but don't fail completely - some badges might have been duplicates
+    if (insertError.code !== '23505') {
+      console.error('Error awarding badges:', insertError);
+    }
+    return [];
+  }
+
+  // Return newly earned badges
+  const unlocked_at = new Date().toISOString();
+  return qualifiedBadges.map((badge) => ({
+    ...badge,
+    unlocked_at,
+  }));
 }
 
 // Check if user meets badge requirements based on trigger type
