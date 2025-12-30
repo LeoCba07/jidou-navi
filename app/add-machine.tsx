@@ -176,14 +176,21 @@ export default function AddMachineScreen() {
       // Check for badge unlocks (contributor badges)
       const newBadges = await checkAndAwardBadges(machine.id);
 
-      // Show success and go back
-      Alert.alert('Success', 'Machine added!', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
-
-      // Show badge popup if any earned (after navigating back)
       if (newBadges.length > 0) {
-        showBadgePopup(newBadges);
+        // Show success alert, then badge popup, then navigate back
+        Alert.alert('Success', 'Machine added!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              showBadgePopup(newBadges, () => router.back());
+            },
+          },
+        ]);
+      } else {
+        // No badges - just show success and go back
+        Alert.alert('Success', 'Machine added!', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
       }
     } catch (error: any) {
       console.error('Submit error:', error);

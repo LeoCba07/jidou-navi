@@ -61,6 +61,7 @@ export default function BadgeUnlockModal() {
   }
 
   function handleViewAllBadges() {
+    onDismiss?.();
     handleClose();
     // Navigate to profile which shows badges
     router.push('/(tabs)/profile');
@@ -96,11 +97,7 @@ export default function BadgeUnlockModal() {
             {badges.map((badge, index) => (
               <View key={badge.id} style={styles.badgeItem}>
                 <View style={styles.badgeIconWrapper}>
-                  {badge.icon_url ? (
-                    <Text style={styles.badgeEmoji}>🎖️</Text>
-                  ) : (
-                    <Text style={styles.badgeEmoji}>🎖️</Text>
-                  )}
+                  <Text style={styles.badgeEmoji}>🎖️</Text>
                 </View>
                 <View style={styles.badgeInfo}>
                   <Text style={styles.badgeName}>{badge.name}</Text>
@@ -112,7 +109,12 @@ export default function BadgeUnlockModal() {
 
           {/* Actions */}
           <View style={styles.actions}>
-            <Pressable style={styles.viewAllButton} onPress={handleViewAllBadges}>
+            <Pressable
+              style={styles.viewAllButton}
+              onPress={handleViewAllBadges}
+              accessibilityRole="button"
+              accessibilityLabel="View all badges"
+            >
               <Text style={styles.viewAllText}>View All Badges</Text>
             </Pressable>
 
@@ -122,6 +124,8 @@ export default function BadgeUnlockModal() {
                 handleClose();
                 onDismiss?.();
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Dismiss badge notification"
             >
               <Text style={styles.dismissText}>Awesome!</Text>
             </Pressable>

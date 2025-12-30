@@ -188,19 +188,21 @@ export default function MachineDetailScreen() {
       // Check for badge unlocks
       const newBadges = await checkAndAwardBadges(params.id);
 
-      // Show success message
+      // Show success message, then badge popup if earned
       Alert.alert(
         'Checked In!',
         stillExists
           ? 'Thanks for confirming this machine is still here!'
           : 'Thanks for letting us know. We\'ll verify this machine.',
-        [{ text: 'OK' }]
+        [{
+          text: 'OK',
+          onPress: () => {
+            if (newBadges.length > 0) {
+              showBadgePopup(newBadges);
+            }
+          },
+        }]
       );
-
-      // Show badge popup if any earned (after the check-in alert)
-      if (newBadges.length > 0) {
-        showBadgePopup(newBadges);
-      }
     } catch (err) {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
