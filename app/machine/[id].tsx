@@ -1,5 +1,5 @@
 // Machine detail screen
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,16 +12,20 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
 import { supabase } from '../../src/lib/supabase';
-import { useAuthStore } from '../../src/store/authStore';
+import { useAuthStore, useSavedMachinesStore } from '../../src/store';
+import { saveMachine, unsaveMachine } from '../../src/lib/machines';
 
 export default function MachineDetailScreen() {
   const { user } = useAuthStore();
+  const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -39,6 +43,9 @@ export default function MachineDetailScreen() {
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
 
+  // Check if machine is saved
+  const isSaved = savedMachineIds.has(params.id);
+
   const distance = Number(params.distance_meters) < 1000
     ? `${Math.round(Number(params.distance_meters))}m`
     : `${(Number(params.distance_meters) / 1000).toFixed(1)}km`;
@@ -54,6 +61,41 @@ export default function MachineDetailScreen() {
     });
 
     if (url) Linking.openURL(url);
+  }
+
+  async function handleSaveToggle() {
+    if (!user) {
+      Alert.alert('Login Required', 'Please log in to save machines.');
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      if (isSaved) {
+        // Optimistic update - remove from store immediately
+        removeSaved(params.id);
+        const success = await unsaveMachine(params.id);
+        if (!success) {
+          // Revert on failure
+          addSaved(params.id);
+          Alert.alert('Error', 'Failed to unsave machine.');
+        }
+      } else {
+        // Optimistic update - add to store immediately
+        addSaved(params.id);
+        const success = await saveMachine(params.id);
+        if (!success) {
+          // Revert on failure
+          removeSaved(params.id);
+          Alert.alert('Error', 'Failed to save machine.');
+        }
+      }
+    } catch (err) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function handleCheckIn() {
@@ -211,8 +253,25 @@ export default function MachineDetailScreen() {
                 </Text>
               )}
             </Pressable>
-            <Pressable style={styles.secondaryButton}>
-              <Text style={styles.secondaryButtonText}>Save</Text>
+            <Pressable
+              style={[styles.secondaryButton, saving && styles.buttonDisabled]}
+              onPress={handleSaveToggle}
+              disabled={saving}
+            >
+              {saving ? (
+                <ActivityIndicator size="small" color="#333" />
+              ) : (
+                <View style={styles.saveButtonContent}>
+                  <Ionicons
+                    name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                    size={18}
+                    color={isSaved ? '#FF4B4B' : '#333'}
+                  />
+                  <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]}>
+                    {isSaved ? 'Saved' : 'Save'}
+                  </Text>
+                </View>
+              )}
             </Pressable>
           </View>
         </View>
@@ -335,5 +394,13 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     opacity: 0.6,
+  },
+  saveButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  savedText: {
+    color: '#FF4B4B',
   },
 });

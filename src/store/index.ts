@@ -3,3 +3,4 @@
 export { useAuthStore } from './authStore';
 export { useMachinesStore } from './machinesStore';
 export { useUIStore } from './uiStore';
+export { useSavedMachinesStore } from './savedMachinesStore';

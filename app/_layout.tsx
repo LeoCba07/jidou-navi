@@ -4,11 +4,14 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
+import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
+import { fetchSavedMachineIds } from '../src/lib/machines';
 
 export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const { user, setUser, setSession, setProfile, isLoading, setLoading } = useAuthStore();
+  const { setSavedMachineIds } = useSavedMachinesStore();
   const [isReady, setIsReady] = useState(false);
 
   // Listen to auth state changes
@@ -19,6 +22,7 @@ export default function RootLayout() {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
+        loadSavedMachines();
       }
       setLoading(false);
       setIsReady(true);
@@ -31,14 +35,22 @@ export default function RootLayout() {
         setUser(session?.user ?? null);
         if (session?.user) {
           fetchProfile(session.user.id, session.user.email);
+          loadSavedMachines();
         } else {
           setProfile(null);
+          setSavedMachineIds([]); // Clear saved machines on logout
         }
       }
     );
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Load saved machines for the current user
+  async function loadSavedMachines() {
+    const ids = await fetchSavedMachineIds();
+    setSavedMachineIds(ids);
+  }
 
   // Fetch user profile from database (creates one if missing)
   async function fetchProfile(userId: string, userEmail?: string) {
