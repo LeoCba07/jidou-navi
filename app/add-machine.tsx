@@ -13,56 +13,12 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 
-// Image compression settings
-const MAX_DIMENSION = 1200; // Max pixels on longest side
-const MAX_FILE_SIZE = 500 * 1024; // 500KB in bytes
-const INITIAL_QUALITY = 0.8;
-const MIN_QUALITY = 0.3;
-
-// Compress image to meet size requirements
-async function compressImage(uri: string): Promise<{ uri: string; size: number }> {
-  // First resize to max dimension
-  const resized = await ImageManipulator.manipulateAsync(
-    uri,
-    [{ resize: { width: MAX_DIMENSION, height: MAX_DIMENSION } }],
-    { compress: INITIAL_QUALITY, format: ImageManipulator.SaveFormat.JPEG }
-  );
-
-  // Check file size
-  const response = await fetch(resized.uri);
-  const blob = await response.blob();
-  let fileSize = blob.size;
-
-  // If already under limit, return
-  if (fileSize <= MAX_FILE_SIZE) {
-    return { uri: resized.uri, size: fileSize };
-  }
-
-  // Progressively reduce quality until under limit
-  let quality = INITIAL_QUALITY - 0.1;
-  let compressedUri = resized.uri;
-
-  while (fileSize > MAX_FILE_SIZE && quality >= MIN_QUALITY) {
-    const compressed = await ImageManipulator.manipulateAsync(
-      uri,
-      [{ resize: { width: MAX_DIMENSION, height: MAX_DIMENSION } }],
-      { compress: quality, format: ImageManipulator.SaveFormat.JPEG }
-    );
-
-    const checkResponse = await fetch(compressed.uri);
-    const checkBlob = await checkResponse.blob();
-    fileSize = checkBlob.size;
-    compressedUri = compressed.uri;
-    quality -= 0.1;
-  }
-
-  return { uri: compressedUri, size: fileSize };
-}
+// Image quality setting for compression (0.5 = ~50% quality, good balance)
+const IMAGE_QUALITY = 0.5;
 
 const CATEGORIES = [
   { id: 'drinks', label: 'Drinks' },
@@ -104,33 +60,37 @@ export default function AddMachineScreen() {
       return;
     }
 
-    const result = useCamera
-      ? await ImagePicker.launchCameraAsync({
-          mediaTypes: ['images'],
-          quality: 1, // Get full quality, we'll compress ourselves
-          allowsEditing: true,
-          aspect: [4, 3],
-        })
-      : await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
-          quality: 1, // Get full quality, we'll compress ourselves
-          allowsEditing: true,
-          aspect: [4, 3],
-        });
+    setCompressing(true);
 
-    if (!result.canceled && result.assets[0]) {
-      // Compress the image
-      setCompressing(true);
-      try {
-        const { uri, size } = await compressImage(result.assets[0].uri);
-        setPhoto(uri);
-        setPhotoSize(size);
-      } catch (error) {
-        console.error('Compression error:', error);
-        Alert.alert('Error', 'Failed to process image. Please try again.');
-      } finally {
-        setCompressing(false);
+    try {
+      const result = useCamera
+        ? await ImagePicker.launchCameraAsync({
+            mediaTypes: ['images'],
+            quality: IMAGE_QUALITY,
+            allowsEditing: true,
+            aspect: [4, 3],
+          })
+        : await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            quality: IMAGE_QUALITY,
+            allowsEditing: true,
+            aspect: [4, 3],
+          });
+
+      if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
+        setPhoto(asset.uri);
+
+        // Get file size (fetch blob to measure)
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+        setPhotoSize(blob.size);
       }
+    } catch (error) {
+      console.error('Image picker error:', error);
+      Alert.alert('Error', 'Failed to process image. Please try again.');
+    } finally {
+      setCompressing(false);
     }
   }
 
@@ -235,7 +195,7 @@ export default function AddMachineScreen() {
           {compressing ? (
             <View style={styles.compressingContainer}>
               <ActivityIndicator size="large" color="#FF4B4B" />
-              <Text style={styles.compressingText}>Compressing image...</Text>
+              <Text style={styles.compressingText}>Processing image...</Text>
             </View>
           ) : photo ? (
             <Pressable onPress={() => { setPhoto(null); setPhotoSize(null); }}>
