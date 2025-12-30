@@ -17,6 +17,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
 import { supabase } from '../../src/lib/supabase';
 import { useAuthStore, useSavedMachinesStore } from '../../src/store';
+import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine } from '../../src/lib/machines';
 
 export default function MachineDetailScreen() {
@@ -180,13 +181,26 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
 
-      Alert.alert(
-        'Checked In!',
-        stillExists
-          ? 'Thanks for confirming this machine is still here!'
-          : 'Thanks for letting us know. We\'ll verify this machine.',
-        [{ text: 'OK' }]
-      );
+      // Check for badge unlocks
+      const newBadges = await checkAndAwardBadges(params.id);
+
+      if (newBadges.length > 0) {
+        // Show badge earned alert
+        const badge = newBadges[0]; // Show first badge (usually only one at a time)
+        Alert.alert(
+          '🏆 Badge Earned!',
+          `You earned "${badge.name}"!\n\n${badge.description}`,
+          [{ text: 'Awesome!' }]
+        );
+      } else {
+        Alert.alert(
+          'Checked In!',
+          stillExists
+            ? 'Thanks for confirming this machine is still here!'
+            : 'Thanks for letting us know. We\'ll verify this machine.',
+          [{ text: 'OK' }]
+        );
+      }
     } catch (err) {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
