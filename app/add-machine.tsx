@@ -13,9 +13,56 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
+
+// Image compression settings
+const MAX_DIMENSION = 1200; // Max pixels on longest side
+const MAX_FILE_SIZE = 500 * 1024; // 500KB in bytes
+const INITIAL_QUALITY = 0.8;
+const MIN_QUALITY = 0.3;
+
+// Compress image to meet size requirements
+async function compressImage(uri: string): Promise<{ uri: string; size: number }> {
+  // First resize to max dimension
+  const resized = await ImageManipulator.manipulateAsync(
+    uri,
+    [{ resize: { width: MAX_DIMENSION, height: MAX_DIMENSION } }],
+    { compress: INITIAL_QUALITY, format: ImageManipulator.SaveFormat.JPEG }
+  );
+
+  // Check file size
+  const response = await fetch(resized.uri);
+  const blob = await response.blob();
+  let fileSize = blob.size;
+
+  // If already under limit, return
+  if (fileSize <= MAX_FILE_SIZE) {
+    return { uri: resized.uri, size: fileSize };
+  }
+
+  // Progressively reduce quality until under limit
+  let quality = INITIAL_QUALITY - 0.1;
+  let compressedUri = resized.uri;
+
+  while (fileSize > MAX_FILE_SIZE && quality >= MIN_QUALITY) {
+    const compressed = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: MAX_DIMENSION, height: MAX_DIMENSION } }],
+      { compress: quality, format: ImageManipulator.SaveFormat.JPEG }
+    );
+
+    const checkResponse = await fetch(compressed.uri);
+    const checkBlob = await checkResponse.blob();
+    fileSize = checkBlob.size;
+    compressedUri = compressed.uri;
+    quality -= 0.1;
+  }
+
+  return { uri: compressedUri, size: fileSize };
+}
 
 const CATEGORIES = [
   { id: 'drinks', label: 'Drinks' },
@@ -29,6 +76,8 @@ export default function AddMachineScreen() {
   const { user } = useAuthStore();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [photoSize, setPhotoSize] = useState<number | null>(null);
+  const [compressing, setCompressing] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -58,19 +107,30 @@ export default function AddMachineScreen() {
     const result = useCamera
       ? await ImagePicker.launchCameraAsync({
           mediaTypes: ['images'],
-          quality: 0.7,
+          quality: 1, // Get full quality, we'll compress ourselves
           allowsEditing: true,
           aspect: [4, 3],
         })
       : await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ['images'],
-          quality: 0.7,
+          quality: 1, // Get full quality, we'll compress ourselves
           allowsEditing: true,
           aspect: [4, 3],
         });
 
     if (!result.canceled && result.assets[0]) {
-      setPhoto(result.assets[0].uri);
+      // Compress the image
+      setCompressing(true);
+      try {
+        const { uri, size } = await compressImage(result.assets[0].uri);
+        setPhoto(uri);
+        setPhotoSize(size);
+      } catch (error) {
+        console.error('Compression error:', error);
+        Alert.alert('Error', 'Failed to process image. Please try again.');
+      } finally {
+        setCompressing(false);
+      }
     }
   }
 
@@ -172,10 +232,17 @@ export default function AddMachineScreen() {
       <ScrollView style={styles.content}>
         {/* Photo */}
         <View style={styles.photoSection}>
-          {photo ? (
-            <Pressable onPress={() => setPhoto(null)}>
+          {compressing ? (
+            <View style={styles.compressingContainer}>
+              <ActivityIndicator size="large" color="#FF4B4B" />
+              <Text style={styles.compressingText}>Compressing image...</Text>
+            </View>
+          ) : photo ? (
+            <Pressable onPress={() => { setPhoto(null); setPhotoSize(null); }}>
               <Image source={{ uri: photo }} style={styles.photo} />
-              <Text style={styles.photoHint}>Tap to remove</Text>
+              <Text style={styles.photoHint}>
+                Tap to remove{photoSize ? ` • ${(photoSize / 1024).toFixed(0)}KB` : ''}
+              </Text>
             </Pressable>
           ) : (
             <View style={styles.photoButtons}>
@@ -313,6 +380,18 @@ const styles = StyleSheet.create({
   },
   photoButtons: {
     gap: 12,
+  },
+  compressingContainer: {
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+  },
+  compressingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666',
   },
   photoButton: {
     backgroundColor: '#f0f0f0',
