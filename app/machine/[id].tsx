@@ -16,13 +16,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
 import { supabase } from '../../src/lib/supabase';
-import { useAuthStore, useSavedMachinesStore } from '../../src/store';
+import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine } from '../../src/lib/machines';
 
 export default function MachineDetailScreen() {
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
+  const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
@@ -187,21 +188,18 @@ export default function MachineDetailScreen() {
       // Check for badge unlocks
       const newBadges = await checkAndAwardBadges(params.id);
 
+      // Show success message
+      Alert.alert(
+        'Checked In!',
+        stillExists
+          ? 'Thanks for confirming this machine is still here!'
+          : 'Thanks for letting us know. We\'ll verify this machine.',
+        [{ text: 'OK' }]
+      );
+
+      // Show badge popup if any earned (after the check-in alert)
       if (newBadges.length > 0) {
-        // Show all earned badges in alert
-        const title = newBadges.length === 1 ? '🏆 Badge Earned!' : '🏆 Badges Earned!';
-        const badgeMessages = newBadges
-          .map((badge) => `• "${badge.name}"\n${badge.description}`)
-          .join('\n\n');
-        Alert.alert(title, `You earned:\n\n${badgeMessages}`, [{ text: 'Awesome!' }]);
-      } else {
-        Alert.alert(
-          'Checked In!',
-          stillExists
-            ? 'Thanks for confirming this machine is still here!'
-            : 'Thanks for letting us know. We\'ll verify this machine.',
-          [{ text: 'OK' }]
-        );
+        showBadgePopup(newBadges);
       }
     } catch (err) {
       Alert.alert('Error', 'Something went wrong. Please try again.');

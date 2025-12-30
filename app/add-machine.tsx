@@ -16,6 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
+import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
@@ -31,6 +32,7 @@ const CATEGORIES = [
 
 export default function AddMachineScreen() {
   const { user } = useAuthStore();
+  const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoSize, setPhotoSize] = useState<number | null>(null);
@@ -174,17 +176,14 @@ export default function AddMachineScreen() {
       // Check for badge unlocks (contributor badges)
       const newBadges = await checkAndAwardBadges(machine.id);
 
+      // Show success and go back
+      Alert.alert('Success', 'Machine added!', [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+
+      // Show badge popup if any earned (after navigating back)
       if (newBadges.length > 0) {
-        const title = newBadges.length === 1 ? '🏆 Badge Earned!' : '🏆 Badges Earned!';
-        const badgeList = newBadges
-          .map((badge) => `• "${badge.name}" – ${badge.description}`)
-          .join('\n');
-        const message = `Machine added!\n\nYou earned:\n${badgeList}`;
-        Alert.alert(title, message, [{ text: 'Awesome!', onPress: () => router.back() }]);
-      } else {
-        Alert.alert('Success', 'Machine added!', [
-          { text: 'OK', onPress: () => router.back() },
-        ]);
+        showBadgePopup(newBadges);
       }
     } catch (error: any) {
       console.error('Submit error:', error);

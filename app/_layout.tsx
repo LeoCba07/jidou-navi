@@ -6,6 +6,7 @@ import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
 import { fetchSavedMachineIds } from '../src/lib/machines';
+import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
 
 export default function RootLayout() {
   const router = useRouter();
@@ -112,7 +113,12 @@ export default function RootLayout() {
     );
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
+      <BadgeUnlockModal />
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
