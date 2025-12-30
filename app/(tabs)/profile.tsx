@@ -305,6 +305,9 @@ export default function ProfileScreen() {
             <Pressable
               style={styles.legalLink}
               onPress={() => router.push('/legal/privacy')}
+              accessibilityRole="button"
+              accessibilityLabel="Privacy Policy"
+              accessibilityHint="Opens privacy policy page"
             >
               <Ionicons name="shield-checkmark-outline" size={20} color="#666" />
               <Text style={styles.legalLinkText}>Privacy Policy</Text>
@@ -314,6 +317,9 @@ export default function ProfileScreen() {
             <Pressable
               style={styles.legalLink}
               onPress={() => router.push('/legal/terms')}
+              accessibilityRole="button"
+              accessibilityLabel="Terms of Service"
+              accessibilityHint="Opens terms of service page"
             >
               <Ionicons name="document-text-outline" size={20} color="#666" />
               <Text style={styles.legalLinkText}>Terms of Service</Text>
