@@ -16,6 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
+import { checkAndAwardBadges } from '../src/lib/badges';
 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
@@ -167,9 +168,24 @@ export default function AddMachineScreen() {
 
       if (photoError) console.error('Photo insert error:', photoError);
 
-      Alert.alert('Success', 'Machine added!', [
-        { text: 'OK', onPress: () => router.back() },
-      ]);
+      // Small delay to allow DB triggers (profile contribution counts) to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Check for badge unlocks (contributor badges)
+      const newBadges = await checkAndAwardBadges(machine.id);
+
+      if (newBadges.length > 0) {
+        const title = newBadges.length === 1 ? '🏆 Badge Earned!' : '🏆 Badges Earned!';
+        const badgeList = newBadges
+          .map((badge) => `• "${badge.name}" – ${badge.description}`)
+          .join('\n');
+        const message = `Machine added!\n\nYou earned:\n${badgeList}`;
+        Alert.alert(title, message, [{ text: 'Awesome!', onPress: () => router.back() }]);
+      } else {
+        Alert.alert('Success', 'Machine added!', [
+          { text: 'OK', onPress: () => router.back() },
+        ]);
+      }
     } catch (error: any) {
       console.error('Submit error:', error);
       Alert.alert('Error', error?.message || 'Failed to add machine. Please try again.');

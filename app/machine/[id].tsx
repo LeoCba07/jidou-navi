@@ -17,6 +17,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
 import { supabase } from '../../src/lib/supabase';
 import { useAuthStore, useSavedMachinesStore } from '../../src/store';
+import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine } from '../../src/lib/machines';
 
 export default function MachineDetailScreen() {
@@ -180,13 +181,28 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
 
-      Alert.alert(
-        'Checked In!',
-        stillExists
-          ? 'Thanks for confirming this machine is still here!'
-          : 'Thanks for letting us know. We\'ll verify this machine.',
-        [{ text: 'OK' }]
-      );
+      // Small delay to allow profile counts to update via DB trigger
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Check for badge unlocks
+      const newBadges = await checkAndAwardBadges(params.id);
+
+      if (newBadges.length > 0) {
+        // Show all earned badges in alert
+        const title = newBadges.length === 1 ? '🏆 Badge Earned!' : '🏆 Badges Earned!';
+        const badgeMessages = newBadges
+          .map((badge) => `• "${badge.name}"\n${badge.description}`)
+          .join('\n\n');
+        Alert.alert(title, `You earned:\n\n${badgeMessages}`, [{ text: 'Awesome!' }]);
+      } else {
+        Alert.alert(
+          'Checked In!',
+          stillExists
+            ? 'Thanks for confirming this machine is still here!'
+            : 'Thanks for letting us know. We\'ll verify this machine.',
+          [{ text: 'OK' }]
+        );
+      }
     } catch (err) {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
