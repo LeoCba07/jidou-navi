@@ -17,6 +17,9 @@ import * as Location from 'expo-location';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 
+// Image quality setting for compression (0.5 = ~50% quality, good balance)
+const IMAGE_QUALITY = 0.5;
+
 const CATEGORIES = [
   { id: 'drinks', label: 'Drinks' },
   { id: 'food', label: 'Food' },
@@ -29,6 +32,8 @@ export default function AddMachineScreen() {
   const { user } = useAuthStore();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [photoSize, setPhotoSize] = useState<number | null>(null);
+  const [compressing, setCompressing] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -55,22 +60,37 @@ export default function AddMachineScreen() {
       return;
     }
 
-    const result = useCamera
-      ? await ImagePicker.launchCameraAsync({
-          mediaTypes: ['images'],
-          quality: 0.7,
-          allowsEditing: true,
-          aspect: [4, 3],
-        })
-      : await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
-          quality: 0.7,
-          allowsEditing: true,
-          aspect: [4, 3],
-        });
+    setCompressing(true);
 
-    if (!result.canceled && result.assets[0]) {
-      setPhoto(result.assets[0].uri);
+    try {
+      const result = useCamera
+        ? await ImagePicker.launchCameraAsync({
+            mediaTypes: ['images'],
+            quality: IMAGE_QUALITY,
+            allowsEditing: true,
+            aspect: [4, 3],
+          })
+        : await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            quality: IMAGE_QUALITY,
+            allowsEditing: true,
+            aspect: [4, 3],
+          });
+
+      if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
+        setPhoto(asset.uri);
+
+        // Get file size (fetch blob to measure)
+        const response = await fetch(asset.uri);
+        const blob = await response.blob();
+        setPhotoSize(blob.size);
+      }
+    } catch (error) {
+      console.error('Image picker error:', error);
+      Alert.alert('Error', 'Failed to process image. Please try again.');
+    } finally {
+      setCompressing(false);
     }
   }
 
@@ -172,10 +192,17 @@ export default function AddMachineScreen() {
       <ScrollView style={styles.content}>
         {/* Photo */}
         <View style={styles.photoSection}>
-          {photo ? (
-            <Pressable onPress={() => setPhoto(null)}>
+          {compressing ? (
+            <View style={styles.compressingContainer}>
+              <ActivityIndicator size="large" color="#FF4B4B" />
+              <Text style={styles.compressingText}>Processing image...</Text>
+            </View>
+          ) : photo ? (
+            <Pressable onPress={() => { setPhoto(null); setPhotoSize(null); }}>
               <Image source={{ uri: photo }} style={styles.photo} />
-              <Text style={styles.photoHint}>Tap to remove</Text>
+              <Text style={styles.photoHint}>
+                Tap to remove{photoSize ? ` • ${(photoSize / 1024).toFixed(0)}KB` : ''}
+              </Text>
             </Pressable>
           ) : (
             <View style={styles.photoButtons}>
@@ -313,6 +340,18 @@ const styles = StyleSheet.create({
   },
   photoButtons: {
     gap: 12,
+  },
+  compressingContainer: {
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+  },
+  compressingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666',
   },
   photoButton: {
     backgroundColor: '#f0f0f0',
