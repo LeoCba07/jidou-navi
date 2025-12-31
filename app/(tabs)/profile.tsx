@@ -12,8 +12,11 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useAuthStore } from '../../src/store/authStore';
+import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { supabase } from '../../src/lib/supabase';
+import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
 
 // Badge type from joined query
 type UserBadge = {
@@ -37,8 +40,11 @@ const RARITY_COLORS: Record<string, string> = {
 
 export default function ProfileScreen() {
   const { user, profile } = useAuthStore();
+  const { removeSaved } = useSavedMachinesStore();
   const [badges, setBadges] = useState<UserBadge[]>([]);
+  const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
   const [loadingBadges, setLoadingBadges] = useState(true);
+  const [loadingSaved, setLoadingSaved] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   // Fetch user's badges
@@ -67,13 +73,67 @@ export default function ProfileScreen() {
     setLoadingBadges(false);
   }
 
+  // Fetch user's saved machines
+  async function loadSavedMachines() {
+    if (!user) return;
+    const data = await fetchSavedMachines();
+    setSavedMachines(data);
+    setLoadingSaved(false);
+  }
+
+  // Handle unsave action
+  async function handleUnsave(machineId: string) {
+    Alert.alert(
+      'Remove from Saved',
+      'Are you sure you want to remove this machine from your saved list?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: async () => {
+            // Optimistic update
+            setSavedMachines((prev) => prev.filter((m) => m.machine_id !== machineId));
+            removeSaved(machineId);
+            const success = await unsaveMachine(machineId);
+            if (!success) {
+              // Revert on failure - reload the list
+              loadSavedMachines();
+              Alert.alert('Error', 'Failed to remove machine from saved list.');
+            }
+          },
+        },
+      ]
+    );
+  }
+
+  // Navigate to machine detail
+  function goToMachine(saved: SavedMachine) {
+    router.push({
+      pathname: '/machine/[id]',
+      params: {
+        id: saved.machine.id,
+        name: saved.machine.name || '',
+        description: saved.machine.description || '',
+        address: saved.machine.address || '',
+        latitude: String(saved.machine.latitude),
+        longitude: String(saved.machine.longitude),
+        distance_meters: '0', // We don't have distance from profile
+        primary_photo_url: saved.machine.primary_photo_url || '',
+        visit_count: String(saved.machine.visit_count),
+        status: saved.machine.status || '',
+      },
+    });
+  }
+
   useEffect(() => {
     fetchBadges();
+    loadSavedMachines();
   }, [user]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchBadges();
+    await Promise.all([fetchBadges(), loadSavedMachines()]);
     setRefreshing(false);
   }, [user]);
 
@@ -137,6 +197,57 @@ export default function ProfileScreen() {
             <Text style={styles.statNumber}>{profile?.badge_count || 0}</Text>
             <Text style={styles.statLabel}>Badges</Text>
           </View>
+        </View>
+
+        {/* My Saved Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>My Saved</Text>
+          {loadingSaved ? (
+            <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
+          ) : savedMachines.length === 0 ? (
+            <View style={styles.emptyBadges}>
+              <Ionicons name="bookmark-outline" size={48} color="#ccc" />
+              <Text style={styles.emptyText}>No saved machines yet</Text>
+              <Text style={styles.emptySubtext}>
+                Tap the bookmark icon on any machine to save it for later!
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.savedList}>
+              {savedMachines.map((saved) => (
+                <Pressable
+                  key={saved.id}
+                  style={styles.savedCard}
+                  onPress={() => goToMachine(saved)}
+                >
+                  {saved.machine.primary_photo_url ? (
+                    <Image
+                      source={{ uri: saved.machine.primary_photo_url }}
+                      style={styles.savedPhoto}
+                    />
+                  ) : (
+                    <View style={[styles.savedPhoto, styles.savedPhotoPlaceholder]}>
+                      <Ionicons name="image-outline" size={24} color="#ccc" />
+                    </View>
+                  )}
+                  <View style={styles.savedInfo}>
+                    <Text style={styles.savedName} numberOfLines={1}>
+                      {saved.machine.name || 'Unnamed Machine'}
+                    </Text>
+                    <Text style={styles.savedAddress} numberOfLines={1}>
+                      {saved.machine.address || 'No address'}
+                    </Text>
+                  </View>
+                  <Pressable
+                    style={styles.unsaveButton}
+                    onPress={() => handleUnsave(saved.machine_id)}
+                  >
+                    <Ionicons name="bookmark" size={20} color="#FF4B4B" />
+                  </Pressable>
+                </Pressable>
+              ))}
+            </View>
+          )}
         </View>
 
         {/* Badges Section */}
@@ -375,5 +486,47 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FF4B4B',
     fontWeight: '600',
+  },
+  savedList: {
+    gap: 12,
+  },
+  savedCard: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  savedPhoto: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+  },
+  savedPhotoPlaceholder: {
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  savedInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  savedName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2B2B2B',
+    marginBottom: 4,
+  },
+  savedAddress: {
+    fontSize: 13,
+    color: '#666',
+  },
+  unsaveButton: {
+    padding: 8,
   },
 });
