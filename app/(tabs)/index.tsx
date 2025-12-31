@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import Mapbox, { Camera, LocationPuck, MapView, PointAnnotation } from '@rnmapbox/maps';
+import Mapbox, { Camera, LocationPuck, MapView, MarkerView } from '@rnmapbox/maps';
 import { router } from 'expo-router';
 import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine, SearchResult } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
@@ -74,11 +74,15 @@ export default function MapScreen() {
   // Reload machines when map stops moving
   async function handleRegionChange() {
     if (!mapRef.current) return;
-    setSelectedMachine(null); // Close preview when panning
     const center = await mapRef.current.getCenter();
     if (center) {
       loadMachines(center[1], center[0]); // [lng, lat] -> lat, lng
     }
+  }
+
+  // Close preview when tapping on empty map area
+  function handleMapPress() {
+    setSelectedMachine(null);
   }
 
   // Center map on user's current location
@@ -121,6 +125,13 @@ export default function MapScreen() {
         ref={mapRef}
         style={styles.map}
         onRegionDidChange={handleRegionChange}
+        onPress={(event) => {
+          // Ignore presses on rendered features (markers) to prevent conflict with marker handlers
+          if (event && Array.isArray((event as any).features) && (event as any).features.length > 0) {
+            return;
+          }
+          handleMapPress();
+        }}
       >
         <Camera
           ref={cameraRef}
@@ -131,14 +142,14 @@ export default function MapScreen() {
 
         {/* Machine pins */}
         {filteredMachines.map((machine) => (
-          <PointAnnotation
+          <MarkerView
             key={machine.id}
-            id={machine.id}
             coordinate={[machine.longitude, machine.latitude]}
-            onSelected={() => setSelectedMachine(machine)}
           >
-            <View style={styles.pin} />
-          </PointAnnotation>
+            <Pressable onPress={() => setSelectedMachine(machine)}>
+              <View style={styles.pin} />
+            </Pressable>
+          </MarkerView>
         ))}
       </MapView>
 
