@@ -298,6 +298,36 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Legal Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Legal</Text>
+          <View style={styles.legalContainer}>
+            <Pressable
+              style={styles.legalLink}
+              onPress={() => router.push('/legal/privacy')}
+              accessibilityRole="button"
+              accessibilityLabel="Privacy Policy"
+              accessibilityHint="Opens privacy policy page"
+            >
+              <Ionicons name="shield-checkmark-outline" size={20} color="#666" />
+              <Text style={styles.legalLinkText}>Privacy Policy</Text>
+              <Ionicons name="chevron-forward" size={20} color="#ccc" />
+            </Pressable>
+            <View style={styles.legalDivider} />
+            <Pressable
+              style={styles.legalLink}
+              onPress={() => router.push('/legal/terms')}
+              accessibilityRole="button"
+              accessibilityLabel="Terms of Service"
+              accessibilityHint="Opens terms of service page"
+            >
+              <Ionicons name="document-text-outline" size={20} color="#666" />
+              <Text style={styles.legalLinkText}>Terms of Service</Text>
+              <Ionicons name="chevron-forward" size={20} color="#ccc" />
+            </Pressable>
+          </View>
+        </View>
+
         {/* Logout button */}
         <Pressable style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={20} color="#FF4B4B" />
@@ -469,6 +499,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#2B2B2B',
     textAlign: 'center',
+  },
+  legalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  legalLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 12,
+  },
+  legalLinkText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333',
+  },
+  legalDivider: {
+    height: 1,
+    backgroundColor: '#eee',
+    marginLeft: 48,
   },
   logoutButton: {
     flexDirection: 'row',
