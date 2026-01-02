@@ -6,7 +6,7 @@ A crowdsourced vending machine discovery app for iOS & Android — like Pokémon
 
 ## The Problem
 
-Japan has **5+ million vending machines**, but the rare, themed, or bizarre ones are nearly impossible to find intentionally. Tourists discover them through TikTok and Instagram, but location info is buried in comments and often outdated.
+Japan has **5+ million vending machines**, but the rare, themed, or bizarre ones are nearly impossible to find intentionally. Tourists discover them through TikTok and Instagram, but location info is buried in comments that are sometimes fake and often outdated.
 
 There's no good way to see what's actually near you right now.
 
