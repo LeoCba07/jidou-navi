@@ -2,7 +2,7 @@
 
 Discover Japan, one vending machine at a time.
 
-A crowdsourced vending machine discovery app for iOS & Android — like Pokémon Go for vending machines.
+A crowdsourced vending machine discovery app for iOS & Android — the Pokémon Go for vending machines.
 
 ## The Problem
 
