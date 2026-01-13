@@ -24,6 +24,7 @@ export default function MapScreen() {
   const [selectedMachine, setSelectedMachine] = useState<NearbyMachine | null>(null);
   const mapRef = useRef<MapView>(null);
   const cameraRef = useRef<Camera>(null);
+  const regionChangeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Category filter state from Zustand
   const selectedCategories = useUIStore((state) => state.selectedCategories);
@@ -65,19 +66,42 @@ export default function MapScreen() {
     }
   }, [location]);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (regionChangeTimeout.current) {
+        clearTimeout(regionChangeTimeout.current);
+      }
+    };
+  }, []);
+
   // Fetch machines from Supabase
   async function loadMachines(lat: number, lng: number) {
-    const data = await fetchNearbyMachines(lat, lng);
-    setMachines(data);
+    try {
+      const data = await fetchNearbyMachines(lat, lng);
+      setMachines(data);
+    } catch (error) {
+      console.error('Error loading machines:', error);
+      // Don't clear existing machines - keep showing what we have
+      // This provides graceful degradation when offline
+    }
   }
 
-  // Reload machines when map stops moving
+  // Reload machines when map stops moving (with debouncing)
   async function handleRegionChange() {
-    if (!mapRef.current) return;
-    const center = await mapRef.current.getCenter();
-    if (center) {
-      loadMachines(center[1], center[0]); // [lng, lat] -> lat, lng
+    // Clear previous timeout
+    if (regionChangeTimeout.current) {
+      clearTimeout(regionChangeTimeout.current);
     }
+
+    // Set new timeout to fetch machines after 500ms of no movement
+    regionChangeTimeout.current = setTimeout(async () => {
+      if (!mapRef.current) return;
+      const center = await mapRef.current.getCenter();
+      if (center) {
+        loadMachines(center[1], center[0]); // [lng, lat] -> lat, lng
+      }
+    }, 500);
   }
 
   // Close preview when tapping on empty map area

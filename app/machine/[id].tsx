@@ -73,8 +73,11 @@ export default function MachineDetailScreen() {
 
     setSaving(true);
 
+    // Capture the current state before optimistic update
+    const wasSaved = isSaved;
+
     try {
-      if (isSaved) {
+      if (wasSaved) {
         // Optimistic update - remove from store immediately
         removeSaved(params.id);
         const success = await unsaveMachine(params.id);
@@ -95,7 +98,7 @@ export default function MachineDetailScreen() {
       }
     } catch (err) {
       // Revert optimistic update on unexpected error
-      if (isSaved) {
+      if (wasSaved) {
         // Originally saved: we removed optimistically, so add back
         addSaved(params.id);
       } else {

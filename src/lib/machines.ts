@@ -201,25 +201,35 @@ export async function fetchSavedMachines(): Promise<SavedMachine[]> {
     return [];
   }
 
-  // Fetch primary photos for each machine
-  const machinesWithPhotos = await Promise.all(
-    (data || []).map(async (item) => {
-      const { data: photoData } = await supabase
-        .from('machine_photos')
-        .select('photo_url')
-        .eq('machine_id', item.machine_id)
-        .eq('is_primary', true)
-        .single();
+  if (!data || data.length === 0) {
+    return [];
+  }
 
-      return {
-        ...item,
-        machine: {
-          ...item.machine,
-          primary_photo_url: photoData?.photo_url || null,
-        },
-      };
-    })
-  );
+  // Batch fetch primary photos for all machines in one query
+  const machineIds = data.map((item) => item.machine_id);
+  const { data: photoData } = await supabase
+    .from('machine_photos')
+    .select('machine_id, photo_url')
+    .in('machine_id', machineIds)
+    .eq('is_primary', true)
+    .eq('status', 'active');
+
+  // Create a map of machine_id to photo_url for fast lookup
+  const photoMap = new Map<string, string>();
+  if (photoData) {
+    photoData.forEach((photo) => {
+      photoMap.set(photo.machine_id, photo.photo_url);
+    });
+  }
+
+  // Attach photos to machines
+  const machinesWithPhotos = data.map((item) => ({
+    ...item,
+    machine: {
+      ...item.machine,
+      primary_photo_url: photoMap.get(item.machine_id) || null,
+    },
+  }));
 
   return machinesWithPhotos as SavedMachine[];
 }

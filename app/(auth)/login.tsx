@@ -24,6 +24,12 @@ export default function LoginScreen() {
       Alert.alert('Error', 'Please enter your email');
       return;
     }
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
     if (!password) {
       Alert.alert('Error', 'Please enter your password');
       return;

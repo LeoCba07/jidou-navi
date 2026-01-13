@@ -170,6 +170,31 @@ export default function AddMachineScreen() {
 
       if (photoError) console.error('Photo insert error:', photoError);
 
+      // Insert selected categories
+      if (selectedCategories.length > 0) {
+        // Fetch category IDs from slugs
+        const { data: categoryData, error: categoryFetchError } = await supabase
+          .from('categories')
+          .select('id, slug')
+          .in('slug', selectedCategories);
+
+        if (!categoryFetchError && categoryData && categoryData.length > 0) {
+          // Insert into junction table
+          const categoryInserts = categoryData.map((cat) => ({
+            machine_id: machine.id,
+            category_id: cat.id,
+          }));
+
+          const { error: categoriesError } = await supabase
+            .from('machine_categories')
+            .insert(categoryInserts);
+
+          if (categoriesError) console.error('Categories insert error:', categoriesError);
+        } else if (categoryFetchError) {
+          console.error('Failed to fetch categories:', categoryFetchError);
+        }
+      }
+
       // Small delay to allow DB triggers (profile contribution counts) to complete
       await new Promise(resolve => setTimeout(resolve, 500));
 
