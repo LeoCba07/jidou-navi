@@ -3,205 +3,210 @@
 ## 🔐 Authentication
 
 ### Sign Up
-- [ ] Create new account with valid email
-- [ ] Email validation works (rejects invalid emails)
-- [ ] Username validation works (min 3 characters)
-- [ ] Password validation works (min 6 characters)
-- [ ] Password confirmation works (must match)
-- [ ] Account created successfully
-- [ ] Email verification prompt appears
-- [ ] Profile automatically created in database
+- [X] Create new account with valid email
+- [X] Email validation works (rejects invalid emails)
+- [X] Username validation works (min 3 characters)
+- [X] Password validation works (min 6 characters)
+- [X] Password confirmation works (must match)
+- [X] Account created successfully
+- [X] Email verification prompt appears
+- [X] Profile automatically created in database
+- [ ] Email already in use verification
 
 ### Login
-- [ ] Login with correct credentials
-- [ ] Login fails with wrong password
-- [ ] Login fails with non-existent email
-- [ ] "Forgot Password" link works
-- [ ] Redirects to map after successful login
+- [X] Login with correct credentials
+- [X] Login fails with wrong password
+- [X] Login fails with non-existent email
+- [X] "Forgot Password" link works
+- [X] Redirects to map after successful login
 
 ### Password Reset
-- [ ] Enter email for password reset
-- [ ] Reset email sent confirmation
-- [ ] (Check email) Reset link works
+- [X] Enter email for password reset
+- [X] Reset email sent confirmation
+- [X] (Check email) Reset link works
 
 ## 🗺️ Map Screen
 
 ### Initial Load
-- [ ] Map loads instantly without zoom animation
-- [ ] Map centered on user location (or Tokyo if no permission)
-- [ ] NO zoom animation from USA → Japan
-- [ ] Location permission prompt appears
-- [ ] Red pins appear on map (should see ~22 in Akihabara area)
-- [ ] User location blue dot visible (if permission granted)
-- [ ] Status bar visible at top (battery indicator not covered)
+- [X] Map loads instantly without zoom animation
+- [X] Map centered on user location (or Tokyo if no permission)
+- [X] NO zoom animation from USA → Japan
+- [X] Location permission prompt appears
+- [X] Red pins appear on map (should see ~22 in Akihabara area)
+- [X] User location blue dot visible (if permission granted)
+- [X] Status bar visible at top (battery indicator not covered)
 
 ### Pin Interaction
-- [ ] Pins stay visible when zooming
-- [ ] Pins stay visible when panning
-- [ ] Tap a pin → Preview card appears at bottom
-- [ ] Preview card shows: photo, name, distance, description
-- [ ] Tap different pin → Switches to new preview
-- [ ] Tap map background → Preview card closes
-- [ ] Tap "View Details" on preview → Goes to detail screen
+- [X] Pins stay visible when zooming
+- [X] Pins stay visible when panning
+- [X] Tap a pin → Preview card appears at bottom
+- [X] Preview card shows: photo, name, distance, description
+- [X] Tap different pin → Switches to new preview
+- [X] Tap map background → Preview card closes
+- [X] Tap "View Details" on preview → Goes to detail screen
+- [ ] Mts away shows meters based on current user location and not center of screen
 
 ### Search
-- [ ] Search bar visible at top
-- [ ] Type machine name → Shows results
-- [ ] Select search result → Map centers on that location
-- [ ] Search closes preview card
+- [X] Search bar visible at top
+- [X] Type machine name → Shows results
+- [X] Select search result → Map centers on that location
+- [ ] Selecting a result from search opens that preview card
+- [ ] Search closes any other preview card
 
 ### Category Filters
-- [ ] Filter bar visible below search (All, Drinks, Food, Gachapon, Weird, Retro, Ice Cream, Coffee, Alcohol)
-- [ ] "All" selected by default (white background)
-- [ ] Tap "Drinks" → Only drink machines visible
-- [ ] Tap "Food" → Only food machines visible
-- [ ] Multiple filters can be selected (OR logic)
-- [ ] Tap "All" → Shows all machines again
-- [ ] Filter updates instantly
+- [X] Filter bar visible below search (All, Drinks, Food, Gachapon, Weird, Retro, Ice Cream, Coffee, Alcohol)
+- [X] "All" selected by default (white background)
+- [X] Tap "Drinks" → Only drink machines visible
+- [X] Tap "Food" → Only food machines visible
+- [X] Multiple filters can be selected (OR logic)
+- [X] Tap "All" → Shows all machines again
+- [X] Filter updates instantly
 
 ### Recenter Button
-- [ ] Recenter button visible (bottom right, above tab bar)
-- [ ] Button positioned at bottom: 32px (not too high)
-- [ ] Button easily reachable with thumb
-- [ ] Tap recenter → Map moves to user location
-- [ ] Zoom level resets to 14
+- [X] Recenter button visible (bottom right, above tab bar)
+- [X] Button positioned at bottom: 32px (not too high)
+- [X] Button easily reachable with thumb
+- [X] Tap recenter → Map moves to user location
+- [X] Zoom level resets to 14
 
 ## 📍 Machine Detail Screen
 
 ### Display
-- [ ] Machine photo loads (or placeholder if no photo)
-- [ ] Name displayed correctly
-- [ ] Distance shown (e.g., "250m away")
-- [ ] Address displayed (if available)
-- [ ] Description shown
-- [ ] Visit count displayed
-- [ ] Status shown (active/pending/flagged)
+- [X] Machine photo loads (or placeholder if no photo)
+- [X] Name displayed correctly
+- [X] Distance shown (e.g., "250m away")
+- [ ] Distance show is from user and not from center of the screen map
+- [X] Address displayed (if available)
+- [X] Description shown
+- [X] Visit count displayed
+- [X] Status shown (active/pending/flagged)
 
 ### Actions
-- [ ] "Get Directions" button works → Opens native maps app
-- [ ] "I Visited" button visible
-- [ ] "Save/Bookmark" button visible
-- [ ] Back button returns to map
+- [X] "Get Directions" button works → Opens native maps app
+- [X] "I Visited" button visible
+- [X] "Save/Bookmark" button visible
+- [X] Back button returns to map
 
 ### Check-In Flow
-- [ ] Tap "I Visited" → Shows dialog "Is this vending machine still here?"
-- [ ] Three options: Cancel, No it's gone, Yes it's here
-- [ ] Must be within 200m to check in
-- [ ] If too far away → Error message "Too Far Away"
-- [ ] If successful → "Checked In!" message
-- [ ] Visit count increments by 1
-- [ ] Button changes to "Visited ✓" and disables
-- [ ] Can only check in once per day per machine
+- [X] Tap "I Visited" → Shows dialog "Is this vending machine still here?"
+- [X] Three options: Cancel, No it's gone, Yes it's here
+- [X] Must be within 200m to check in
+- [X] If too far away → Error message "Too Far Away"
+- [X] If successful → "Checked In!" message
+- [X] Visit count increments by 1
+- [X] Button changes to "Visited ✓" and disables
+- [X] Can only check in once per day per machine
 - [ ] If badge earned → Badge popup appears after success
+// There seems to be an error awarding the badge code 42501 / details null hint null message new row violates row level security policy for table user_badges. Need to further look into this
 
 ### Save/Bookmark
-- [ ] Tap bookmark icon → Machine saved
-- [ ] Icon changes to filled bookmark
-- [ ] Text changes to "Saved"
-- [ ] Tap again → Removes from saved
-- [ ] Icon changes back to outline
-- [ ] Requires login (shows alert if not logged in)
+- [X] Tap bookmark icon → Machine saved
+- [X] Icon changes to filled bookmark
+- [X] Text changes to "Saved"
+- [X] Tap again → Removes from saved
+- [X] Icon changes back to outline
+- [X] Requires login (shows alert if not logged in)
 
 ## ➕ Add Machine Screen
 
 ### Access
-- [ ] Tap "+" FAB on map screen → Opens add machine screen
-- [ ] Header shows "Add Machine"
-- [ ] Cancel button works
+- [X] Tap "+" FAB on map screen → Opens add machine screen
+- [X] Header shows "Add Machine"
+- [X] Cancel button works
 
 ### Photo Upload
-- [ ] "Take Photo" button opens camera
-- [ ] "Choose from Gallery" button opens gallery
-- [ ] Selected photo appears on screen
-- [ ] Shows file size (should be <500KB after compression)
-- [ ] "Tap to remove" works to clear photo
-- [ ] Photo required (shows error if missing)
+- [X] "Take Photo" button opens camera
+- [X] "Choose from Gallery" button opens gallery
+- [X] Selected photo appears on screen
+- [X] Shows file size (should be <500KB after compression)
+- [X] "Tap to remove" works to clear photo
+- [X] Photo required (shows error if missing)
 
 ### Form Fields
-- [ ] Name field (required, shows error if empty)
-- [ ] Categories: Drinks, Food, Gachapon, Weird, Retro
-- [ ] Can select multiple categories
-- [ ] Selected categories highlighted in red
-- [ ] Description field (required, multiline)
-- [ ] Location auto-detected and displayed (lat, lng)
+- [X] Name field (required, shows error if empty)
+- [X] Categories: Drinks, Food, Gachapon, Weird, Retro
+- [X] Can select multiple categories
+- [X] Selected categories highlighted in red
+- [X] Description field (required, multiline)
+- [X] Location auto-detected and displayed (lat, lng)
 
 ### Submit
-- [ ] Submit button disabled while uploading
-- [ ] Shows loading indicator while submitting
-- [ ] Photo uploads to Supabase Storage
-- [ ] Machine record created in database
-- [ ] Categories linked correctly
-- [ ] Success message appears
+- [X] Submit button disabled while uploading
+- [X] Shows loading indicator while submitting
+- [X] Photo uploads to Supabase Storage
+- [X] Machine record created in database
+- [X] Categories linked correctly
+- [X] Success message appears
 - [ ] If badge earned → Badge popup appears
-- [ ] Returns to map after success
-- [ ] New machine visible on map immediately
+- [X] Returns to map after success
+- [X] New machine visible on map immediately
 
 ### Validation
-- [ ] Can't submit without photo
-- [ ] Can't submit without name
-- [ ] Can't submit without description
-- [ ] Shows helpful error messages
+- [X] Can't submit without photo
+- [X] Can't submit without name
+- [X] Can't submit without description
+- [X] Shows helpful error messages
 
 ## 👤 Profile Screen
 
 ### User Info
-- [ ] Avatar displayed (or placeholder)
-- [ ] Display name / username shown
-- [ ] Email address shown
+- [X] Avatar displayed (or placeholder)
+- [X] Display name / username shown
+- [X] Email address shown
 - [ ] Bio displayed (if set)
 
 ### Stats
-- [ ] Machines Added count correct
-- [ ] Visits count correct
-- [ ] Badges count correct
+- [X] Machines Added count correct
+- [X] Visits count correct
+- [X] Badges count correct
 
 ### Saved Machines Section
-- [ ] "My Saved" section visible
-- [ ] Shows list of bookmarked machines
-- [ ] Each card shows: photo, name, address
-- [ ] Tap card → Goes to machine detail
-- [ ] Tap bookmark icon → Removes from saved (with confirmation)
-- [ ] If no saved machines → Shows empty state message
+- [X] "My Saved" section visible
+- [X] Shows list of bookmarked machines
+- [X] Each card shows: photo, name, address
+- [X] Tap card → Goes to machine detail
+- [X] Tap bookmark icon → Removes from saved (with confirmation)
+- [X] If no saved machines → Shows empty state message
 
 ### Badges Section
-- [ ] "Badges" section visible
+- [X] "Badges" section visible
 - [ ] Badge grid displayed
 - [ ] Each badge shows icon and name
 - [ ] Border color indicates rarity (gray=common, blue=rare, purple=epic)
 - [ ] Tap badge → Shows description in alert
-- [ ] If no badges → Shows empty state message
+- [X] If no badges → Shows empty state message
 
 ### Legal Section
-- [ ] "Privacy Policy" link visible
-- [ ] Tap → Opens privacy policy page
-- [ ] Contact email shows: leandrotrabucco@gmail.com
-- [ ] "Terms of Service" link visible
-- [ ] Tap → Opens terms page
-- [ ] Contact email shows: leandrotrabucco@gmail.com
-- [ ] Back button works on legal pages
+- [X] "Privacy Policy" link visible
+- [X] Tap → Opens privacy policy page
+- [X] Contact email shows: leandrotrabucco@gmail.com
+- [X] "Terms of Service" link visible
+- [X] Tap → Opens terms page
+- [X] Contact email shows: leandrotrabucco@gmail.com
+- [X] Back button works on legal pages
 
 ### Logout
-- [ ] "Log Out" button visible (red outline)
-- [ ] Tap → Shows confirmation dialog
-- [ ] Cancel → Stays logged in
-- [ ] Log Out → Returns to login screen
-- [ ] After logout, can't access protected features
+- [X] "Log Out" button visible (red outline)
+- [X] Tap → Shows confirmation dialog
+- [X] Cancel → Stays logged in
+- [X] Log Out → Returns to login screen
+- [X] After logout, can't access protected features
 
 ### Delete Account
-- [ ] "Delete Account" button visible below logout (small, red, underlined text)
-- [ ] Tap → Shows confirmation dialog with warning message
-- [ ] Warning mentions data will be permanently deleted
-- [ ] Cancel → Account not deleted
-- [ ] Delete Account → Profile and data deleted
-- [ ] User automatically logged out
-- [ ] Cannot log back in with same credentials
-- [ ] If error → Shows contact email (leandrotrabucco@gmail.com)
+- [X] "Delete Account" button visible below logout (small, red, underlined text)
+- [X] Tap → Shows confirmation dialog with warning message
+- [X] Warning mentions data will be permanently deleted
+- [X] Cancel → Account not deleted
+- [X] Delete Account → Profile and data deleted
+- [X] User automatically logged out
+- [X] Cannot log back in with same credentials
+- [X] If error → Shows contact email (leandrotrabucco@gmail.com)
 
 ### Pull to Refresh
-- [ ] Pull down → Shows loading indicator
-- [ ] Stats refresh
-- [ ] Saved machines refresh
-- [ ] Badges refresh
+- [X] Pull down → Shows loading indicator
+- [X] Stats refresh
+- [X] Saved machines refresh
+- [X] Badges refresh
 
 ## 🏆 Badge System
 
@@ -223,11 +228,11 @@
 ## 🔄 Data Persistence
 
 ### After App Close/Reopen
-- [ ] User stays logged in
-- [ ] Map returns to last location
-- [ ] Saved machines persist
+- [X] User stays logged in
+- [X] Map returns to last location
+- [X] Saved machines persist
 - [ ] Badges persist
-- [ ] User stats correct
+- [X] User stats correct
 
 ### Offline Behavior
 - [ ] Turn off wifi → Map still shows last loaded pins
