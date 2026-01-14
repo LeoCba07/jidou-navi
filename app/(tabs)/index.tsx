@@ -220,6 +220,16 @@ export default function MapScreen() {
           shape={machinesGeoJSON}
           onPress={handleShapePress}
         >
+          {/* Outer glow/shadow */}
+          <CircleLayer
+            id="machine-glow"
+            style={{
+              circleRadius: 16,
+              circleColor: 'rgba(255, 75, 75, 0.2)',
+              circleBlur: 0.8,
+            }}
+          />
+          {/* Main pin circle */}
           <CircleLayer
             id="machine-circles"
             style={{
@@ -227,6 +237,15 @@ export default function MapScreen() {
               circleColor: '#FF4B4B',
               circleStrokeWidth: 3,
               circleStrokeColor: '#ffffff',
+            }}
+          />
+          {/* Inner highlight for depth */}
+          <CircleLayer
+            id="machine-highlight"
+            style={{
+              circleRadius: 5,
+              circleColor: 'rgba(255, 255, 255, 0.4)',
+              circleTranslate: [-2, -2],
             }}
           />
         </ShapeSource>
