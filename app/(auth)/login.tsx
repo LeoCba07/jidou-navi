@@ -50,11 +50,12 @@ export default function LoginScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={styles.content}>
         {/* Logo / Title */}
         <View style={styles.header}>
           <View style={styles.logoContainer}>
@@ -126,7 +127,8 @@ export default function LoginScreen() {
           </Pressable>
         </View>
       </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -134,6 +136,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FDF3E7',
+  },
+  keyboardView: {
+    flex: 1,
   },
   content: {
     flex: 1,
