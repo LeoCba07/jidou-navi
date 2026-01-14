@@ -27,10 +27,13 @@
 ## 🗺️ Map Screen
 
 ### Initial Load
-- [ ] Map loads centered on user location (or Tokyo if no permission)
+- [ ] Map loads instantly without zoom animation
+- [ ] Map centered on user location (or Tokyo if no permission)
+- [ ] NO zoom animation from USA → Japan
 - [ ] Location permission prompt appears
 - [ ] Red pins appear on map (should see ~22 in Akihabara area)
 - [ ] User location blue dot visible (if permission granted)
+- [ ] Status bar visible at top (battery indicator not covered)
 
 ### Pin Interaction
 - [ ] Pins stay visible when zooming
@@ -57,7 +60,9 @@
 - [ ] Filter updates instantly
 
 ### Recenter Button
-- [ ] Recenter button visible (bottom right)
+- [ ] Recenter button visible (bottom right, above tab bar)
+- [ ] Button positioned at bottom: 32px (not too high)
+- [ ] Button easily reachable with thumb
 - [ ] Tap recenter → Map moves to user location
 - [ ] Zoom level resets to 14
 
@@ -169,8 +174,10 @@
 ### Legal Section
 - [ ] "Privacy Policy" link visible
 - [ ] Tap → Opens privacy policy page
+- [ ] Contact email shows: leandrotrabucco@gmail.com
 - [ ] "Terms of Service" link visible
 - [ ] Tap → Opens terms page
+- [ ] Contact email shows: leandrotrabucco@gmail.com
 - [ ] Back button works on legal pages
 
 ### Logout
@@ -179,6 +186,16 @@
 - [ ] Cancel → Stays logged in
 - [ ] Log Out → Returns to login screen
 - [ ] After logout, can't access protected features
+
+### Delete Account
+- [ ] "Delete Account" button visible below logout (small, red, underlined text)
+- [ ] Tap → Shows confirmation dialog with warning message
+- [ ] Warning mentions data will be permanently deleted
+- [ ] Cancel → Account not deleted
+- [ ] Delete Account → Profile and data deleted
+- [ ] User automatically logged out
+- [ ] Cannot log back in with same credentials
+- [ ] If error → Shows contact email (leandrotrabucco@gmail.com)
 
 ### Pull to Refresh
 - [ ] Pull down → Shows loading indicator
@@ -246,11 +263,14 @@
 
 ### Visual Polish
 - [ ] App theme matches brand colors (red #FF4B4B, blue #3C91E6, cream #FDF3E7)
+- [ ] Status bar shows battery/time/signal properly
+- [ ] Status bar style is "dark" (black text)
 - [ ] Buttons have proper press states
 - [ ] Loading indicators appear for slow operations
 - [ ] Images load smoothly
 - [ ] Text is readable at all sizes
 - [ ] No layout shifts or jumps
+- [ ] Map loads without jerky zoom animation
 
 ### Navigation
 - [ ] Bottom tabs work (Map, Profile)
@@ -291,11 +311,12 @@
 
 **P0 - Must Work (Blockers):**
 - Login/Signup
-- Map loads with pins
-- Pins don't disappear
-- Pins are clickable
+- Map loads with pins (no zoom animation)
+- Pins don't disappear when zooming/panning
+- Pins are clickable and show preview
 - Add machine flow
 - Check-in flow
+- Status bar visible
 
 **P1 - Should Work (Important):**
 - Search and filters
@@ -303,6 +324,9 @@
 - Badge unlocking
 - Profile stats
 - Logout
+- Delete account
+- Recenter button positioning
+- Legal pages with correct contact email
 
 **P2 - Nice to Have:**
 - Pull to refresh
