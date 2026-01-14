@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
@@ -115,6 +116,7 @@ export default function RootLayout() {
 
   return (
     <>
+      <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }} />
       <BadgeUnlockModal />
     </>

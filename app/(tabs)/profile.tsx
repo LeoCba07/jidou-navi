@@ -150,6 +150,42 @@ export default function ProfileScreen() {
     ]);
   }
 
+  async function handleDeleteAccount() {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to delete your account? This action cannot be undone. All your data, machines, visits, and badges will be permanently deleted.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete Account',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (!user) return;
+
+              // Call RPC function to delete user and all related data
+              // @ts-ignore - RPC function to be added in database
+              const { error } = await supabase.rpc('delete_user_account');
+
+              if (error) {
+                console.error('Delete account error:', error);
+                Alert.alert('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
+                return;
+              }
+
+              // Sign out the user
+              await supabase.auth.signOut();
+              Alert.alert('Account Deleted', 'Your account has been permanently deleted.');
+            } catch (err) {
+              console.error('Delete account error:', err);
+              Alert.alert('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
+            }
+          },
+        },
+      ]
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -332,6 +368,11 @@ export default function ProfileScreen() {
         <Pressable style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={20} color="#FF4B4B" />
           <Text style={styles.logoutText}>Log Out</Text>
+        </Pressable>
+
+        {/* Delete account button */}
+        <Pressable style={styles.deleteButton} onPress={handleDeleteAccount}>
+          <Text style={styles.deleteText}>Delete Account</Text>
         </Pressable>
       </ScrollView>
     </View>
@@ -531,12 +572,23 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#FF4B4B',
-    marginBottom: 40,
+    marginBottom: 12,
   },
   logoutText: {
     fontSize: 16,
     color: '#FF4B4B',
     fontWeight: '600',
+  },
+  deleteButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    marginBottom: 40,
+  },
+  deleteText: {
+    fontSize: 13,
+    color: '#FF4B4B',
+    textDecorationLine: 'underline',
   },
   savedList: {
     gap: 12,

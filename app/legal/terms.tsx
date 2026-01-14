@@ -81,7 +81,7 @@ export default function TermsOfServiceScreen() {
 
       <SectionTitle>12. Contact</SectionTitle>
       <Paragraph>
-        For questions about these terms, contact us at: support@jidounavi.app
+        For questions about these terms, contact us at: leandrotrabucco@gmail.com
       </Paragraph>
     </LegalPageLayout>
   );

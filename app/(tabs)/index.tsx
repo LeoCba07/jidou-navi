@@ -210,6 +210,7 @@ export default function MapScreen() {
           ref={cameraRef}
           centerCoordinate={[center.longitude, center.latitude]}
           zoomLevel={14}
+          animationDuration={0}
         />
         <LocationPuck puckBearing="heading" puckBearingEnabled />
 
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
   },
   recenterButton: {
     position: 'absolute',
-    bottom: 120,
+    bottom: 32,
     right: 16,
     width: 48,
     height: 48,
