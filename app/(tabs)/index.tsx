@@ -32,13 +32,7 @@ export default function MapScreen() {
 
   // Filter machines by selected categories
   const filteredMachines = useMemo(() => {
-    console.log('🔍 Filter: selectedCategories =', selectedCategories);
-    const filtered = filterMachinesByCategories(machines, selectedCategories);
-    console.log('📍 Rendering pins:', filtered.length, 'out of', machines.length, 'machines');
-    if (filtered.length !== machines.length) {
-      console.log('⚠️  Filter removed', machines.length - filtered.length, 'machines');
-    }
-    return filtered;
+    return filterMachinesByCategories(machines, selectedCategories);
   }, [machines, selectedCategories]);
 
   // Convert machines to GeoJSON for ShapeSource (more stable than MarkerView)
@@ -71,8 +65,6 @@ export default function MapScreen() {
     );
 
     if (!stillVisible) {
-      console.log('⚠️ Selected machine no longer visible, clearing selection');
-      console.log('   Machine was:', selectedMachine.name);
       setSelectedMachine(null);
     }
   }, [filteredMachines, selectedMachine]);
@@ -107,13 +99,11 @@ export default function MapScreen() {
 
   // Fetch machines from Supabase
   async function loadMachines(lat: number, lng: number) {
-    console.log('🔍 Loading machines for:', { lat, lng });
     try {
       const data = await fetchNearbyMachines(lat, lng);
-      console.log('✓ Fetched machines:', data.length);
       setMachines(data);
     } catch (error) {
-      console.error('❌ Error loading machines:', error);
+      console.error('Error loading machines:', error);
       // Don't clear existing machines - keep showing what we have
       // This provides graceful degradation when offline
     }
@@ -140,11 +130,9 @@ export default function MapScreen() {
   function handleMapPress() {
     // Don't clear if a marker was just pressed
     if (markerPressedRef.current) {
-      console.log('🚫 Ignoring map press - marker was tapped');
       markerPressedRef.current = false;
       return;
     }
-    console.log('🗺️ Map background tapped - clearing selection');
     setSelectedMachine(null);
   }
 
@@ -154,8 +142,6 @@ export default function MapScreen() {
 
     const feature = event.features[0];
     const machineId = feature.properties.id;
-
-    console.log('📌 Marker pressed via ShapeSource:', feature.properties.name);
 
     const machine = filteredMachines.find(m => m.id === machineId);
     if (machine) {
