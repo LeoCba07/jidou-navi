@@ -40,8 +40,6 @@ export async function fetchNearbyMachines(
   lng: number,
   radiusMeters: number = 5000
 ): Promise<NearbyMachine[]> {
-  console.log('📡 API: nearby_machines RPC called', { lat, lng, radiusMeters });
-
   const { data, error } = await supabase.rpc('nearby_machines', {
     lat,
     lng,
@@ -50,12 +48,10 @@ export async function fetchNearbyMachines(
   });
 
   if (error) {
-    console.error('❌ API: RPC error:', error.message);
-    console.error('Error details:', error);
+    console.error('Error fetching nearby machines:', error);
     return [];
   }
 
-  console.log('✓ API: RPC returned', data?.length || 0, 'machines');
   return (data || []) as NearbyMachine[];
 }
 
