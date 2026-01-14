@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import Mapbox, { Camera, LocationPuck, MapView, MarkerView } from '@rnmapbox/maps';
+import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, CircleLayer } from '@rnmapbox/maps';
 import { router } from 'expo-router';
 import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine, SearchResult } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
@@ -25,14 +25,42 @@ export default function MapScreen() {
   const mapRef = useRef<MapView>(null);
   const cameraRef = useRef<Camera>(null);
   const regionChangeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const markerPressedRef = useRef<boolean>(false);
 
   // Category filter state from Zustand
   const selectedCategories = useUIStore((state) => state.selectedCategories);
 
   // Filter machines by selected categories
   const filteredMachines = useMemo(() => {
-    return filterMachinesByCategories(machines, selectedCategories);
+    console.log('🔍 Filter: selectedCategories =', selectedCategories);
+    const filtered = filterMachinesByCategories(machines, selectedCategories);
+    console.log('📍 Rendering pins:', filtered.length, 'out of', machines.length, 'machines');
+    if (filtered.length !== machines.length) {
+      console.log('⚠️  Filter removed', machines.length - filtered.length, 'machines');
+    }
+    return filtered;
   }, [machines, selectedCategories]);
+
+  // Convert machines to GeoJSON for ShapeSource (more stable than MarkerView)
+  const machinesGeoJSON = useMemo(() => {
+    const features = filteredMachines.map((machine) => ({
+      type: 'Feature' as const,
+      id: machine.id,
+      geometry: {
+        type: 'Point' as const,
+        coordinates: [machine.longitude, machine.latitude],
+      },
+      properties: {
+        id: machine.id,
+        name: machine.name,
+      },
+    }));
+
+    return {
+      type: 'FeatureCollection' as const,
+      features,
+    };
+  }, [filteredMachines]);
 
   // Clear selected machine if it's no longer visible after filtering
   useEffect(() => {
@@ -43,6 +71,8 @@ export default function MapScreen() {
     );
 
     if (!stillVisible) {
+      console.log('⚠️ Selected machine no longer visible, clearing selection');
+      console.log('   Machine was:', selectedMachine.name);
       setSelectedMachine(null);
     }
   }, [filteredMachines, selectedMachine]);
@@ -77,11 +107,13 @@ export default function MapScreen() {
 
   // Fetch machines from Supabase
   async function loadMachines(lat: number, lng: number) {
+    console.log('🔍 Loading machines for:', { lat, lng });
     try {
       const data = await fetchNearbyMachines(lat, lng);
+      console.log('✓ Fetched machines:', data.length);
       setMachines(data);
     } catch (error) {
-      console.error('Error loading machines:', error);
+      console.error('❌ Error loading machines:', error);
       // Don't clear existing machines - keep showing what we have
       // This provides graceful degradation when offline
     }
@@ -106,7 +138,30 @@ export default function MapScreen() {
 
   // Close preview when tapping on empty map area
   function handleMapPress() {
+    // Don't clear if a marker was just pressed
+    if (markerPressedRef.current) {
+      console.log('🚫 Ignoring map press - marker was tapped');
+      markerPressedRef.current = false;
+      return;
+    }
+    console.log('🗺️ Map background tapped - clearing selection');
     setSelectedMachine(null);
+  }
+
+  // Handle marker press from ShapeSource
+  function handleShapePress(event: any) {
+    if (!event.features || event.features.length === 0) return;
+
+    const feature = event.features[0];
+    const machineId = feature.properties.id;
+
+    console.log('📌 Marker pressed via ShapeSource:', feature.properties.name);
+
+    const machine = filteredMachines.find(m => m.id === machineId);
+    if (machine) {
+      markerPressedRef.current = true;
+      setSelectedMachine(machine);
+    }
   }
 
   // Center map on user's current location
@@ -149,13 +204,7 @@ export default function MapScreen() {
         ref={mapRef}
         style={styles.map}
         onRegionDidChange={handleRegionChange}
-        onPress={(event) => {
-          // Ignore presses on rendered features (markers) to prevent conflict with marker handlers
-          if (event && Array.isArray((event as any).features) && (event as any).features.length > 0) {
-            return;
-          }
-          handleMapPress();
-        }}
+        onPress={handleMapPress}
       >
         <Camera
           ref={cameraRef}
@@ -164,17 +213,22 @@ export default function MapScreen() {
         />
         <LocationPuck puckBearing="heading" puckBearingEnabled />
 
-        {/* Machine pins */}
-        {filteredMachines.map((machine) => (
-          <MarkerView
-            key={machine.id}
-            coordinate={[machine.longitude, machine.latitude]}
-          >
-            <Pressable onPress={() => setSelectedMachine(machine)}>
-              <View style={styles.pin} />
-            </Pressable>
-          </MarkerView>
-        ))}
+        {/* Machine pins using ShapeSource (more stable than MarkerView) */}
+        <ShapeSource
+          id="machines"
+          shape={machinesGeoJSON}
+          onPress={handleShapePress}
+        >
+          <CircleLayer
+            id="machine-circles"
+            style={{
+              circleRadius: 12,
+              circleColor: '#FF4B4B',
+              circleStrokeWidth: 3,
+              circleStrokeColor: '#ffffff',
+            }}
+          />
+        </ShapeSource>
       </MapView>
 
       {/* Search bar */}
