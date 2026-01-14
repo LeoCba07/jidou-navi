@@ -98,7 +98,7 @@ export default function SignupScreen() {
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <Ionicons name="cafe" size={48} color="#FF4B4B" />
+              <Ionicons name="storefront-outline" size={48} color="#FF4B4B" />
             </View>
             <Text style={styles.logo}>JidouNavi</Text>
             <Text style={styles.subtitle}>Create your account</Text>
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 60,
   },
   content: {
     flex: 1,

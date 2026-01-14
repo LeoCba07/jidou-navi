@@ -58,7 +58,7 @@ export default function LoginScreen() {
         {/* Logo / Title */}
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Ionicons name="cafe" size={48} color="#FF4B4B" />
+            <Ionicons name="storefront-outline" size={48} color="#FF4B4B" />
           </View>
           <Text style={styles.logo}>JidouNavi</Text>
           <Text style={styles.subtitle}>Discover Japan's vending machines</Text>
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 24,
+    paddingBottom: 40,
   },
   header: {
     alignItems: 'center',
