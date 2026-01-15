@@ -5,15 +5,19 @@ import { NearbyMachine } from '../lib/machines';
 
 type Props = {
   machine: NearbyMachine;
+  distanceMeters?: number; // Override distance (e.g., from user's actual location)
   onPress: () => void;
   onClose: () => void;
 };
 
-export function MachinePreviewCard({ machine, onPress, onClose }: Props) {
+export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }: Props) {
+  // Use override distance if provided, otherwise fall back to machine's distance
+  const actualDistance = distanceMeters ?? machine.distance_meters;
+
   // Format distance
-  const distance = machine.distance_meters < 1000
-    ? `${Math.round(machine.distance_meters)}m`
-    : `${(machine.distance_meters / 1000).toFixed(1)}km`;
+  const distance = actualDistance < 1000
+    ? `${Math.round(actualDistance)}m`
+    : `${(actualDistance / 1000).toFixed(1)}km`;
 
   return (
     <View style={styles.container}>

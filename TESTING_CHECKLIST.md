@@ -170,10 +170,10 @@
 
 ### Badges Section
 - [✓] "Badges" section visible
-- [X] Badge grid displayed
-- [X] Each badge shows icon and name
-- [X] Border color indicates rarity (gray=common, blue=rare, purple=epic)
-- [X] Tap badge → Shows description in alert
+- [✓] Badge grid displayed
+- [✓] Each badge shows icon and name
+- [✓] Border color indicates rarity (gray=common, blue=rare, purple=epic)
+- [✓] Tap badge → Shows description in alert
 - [✓] If no badges → Shows empty state message
 
 ### Legal Section

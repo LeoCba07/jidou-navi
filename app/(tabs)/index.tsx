@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, CircleLayer } from '@rnmapbox/maps';
 import { router } from 'expo-router';
-import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine, SearchResult } from '../../src/lib/machines';
+import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine, SearchResult, calculateDistance } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
 import { SearchBar } from '../../src/components/SearchBar';
 import { CategoryFilterBar } from '../../src/components/CategoryFilterBar';
@@ -251,29 +251,42 @@ export default function MapScreen() {
       </Pressable>
 
       {/* Preview card */}
-      {selectedMachine && (
-        <MachinePreviewCard
-          machine={selectedMachine}
-          onPress={() => {
-            router.push({
-              pathname: '/machine/[id]',
-              params: {
-                id: selectedMachine.id,
-                name: selectedMachine.name || '',
-                description: selectedMachine.description || '',
-                address: selectedMachine.address || '',
-                latitude: String(selectedMachine.latitude),
-                longitude: String(selectedMachine.longitude),
-                distance_meters: String(selectedMachine.distance_meters),
-                primary_photo_url: selectedMachine.primary_photo_url || '',
-                visit_count: String(selectedMachine.visit_count),
-                status: selectedMachine.status || '',
-              },
-            });
-          }}
-          onClose={() => setSelectedMachine(null)}
-        />
-      )}
+      {selectedMachine && (() => {
+        // Calculate actual distance from user's location
+        const actualDistance = location
+          ? calculateDistance(
+              location.latitude,
+              location.longitude,
+              selectedMachine.latitude,
+              selectedMachine.longitude
+            )
+          : selectedMachine.distance_meters;
+
+        return (
+          <MachinePreviewCard
+            machine={selectedMachine}
+            distanceMeters={actualDistance}
+            onPress={() => {
+              router.push({
+                pathname: '/machine/[id]',
+                params: {
+                  id: selectedMachine.id,
+                  name: selectedMachine.name || '',
+                  description: selectedMachine.description || '',
+                  address: selectedMachine.address || '',
+                  latitude: String(selectedMachine.latitude),
+                  longitude: String(selectedMachine.longitude),
+                  distance_meters: String(actualDistance),
+                  primary_photo_url: selectedMachine.primary_photo_url || '',
+                  visit_count: String(selectedMachine.visit_count),
+                  status: selectedMachine.status || '',
+                },
+              });
+            }}
+            onClose={() => setSelectedMachine(null)}
+          />
+        );
+      })()}
     </View>
   );
 }
