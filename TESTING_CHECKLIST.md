@@ -11,7 +11,7 @@
 - [✓] Account created successfully
 - [✓] Email verification prompt appears
 - [✓] Profile automatically created in database
-- [X] Email already in use verification
+- [✓] Email already in use verification
 
 ### Login
 - [✓] Login with correct credentials
@@ -235,21 +235,21 @@
 
 ### Offline Behavior
 - [✓] Turn off wifi → Map still shows last loaded pins
-- [X] Can't add new machines (should show error)
-- [X] Can't check in (should show error)
-- [X] Graceful error messages
+- [✓] Can't add new machines (should show error)
+- [✓] Can't check in (should show error)
+- [✓] Graceful error messages
 
 ## 🐛 Edge Cases
 
 ### Network Issues
-- [X] Slow connection → Shows loading states
-- [X] No connection → Helpful error messages
-- [X] Connection restored → App recovers
+- [✓] Slow connection → Shows loading states
+- [✓] No connection → Helpful error messages
+- [✓] Connection restored → App recovers
 
 ### GPS Issues
 - [✓] Location permission denied → Map shows Tokyo
 - [✓] GPS inaccurate → Check-in validates 200m radius
-- [X] No GPS → Shows error when adding machine
+- [✓] No GPS → Shows error when adding machine
 
 ### Invalid Data
 - [✓] Machine with no photo → Shows placeholder
