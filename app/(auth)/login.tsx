@@ -153,25 +153,28 @@ const styles = StyleSheet.create({
   logoContainer: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 4,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    shadowColor: '#FF4B4B',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    borderWidth: 3,
+    borderColor: '#FF4B4B',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 0,
     elevation: 4,
   },
   logo: {
-    fontSize: 32,
-    fontWeight: '700',
+    fontSize: 18,
+    fontFamily: 'PressStart2P',
     color: '#2B2B2B',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
+    fontFamily: 'Inter',
     color: '#666',
   },
   form: {
@@ -182,7 +185,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 8,
   },
@@ -207,6 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     fontSize: 16,
+    fontFamily: 'Inter',
     color: '#2B2B2B',
   },
   forgotLink: {
@@ -220,12 +224,14 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#FF4B4B',
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 2,
     alignItems: 'center',
-    shadowColor: '#FF4B4B',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    borderWidth: 3,
+    borderColor: '#CC3C3C',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 0,
     elevation: 4,
   },
   buttonDisabled: {
@@ -234,7 +240,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 17,
     color: 'white',
-    fontWeight: '700',
+    fontFamily: 'Inter-Bold',
     letterSpacing: 0.5,
   },
   footer: {
@@ -244,11 +250,12 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#666',
   },
   linkText: {
     fontSize: 14,
     color: '#FF4B4B',
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
   },
 });

@@ -3,6 +3,14 @@ import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
@@ -15,6 +23,14 @@ export default function RootLayout() {
   const { user, setUser, setSession, setProfile, isLoading, setLoading } = useAuthStore();
   const { setSavedMachineIds } = useSavedMachinesStore();
   const [isReady, setIsReady] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    PressStart2P: PressStart2P_400Regular,
+    Inter: Inter_400Regular,
+    'Inter-Medium': Inter_500Medium,
+    'Inter-SemiBold': Inter_600SemiBold,
+    'Inter-Bold': Inter_700Bold,
+  });
 
   // Listen to auth state changes
   useEffect(() => {
@@ -105,8 +121,8 @@ export default function RootLayout() {
     }
   }, [user, segments, isReady]);
 
-  // Show loading screen while checking auth
-  if (!isReady || isLoading) {
+  // Show loading screen while checking auth or loading fonts
+  if (!isReady || isLoading || !fontsLoaded) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#FF4B4B" />

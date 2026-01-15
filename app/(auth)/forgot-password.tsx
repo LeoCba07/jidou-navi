@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 14,
+    fontFamily: 'PressStart2P',
     color: '#2B2B2B',
     marginBottom: 12,
   },
@@ -170,8 +170,15 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#FF4B4B',
     paddingVertical: 14,
-    borderRadius: 8,
+    borderRadius: 2,
     alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#CC3C3C',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 0,
+    elevation: 4,
   },
   buttonDisabled: {
     opacity: 0.6,
@@ -188,8 +195,8 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   successTitle: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 12,
+    fontFamily: 'PressStart2P',
     color: '#2B2B2B',
     textAlign: 'center',
     marginBottom: 12,

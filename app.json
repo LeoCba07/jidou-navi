@@ -42,7 +42,8 @@
     "plugins": [
       "@rnmapbox/maps",
       "expo-router",
-      "expo-image-picker"
+      "expo-image-picker",
+      "expo-font"
     ],
     "extra": {
       "router": {},

@@ -363,8 +363,8 @@ const styles = StyleSheet.create({
     color: '#FF4B4B',
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 12,
+    fontFamily: 'PressStart2P',
     color: '#333',
   },
   content: {
@@ -403,8 +403,15 @@ const styles = StyleSheet.create({
   photoButton: {
     backgroundColor: '#f0f0f0',
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 2,
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 0,
+    elevation: 2,
   },
   photoButtonText: {
     fontSize: 16,
@@ -416,7 +423,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#333',
     marginBottom: 8,
   },
@@ -427,6 +434,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
+    fontFamily: 'Inter',
     color: '#333',
   },
   textArea: {
@@ -441,11 +449,14 @@ const styles = StyleSheet.create({
   categoryChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 2,
     backgroundColor: '#f0f0f0',
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.15)',
   },
   categoryChipSelected: {
     backgroundColor: '#FF4B4B',
+    borderColor: '#CC3C3C',
   },
   categoryText: {
     fontSize: 14,
@@ -472,9 +483,16 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#FF4B4B',
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 2,
     alignItems: 'center',
     marginBottom: 70,
+    borderWidth: 3,
+    borderColor: '#CC3C3C',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 0,
+    elevation: 4,
   },
   submitButtonDisabled: {
     opacity: 0.6,
@@ -482,6 +500,6 @@ const styles = StyleSheet.create({
   submitText: {
     fontSize: 16,
     color: 'white',
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
   },
 });
