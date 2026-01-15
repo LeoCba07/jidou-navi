@@ -98,14 +98,14 @@ export default function MapScreen() {
   }, []);
 
   // Fetch machines from Supabase
+  // On error (e.g., offline), keeps existing cached machines visible
   async function loadMachines(lat: number, lng: number) {
-    try {
-      const data = await fetchNearbyMachines(lat, lng);
+    const data = await fetchNearbyMachines(lat, lng);
+    // Only update if we got data - null means network error, keep cached
+    if (data !== null) {
       setMachines(data);
-    } catch (error) {
-      console.error('Error loading machines:', error);
-      // Don't clear existing machines - keep showing what we have
-      // This provides graceful degradation when offline
+    } else {
+      console.log('Offline or network error - keeping cached machines');
     }
   }
 
@@ -160,18 +160,37 @@ export default function MapScreen() {
     });
   }
 
-  // Handle search result selection - center map on result
-  function handleSearchResult(result: SearchResult) {
+  // Handle search result selection - center map on result and show preview
+  async function handleSearchResult(result: SearchResult) {
     if (!cameraRef.current) return;
-    // Clear any open preview card
+
+    // Clear any open preview card first
     setSelectedMachine(null);
+
+    // Center map on the selected result
     cameraRef.current.setCamera({
       centerCoordinate: [result.longitude, result.latitude],
       zoomLevel: 16,
       animationDuration: 1000,
     });
+
     // Reload machines around the selected location
-    loadMachines(result.latitude, result.longitude);
+    const nearbyMachines = await fetchNearbyMachines(result.latitude, result.longitude);
+
+    if (nearbyMachines !== null) {
+      setMachines(nearbyMachines);
+      // Find the selected machine in the loaded results and show preview
+      const selectedFromSearch = nearbyMachines.find(m => m.id === result.id);
+      if (selectedFromSearch) {
+        setSelectedMachine(selectedFromSearch);
+      }
+    } else {
+      // Offline - try to find machine in existing cache
+      const cachedMachine = machines.find(m => m.id === result.id);
+      if (cachedMachine) {
+        setSelectedMachine(cachedMachine);
+      }
+    }
   }
 
   if (loading) {

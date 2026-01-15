@@ -44,14 +44,14 @@
 - [✓] Tap different pin → Switches to new preview
 - [✓] Tap map background → Preview card closes
 - [✓] Tap "View Details" on preview → Goes to detail screen
-- [X] Mts away shows meters based on current user location and not center of screen
+- [✓] Mts away shows meters based on current user location and not center of screen
 
 ### Search
 - [✓] Search bar visible at top
 - [✓] Type machine name → Shows results
 - [✓] Select search result → Map centers on that location
-- [X] Selecting a result from search opens that preview card
-- [X] Search closes any other preview card
+- [✓] Selecting a result from search opens that preview card
+- [✓] Search closes any other preview card
 
 ### Category Filters
 - [✓] Filter bar visible below search (All, Drinks, Food, Gachapon, Weird, Retro, Ice Cream, Coffee, Alcohol)
@@ -75,7 +75,7 @@
 - [✓] Machine photo loads (or placeholder if no photo)
 - [✓] Name displayed correctly
 - [✓] Distance shown (e.g., "250m away")
-- [X] Distance show is from user and not from center of the screen map
+- [✓] Distance show is from user and not from center of the screen map
 - [✓] Address displayed (if available)
 - [✓] Description shown
 - [✓] Visit count displayed
@@ -96,8 +96,7 @@
 - [✓] Visit count increments by 1
 - [✓] Button changes to "Visited ✓" and disables
 - [✓] Can only check in once per day per machine
-- [X] If badge earned → Badge popup appears after success
-// There seems to be an error awarding the badge code 42501 / details null hint null message new row violates row level security policy for table user_badges. Need to further look into this
+- [✓] If badge earned → Badge popup appears after success
 
 ### Save/Bookmark
 - [✓] Tap bookmark icon → Machine saved
@@ -137,7 +136,7 @@
 - [✓] Machine record created in database
 - [✓] Categories linked correctly
 - [✓] Success message appears
-- [X] If badge earned → Badge popup appears
+- [✓] If badge earned → Badge popup appears
 - [✓] Returns to map after success
 - [✓] New machine visible on map immediately
 
@@ -153,7 +152,7 @@
 - [✓] Avatar displayed (or placeholder)
 - [✓] Display name / username shown
 - [✓] Email address shown
-- [X] Bio displayed (if set)
+- [✓] Bio displayed (if set)
 
 ### Stats
 - [✓] Machines Added count correct
@@ -211,19 +210,19 @@
 ## 🏆 Badge System
 
 ### Badge Unlocking
-- [X] First Find badge: Visit 1st machine
-- [X] Explorer badge: Visit 5 machines
-- [X] Contributor badge: Add 1st machine
-- [X] Badge popup appears when earned
-- [X] Popup shows badge icon, name, description
-- [X] Can dismiss popup
-- [X] Badge appears in profile immediately
-- [X] Badge count increments
+- [✓] First Find badge: Visit 1st machine
+- [✓] Explorer badge: Visit 5 machines
+- [✓] Contributor badge: Add 1st machine
+- [✓] Badge popup appears when earned
+- [✓] Popup shows badge icon, name, description
+- [✓] Can dismiss popup
+- [✓] Badge appears in profile immediately
+- [✓] Badge count increments
 
 ### Badge Triggers to Test
-- [X] Visit 1 machine → "First Find"
-- [X] Add 1 machine → "Contributor"
-- [X] Visit 5 machines → "Explorer" (optional, takes time)
+- [✓] Visit 1 machine → "First Find"
+- [✓] Add 1 machine → "Contributor"
+- [✓] Visit 5 machines → "Explorer" (optional, takes time)
 
 ## 🔄 Data Persistence
 
@@ -231,11 +230,11 @@
 - [✓] User stays logged in
 - [✓] Map returns to last location
 - [✓] Saved machines persist
-- [X] Badges persist
+- [✓] Badges persist
 - [✓] User stats correct
 
 ### Offline Behavior
-- [X] Turn off wifi → Map still shows last loaded pins
+- [✓] Turn off wifi → Map still shows last loaded pins
 - [X] Can't add new machines (should show error)
 - [X] Can't check in (should show error)
 - [X] Graceful error messages
@@ -248,15 +247,15 @@
 - [X] Connection restored → App recovers
 
 ### GPS Issues
-- [X] Location permission denied → Map shows Tokyo
-- [X] GPS inaccurate → Check-in validates 200m radius
+- [✓] Location permission denied → Map shows Tokyo
+- [✓] GPS inaccurate → Check-in validates 200m radius
 - [X] No GPS → Shows error when adding machine
 
 ### Invalid Data
-- [X] Machine with no photo → Shows placeholder
-- [X] Machine with no address → Hides address field
-- [X] Machine with no description → Shows empty
-- [X] Machine with no categories → Still visible on map
+- [✓] Machine with no photo → Shows placeholder
+- [✓] Machine with no address → Hides address field
+- [✓] Machine with no description → Shows empty
+- [✓] Machine with no categories → Still visible on map
 
 ### Rapid Interactions
 - [✓] Quickly tap multiple pins → Doesn't crash
@@ -293,8 +292,8 @@
 ### New User Journey
 1. [✓] Download app → Sign up → Map loads with pins
 2. [✓] Tap pin → See details → Check in (if nearby)
-3. [X] Get "First Find" badge → Badge popup appears
-4. [X] Go to Profile → See badge and stats
+3. [✓] Get "First Find" badge → Badge popup appears
+4. [✓] Go to Profile → See badge and stats
 
 ### Add Machine Journey
 1. [✓] Find real vending machine

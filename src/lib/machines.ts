@@ -56,24 +56,31 @@ export type NearbyMachine = {
 };
 
 // Fetch machines within radius of a location
+// Returns null on network failure so caller can keep cached data
 export async function fetchNearbyMachines(
   lat: number,
   lng: number,
   radiusMeters: number = 5000
-): Promise<NearbyMachine[]> {
-  const { data, error } = await supabase.rpc('nearby_machines', {
-    lat,
-    lng,
-    radius_meters: radiusMeters,
-    limit_count: 50,
-  });
+): Promise<NearbyMachine[] | null> {
+  try {
+    const { data, error } = await supabase.rpc('nearby_machines', {
+      lat,
+      lng,
+      radius_meters: radiusMeters,
+      limit_count: 50,
+    });
 
-  if (error) {
-    console.error('Error fetching nearby machines:', error);
-    return [];
+    if (error) {
+      console.error('Error fetching nearby machines:', error);
+      return null; // Return null so caller keeps cached data
+    }
+
+    return (data || []) as NearbyMachine[];
+  } catch (e) {
+    // Network error - request failed entirely
+    console.error('Network error fetching machines:', e);
+    return null;
   }
-
-  return (data || []) as NearbyMachine[];
 }
 
 // Search machines by name, description, or address (fuzzy search)
