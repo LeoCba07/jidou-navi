@@ -1,288 +1,678 @@
-1 変な自販機コーナー 2−19−7 Kanda Sudacho, Chiyoda-ku, Tokyo.
-2 Sea urchin vending machine Sushi Kappo Shidashi Nangiku in Tondabayashi City,
-3 Osaka Prefecture (大阪府富田林市若松町西2-1726-6).
-4 Wagyu vending machine 愛知県豊田市桝塚西町北屋敷120-3.
-5 Omi beef gacha vending machine on a street in Osaka 1-600 Minami-Osawa, Hachioji City, Tokyo 2F Factory Outlets "B Block" Cafe Butter Maegoto
-6 beef tongue/gacha beef vending machine in Sendai 38°15'27.9"N 140°52'47.4"E
-7 Steam punk vending machine Shurotei / 棕櫚亭
-Address: Kanagawa-ken, Kawasaki-shi, Tama-ku, Nishi-Ikuta 3-9-9
-神奈川県川崎市多摩区西生田3-9-9
-8 The bench futuristic vending machine emit scent play projection mapping with your purchase The Bench
-Address: JR Shinjuku Station EATo LUMINE (near JR Shinjuku Station basement 1F west exit ticket gate)
-JR新宿駅「イイトルミネ」内　※JR新宿駅地下1F西口改札近く
-Open: 8:00 a.m.-10:00 p.m.
-9 Vending machine information
-Miwa Somen Nagashi / 三輪そうめん流し
-Address: Nara-ken, Sakurai-shi, Miwa 460-24
-奈良県桜井市三輪460-24
-10 Marutodirect crab vending machine
-11 used panties machine
-12 vending machine of love letters addressed to onichan M's Akihabara
-13 STD test vending machine near Akebonobashi (GPS 35.691581,139.719583)
-14 edible insects 35.704353,139.579881
-15 dashi 2-14-14 Hanada, Koshigaya City, Saitama Prefecture
-16 dashi 1-7-8 Nishishinkoiwa, Katsushika Ward, Tokyo
-17 dashi 2-11-7 Nihonbashi Kayabacho, Chuo-ku, Tokyo
-18 dashi 1-60 Yoyogi, Shibuya-ku, Tokyo
-19 dashi 9-3-3 Higashikasai, Edogawa-ku, Tokyo
-20 dashi 3-7 Shibasakicho, Tachikawa City, Tokyo
-21 dashi 5-34-4 Kameari, Katsushika Ward, Tokyo
-22 dashi 12-8 Asahicho, Hachioji City, Tokyo
-23 dashi 1-39-3 Futa, Chofu City, Tokyo
-24 dashi 3-6-12 Ayase, Adachi-ku, Tokyo
-25 dashi 9-2 Oyamacho, Itabashi-ku, Tokyo
-26 dashi 1-3-9 Higashi-Ikebukuro, Toshima-ku, Tokyo
-27 dashi 2-18 Asakusa, Taito Ward, Tokyo
-28 dashi 7-15 Yonbancho, Chiyoda-ku, Tokyo
-29 dashi 2-21-15 Higashigotanda, Shinagawa-ku, Tokyo
-30 dashi 553 Komaeda, Fukaya City, Saitama Prefecture
-31 dashi 178-1 Shimofujisawa, Iruma City, Saitama Prefecture
-32 dashi 3-1-15 Nishibori, Sakura Ward, Saitama City, Saitama Prefecture
-33 dashi 2-245 Ginza, Kumagaya City
-34 dashi 1737 Onobukuro, Kazo City, Saitama Prefecture
-35 dashi 7-48-5 Higashi-Urawa, Saitama City, Saitama Prefecture
-36 dashi 4-20-13 Kishimachi, Urawa Ward, Saitama City, Saitama Prefecture
-37 dashi 74 Nakamachi, Kumagaya City, Saitama Prefecture
-38 dashi 137-1 Kotoyori, Kazo City, Saitama Prefecture
-39 dashi 2540-5 Uenodai, Fukaya City, Saitama Prefecture
-40 Used Tire Mart Sagamihara Store - Vending Machine Corner 2661-1 Shimomizo, Minami Ward, Sagamihara, Kanagawa 252-0335
-41 Fresh Bananas Found in Shibuya Station, Exit 3 of the Hanzomon Line in front of Village Vanguard
-42 Bug Snacks Takadanobaba, in front of the Kome to Circus izakaya. 2 Chome-19-8 Takadanobaba, Shinjuku City, Tokyo 169-0075
-43 water from different parts of japan Tokyo Metro Ginza-itchome Station on the Yurakucho Line
-44 shirts and spices entrance of Shibuya 109
-45 mystery prizes 35°41'54.7"N 139°46'13.9"E king treasure box
-46 vending machine that sells an onion Location: Minami 1-jo Nishi 10-chome, Chuo-ku
-, Sapporo Minami 1-jo Legal and Tax Center, Koroku Daiichi Building
-47 "Acorns" Mottainai Box
-Location: Oriro Sapporo Building, 15-4 Kita 5-jo Nishi 11-chome, Chuo-ku, Sapporo
-( Here )
-This is a frozen product. Please be careful.
-Random is exciting!
-The "Mottainai Box" from the popular bakery "Donguri" was created with the desire to reduce food waste, and is a wonderful vending machine that is kind to the earth, the store, and the buyers!
-48 Duskin's dish washing sponges are very popular!
-Location: Duskin Bunkyodai Branch,
-3-2 Nopporo Sumiyoshicho, Ebetsu City
-( Here )
-Apparently, there are people who have been using it for many years, saying, "I can't live without this!" As you'd expect, the sponge from cleaning company Duskin has a reputation for reliability.
-49 It's time to buy sandwiches from vending machines.
-Location: Nango 18-chome Station on the Tozai Line,
-7-1 Minami Nango-dori 18-chome Kita, Shiroishi Ward, Sapporo
-( Here ) Shirokuma Bakery
-was installed at Nango 18-chome Station on November 5th.We'd like to introduce you to a vending machine where you can buy sandwiches and bread from.
-It's convenient to have one at a station. You can quickly grab something! QR code payment is accepted, so you can easily buy something even during your commute. (The image was taken around 2 p.m.)
-https://att-japan.net/ja/culture/18/
-https://jihanki.sagase.com/search/
+# Vending Machines Seed Data
 
+Use this format for each machine. Photo files should be placed in a `seed-photos/` folder.
 
-Vending machine name	Kagurazaka Jizoya
-location	11-5 Fukuromachi, Shinjuku-ku, Tokyo 162-0828
-merchandise	Rice crackers
-Vending machine features	A vending machine where you can buy Kagurazaka Jizoya's special rice crackers. There are so many varieties to choose from, it's fun.
+---
 
-Vending machine name	Yakiniku Yamato
-location	1-8-28 Natsumi, Funabashi City, Chiba Prefecture, 273-0865
-merchandise	Side dishes
-Vending machine features	This vending machine is a must-have for meat lovers, as it sells Yakiniku Yamato beef bowls, croquettes, fresh gyoza, and more.
-Vending machine name	Fresh soba noodle vending machine
-location	5-5-3 Tamagawa, Chofu City, Tokyo 182-0025
-merchandise	Nihachi Nama Soba and Soup Set
-Juwari Nama Soba and Soup Set
-Tamakiyama Soup
-Vending machine features	Originally from Japan?! A vending machine selling refrigerated soba noodles! Handmade every morning! Enjoy fresh
-soba noodles at home!
-Authentic soba noodles from a soba restaurant, free of artificial seasonings, preservatives, and additives, can be easily taken out from the vending machine.
-Electronic payment is also accepted.
+## Format Template
 
-Vending machine name	Vending machine café MAgnET
-location	5-39-5 Honmachi, Koganei City, Tokyo
-merchandise	Frozen prepared foods (gyoza, dim sum, curry, fried chicken, seafood, etc.)　
-, frozen bento lunches (rice dishes, reduced-sodium side dishes, etc.)　
-, frozen sweets (ice cream, baked sweet potatoes, ice cream buns, canned crepes),　
-frozen noodles (ramen, pasta, yakisoba),　
-cup drinks , canned
-PET drinks　
-, dried fruit　
-, frozen coffee (starting mid-June)
-Vending machine features	We offer a wide range of frozen products and other fun items.
-We also have a microwave and　
-a dining area　 where you can eat and drink inside the store
-. We also have restrooms and diaper changing stations.
+```
+### [ID] Machine Name
+- **Name (JP):** Japanese name if available
+- **Address:** Full address
+- **Coordinates:** lat, lng (if known)
+- **Categories:** drinks, food, gachapon, weird, retro, ice-cream, coffee, alcohol
+- **Description:** What makes it special
+- **Photo:** filename.jpg
+```
 
-Vending machine name	Tokiwa Sauce
-location	3-3 Kamimuneoka, Shiki City, Saitama Prefecture
-merchandise	Raw sauce (medium thick, thick, Worcestershire)
-Vending machine features	A vending machine with a wide variety of Tokiwa Sauce sauces.
-They go well with fried foods and salads.
+---
 
-Vending machine name	Frozen Marche Sashiogi store
-location	Saitama Prefecture, Saitama City, Nishi Ward, Sashiogi Ryobessho 329
-merchandise	Sweets, horse sashimi, Korean food, yakitori, gyoza, Taiwanese food, ramen, etc.
-Vending machine features	We have installed seven refrigerators and offer a wide range of frozen foods. They're delicious, of course! We also have many products that are hard to find in this area.
+# TOKYO AREA
 
-Vending machine name	Delicious roasted sweet potato vending machine
-location	10-3 Renjakucho, Kawagoe City, Saitama Prefecture
-merchandise	Matured baked sweet potato
-Vending machine features	We use carefully selected sweet potatoes (Beni Haruka) from our farmers, baked using a patented method to create a sweet, honey-filled treat. You can enjoy both hot and cold baked sweet potatoes 24 hours a day, 365 days a year. This is the only place in Kawagoe where you can buy them.
+## Akihabara / Chiyoda
 
-Vending machine name	Harada Noodles
-location	1640 Itakura, Itakura-cho, Oura-gun, Gunma Prefecture, 374-0132
-merchandise	Udon
-Vending machine features	A vending machine where you can buy the winning product of the Men-1 Grand Prix, "Itakura Cucumber Cold Udon."
+### 001 Weird Vending Machine Corner
+- **Name (JP):** 変な自販機コーナー
+- **Address:** 2-19-7 Kanda Sudacho, Chiyoda-ku, Tokyo
+- **Coordinates:** 35.6983, 139.7731
+- **Categories:** weird
+- **Description:** A corner dedicated to strange and unusual vending machines. Multiple weird items available.
+- **Photo:** 001_weird_corner_akihabara.jpg
 
-Vending machine name	Tanaka Farm
-location	5-1 Nakamachi, Fukaya City, Saitama Prefecture, 366-0822
-merchandise	Egg
-Vending machine features	This vending machine sells Tanaka Farm's eggs, "Fukaya no Takam," which are specially selected for their rich yolks.
+### 002 Love Letter Vending Machine
+- **Name (JP):** M's Akihabara
+- **Address:** M's Akihabara Building, Sotokanda, Chiyoda-ku, Tokyo
+- **Coordinates:** 35.6984, 139.7711
+- **Categories:** weird
+- **Description:** Vending machine selling love letters addressed to "onii-chan". Peak Akihabara culture.
+- **Photo:** 002_love_letter_ms_akihabara.jpg
 
-Vending machine name	Maruhashi Foods
-location	3464-1 Higashi Obokatacho, Isesaki City, Gunma Prefecture, 379-2234
-merchandise	Boiled offal
-Vending machine features	This vending machine sells Maruhashi Foods' stewed offal, a Gunma Joshu specialty made with carefully selected offal and ingredients.
+### 003 7's Crepes Akihabara
+- **Name (JP):** セブンズクレープ秋葉原店
+- **Address:** 1-14-3 Sotokanda, Chiyoda-ku, Tokyo
+- **Coordinates:** 35.6991, 139.7710
+- **Categories:** food
+- **Description:** Frozen crepes that are ready to eat. Various flavors available 24/7.
+- **Photo:** 003_7s_crepes_akihabara.jpg
 
-Vending machine name	Shimizu Bakery
-location	Japan, 〒372-0006, 928-13 Otamachi, Isesaki City, Gunma Prefecture
-merchandise	bread
-Vending machine features	A vending machine where you can buy a wide variety of breads from Shimizu Bakery, including savory breads, sweet breads, and sandwiches.
-	Tateishi Burger
-location	3-17-15 Horikiri, Katsushika-ku, Tokyo 124-0006
-merchandise	hamburger
-Vending machine features	A vending machine where you can buy the classic Tateishi Burger for 100 yen. Full of nostalgia!
-Vending machine name	Coffee vending machine
-location	2661-1 Shimomizo, Minami-ku, Sagamihara City, Kanagawa Prefecture, 252-0335
-merchandise	Coffee, milkshake, candy
-Vending machine features	A retro vending machine where you can buy nostalgic drinks.
+### 004 Edible Insects Vending Machine
+- **Name (JP):** 昆虫食自販機
+- **Address:** Near Takadanobaba, in front of Kome to Circus izakaya, 2-19-8 Takadanobaba, Shinjuku-ku, Tokyo
+- **Coordinates:** 35.7044, 139.5799
+- **Categories:** weird, food
+- **Description:** Bug snacks vending machine. Crickets, larvae, and other edible insects for the adventurous.
+- **Photo:** 004_bug_snacks_takadanobaba.jpg
 
-Vending machine name	Yakiniku Yamato
-location	1-8-28 Natsumi, Funabashi City, Chiba Prefecture, 273-0865
-merchandise	Side dishes
-Vending machine features	This vending machine is a must-have for meat lovers, as it sells Yakiniku Yamato beef bowls, croquettes, fresh gyoza, and more.
+## Shinjuku
 
-Vending machine name	Vending Machine Cafeteria
-location	Palace Honmaru, 293-3 Tomizukacho, Isesaki City, Gunma Prefecture, 372-0833
-merchandise	Udon, soba, hamburgers
-Vending machine features	There are rows of retro vending machines selling traditional udon, soba, and hamburgers.
+### 005 The Bench - Futuristic Vending Machine
+- **Name (JP):** The Bench
+- **Address:** JR Shinjuku Station EATo LUMINE, B1F near West Exit
+- **Coordinates:** 35.6896, 139.7006
+- **Categories:** weird, drinks
+- **Description:** Futuristic vending machine that emits scents and plays projection mapping with your purchase. A sensory experience.
+- **Photo:** 005_the_bench_shinjuku.jpg
 
-Vending machine name	Cafe & CD Shop Sammy
-location	Saitama Prefecture Kawaguchi City Hatogaya Honmachi 3-8-3 1F Hatogaya Honmachi 2-chome traffic light corner Dia Palace
-merchandise	CD
-Vending machine features	There is a vending machine where you can buy CDs of nostalgic and famous songs.
-You can also relax and have a meal at the cafe inside the store.
+### 006 MUJI Pocket
+- **Name (JP):** 無印良品ポケット
+- **Address:** 3-17-1 Shinjuku, Shinjuku-ku, Tokyo
+- **Coordinates:** 35.6905, 139.7003
+- **Categories:** weird
+- **Description:** MUJI amenities vending machine. Travel essentials, skincare, and everyday items.
+- **Photo:** 006_muji_pocket_shinjuku.jpg
 
-Vending machine name	Lunch box vending machine
-location	Sakaijima, Inashiki City, Ibaraki Prefecture, 300-0723
-merchandise	bento
-Vending machine features	A retro vending machine where you can buy Yakiniku bento, Fried chicken bento, and Fillet cutlet bento. The price is reasonable at 300 yen.
+### 007 Kagurazaka Jizoya Rice Crackers
+- **Name (JP):** 神楽坂地蔵屋
+- **Address:** 11-5 Fukuromachi, Shinjuku-ku, Tokyo
+- **Coordinates:** 35.7021, 139.7412
+- **Categories:** food
+- **Description:** Special artisan rice crackers from Kagurazaka Jizoya. Many varieties to choose from.
+- **Photo:** 007_jizoya_rice_crackers.jpg
 
-Vending machine name	GK Gutsuri Noodles MEGA Donki Musashi Urawa Branch
-location	5-16-10 Shirahata, Minami-ku, Saitama City, Saitama Prefecture
-merchandise	Jiro-style frozen ramen
-Vending machine features	This vending machine stocks frozen ramen from popular Jiro-style ramen restaurants.
+## Shibuya
 
-Vending machine name	BLUE BOTTLE COFFEE
-location	2-8-16 Jiyugaoka, Meguro-ku, Tokyo 152-0035
-merchandise	Coffee, yokan
-Vending machine features	A vending machine where you can buy coffee and yokan from BLUE BOTTLE COFFEE. You can also buy instant coffee and beans.
+### 008 Fresh Bananas Shibuya Station
+- **Name (JP):** バナナ自販機
+- **Address:** Shibuya Station, Exit 3 Hanzomon Line, in front of Village Vanguard
+- **Coordinates:** 35.6580, 139.7016
+- **Categories:** food, weird
+- **Description:** Fresh banana vending machine. Perfectly ripe bananas available 24/7.
+- **Photo:** 008_banana_shibuya.jpg
 
-Vending machine name	Thank you chicken wings
-location	2-11-1 Fujimi, Chuo-ku, Chiba City, Chiba Prefecture, 260-0015
-merchandise	Baked sweet potato, chicken wings
-Vending machine features	A 500 yen vending machine where you can buy roasted sweet potatoes and chicken wings. You can choose the flavor of the chicken wings.
+### 009 Shirts and Spices Shibuya 109
+- **Name (JP):** シャツとスパイス
+- **Address:** Entrance of Shibuya 109, Shibuya-ku, Tokyo
+- **Coordinates:** 35.6598, 139.6985
+- **Categories:** weird
+- **Description:** Unusual combo vending machine selling both shirts and spices at the iconic 109 building.
+- **Photo:** 009_shirts_spices_109.jpg
 
-Vending machine name	Tsukamoto Building Materials Co., Ltd.
-location	5-8-27 Nitta, Ichikawa City, Chiba Prefecture
-merchandise	Calorie Mate, Kit Kat, Bourbon Petit series, Ramune, etc.
-Vending machine features	There is a lot of product changeover!
+### 010 Beetopia Honey
+- **Name (JP):** ビートピア
+- **Address:** In front of Ashville, 1-19-11 Jingumae, Shibuya-ku, Tokyo
+- **Coordinates:** 35.6702, 139.7057
+- **Categories:** food
+- **Description:** Premium honey vending machine. Specially selected rich honey and bee-related goods.
+- **Photo:** 010_beetopia_honey_shibuya.jpg
 
-Vending machine name	Beetopia
-location	In front of Ashville, 1-19-11 Jingumae, Shibuya-ku, Tokyo 150-0001
-merchandise	honey
-Vending machine features	A vending machine where you can buy Beetopia's specially selected rich honey and other goods.
+### 011 Ira Cola
+- **Name (JP):** イラコーラ
+- **Address:** 6-20-10 Jingumae, Shibuya-ku, Tokyo
+- **Coordinates:** 35.6678, 139.7089
+- **Categories:** drinks, weird
+- **Description:** Specialty cola vending machine for cola enthusiasts. Unique craft cola experience.
+- **Photo:** 011_ira_cola_shibuya.jpg
 
-Vending machine name	Kagurazaka Jizoya
-location	11-5 Fukuromachi, Shinjuku-ku, Tokyo 162-0828
-merchandise	Rice crackers
-Vending machine features	A vending machine where you can buy Kagurazaka Jizoya's special rice crackers. There are so many varieties to choose from, it's fun.
+### 012 Apple Cycle Products
+- **Name (JP):** アップルサイクル
+- **Address:** 2-21-1 Shibuya, Shibuya-ku, Tokyo
+- **Coordinates:** 35.6595, 139.7004
+- **Categories:** weird
+- **Description:** Eco-conscious vending machine selling upcycled products. Creates new value from discarded items.
+- **Photo:** 012_apple_cycle_shibuya.jpg
 
-Vending machine name	7's Crepes Akihabara store
-location	1-14-3 Sotokanda, Chiyoda-ku, Tokyo
-merchandise	Frozen Crepes
-Vending machine features	It's frozen but ready to eat.
+## Ikebukuro / Toshima
 
-Vending machine name	FOODS&BAR A-ONE's homemade dressing
-location	SAN Park Toda Kawagishi 2-5-17 Kawagishi, Toda City, Saitama Prefecture, and 9 other locations
-merchandise	Vegetable dressing
-600 yen
-Vending machine features	This additive-free dressing is made with plenty of carrots, onions, and apples. Its catchphrase is "a unique taste that you'll be hooked on once you try it," and it's available in vending machines and online.
+### 013 Nanja Gyoza Stadium
+- **Name (JP):** ナンジャ餃子スタジアム
+- **Address:** Sunshine City World Import Mart Building 2F, 3-1 Higashi-Ikebukuro, Toshima-ku, Tokyo
+- **Coordinates:** 35.7294, 139.7193
+- **Categories:** food
+- **Description:** Famous gyoza vending machine at Namja Town. Dumplings from renowned restaurants.
+- **Photo:** 013_nanja_gyoza_ikebukuro.jpg
 
-Vending machine name	Chiffon cake vending machine
-location	4-1-3 Kamatsuka, Konosu City, Saitama Prefecture
-merchandise	chiffon cake
-Vending machine features	A vending machine where you can buy gluten-free chiffon cake.
-Vending machine name	MUJI pocket
-location	3-17-1 Shinjuku, Shinjuku-ku, Tokyo 160-0022
-merchandise	Amenities
-Vending machine features	This vending machine allows you to easily purchase a wide variety of amenities.
-Vending machine name	The baseball museum
-location	1-3-61 Koraku, Bunkyo-ku, Tokyo 112-0004
-merchandise	Baseballs,
-mugs,
-pens
-, and more
-Vending machine features	This vending machine has a wide selection of souvenirs that baseball fans will love.
-Vending machine name	Apple Cycle Products
-location	2-21-1 Shibuya, Shibuya-ku, Tokyo 150-8510
-merchandise	Apple Cycle
-Vending machine features	This vending machine allows you to think about environmental issues by purchasing items, and can create new value in discarded items.
+### 014 Dashi Doraku #1 (Ikebukuro)
+- **Name (JP):** だし道楽
+- **Address:** 1-3-9 Higashi-Ikebukuro, Toshima-ku, Tokyo
+- **Coordinates:** 35.7312, 139.7156
+- **Categories:** food
+- **Description:** Dashi Doraku series (1 of 7). Premium Japanese dashi (soup stock) vending machine. Authentic flying fish and kelp broth for home cooking.
+- **Photo:** 014_dashi_ikebukuro.jpg
 
-Vending machine name	Curry Land
-location	9-3-3 Higashikasai, Edogawa-ku, Tokyo 134-0084
-merchandise	Local instant curry
-Vending machine features	A vending machine where you can buy Curry Land's local instant curry.
-Vending machine name	Puntrepreneur
-location	6-26-3 Nakanoshima, Tama Ward, Kawasaki City, Kanagawa Prefecture, 214-0012
-merchandise	Frozen bread
-Vending machine features	This vending machine sells frozen bread from Pantrepreneur. There's a wide variety of breads, including snack and meal combinations, as well as loaf bread and French bread sets.
-Vending machine name	Medicinal dried fruit vending machine
-location	4-15-7 Hirai, Edogawa-ku, Tokyo (approximately 4 minutes' walk from JR Hirai Station)
-merchandise	Medicinal dried fruits (jujubes, jujube snacks, green raisins, apricots)
-Medicinal teas and drinks (chrysanthemum tea, goji berry juice)
-Vending machine features	This is Japan's first medicinal dried fruit vending machine!
-Starting with our most popular fruit, "Jujube," we also sell seasonal products that are only available at this vending machine.
-Vending machine name	Pipo-kun vending machine
-location	3-5-1 Kyobashi, Chuo-ku, Tokyo 104-0031
-merchandise	Goods
-Vending machine features	A vending machine where you can buy merchandise featuring the famous character Pipo-kun, such as handkerchiefs and mechanical pencils.
-Vending machine name	Ira Cola
-location	6-20-10 Jingumae, Shibuya-ku, Tokyo 150-0001
-merchandise	Ira Cola
-Vending machine features	This vending machine allows cola lovers to easily purchase Ira Cola, a drink they'll want to try.
-Vending machine name	Nanja Gyoza Stadium
-location	Sunshine City World Import Mart Building 2F, 3-1 Higashi-Ikebukuro, Toshima-ku, Tokyo 170-0013
-merchandise	chinese dumpling
-Vending machine features	Nanja Town is proud of this vending machine where you can buy delicious gyoza from famous restaurants.
-Vending machine name	Gincho Industry
-location	Ishibashi Building, 1-4-15 Komagata, Taito-ku, Tokyo 111-0043
-merchandise	Rice clay
-Vending machine features	A vending machine where you can buy Gincho Sangyo's rice clay at any time.
-Vending machine name	Camping vending machine
-location	156 Fumoto, Fujinomiya City, Shizuoka Prefecture, 418-0109
-merchandise	Instant ramen,
-marshmallows,
-sponges,
-detergent, etc.
-Vending machine name	Haraho Hot Springs
-location	305 Haraho, Izu City, Shizuoka Prefecture, 410-2514
-merchandise	hot spring
-Vending machine features	This vending machine allows you to enjoy Haraho Onsen, which is extremely effective for your skin, at home. Fill the tank and take it home.
-	Goldfish vending machine
-location	52 Arakicho, Yamatokoriyama City, Nara Prefecture, 639-1021
-merchandise	goldfish
-Vending machine features	A vending machine where you can buy fresh, lively goldfish caught that morning. A perfect souvenir.
-Vending machine name	Ohno Farm
-location	2-99 Koyanagi, Kitakata-cho, Motosu-gun, Gifu Prefecture, 501-0434
-merchandise	tomato
-Vending machine features	This vending machine allows you to easily purchase fresh tomatoes picked from the farm.
-Vending machine name	Cafe Peacock
-location	138-1 Higashisue, Ube City, Yamaguchi Prefecture, 759-0206
-merchandise	coffee beans
-Vending machine features	You can enjoy Cafe Peacock's authentic coffee in the comfort of your own home.
+## Meguro / Jiyugaoka
+
+### 015 Blue Bottle Coffee
+- **Name (JP):** ブルーボトルコーヒー
+- **Address:** 2-8-16 Jiyugaoka, Meguro-ku, Tokyo
+- **Coordinates:** 35.6077, 139.6695
+- **Categories:** coffee
+- **Description:** Blue Bottle Coffee vending machine. Premium coffee, instant coffee, beans, and even yokan.
+- **Photo:** 015_blue_bottle_jiyugaoka.jpg
+
+## Taito / Asakusa
+
+### 016 Dashi Doraku #2 (Asakusa)
+- **Name (JP):** だし道楽
+- **Address:** 2-18 Asakusa, Taito-ku, Tokyo
+- **Coordinates:** 35.7148, 139.7967
+- **Categories:** food
+- **Description:** Dashi Doraku series (2 of 7). Premium dashi stock in the heart of Asakusa tourist area. Great souvenir for foodies.
+- **Photo:** 016_dashi_asakusa.jpg
+
+### 017 Gincho Rice Clay
+- **Name (JP):** 銀鳥産業
+- **Address:** Ishibashi Building, 1-4-15 Komagata, Taito-ku, Tokyo
+- **Coordinates:** 35.7056, 139.7945
+- **Categories:** weird
+- **Description:** Rice clay vending machine. Unique craft material available 24/7.
+- **Photo:** 017_rice_clay_taito.jpg
+
+## Bunkyo
+
+### 018 Baseball Museum Souvenirs
+- **Name (JP):** 野球殿堂博物館
+- **Address:** 1-3-61 Koraku, Bunkyo-ku, Tokyo
+- **Coordinates:** 35.7058, 139.7519
+- **Categories:** weird
+- **Description:** Baseball memorabilia vending machine. Baseballs, mugs, pens, and fan merchandise.
+- **Photo:** 018_baseball_museum_bunkyo.jpg
+
+## Chuo / Ginza
+
+### 019 Pipo-kun Goods
+- **Name (JP):** ピーポくん自販機
+- **Address:** 3-5-1 Kyobashi, Chuo-ku, Tokyo
+- **Coordinates:** 35.6774, 139.7706
+- **Categories:** weird
+- **Description:** Tokyo Police mascot Pipo-kun merchandise vending machine. Handkerchiefs, pencils, and cute goods.
+- **Photo:** 019_pipokun_kyobashi.jpg
+
+### 020 Dashi Doraku #3 (Nihonbashi)
+- **Name (JP):** だし道楽
+- **Address:** 2-11-7 Nihonbashi Kayabacho, Chuo-ku, Tokyo
+- **Coordinates:** 35.6798, 139.7812
+- **Categories:** food
+- **Description:** Dashi Doraku series (3 of 7). Premium Japanese dashi in the business district. Office workers grab authentic stock on their way home.
+- **Photo:** 020_dashi_nihonbashi.jpg
+
+## Edogawa
+
+### 021 Medicinal Dried Fruit
+- **Name (JP):** 薬膳ドライフルーツ自販機
+- **Address:** 4-15-7 Hirai, Edogawa-ku, Tokyo (4 min walk from JR Hirai Station)
+- **Coordinates:** 35.7062, 139.8442
+- **Categories:** food, weird
+- **Description:** Japan's first medicinal dried fruit vending machine! Jujubes, goji berries, apricots, and health teas.
+- **Photo:** 021_medicinal_fruit_hirai.jpg
+
+### 022 Curry Land
+- **Name (JP):** カレーランド
+- **Address:** 9-3-3 Higashikasai, Edogawa-ku, Tokyo
+- **Coordinates:** 35.6595, 139.8732
+- **Categories:** food
+- **Description:** Local instant curry vending machine. Regional curry varieties from across Japan.
+- **Photo:** 022_curry_land_kasai.jpg
+
+### 023 Dashi Doraku #4 (Kasai)
+- **Name (JP):** だし道楽
+- **Address:** 9-3-3 Higashikasai, Edogawa-ku, Tokyo
+- **Coordinates:** 35.6592, 139.8731
+- **Categories:** food
+- **Description:** Dashi Doraku series (4 of 7). Premium dashi stock in the Kasai area, near the Curry Land machine.
+- **Photo:** 023_dashi_kasai.jpg
+
+## Chofu / Koganei (West Tokyo)
+
+### 024 Fresh Soba Noodle Vending Machine
+- **Name (JP):** 生そば自販機
+- **Address:** 5-5-3 Tamagawa, Chofu City, Tokyo
+- **Coordinates:** 35.6535, 139.5462
+- **Categories:** food
+- **Description:** Refrigerated fresh soba noodles! Handmade every morning. Nihachi and Juwari soba sets. No additives.
+- **Photo:** 024_fresh_soba_chofu.jpg
+
+### 025 Vending Machine Cafe MAgnET
+- **Name (JP):** 自販機カフェ MAgnET
+- **Address:** 5-39-5 Honmachi, Koganei City, Tokyo
+- **Coordinates:** 35.7011, 139.5032
+- **Categories:** food, drinks
+- **Description:** Full vending machine cafe! Frozen foods, bento, sweets, noodles, drinks. Has microwave, dining area, restrooms.
+- **Photo:** 025_magnet_cafe_koganei.jpg
+
+## Katsushika
+
+### 026 Tateishi Burger
+- **Name (JP):** 立石バーガー
+- **Address:** 3-17-15 Horikiri, Katsushika-ku, Tokyo
+- **Coordinates:** 35.7432, 139.8275
+- **Categories:** food, retro
+- **Description:** Classic retro hamburger vending machine. Nostalgic 100 yen burgers!
+- **Photo:** 026_tateishi_burger_katsushika.jpg
+
+### 027 Dashi Doraku #5 (Nishishinkoiwa)
+- **Name (JP):** だし道楽
+- **Address:** 1-7-8 Nishishinkoiwa, Katsushika-ku, Tokyo
+- **Coordinates:** 35.7342, 139.8512
+- **Categories:** food
+- **Description:** Dashi Doraku series (5 of 7). Premium Japanese dashi in the Katsushika residential area.
+- **Photo:** 027_dashi_katsushika.jpg
+
+### 028 Dashi Doraku #6 (Kameari)
+- **Name (JP):** だし道楽
+- **Address:** 5-34-4 Kameari, Katsushika-ku, Tokyo
+- **Coordinates:** 35.7621, 139.8478
+- **Categories:** food
+- **Description:** Dashi Doraku series (6 of 7). Near famous Kameari station (Kochikame fans!). Grab dashi while hunting for Ryo-san statues.
+- **Photo:** 028_dashi_kameari.jpg
+
+---
+
+# KANAGAWA
+
+## Kawasaki
+
+### 029 Steampunk Vending Machine
+- **Name (JP):** 棕櫚亭 (Shurotei)
+- **Address:** 3-9-9 Nishi-Ikuta, Tama-ku, Kawasaki City, Kanagawa
+- **Coordinates:** 35.6174, 139.4512
+- **Categories:** weird, retro
+- **Description:** Beautifully decorated steampunk-themed vending machine. A work of art!
+- **Photo:** 029_steampunk_kawasaki.jpg
+
+### 030 Pantrepreneur Frozen Bread
+- **Name (JP):** パントレプレナー
+- **Address:** 6-26-3 Nakanoshima, Tama-ku, Kawasaki City, Kanagawa
+- **Coordinates:** 35.5987, 139.4623
+- **Categories:** food
+- **Description:** Frozen artisan bread vending machine. Snack breads, meal breads, French bread sets.
+- **Photo:** 030_pantrepreneur_kawasaki.jpg
+
+## Sagamihara
+
+### 031 Retro Coffee & Milkshake
+- **Name (JP):** レトロ自販機コーナー
+- **Address:** 2661-1 Shimomizo, Minami-ku, Sagamihara City, Kanagawa
+- **Coordinates:** 35.5312, 139.3856
+- **Categories:** drinks, retro
+- **Description:** Nostalgic retro vending machine with coffee, milkshakes, and candy. Time travel experience!
+- **Photo:** 031_retro_coffee_sagamihara.jpg
+
+### 032 Used Tire Mart Vending Corner
+- **Name (JP):** 中古タイヤマート相模原店
+- **Address:** 2661-1 Shimomizo, Minami-ku, Sagamihara City, Kanagawa
+- **Coordinates:** 35.5311, 139.3855
+- **Categories:** retro, weird
+- **Description:** Vintage vending machine corner at a tire shop. Multiple retro machines in one spot.
+- **Photo:** 032_tire_mart_sagamihara.jpg
+
+---
+
+# SAITAMA
+
+## Saitama City
+
+### 033 Frozen Marche Sashiogi
+- **Name (JP):** 冷凍マルシェ指扇店
+- **Address:** 329 Sashiogi Ryobessho, Nishi-ku, Saitama City, Saitama
+- **Coordinates:** 35.9156, 139.5678
+- **Categories:** food
+- **Description:** Seven refrigerators of frozen foods! Sweets, horse sashimi, Korean food, yakitori, gyoza, ramen.
+- **Photo:** 033_frozen_marche_saitama.jpg
+
+### 034 Dashi Doraku #7 (Saitama)
+- **Name (JP):** だし道楽
+- **Address:** 3-1-15 Nishibori, Sakura-ku, Saitama City, Saitama
+- **Coordinates:** 35.8712, 139.6234
+- **Categories:** food
+- **Description:** Dashi Doraku series (7 of 7). The only Saitama location! Complete the full collection for the Dashi Lover badge.
+- **Photo:** 034_dashi_saitama_sakura.jpg
+
+### 035 Jiro-style Ramen Vending Machine
+- **Name (JP):** GKがっつりめん
+- **Address:** 5-16-10 Shirahata, Minami-ku, Saitama City, Saitama (MEGA Don Quijote)
+- **Coordinates:** 35.8456, 139.6534
+- **Categories:** food
+- **Description:** Frozen Jiro-style ramen from popular shops. Thick noodles, rich broth, lots of garlic!
+- **Photo:** 035_jiro_ramen_saitama.jpg
+
+## Kawagoe
+
+### 036 Delicious Roasted Sweet Potato
+- **Name (JP):** 美味しい焼き芋自販機
+- **Address:** 10-3 Renjakucho, Kawagoe City, Saitama
+- **Coordinates:** 35.9225, 139.4856
+- **Categories:** food
+- **Description:** Matured baked sweet potatoes using patented method. Honey-sweet Beni Haruka variety. Hot or cold, 24/7.
+- **Photo:** 036_yakiimo_kawagoe.jpg
+
+## Shiki
+
+### 037 Tokiwa Sauce
+- **Name (JP):** トキハソース
+- **Address:** 3-3 Kamimuneoka, Shiki City, Saitama
+- **Coordinates:** 35.8423, 139.5789
+- **Categories:** food
+- **Description:** Artisan sauce vending machine. Medium thick, thick, and Worcestershire varieties. Perfect for fried foods.
+- **Photo:** 037_tokiwa_sauce_shiki.jpg
+
+## Konosu
+
+### 038 Chiffon Cake Vending Machine
+- **Name (JP):** シフォンケーキ自販機
+- **Address:** 4-1-3 Kamatsuka, Konosu City, Saitama
+- **Coordinates:** 36.0612, 139.5234
+- **Categories:** food
+- **Description:** Gluten-free chiffon cake vending machine. Fluffy, light, and available anytime.
+- **Photo:** 038_chiffon_cake_konosu.jpg
+
+## Kawaguchi
+
+### 039 Cafe & CD Shop Sammy
+- **Name (JP):** カフェ＆CDショップ サミー
+- **Address:** 3-8-3 Hatogaya Honmachi, Kawaguchi City, Saitama
+- **Coordinates:** 35.8312, 139.7423
+- **Categories:** weird, retro
+- **Description:** CD vending machine with nostalgic songs. Cafe inside for relaxing. Unique retro experience.
+- **Photo:** 039_cd_vending_kawaguchi.jpg
+
+## Toda
+
+### 040 Homemade Vegetable Dressing
+- **Name (JP):** FOODS&BAR A-ONE
+- **Address:** SAN Park Toda Kawagishi, 2-5-17 Kawagishi, Toda City, Saitama
+- **Coordinates:** 35.8156, 139.6789
+- **Categories:** food
+- **Description:** Additive-free vegetable dressing made with carrots, onions, and apples. "A taste you'll be hooked on!"
+- **Photo:** 040_dressing_toda.jpg
+
+---
+
+# CHIBA
+
+## Funabashi
+
+### 041 Yakiniku Yamato
+- **Name (JP):** 焼肉やまと
+- **Address:** 1-8-28 Natsumi, Funabashi City, Chiba
+- **Coordinates:** 35.6912, 139.9823
+- **Categories:** food
+- **Description:** Meat lover's paradise! Beef bowls, croquettes, fresh gyoza from famous yakiniku restaurant.
+- **Photo:** 041_yakiniku_yamato_funabashi.jpg
+
+## Chiba City
+
+### 042 Thank You Chicken Wings
+- **Name (JP):** ありがとう手羽先
+- **Address:** 2-11-1 Fujimi, Chuo-ku, Chiba City, Chiba
+- **Coordinates:** 35.6089, 140.1123
+- **Categories:** food
+- **Description:** 500 yen vending machine with roasted sweet potatoes and chicken wings. Choose your wing flavor!
+- **Photo:** 042_chicken_wings_chiba.jpg
+
+## Ichikawa
+
+### 043 Tsukamoto Building Materials Snacks
+- **Name (JP):** 塚本建材
+- **Address:** 5-8-27 Nitta, Ichikawa City, Chiba
+- **Coordinates:** 35.7234, 139.9345
+- **Categories:** food
+- **Description:** Rotating selection of snacks. Calorie Mate, Kit Kat, Bourbon Petit series, Ramune.
+- **Photo:** 043_snacks_ichikawa.jpg
+
+---
+
+# GUNMA
+
+## Isesaki
+
+### 044 Vending Machine Cafeteria
+- **Name (JP):** 自販機食堂
+- **Address:** Palace Honmaru, 293-3 Tomizukacho, Isesaki City, Gunma
+- **Coordinates:** 36.3112, 139.1923
+- **Categories:** retro, food
+- **Description:** Rows of retro vending machines! Classic udon, soba, and hamburgers. Nostalgic dining experience.
+- **Photo:** 044_vending_cafeteria_isesaki.jpg
+
+### 045 Maruhashi Boiled Offal
+- **Name (JP):** 丸橋食品
+- **Address:** 3464-1 Higashi Obokatacho, Isesaki City, Gunma
+- **Coordinates:** 36.3234, 139.2123
+- **Categories:** food
+- **Description:** Gunma Joshu specialty! Stewed offal with carefully selected ingredients. Local delicacy.
+- **Photo:** 045_motsu_isesaki.jpg
+
+### 046 Shimizu Bakery
+- **Name (JP):** 清水パン
+- **Address:** 928-13 Otamachi, Isesaki City, Gunma
+- **Coordinates:** 36.3089, 139.1834
+- **Categories:** food
+- **Description:** Wide variety of fresh bread. Savory, sweet, and sandwiches from local bakery.
+- **Photo:** 046_shimizu_bakery_isesaki.jpg
+
+## Itakura
+
+### 047 Harada Noodles
+- **Name (JP):** 原田製麺
+- **Address:** 1640 Itakura, Itakura-cho, Oura-gun, Gunma
+- **Coordinates:** 36.2234, 139.6423
+- **Categories:** food
+- **Description:** Men-1 Grand Prix winner! Famous "Itakura Cucumber Cold Udon" available here.
+- **Photo:** 047_harada_noodles_itakura.jpg
+
+---
+
+# IBARAKI
+
+### 048 Retro Lunch Box Vending Machine
+- **Name (JP):** 弁当自販機
+- **Address:** Sakaijima, Inashiki City, Ibaraki
+- **Coordinates:** 35.9512, 140.3234
+- **Categories:** retro, food
+- **Description:** Retro bento vending machine! Yakiniku, fried chicken, or fillet cutlet bento for just 300 yen.
+- **Photo:** 048_retro_bento_ibaraki.jpg
+
+---
+
+# NARA
+
+### 049 Miwa Somen Nagashi
+- **Name (JP):** 三輪そうめん流し
+- **Address:** 460-24 Miwa, Sakurai City, Nara
+- **Coordinates:** 34.5312, 135.8523
+- **Categories:** food
+- **Description:** Famous Miwa somen noodles vending machine at the source. Traditional Nara specialty.
+- **Photo:** 049_miwa_somen_nara.jpg
+
+### 050 Goldfish Vending Machine
+- **Name (JP):** 金魚自販機
+- **Address:** 52 Arakicho, Yamatokoriyama City, Nara
+- **Coordinates:** 34.6489, 135.7823
+- **Categories:** weird
+- **Description:** Live goldfish vending machine! Fresh, lively goldfish caught that morning. Yamatokoriyama is famous for goldfish.
+- **Photo:** 050_goldfish_nara.jpg
+
+---
+
+# SHIZUOKA
+
+### 051 Camping Vending Machine
+- **Name (JP):** キャンプ自販機
+- **Address:** 156 Fumoto, Fujinomiya City, Shizuoka
+- **Coordinates:** 35.3123, 138.6234
+- **Categories:** food, weird
+- **Description:** Camper's essential supplies! Instant ramen, marshmallows, sponges, detergent. Near Mt. Fuji camping areas.
+- **Photo:** 051_camping_fujinomiya.jpg
+
+### 052 Haraho Hot Springs
+- **Name (JP):** 原保温泉
+- **Address:** 305 Haraho, Izu City, Shizuoka
+- **Coordinates:** 34.9423, 138.9234
+- **Categories:** weird
+- **Description:** Hot spring water vending machine! Fill your tank and enjoy Haraho Onsen's skin-beautifying waters at home.
+- **Photo:** 052_onsen_water_izu.jpg
+
+---
+
+# OSAKA
+
+### 053 Sea Urchin Vending Machine
+- **Name (JP):** うに自販機
+- **Address:** Sushi Kappo Shidashi Nangiku, 2-1726-6 Wakamatsucho Nishi, Tondabayashi City, Osaka
+- **Coordinates:** 34.5012, 135.5934
+- **Categories:** food, weird
+- **Description:** Fresh sea urchin from a sushi restaurant! Premium uni available 24/7.
+- **Photo:** 053_sea_urchin_osaka.jpg
+
+---
+
+# AICHI
+
+### 054 Wagyu Vending Machine
+- **Name (JP):** 和牛自販機
+- **Address:** 120-3 Masuzuka Nishimachi Kitayashiki, Toyota City, Aichi
+- **Coordinates:** 35.0823, 137.1534
+- **Categories:** food
+- **Description:** Premium wagyu beef vending machine. High-quality cuts available anytime.
+- **Photo:** 054_wagyu_toyota.jpg
+
+---
+
+# MIYAGI (SENDAI)
+
+### 055 Beef Tongue Gacha
+- **Name (JP):** 牛タンガチャ
+- **Address:** Near Sendai Station area
+- **Coordinates:** 38.2577, 140.8798
+- **Categories:** food, gachapon
+- **Description:** Sendai specialty beef tongue in gacha format! Random cuts of premium gyutan.
+- **Photo:** 055_gyutan_gacha_sendai.jpg
+
+---
+
+# GIFU
+
+### 056 Ohno Farm Tomatoes
+- **Name (JP):** 大野農園
+- **Address:** 2-99 Koyanagi, Kitakata-cho, Motosu-gun, Gifu
+- **Coordinates:** 35.4423, 136.6734
+- **Categories:** food
+- **Description:** Farm-fresh tomatoes picked that day. Direct from the greenhouse to you.
+- **Photo:** 056_tomatoes_gifu.jpg
+
+---
+
+# YAMAGUCHI
+
+### 057 Cafe Peacock Coffee Beans
+- **Name (JP):** カフェピーコック
+- **Address:** 138-1 Higashisue, Ube City, Yamaguchi
+- **Coordinates:** 33.9512, 131.2534
+- **Categories:** coffee
+- **Description:** Authentic coffee beans for home brewing. Cafe Peacock's signature roasts.
+- **Photo:** 057_peacock_coffee_yamaguchi.jpg
+
+---
+
+# HOKKAIDO (SAPPORO)
+
+### 058 Onion Vending Machine
+- **Name (JP):** 玉ねぎ自販機
+- **Address:** Minami 1-jo Legal and Tax Center, Koroku Daiichi Building, Minami 1-jo Nishi 10-chome, Chuo-ku, Sapporo
+- **Coordinates:** 43.0589, 141.3456
+- **Categories:** food, weird
+- **Description:** Yes, just onions. A vending machine dedicated to selling single onions.
+- **Photo:** 058_onion_sapporo.jpg
+
+### 059 Donguri Mottainai Box
+- **Name (JP):** どんぐりもったいないBOX
+- **Address:** Oriro Sapporo Building, 15-4 Kita 5-jo Nishi 11-chome, Chuo-ku, Sapporo
+- **Coordinates:** 43.0634, 141.3389
+- **Categories:** food
+- **Description:** Frozen mystery bakery box from popular "Donguri" bakery. Reduce food waste, get random treats!
+- **Photo:** 059_mottainai_box_sapporo.jpg
+
+### 060 Duskin Sponge Vending Machine
+- **Name (JP):** ダスキンスポンジ自販機
+- **Address:** 3-2 Nopporo Sumiyoshicho, Ebetsu City, Hokkaido
+- **Coordinates:** 43.0712, 141.5234
+- **Categories:** weird
+- **Description:** Famous Duskin dish washing sponges. Fans say "I can't live without this!" Reliable quality.
+- **Photo:** 060_duskin_sponge_ebetsu.jpg
+
+### 061 Shirokuma Bakery Sandwiches
+- **Name (JP):** しろくまベーカリー
+- **Address:** Nango 18-chome Station, 7-1 Minami Nango-dori 18-chome Kita, Shiroishi-ku, Sapporo
+- **Coordinates:** 43.0423, 141.4234
+- **Categories:** food
+- **Description:** Fresh sandwiches and bread at the station. QR payment accepted. Convenient for commuters.
+- **Photo:** 061_shirokuma_bakery_sapporo.jpg
+
+---
+
+# SPECIAL / UNIQUE
+
+### 062 STD Test Vending Machine
+- **Name (JP):** 性病検査キット自販機
+- **Address:** Near Akebonobashi Station, Shinjuku
+- **Coordinates:** 35.6916, 139.7196
+- **Categories:** weird
+- **Description:** Discrete STD testing kits available 24/7. Anonymous and convenient health service.
+- **Photo:** 062_std_test_shinjuku.jpg
+
+### 063 King Treasure Box Mystery Prizes
+- **Name (JP):** キングトレジャーボックス
+- **Address:** Near Shibuya (coordinates: 35.6985, 139.7705)
+- **Coordinates:** 35.6985, 139.7705
+- **Categories:** gachapon, weird
+- **Description:** Mystery prize vending machine. You never know what you'll get!
+- **Photo:** 063_mystery_box_shibuya.jpg
+
+### 064 Water from Different Parts of Japan
+- **Name (JP):** 全国の水自販機
+- **Address:** Tokyo Metro Ginza-itchome Station, Yurakucho Line
+- **Coordinates:** 35.6756, 139.7678
+- **Categories:** drinks, weird
+- **Description:** Taste waters from different regions of Japan. A liquid tour of the country.
+- **Photo:** 064_regional_water_ginza.jpg
+
+---
+
+# NOTES
+
+## Photo Naming Convention
+- Format: `[ID]_[short_description]_[location].jpg`
+- Example: `001_weird_corner_akihabara.jpg`
+- Keep filenames lowercase with underscores
+- Place all photos in `seed-photos/` folder
+
+## Categories Reference
+| Category | Description |
+|----------|-------------|
+| drinks | Beverages (non-coffee) |
+| food | Edible items |
+| gachapon | Random/gacha style |
+| weird | Unusual/unique items |
+| retro | Nostalgic/vintage machines |
+| ice-cream | Frozen treats |
+| coffee | Coffee products |
+| alcohol | Alcoholic beverages |
+
+## Priority for Seeding
+Focus on **Tokyo area first** (IDs 001-028) for density, especially:
+- Akihabara (001-003)
+- Shinjuku (005-007)
+- Shibuya (008-012)
+- Ikebukuro (013-014)
+
+## Machine Series (for collection badges)
+| Series | Count | Badge Idea |
+|--------|-------|------------|
+| Dashi Doraku | 7 | "Dashi Lover" - Visit all 7 Dashi Doraku locations |
+
+## TODO
+- [ ] Download/take photos for each machine
+- [ ] Verify coordinates with Google Maps
+- [ ] Add more machines in Akihabara area for density
+- [ ] Find opening hours where applicable
+- [ ] Add "Dashi Lover" badge to badges table (trigger: visit all 7 dashi machines)
