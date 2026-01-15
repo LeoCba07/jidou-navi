@@ -413,6 +413,7 @@ CREATE POLICY "Badges are viewable by everyone" ON badges FOR SELECT USING (true
 
 -- User Badges
 CREATE POLICY "User badges are viewable by everyone" ON user_badges FOR SELECT USING (true);
+CREATE POLICY "Users can earn badges" ON user_badges FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- Flags
 CREATE POLICY "Users can view own flags" ON flags FOR SELECT USING (auth.uid() = reported_by);

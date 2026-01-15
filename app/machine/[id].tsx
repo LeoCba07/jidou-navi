@@ -48,6 +48,30 @@ export default function MachineDetailScreen() {
   // Check if machine is saved
   const isSaved = savedMachineIds.has(params.id);
 
+  // Check if user already visited this machine recently (within 3 days)
+  useEffect(() => {
+    async function checkRecentVisit() {
+      if (!user) return;
+
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+      const { data } = await supabase
+        .from('visits')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('machine_id', params.id)
+        .gte('visited_at', threeDaysAgo.toISOString())
+        .limit(1);
+
+      if (data && data.length > 0) {
+        setHasCheckedIn(true);
+      }
+    }
+
+    checkRecentVisit();
+  }, [user, params.id]);
+
   const distance = Number(params.distance_meters) < 1000
     ? `${Math.round(Number(params.distance_meters))}m`
     : `${(Number(params.distance_meters) / 1000).toFixed(1)}km`;

@@ -191,6 +191,8 @@ export default function MapScreen() {
         style={styles.map}
         onRegionDidChange={handleRegionChange}
         onPress={handleMapPress}
+        scaleBarEnabled={false}
+        compassEnabled={false}
       >
         <Camera
           ref={cameraRef}
@@ -245,7 +247,7 @@ export default function MapScreen() {
 
       {/* Recenter button */}
       <Pressable style={styles.recenterButton} onPress={centerOnUser}>
-        <Ionicons name="locate" size={24} color="#333" />
+        <Ionicons name="locate" size={28} color="#333" />
       </Pressable>
 
       {/* Preview card */}
@@ -290,10 +292,10 @@ const styles = StyleSheet.create({
   },
   recenterButton: {
     position: 'absolute',
-    bottom: 32,
-    right: 16,
-    width: 48,
-    height: 48,
+    bottom: 12,
+    right: 12,
+    width: 46,
+    height: 46,
     borderRadius: 24,
     backgroundColor: 'white',
     justifyContent: 'center',

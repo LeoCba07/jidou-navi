@@ -73,7 +73,7 @@ export function CategoryFilterBar() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 115,
+    top: 80,
     left: 0,
     right: 0,
     zIndex: 10,

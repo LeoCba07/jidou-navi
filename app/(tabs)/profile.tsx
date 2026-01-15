@@ -300,7 +300,11 @@ export default function ProfileScreen() {
               </Text>
             </View>
           ) : (
-            <View style={styles.badgesGrid}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.badgesScroll}
+            >
               {badges.map((userBadge) => (
                 <Pressable
                   key={userBadge.id}
@@ -325,12 +329,15 @@ export default function ProfileScreen() {
                       <Ionicons name="trophy" size={24} color="#FF4B4B" />
                     </View>
                   )}
-                  <Text style={styles.badgeName} numberOfLines={2}>
+                  <Text style={styles.badgeName} numberOfLines={1}>
                     {userBadge.badge.name}
+                  </Text>
+                  <Text style={styles.badgeDescription} numberOfLines={2}>
+                    {userBadge.badge.description}
                   </Text>
                 </Pressable>
               ))}
-            </View>
+            </ScrollView>
           )}
         </View>
 
@@ -505,13 +512,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
   },
-  badgesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  badgesScroll: {
     gap: 12,
   },
   badgeItem: {
-    width: '30%',
+    width: 110,
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 12,
@@ -536,10 +541,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badgeName: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '600',
     color: '#2B2B2B',
     textAlign: 'center',
+    marginBottom: 4,
+  },
+  badgeDescription: {
+    fontSize: 10,
+    color: '#999',
+    textAlign: 'center',
+    lineHeight: 13,
   },
   legalContainer: {
     backgroundColor: '#fff',

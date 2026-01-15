@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   },
   container: {
     position: "absolute",
-    top: 60,
+    top: 30,
     left: 12,
     right: 12,
     zIndex: 20,
