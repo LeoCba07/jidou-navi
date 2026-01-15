@@ -16,6 +16,7 @@ import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
 import { fetchSavedMachineIds } from '../src/lib/machines';
 import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
+import AppModal from '../src/components/AppModal';
 
 export default function RootLayout() {
   const router = useRouter();
@@ -135,6 +136,7 @@ export default function RootLayout() {
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }} />
       <BadgeUnlockModal />
+      <AppModal />
     </>
   );
 }

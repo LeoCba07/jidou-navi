@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Linking,
   Platform,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,11 +18,13 @@ import { supabase } from '../../src/lib/supabase';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine } from '../../src/lib/machines';
+import { useAppModal } from '../../src/hooks/useAppModal';
 
 export default function MachineDetailScreen() {
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
+  const { showError, showSuccess, showConfirm } = useAppModal();
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
@@ -40,10 +41,15 @@ export default function MachineDetailScreen() {
     primary_photo_url: string;
     visit_count: string;
     status: string;
+    categories: string;
   }>();
 
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
+
+  // Parse categories from JSON string
+  const categories = params.categories ? JSON.parse(params.categories) : [];
+  const isActive = params.status === 'active';
 
   // Check if machine is saved
   const isSaved = savedMachineIds.has(params.id);
@@ -91,7 +97,7 @@ export default function MachineDetailScreen() {
 
   async function handleSaveToggle() {
     if (!user) {
-      Alert.alert('Login Required', 'Please log in to save machines.');
+      showError('Login Required', 'Please log in to save machines.');
       return;
     }
 
@@ -108,7 +114,7 @@ export default function MachineDetailScreen() {
         if (!success) {
           // Revert on failure
           addSaved(params.id);
-          Alert.alert('Error', 'Failed to unsave machine.');
+          showError('Error', 'Failed to unsave machine.');
         }
       } else {
         // Optimistic update - add to store immediately
@@ -117,7 +123,7 @@ export default function MachineDetailScreen() {
         if (!success) {
           // Revert on failure
           removeSaved(params.id);
-          Alert.alert('Error', 'Failed to save machine.');
+          showError('Error', 'Failed to save machine.');
         }
       }
     } catch (err) {
@@ -129,20 +135,20 @@ export default function MachineDetailScreen() {
         // Originally not saved: we added optimistically, so remove
         removeSaved(params.id);
       }
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      showError('Error', 'Something went wrong. Please try again.');
     } finally {
       setSaving(false);
     }
   }
 
-  async function handleCheckIn() {
+  function handleCheckIn() {
     if (!user) {
-      Alert.alert('Login Required', 'Please log in to check in.');
+      showError('Login Required', 'Please log in to check in.');
       return;
     }
 
     // Ask if machine still exists
-    Alert.alert(
+    showConfirm(
       'Check In',
       'Is this vending machine still here?',
       [
@@ -151,12 +157,13 @@ export default function MachineDetailScreen() {
           style: 'cancel',
         },
         {
-          text: 'No, it\'s gone',
+          text: "No, it's gone",
           style: 'destructive',
           onPress: () => performCheckIn(false),
         },
         {
-          text: 'Yes, it\'s here!',
+          text: "Yes, it's here!",
+          style: 'primary',
           onPress: () => performCheckIn(true),
         },
       ]
@@ -170,7 +177,7 @@ export default function MachineDetailScreen() {
       // Get current location
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Location Required', 'Please enable location to check in.');
+        showError('Location Required', 'Please enable location to check in.');
         setCheckingIn(false);
         return;
       }
@@ -191,15 +198,15 @@ export default function MachineDetailScreen() {
       if (error) {
         // Check for specific error messages
         if (error.message.includes('too far')) {
-          Alert.alert(
+          showError(
             'Too Far Away',
             'You need to be closer to the vending machine to check in. Get within 200 meters and try again.'
           );
         } else if (error.message.includes('already visited')) {
-          Alert.alert('Already Checked In', 'You\'ve already checked in to this machine today.');
+          showError('Already Checked In', "You've already checked in to this machine recently.");
           setHasCheckedIn(true); // Disable button since already visited
         } else {
-          Alert.alert('Check-in Failed', error.message);
+          showError('Check-in Failed', error.message);
         }
         setCheckingIn(false);
         return;
@@ -216,22 +223,19 @@ export default function MachineDetailScreen() {
       const newBadges = await checkAndAwardBadges(params.id);
 
       // Show success message, then badge popup if earned
-      Alert.alert(
+      showSuccess(
         'Checked In!',
         stillExists
           ? 'Thanks for confirming this machine is still here!'
-          : 'Thanks for letting us know. We\'ll verify this machine.',
-        [{
-          text: 'OK',
-          onPress: () => {
-            if (newBadges.length > 0) {
-              showBadgePopup(newBadges);
-            }
-          },
-        }]
+          : "Thanks for letting us know. We'll verify this machine.",
+        () => {
+          if (newBadges.length > 0) {
+            showBadgePopup(newBadges);
+          }
+        }
       );
     } catch (err) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      showError('Error', 'Something went wrong. Please try again.');
     } finally {
       setCheckingIn(false);
     }
@@ -259,26 +263,53 @@ export default function MachineDetailScreen() {
         {/* Info */}
         <View style={styles.info}>
           <Text style={styles.name}>{params.name || 'Unnamed Machine'}</Text>
-          <Text style={styles.distance}>{distance} away</Text>
+
+          {/* Categories */}
+          {categories.length > 0 && (
+            <View style={styles.categoriesRow}>
+              {categories.map((cat: any) => (
+                <View
+                  key={cat.id}
+                  style={[styles.categoryChip, { backgroundColor: cat.color }]}
+                >
+                  <Text style={styles.categoryText}>{cat.name}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* Stats row */}
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Ionicons name="location" size={16} color="#FF4B4B" />
+              <Text style={styles.statDistance}>{distance} away</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="eye-outline" size={16} color="#666" />
+              <Text style={styles.statText}>{displayVisitCount} visits</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons
+                name={isActive ? 'checkmark-circle' : 'help-circle'}
+                size={16}
+                color={isActive ? '#22C55E' : '#F59E0B'}
+              />
+              <Text style={[styles.statText, isActive ? styles.activeText : styles.unknownText]}>
+                {isActive ? 'Active' : 'Unverified'}
+              </Text>
+            </View>
+          </View>
 
           {params.address && (
-            <Text style={styles.address}>{params.address}</Text>
+            <View style={styles.addressRow}>
+              <Ionicons name="map-outline" size={16} color="#666" />
+              <Text style={styles.address}>{params.address}</Text>
+            </View>
           )}
 
           {params.description && (
             <Text style={styles.description}>{params.description}</Text>
           )}
-
-          <View style={styles.stats}>
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{displayVisitCount}</Text>
-              <Text style={styles.statLabel}>visits</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>{params.status || 'active'}</Text>
-              <Text style={styles.statLabel}>status</Text>
-            </View>
-          </View>
         </View>
 
         {/* Action buttons */}
@@ -375,41 +406,73 @@ const styles = StyleSheet.create({
     fontFamily: 'PressStart2P',
     color: '#333',
     lineHeight: 22,
+    marginBottom: 12,
   },
-  distance: {
-    fontSize: 16,
+  categoriesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  categoryChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 2,
+  },
+  categoryText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    marginBottom: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  statDistance: {
+    fontSize: 14,
     color: '#FF4B4B',
-    marginTop: 4,
+    fontWeight: '600',
   },
-  address: {
+  statText: {
     fontSize: 14,
     color: '#666',
-    marginTop: 8,
+  },
+  activeText: {
+    color: '#22C55E',
+  },
+  unknownText: {
+    color: '#F59E0B',
+  },
+  addressRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginBottom: 12,
+  },
+  address: {
+    flex: 1,
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
   },
   description: {
     fontSize: 15,
     fontFamily: 'Inter',
     color: '#444',
-    marginTop: 12,
     lineHeight: 22,
-  },
-  stats: {
-    flexDirection: 'row',
-    marginTop: 20,
-    gap: 24,
-  },
-  stat: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 2,
   },
   actions: {
     padding: 16,

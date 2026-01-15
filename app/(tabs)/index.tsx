@@ -299,6 +299,7 @@ export default function MapScreen() {
                   primary_photo_url: selectedMachine.primary_photo_url || '',
                   visit_count: String(selectedMachine.visit_count),
                   status: selectedMachine.status || '',
+                  categories: JSON.stringify(selectedMachine.categories || []),
                 },
               });
             }}

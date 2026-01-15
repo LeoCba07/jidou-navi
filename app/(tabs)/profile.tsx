@@ -5,7 +5,6 @@ import {
   Text,
   Pressable,
   StyleSheet,
-  Alert,
   ScrollView,
   Image,
   ActivityIndicator,
@@ -17,6 +16,7 @@ import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
+import { useAppModal } from '../../src/hooks/useAppModal';
 
 // Badge type from joined query
 type UserBadge = {
@@ -41,6 +41,7 @@ const RARITY_COLORS: Record<string, string> = {
 export default function ProfileScreen() {
   const { user, profile } = useAuthStore();
   const { removeSaved } = useSavedMachinesStore();
+  const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
   const [loadingBadges, setLoadingBadges] = useState(true);
@@ -82,8 +83,8 @@ export default function ProfileScreen() {
   }
 
   // Handle unsave action
-  async function handleUnsave(machineId: string) {
-    Alert.alert(
+  function handleUnsave(machineId: string) {
+    showConfirm(
       'Remove from Saved',
       'Are you sure you want to remove this machine from your saved list?',
       [
@@ -99,7 +100,7 @@ export default function ProfileScreen() {
             if (!success) {
               // Revert on failure - reload the list
               loadSavedMachines();
-              Alert.alert('Error', 'Failed to remove machine from saved list.');
+              showError('Error', 'Failed to remove machine from saved list.');
             }
           },
         },
@@ -137,8 +138,8 @@ export default function ProfileScreen() {
     setRefreshing(false);
   }, [user]);
 
-  async function handleLogout() {
-    Alert.alert('Log Out', 'Are you sure you want to log out?', [
+  function handleLogout() {
+    showConfirm('Log Out', 'Are you sure you want to log out?', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Log Out',
@@ -150,8 +151,8 @@ export default function ProfileScreen() {
     ]);
   }
 
-  async function handleDeleteAccount() {
-    Alert.alert(
+  function handleDeleteAccount() {
+    showConfirm(
       'Delete Account',
       'Are you sure you want to delete your account? This action cannot be undone. All your data, machines, visits, and badges will be permanently deleted.',
       [
@@ -169,16 +170,16 @@ export default function ProfileScreen() {
 
               if (error) {
                 console.error('Delete account error:', error);
-                Alert.alert('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
+                showError('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
                 return;
               }
 
               // Sign out the user
               await supabase.auth.signOut();
-              Alert.alert('Account Deleted', 'Your account has been permanently deleted.');
+              showSuccess('Account Deleted', 'Your account has been permanently deleted.');
             } catch (err) {
               console.error('Delete account error:', err);
-              Alert.alert('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
+              showError('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
             }
           },
         },
@@ -316,7 +317,7 @@ export default function ProfileScreen() {
                     },
                   ]}
                   onPress={() =>
-                    Alert.alert(userBadge.badge.name, userBadge.badge.description)
+                    showInfo(userBadge.badge.name, userBadge.badge.description)
                   }
                 >
                   {userBadge.badge.icon_url ? (

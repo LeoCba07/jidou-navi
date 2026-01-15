@@ -8,7 +8,6 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
@@ -18,6 +17,7 @@ import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
+import { useAppModal } from '../src/hooks/useAppModal';
 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
@@ -33,6 +33,7 @@ const CATEGORIES = [
 export default function AddMachineScreen() {
   const { user } = useAuthStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
+  const { showError, showSuccess } = useAppModal();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoSize, setPhotoSize] = useState<number | null>(null);
@@ -59,7 +60,7 @@ export default function AddMachineScreen() {
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please grant camera/gallery access.');
+      showError('Permission needed', 'Please grant camera/gallery access.');
       return;
     }
 
@@ -91,7 +92,7 @@ export default function AddMachineScreen() {
       }
     } catch (error) {
       console.error('Image picker error:', error);
-      Alert.alert('Error', 'Failed to process image. Please try again.');
+      showError('Error', 'Failed to process image. Please try again.');
     } finally {
       setCompressing(false);
     }
@@ -105,19 +106,19 @@ export default function AddMachineScreen() {
 
   async function handleSubmit() {
     if (!photo) {
-      Alert.alert('Photo required', 'Please take or select a photo.');
+      showError('Photo required', 'Please take or select a photo.');
       return;
     }
     if (!name.trim()) {
-      Alert.alert('Name required', 'Please enter a name for the machine.');
+      showError('Name required', 'Please enter a name for the machine.');
       return;
     }
     if (!description.trim()) {
-      Alert.alert('Description required', 'Please add a description.');
+      showError('Description required', 'Please add a description.');
       return;
     }
     if (!location) {
-      Alert.alert('Location required', 'Please wait for GPS location or enable location services.');
+      showError('Location required', 'Please wait for GPS location or enable location services.');
       return;
     }
 
@@ -203,23 +204,16 @@ export default function AddMachineScreen() {
 
       if (newBadges.length > 0) {
         // Show success alert, then badge popup, then navigate back
-        Alert.alert('Success', 'Machine added!', [
-          {
-            text: 'OK',
-            onPress: () => {
-              showBadgePopup(newBadges, () => router.back());
-            },
-          },
-        ]);
+        showSuccess('Success', 'Machine added!', () => {
+          showBadgePopup(newBadges, () => router.back());
+        });
       } else {
         // No badges - just show success and go back
-        Alert.alert('Success', 'Machine added!', [
-          { text: 'OK', onPress: () => router.back() },
-        ]);
+        showSuccess('Success', 'Machine added!', () => router.back());
       }
     } catch (error: any) {
       console.error('Submit error:', error);
-      Alert.alert('Error', error?.message || 'Failed to add machine. Please try again.');
+      showError('Error', error?.message || 'Failed to add machine. Please try again.');
     } finally {
       setSubmitting(false);
     }

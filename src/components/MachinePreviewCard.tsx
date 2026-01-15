@@ -19,6 +19,9 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
     ? `${Math.round(actualDistance)}m`
     : `${(actualDistance / 1000).toFixed(1)}km`;
 
+  const categories = machine.categories || [];
+  const isActive = machine.status === 'active';
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.card} onPress={onPress}>
@@ -36,15 +39,43 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
           <Text style={styles.name} numberOfLines={1}>
             {machine.name || 'Unnamed Machine'}
           </Text>
-          <View style={styles.distanceRow}>
-            <Ionicons name="location" size={14} color="#FF4B4B" />
-            <Text style={styles.distance}>{distance} away</Text>
-          </View>
-          {machine.description && (
-            <Text style={styles.description} numberOfLines={2}>
-              {machine.description}
-            </Text>
+
+          {/* Categories */}
+          {categories.length > 0 && (
+            <View style={styles.categoriesRow}>
+              {categories.slice(0, 3).map((cat) => (
+                <View
+                  key={cat.id}
+                  style={[styles.categoryChip, { backgroundColor: cat.color }]}
+                >
+                  <Text style={styles.categoryText}>{cat.name}</Text>
+                </View>
+              ))}
+            </View>
           )}
+
+          {/* Stats row */}
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Ionicons name="location" size={14} color="#FF4B4B" />
+              <Text style={styles.statText}>{distance}</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="eye-outline" size={14} color="#666" />
+              <Text style={styles.statTextMuted}>{machine.visit_count} visits</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons
+                name={isActive ? 'checkmark-circle' : 'help-circle'}
+                size={14}
+                color={isActive ? '#22C55E' : '#F59E0B'}
+              />
+              <Text style={[styles.statTextMuted, isActive ? styles.activeText : styles.unknownText]}>
+                {isActive ? 'Active' : 'Unverified'}
+              </Text>
+            </View>
+          </View>
+
           {/* Tap indicator */}
           <View style={styles.tapIndicator}>
             <Text style={styles.tapText}>Tap for details</Text>
@@ -96,36 +127,61 @@ const styles = StyleSheet.create({
   info: {
     flex: 1,
     marginLeft: 14,
+    paddingRight: 24,
     justifyContent: 'center',
   },
   name: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     color: '#2B2B2B',
-    marginBottom: 4,
+    marginBottom: 6,
   },
-  distanceRow: {
+  categoriesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 8,
+  },
+  categoryChip: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 2,
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 8,
+  },
+  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginBottom: 6,
   },
-  distance: {
+  statText: {
     fontSize: 13,
     color: '#FF4B4B',
     fontWeight: '600',
   },
-  description: {
-    fontSize: 13,
+  statTextMuted: {
+    fontSize: 12,
     color: '#666',
-    lineHeight: 18,
-    marginBottom: 8,
+  },
+  activeText: {
+    color: '#22C55E',
+  },
+  unknownText: {
+    color: '#F59E0B',
   },
   tapIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 4,
   },
   tapText: {
     fontSize: 12,

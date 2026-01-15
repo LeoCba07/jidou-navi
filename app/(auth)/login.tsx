@@ -6,7 +6,6 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -14,25 +13,27 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
+import { useAppModal } from '../../src/hooks/useAppModal';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { showError } = useAppModal();
 
   async function handleLogin() {
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email');
+      showError('Error', 'Please enter your email');
       return;
     }
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      showError('Error', 'Please enter a valid email address');
       return;
     }
     if (!password) {
-      Alert.alert('Error', 'Please enter your password');
+      showError('Error', 'Please enter your password');
       return;
     }
 
@@ -44,7 +45,7 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (error) {
-      Alert.alert('Login failed', error.message);
+      showError('Login failed', error.message);
     }
     // On success, the auth listener in _layout.tsx will redirect
   }
