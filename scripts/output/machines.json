@@ -1,0 +1,4019 @@
+{
+  "scraped_at": "2026-01-16T05:33:58.834124+00:00",
+  "source": "jihanki.sagase.com",
+  "machines": [
+    {
+      "source_id": "3492",
+      "source_url": "https://jihanki.sagase.com/jihanki/3492/",
+      "name": "Kagurazaka Jizoya Rice Crackers",
+      "location": {
+        "address": "〒162-0828 東京都新宿区袋町１１−５",
+        "latitude": 35.702839,
+        "longitude": 139.737497
+      },
+      "merchandise": [
+        "煎餅"
+      ],
+      "categories": [
+        "食べ物",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "ザ",
+        "国民食",
+        "頑張った自分にご褒美",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "Artisan rice crackers from Kagurazaka Jizoya. Many varieties to choose from, making selection fun."
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/206-image1-20211123051139.jpg",
+          "local_path": "images/3492/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/206-image2-20211123051139.jpg",
+          "local_path": "images/3492/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3494",
+      "source_url": "https://jihanki.sagase.com/jihanki/3494/",
+      "name": "Udon Noodle Vending Machine",
+      "location": {
+        "address": "〒761-0301 香川県高松市林町１４８１−１",
+        "latitude": 34.302239,
+        "longitude": 134.074413
+      },
+      "merchandise": [
+        "うどん"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "お酒のお供に"
+      ],
+      "features": [
+        "Sanuki udon available conveniently from a vending machine. Very tasty and authentic."
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/208-image1-20211123052211.jpg",
+          "local_path": "images/3494/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3495",
+      "source_url": "https://jihanki.sagase.com/jihanki/3495/",
+      "name": "Cafe Peacock Coffee Beans",
+      "location": {
+        "address": "〒759-0206 山口県宇部市東須恵１３８−１",
+        "latitude": 33.996137,
+        "longitude": 131.213171
+      },
+      "merchandise": [
+        "コーヒー豆"
+      ],
+      "categories": [
+        "飲み物",
+        "その他",
+        "一度は買ってみたい",
+        "名店の味",
+        "買えるのはここだけ",
+        "ワクワク",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "頑張った自分にご褒美"
+      ],
+      "features": [
+        "Enjoy Cafe Peacock's authentic specialty coffee at home."
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/209-image1-20211123052523.jpg",
+          "local_path": "images/3495/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/209-image2-20211123052523.jpg",
+          "local_path": "images/3495/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3598",
+      "source_url": "https://jihanki.sagase.com/jihanki/3598/",
+      "name": "Maruichi Ramen & Gyoza",
+      "location": {
+        "address": "〒243-0018 神奈川県厚木市中町３丁目１８−５ 1Ｆ 二見ビル",
+        "latitude": 35.442206,
+        "longitude": 139.362649
+      },
+      "merchandise": [
+        "冷凍ラーメン餃子"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "夜食に是非"
+      ],
+      "features": [
+        "Maruichi's special frozen ramen and gyoza available for easy purchase."
+      ],
+      "images": []
+    },
+    {
+      "source_id": "3765",
+      "source_url": "https://jihanki.sagase.com/jihanki/3765/",
+      "name": "Fresh Soba Noodle Vending Machine",
+      "location": {
+        "address": "〒182-0025 東京都調布市多摩川５－５－３",
+        "latitude": 35.644611,
+        "longitude": 139.537689
+      },
+      "merchandise": [
+        "二八生そば",
+        "つゆセット十割生そば",
+        "つゆセット田麦山のつゆ"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "一度は買ってみたい",
+        "名店の味",
+        "気になるあのお店",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "ザ",
+        "国民食",
+        "意識の高い方へ"
+      ],
+      "features": [
+        "Japan's first refrigerated fresh soba vending machine! Handmade every morning. No additives, preservatives, or artificial flavors. E-money accepted."
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/438-image1-20221121071029.jpg",
+          "local_path": "images/3765/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/438-image2-20221121071029.jpg",
+          "local_path": "images/3765/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/438-image3-20221115102942.jpg",
+          "local_path": "images/3765/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/438-image4-20221115102942.jpg",
+          "local_path": "images/3765/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/438-image5-20221115102942.jpg",
+          "local_path": "images/3765/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/438-image6-20221115102942.jpg",
+          "local_path": "images/3765/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3846",
+      "source_url": "https://jihanki.sagase.com/jihanki/3846/",
+      "name": "Vending Machine Cafe MAgnET",
+      "location": {
+        "address": "東京都小金井市本町5-39-5",
+        "latitude": 35.705435,
+        "longitude": 139.505554
+      },
+      "merchandise": [
+        "冷凍総菜(餃子",
+        "点心",
+        "カレー",
+        "唐揚げ",
+        "海鮮物",
+        "他)冷凍弁当(米飯物",
+        "減塩おかず",
+        "他)冷凍スィーツ(アイス",
+        "焼き芋",
+        "アイスパン",
+        "クレープ缶)冷凍麺類(ラーメン",
+        "パスタ",
+        "焼きそば)カップ式飲料缶ペット飲料ドライフルーツ凍眠珈琲(6月中旬スタート)"
+      ],
+      "categories": [
+        "電子マネー対応",
+        "飲み物",
+        "食べ物",
+        "食材",
+        "映える",
+        "一度は買ってみたい",
+        "名店の味",
+        "気になるあのお店",
+        "買えるのはここだけ",
+        "ワクワク",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "リラックスしたいときに",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "ザ",
+        "国民食",
+        "お酒のお供に",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "甘いものは別腹",
+        "意識の高い方へ"
+      ],
+      "features": [
+        "冷凍商品を中心に幅広いラインナップで楽しさも提供レンジも置き店内飲食も可能イートインスペース完備トイレとおむつ交換台も完備"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/451-image1-20230605030820.jpg",
+          "local_path": "images/3846/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/451-image2-20230605030820.jpg",
+          "local_path": "images/3846/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/451-image3-20230605030820.jpg",
+          "local_path": "images/3846/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/451-image4-20230605030820.jpg",
+          "local_path": "images/3846/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/451-image5-20230605030820.jpg",
+          "local_path": "images/3846/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/451-image6-20230605030820.jpg",
+          "local_path": "images/3846/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3303",
+      "source_url": "https://jihanki.sagase.com/jihanki/3303/",
+      "name": "Tokiwa Sauce",
+      "location": {
+        "address": "埼玉県志木市上宗岡３丁目３",
+        "latitude": 35.85203,
+        "longitude": 139.57893
+      },
+      "merchandise": [
+        "生ソース（中濃",
+        "濃厚",
+        "ウスター）"
+      ],
+      "categories": [
+        "食材",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "ザ",
+        "国民食",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "トキハソースの種類豊富なソースが買える自販機。揚げ物はもちろん、サラダにも合います。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/19-image1-20211109055109.jpg",
+          "local_path": "images/3303/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/19-image2-20211109055109.jpg",
+          "local_path": "images/3303/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4147",
+      "source_url": "https://jihanki.sagase.com/jihanki/4147/",
+      "name": "Frozen Marche Sashiogi",
+      "location": {
+        "address": "埼玉県さいたま市西区指扇領別所３２９",
+        "latitude": 35.918904,
+        "longitude": 139.566369
+      },
+      "merchandise": [
+        "スイーツ",
+        "馬刺",
+        "韓国料理",
+        "焼鳥",
+        "餃子",
+        "台湾料理",
+        "ラーメンなど"
+      ],
+      "categories": [
+        "電子マネー対応",
+        "食べ物",
+        "映える",
+        "一度は買ってみたい",
+        "名店の味",
+        "気になるあのお店",
+        "買えるのはここだけ",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "ザ",
+        "国民食",
+        "お酒のお供に",
+        "頑張った自分にご褒美",
+        "気になるあの子に",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "7台のど冷えもんを設置し、幅広いラインナップの冷凍食品を揃えております。美味しいのは当たり前！この辺りでは、なかなか入手できないような商品も多数用意しております。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/464-image1-20240229003212.jpg",
+          "local_path": "images/4147/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/464-image2-20240229003212.jpg",
+          "local_path": "images/4147/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/464-image3-20240229003212.jpg",
+          "local_path": "images/4147/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/464-image4-20240229003212.jpg",
+          "local_path": "images/4147/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/464-image5-20240229003212.jpg",
+          "local_path": "images/4147/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/464-image6-20240229003212.jpg",
+          "local_path": "images/4147/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4600",
+      "source_url": "https://jihanki.sagase.com/jihanki/4600/",
+      "name": "Delicious Roasted Sweet Potato",
+      "location": {
+        "address": "埼玉県川越市連雀町10-3",
+        "latitude": 35.920028,
+        "longitude": 139.482862
+      },
+      "merchandise": [
+        "熟成焼き芋"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "映える",
+        "一度は買ってみたい",
+        "気になるあのお店",
+        "買えるのはここだけ",
+        "ワクワク",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "ザ",
+        "国民食",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "甘いものは別腹",
+        "意識の高い方へ",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "農家さんから厳選したさつまいも（紅はるか）を特許取得製法で蜜たっぷりに焼き上げました。冷やし焼き芋、暖かい焼き芋を24時間365日いつでも手軽に食べられます。 川越で買えるのはここだけです。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/492-image1-20241101040340.jpg",
+          "local_path": "images/4600/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/492-image2-20241101040340.jpg",
+          "local_path": "images/4600/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/492-image3-20241101040340.jpg",
+          "local_path": "images/4600/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/492-image4-20241101040340.jpg",
+          "local_path": "images/4600/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/492-image5-20241101040340.jpg",
+          "local_path": "images/4600/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/492-image6-20241101040340.jpg",
+          "local_path": "images/4600/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3660",
+      "source_url": "https://jihanki.sagase.com/jihanki/3660/",
+      "name": "Harada Noodles",
+      "location": {
+        "address": "〒374-0132 群馬県邑楽郡板倉町板倉１６４０",
+        "latitude": 36.220315,
+        "longitude": 139.615394
+      },
+      "merchandise": [
+        "うどん"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "気になるあのお店",
+        "空腹時にガツンと",
+        "ザ",
+        "国民食",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "麺―１グランプリ優勝商品の「板倉きゅうりの冷汁うどん」が買える自販機。"
+      ],
+      "images": []
+    },
+    {
+      "source_id": "3375",
+      "source_url": "https://jihanki.sagase.com/jihanki/3375/",
+      "name": "Tanaka Farm Fresh Produce",
+      "location": {
+        "address": "〒366-0822 埼玉県深谷市仲町５−１",
+        "latitude": 36.195269,
+        "longitude": 139.28241
+      },
+      "merchandise": [
+        "たまご"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "ザ",
+        "国民食"
+      ],
+      "features": [
+        "田中農場さんのたまご「深谷の宝玉」が買える自販機。黄身が濃厚なこだわりのたまご。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/90-image1-20211116042422.jpg",
+          "local_path": "images/3375/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/90-image2-20211116042422.jpg",
+          "local_path": "images/3375/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3674",
+      "source_url": "https://jihanki.sagase.com/jihanki/3674/",
+      "name": "Maruhashi Boiled Offal",
+      "location": {
+        "address": "〒379-2234 群馬県伊勢崎市東小保方町3464−1",
+        "latitude": 36.328422,
+        "longitude": 139.247499
+      },
+      "merchandise": [
+        "もつ煮"
+      ],
+      "categories": [
+        "食べ物",
+        "名店の味",
+        "気になるあのお店",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "ザ",
+        "国民食",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "丸橋食品さんの、もつと具材にこだわった群馬上州名物のもつ煮が買える自販機。"
+      ],
+      "images": []
+    },
+    {
+      "source_id": "3322",
+      "source_url": "https://jihanki.sagase.com/jihanki/3322/",
+      "name": "Yakiniku Yamato BBQ Meat",
+      "location": {
+        "address": "〒273-0865 千葉県船橋市夏見１丁目８−２８",
+        "latitude": 35.706719,
+        "longitude": 139.987804
+      },
+      "merchandise": [
+        "お惣菜"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "ワクワク",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "ザ",
+        "国民食",
+        "お酒のお供に",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "焼肉やまとの牛丼、コロッケ、生餃子などが買える、肉好きにはたまらない自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/37-image1-20211114102313.jpg",
+          "local_path": "images/3322/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/37-image2-20211114102313.jpg",
+          "local_path": "images/3322/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3365",
+      "source_url": "https://jihanki.sagase.com/jihanki/3365/",
+      "name": "Tateishi Retro Burger",
+      "location": {
+        "address": "〒124-0006 東京都葛飾区堀切３丁目１７−１５",
+        "latitude": 35.746313,
+        "longitude": 139.830617
+      },
+      "merchandise": [
+        "ハンバーガー"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "買えるのはここだけ",
+        "ワクワク",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "ちびっこ大好き",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "昔からある立石バーガーが１００円で買える自販機。懐かしさいっぱい！"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/80-image1-20211116014552.jpg",
+          "local_path": "images/3365/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3504",
+      "source_url": "https://jihanki.sagase.com/jihanki/3504/",
+      "name": "Coffee Vending Machine",
+      "location": {
+        "address": "〒252-0335 神奈川県相模原市南区下溝２６６１−１",
+        "latitude": 35.542853,
+        "longitude": 139.382294
+      },
+      "merchandise": [
+        "コーヒー",
+        "ミルクセーキ",
+        "あめゆ"
+      ],
+      "categories": [
+        "飲み物",
+        "食材",
+        "ワクワク",
+        "頑張った自分にご褒美",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "昔懐かしい飲み物が買えるレトロな自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/218-image1-20211123070122.jpg",
+          "local_path": "images/3504/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3363",
+      "source_url": "https://jihanki.sagase.com/jihanki/3363/",
+      "name": "Retro Bento Box Vending Machine",
+      "location": {
+        "address": "〒300-0723 茨城県稲敷市境島",
+        "latitude": 35.954035,
+        "longitude": 140.505557
+      },
+      "merchandise": [
+        "弁当"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "買えるのはここだけ",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "焼肉弁当、唐揚げ弁当、ヒレカツ弁当が買えるレトロな自販機。お値段も300円とリーズナブル。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/78-image1-20211116012729.jpg",
+          "local_path": "images/3363/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/78-image2-20211116012729.jpg",
+          "local_path": "images/3363/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3304",
+      "source_url": "https://jihanki.sagase.com/jihanki/3304/",
+      "name": "Cafe & CD Shop Sammy",
+      "location": {
+        "address": "埼玉県川口市鳩ヶ谷本町３丁目８−３ 1F 鳩ヶ谷本町 2丁目信号角 ダイアパレス",
+        "latitude": 35.833326,
+        "longitude": 139.740449
+      },
+      "merchandise": [
+        "CD"
+      ],
+      "categories": [
+        "電子マネー対応",
+        "グッズ",
+        "リラックスしたいときに",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "懐かしの曲や有名な曲のCDが買える自販機。店内のカフェで食事をしながらリラックスも。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/20-image1-20211109060403.jpg",
+          "local_path": "images/3304/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3665",
+      "source_url": "https://jihanki.sagase.com/jihanki/3665/",
+      "name": "Vending Machine Cafeteria",
+      "location": {
+        "address": "〒372-0833 群馬県伊勢崎市富塚町２９３−３ パレス本丸",
+        "latitude": 36.274562,
+        "longitude": 139.197128
+      },
+      "merchandise": [
+        "うどん",
+        "そば",
+        "ハンバーガー"
+      ],
+      "categories": [
+        "食べ物",
+        "映える",
+        "ワクワク",
+        "リラックスしたいときに",
+        "夜食に是非",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "昔ながらのうどんやそば、ハンバーガーが買えるレトロな自販機が並んでいます。"
+      ],
+      "images": []
+    },
+    {
+      "source_id": "3429",
+      "source_url": "https://jihanki.sagase.com/jihanki/3429/",
+      "name": "Shimizu Bakery",
+      "location": {
+        "address": "日本、〒372-0006 群馬県伊勢崎市太田町９２８−１３",
+        "latitude": 36.3348,
+        "longitude": 139.188781
+      },
+      "merchandise": [
+        "パン"
+      ],
+      "categories": [
+        "食べ物",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "頑張った自分にご褒美",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "シミズベーカリーさんの惣菜パンや菓子パン、サンドイッチなど種類豊富なパンが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/144-image1-20211119101102.jpg",
+          "local_path": "images/3429/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/144-image2-20211119101102.jpg",
+          "local_path": "images/3429/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3654",
+      "source_url": "https://jihanki.sagase.com/jihanki/3654/",
+      "name": "Chiffon Cake Vending Machine",
+      "location": {
+        "address": "埼玉県鴻巣市鎌塚4-1-3",
+        "latitude": 36.107744,
+        "longitude": 139.448765
+      },
+      "merchandise": [
+        "シフォンケーキ"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "ワクワク",
+        "頑張った自分にご褒美",
+        "甘いものは別腹",
+        "意識の高い方へ"
+      ],
+      "features": [
+        "グルテンフリーのシフォンケーキが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/365-image1-20211207083426.jpg",
+          "local_path": "images/3654/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/365-image2-20211207083426.jpg",
+          "local_path": "images/3654/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3730",
+      "source_url": "https://jihanki.sagase.com/jihanki/3730/",
+      "name": "FOODS&BAR A-ONE Homemade Dressing",
+      "location": {
+        "address": "埼玉県戸田市川岸2-5-17SANパーク戸田川岸　他9か所",
+        "latitude": 35.8054,
+        "longitude": 139.683882
+      },
+      "merchandise": [
+        "やさいがすすむドレッシング600円"
+      ],
+      "categories": [
+        "食材",
+        "名店の味",
+        "気になるあのお店",
+        "ワクワク",
+        "意識の高い方へ"
+      ],
+      "features": [
+        "人参、玉ねぎ、リンゴをふんだんに使った無添加ドレッシング。他には無いテイスト、一度食べたらハマる味をキャッチコピーに自販機及びネットで販売中。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/413-image1-20220726072247.jpg",
+          "local_path": "images/3730/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/413-image2-20220726072247.jpg",
+          "local_path": "images/3730/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/413-image3-20220726072247.jpg",
+          "local_path": "images/3730/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/413-image4-20220726072247.jpg",
+          "local_path": "images/3730/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/413-image5-20220726072247.jpg",
+          "local_path": "images/3730/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/413-image6-20220726072247.jpg",
+          "local_path": "images/3730/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4168",
+      "source_url": "https://jihanki.sagase.com/jihanki/4168/",
+      "name": "７’ｓクレープ秋葉原店",
+      "location": {
+        "address": "東京都千代田区外神田1-14-3",
+        "latitude": 35.698576,
+        "longitude": 139.771645
+      },
+      "merchandise": [
+        "冷凍クレープ"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "気になるあの子に",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "冷凍ですが、すぐに食べられます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/469-image1-20240326083305.jpg",
+          "local_path": "images/4168/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/469-image2-20240326083305.jpg",
+          "local_path": "images/4168/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/469-image3-20240326083305.jpg",
+          "local_path": "images/4168/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/469-image4-20240326083305.jpg",
+          "local_path": "images/4168/4.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3512",
+      "source_url": "https://jihanki.sagase.com/jihanki/3512/",
+      "name": "Beetopia Honey",
+      "location": {
+        "address": "〒150-0001 東京都渋谷区神宮前１丁目１９−１１アッシュビル前",
+        "latitude": 35.671878,
+        "longitude": 139.703441
+      },
+      "merchandise": [
+        "はちみつ"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "グッズ",
+        "一度は買ってみたい",
+        "ワクワク",
+        "お土産に是非",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "Beetopiaさんこだわりの濃厚なはちみつやグッズが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/226-image1-20211123093909.jpg",
+          "local_path": "images/3512/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/226-image2-20211123093909.jpg",
+          "local_path": "images/3512/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4148",
+      "source_url": "https://jihanki.sagase.com/jihanki/4148/",
+      "name": "Tsukamoto Building Materials Snacks",
+      "location": {
+        "address": "千葉県市川市新田5-8-27",
+        "latitude": 35.729305,
+        "longitude": 139.911641
+      },
+      "merchandise": [
+        "カロリーメイト",
+        "キットカット",
+        "ブルボンプチシリーズ",
+        "ラムネなど"
+      ],
+      "categories": [
+        "食べ物",
+        "ワクワク",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "お酒のお供に",
+        "頑張った自分にご褒美",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "商品の入れ替わりが多い！"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/465-image1-20240304085734.jpg",
+          "local_path": "images/4148/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/465-image2-20240304085734.jpg",
+          "local_path": "images/4148/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3417",
+      "source_url": "https://jihanki.sagase.com/jihanki/3417/",
+      "name": "Thank You Chicken Wings",
+      "location": {
+        "address": "〒260-0015 千葉県千葉市中央区富士見２丁目１１−１",
+        "latitude": 35.609831,
+        "longitude": 140.120435
+      },
+      "merchandise": [
+        "焼き芋",
+        "手羽先"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "ちびっこ大好き",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "焼き芋と手羽先が買える500円自販機。手羽先は味が選べます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/132-image1-20211119045951.jpg",
+          "local_path": "images/3417/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/132-image2-20211119045951.jpg",
+          "local_path": "images/3417/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3647",
+      "source_url": "https://jihanki.sagase.com/jihanki/3647/",
+      "name": "Fresh Banana Vending Machine",
+      "location": {
+        "address": "〒150-6141 東京都渋谷区渋谷２丁目２４−１２ スクランブルスクエア 地下 １階",
+        "latitude": 35.6581,
+        "longitude": 139.701763
+      },
+      "merchandise": [
+        "バナナ"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "朝の忙しい時間でも気軽にバナナを買うことができる自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/360-image1-20211126010355.jpg",
+          "local_path": "images/3647/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/360-image2-20211126010355.jpg",
+          "local_path": "images/3647/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3560",
+      "source_url": "https://jihanki.sagase.com/jihanki/3560/",
+      "name": "Blue Bottle Coffee",
+      "location": {
+        "address": "〒152-0035 東京都目黒区自由が丘２丁目８−１６",
+        "latitude": 35.610182,
+        "longitude": 139.667457
+      },
+      "merchandise": [
+        "コーヒー",
+        "羊羹"
+      ],
+      "categories": [
+        "飲み物",
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "BLUE BOTTLE COFFEEさんのコーヒーや羊羹が買える自販機。インスタントコーヒーや豆も買えます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/274-image1-20211124021005.jpg",
+          "local_path": "images/3560/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4167",
+      "source_url": "https://jihanki.sagase.com/jihanki/4167/",
+      "name": "GK Hearty Ramen MEGA Don Quijote",
+      "location": {
+        "address": "埼玉県さいたま市南区白幡5-16-10",
+        "latitude": 35.843063,
+        "longitude": 139.648464
+      },
+      "merchandise": [
+        "二郎系冷凍ラーメン"
+      ],
+      "categories": [
+        "電子マネー対応",
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美"
+      ],
+      "features": [
+        "二郎系の人気ラーメン店の冷凍ラーメンを集めた自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/468-image1-20240326082836.jpg",
+          "local_path": "images/4167/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/468-image2-20240326082836.jpg",
+          "local_path": "images/4167/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/468-image3-20240326082836.jpg",
+          "local_path": "images/4167/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/468-image4-20240326082836.jpg",
+          "local_path": "images/4167/4.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3535",
+      "source_url": "https://jihanki.sagase.com/jihanki/3535/",
+      "name": "MUJI Pocket Essentials",
+      "location": {
+        "address": "〒160-0022 東京都新宿区新宿３丁目１７−１",
+        "latitude": 35.691646,
+        "longitude": 139.704026
+      },
+      "merchandise": [
+        "アメニティ"
+      ],
+      "categories": [
+        "グッズ",
+        "一度は買ってみたい",
+        "買えるのはここだけ"
+      ],
+      "features": [
+        "豊富なアメニティを気軽に買うことができる自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/249-image1-20211123185700.jpg",
+          "local_path": "images/3535/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3490",
+      "source_url": "https://jihanki.sagase.com/jihanki/3490/",
+      "name": "Baseball Museum Souvenirs",
+      "location": {
+        "address": "〒112-0004 東京都文京区後楽１丁目３−６１",
+        "latitude": 35.705837,
+        "longitude": 139.753511
+      },
+      "merchandise": [
+        "野球ボールマグカップペンなど多数"
+      ],
+      "categories": [
+        "一度は買ってみたい",
+        "買えるのはここだけ",
+        "ワクワク"
+      ],
+      "features": [
+        "野球好きにはたまらないお土産が豊富にそろっている自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/204-image1-20211123043738.jpg",
+          "local_path": "images/3490/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3450",
+      "source_url": "https://jihanki.sagase.com/jihanki/3450/",
+      "name": "Apple Cycle Upcycled Products",
+      "location": {
+        "address": "〒150-8510 東京都渋谷区渋谷２丁目２１−１",
+        "latitude": 35.659583,
+        "longitude": 139.703806
+      },
+      "merchandise": [
+        "アップルサイクル"
+      ],
+      "categories": [
+        "グッズ",
+        "映える",
+        "買えるのはここだけ"
+      ],
+      "features": [
+        "買うことで環境問題について考えることができ、捨てられたものに新たな価値を生むことができる自動販売機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/164-image1-20211122235910.jpg",
+          "local_path": "images/3450/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3454",
+      "source_url": "https://jihanki.sagase.com/jihanki/3454/",
+      "name": "Curry Land Regional Curries",
+      "location": {
+        "address": "〒134-0084 東京都江戸川区東葛西９丁目３−３",
+        "latitude": 35.655596,
+        "longitude": 139.886957
+      },
+      "merchandise": [
+        "ご当地レトルトカレー"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "買えるのはここだけ",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "カレーランドのご当地レトルトカレーが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/168-image1-20211123001904.jpg",
+          "local_path": "images/3454/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3334",
+      "source_url": "https://jihanki.sagase.com/jihanki/3334/",
+      "name": "Pantrepreneur Frozen Bread",
+      "location": {
+        "address": "〒214-0012 神奈川県川崎市多摩区中野島６丁目２６−３",
+        "latitude": 35.630625,
+        "longitude": 139.551359
+      },
+      "merchandise": [
+        "冷凍パン"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "買えるのはここだけ",
+        "ワクワク",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "パントレプレナーの冷凍パンが買える自販機。おやつ系とお食事系の組み合わせや、食パンやフランスパンセットなどバラエティ豊か。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/49-image1-20211114114725.jpg",
+          "local_path": "images/3334/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3739",
+      "source_url": "https://jihanki.sagase.com/jihanki/3739/",
+      "name": "Medicinal Dried Fruit",
+      "location": {
+        "address": "東京都江戸川区平井4-15-7（JR平井駅より徒歩約4分）",
+        "latitude": 35.706641,
+        "longitude": 139.845405
+      },
+      "merchandise": [
+        "薬膳ドライフルーツ（なつめ",
+        "なつめスナック",
+        "グリーンレーズン",
+        "あんず）薬膳茶",
+        "ドリンク（菊花茶",
+        "ゴジベリー（クコの実）ジュース）"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "気になるあのお店",
+        "ワクワク",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "頑張った自分にご褒美",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "日本初？！の薬膳ドライフルーツ自販機です。当店1番人気の「なつめ」をはじめ、季節により自販機限定商品も販売します。スーパーなどでは中々見かけない、希少性のある高品質な商品を取り揃えています。約1週間分～の商品が多い為、薬膳が初めての方にもおすすめです。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/422-image1-20220828143019.jpg",
+          "local_path": "images/3739/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/422-image2-20220828143019.jpg",
+          "local_path": "images/3739/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/422-image3-20220828143019.jpg",
+          "local_path": "images/3739/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/422-image4-20220828143146.jpg",
+          "local_path": "images/3739/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/422-image5-20220828143019.jpg",
+          "local_path": "images/3739/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/422-image6-20220828143019.jpg",
+          "local_path": "images/3739/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3567",
+      "source_url": "https://jihanki.sagase.com/jihanki/3567/",
+      "name": "Pipo-kun Police Mascot Goods",
+      "location": {
+        "address": "〒104-0031 東京都中央区京橋３丁目５−１",
+        "latitude": 35.675398,
+        "longitude": 139.770216
+      },
+      "merchandise": [
+        "グッズ"
+      ],
+      "categories": [
+        "グッズ",
+        "一度は買ってみたい",
+        "ワクワク",
+        "お土産に是非"
+      ],
+      "features": [
+        "有名キャラクターピーポくんの、ハンカチやシャーペンなどのグッズが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/281-image1-20211124063538.jpg",
+          "local_path": "images/3567/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3530",
+      "source_url": "https://jihanki.sagase.com/jihanki/3530/",
+      "name": "Ira Craft Cola",
+      "location": {
+        "address": "〒150-0001 東京都渋谷区神宮前６丁目２０−１０",
+        "latitude": 35.663528,
+        "longitude": 139.702261
+      },
+      "merchandise": [
+        "伊良コーラ"
+      ],
+      "categories": [
+        "飲み物",
+        "映える",
+        "一度は買ってみたい",
+        "お土産に是非"
+      ],
+      "features": [
+        "コーラ好きには飲んでみたい伊良コーラが気軽に買うことができる自販機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/244-image1-20211123165844.jpg",
+          "local_path": "images/3530/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3465",
+      "source_url": "https://jihanki.sagase.com/jihanki/3465/",
+      "name": "Nanja Gyoza Stadium",
+      "location": {
+        "address": "〒170-0013 東京都豊島区東池袋３丁目１ サンシャインシティ ワールドインポートマートビル 2F",
+        "latitude": 35.728663,
+        "longitude": 139.719517
+      },
+      "merchandise": [
+        "餃子"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "ワクワク",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "ナンジャタウンが誇る、名店のおいしい餃子が買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/179-image1-20211123011012.jpg",
+          "local_path": "images/3465/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3426",
+      "source_url": "https://jihanki.sagase.com/jihanki/3426/",
+      "name": "Gincho Rice Clay Crafts",
+      "location": {
+        "address": "〒111-0043 東京都台東区駒形１丁目４−１５ 石橋ビル",
+        "latitude": 35.707111,
+        "longitude": 139.795205
+      },
+      "merchandise": [
+        "お米のねんど"
+      ],
+      "categories": [
+        "グッズ",
+        "その他",
+        "ワクワク",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "銀鳥産業さんのお米のねんどがいつでも買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/141-image1-20211119095747.jpg",
+          "local_path": "images/3426/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/141-image2-20211119095747.jpg",
+          "local_path": "images/3426/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3498",
+      "source_url": "https://jihanki.sagase.com/jihanki/3498/",
+      "name": "Camping Supplies Vending Machine",
+      "location": {
+        "address": "〒418-0109 静岡県富士宮市麓１５６",
+        "latitude": 35.399919,
+        "longitude": 138.564633
+      },
+      "merchandise": [
+        "インスタントラーメンマシュマロスポンジ洗剤　など"
+      ],
+      "categories": [
+        "その他"
+      ],
+      "features": [
+        "キャンプで役に立つ商品がたくさん揃っている自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/212-image1-20211123054409.jpg",
+          "local_path": "images/3498/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3583",
+      "source_url": "https://jihanki.sagase.com/jihanki/3583/",
+      "name": "Haraho Hot Spring Water",
+      "location": {
+        "address": "〒410-2514 静岡県伊豆市原保３０５",
+        "latitude": 34.925578,
+        "longitude": 138.99972
+      },
+      "merchandise": [
+        "温泉"
+      ],
+      "categories": [
+        "その他",
+        "一度は買ってみたい",
+        "お土産に是非"
+      ],
+      "features": [
+        "お肌に効果抜群の原保温泉が家でも楽しめる自販機。タンクに入れて持ち帰ります。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/297-image1-20211124081616.jpg",
+          "local_path": "images/3583/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/297-image2-20211124081616.jpg",
+          "local_path": "images/3583/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3630",
+      "source_url": "https://jihanki.sagase.com/jihanki/3630/",
+      "name": "Goldfish Vending Machine",
+      "location": {
+        "address": "〒639-1021 奈良県大和郡山市新木町52",
+        "latitude": 34.641133,
+        "longitude": 135.777212
+      },
+      "merchandise": [
+        "金魚"
+      ],
+      "categories": [
+        "その他",
+        "一度は買ってみたい",
+        "ワクワク",
+        "お土産に是非",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "朝採りの新鮮で元気な金魚が買える自販機。お土産にぜひ。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/344-image1-20211125133001.jpg",
+          "local_path": "images/3630/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/344-image2-20211125133001.jpg",
+          "local_path": "images/3630/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3393",
+      "source_url": "https://jihanki.sagase.com/jihanki/3393/",
+      "name": "ピッツェリアロベルティーノ",
+      "location": {
+        "address": "〒213-0026 神奈川県川崎市高津区久末４０２",
+        "latitude": 35.564859,
+        "longitude": 139.615354
+      },
+      "merchandise": [
+        "ピッツァ",
+        "他"
+      ],
+      "categories": [
+        "電子マネー対応",
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "頑張った自分にご褒美"
+      ],
+      "features": [
+        "ピッツェリアロベルティーノさんの、ピッツァやスパゲティ、もつ煮込みが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/108-image1-20211116070113.jpg",
+          "local_path": "images/3393/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3350",
+      "source_url": "https://jihanki.sagase.com/jihanki/3350/",
+      "name": "Hakata Ramen Debuchan",
+      "location": {
+        "address": "〒169-0075 東京都新宿区高田馬場２丁目１３−６",
+        "latitude": 35.712463,
+        "longitude": 139.707401
+      },
+      "merchandise": [
+        "博多ラーメン",
+        "煮干しラーメン"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "頑張った自分にご褒美"
+      ],
+      "features": [
+        "ラーメン凪の煮干しラーメンやでぶちゃんの博多ラーメンが買える冷凍自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/65-image1-20211115150150.jpg",
+          "local_path": "images/3350/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3608",
+      "source_url": "https://jihanki.sagase.com/jihanki/3608/",
+      "name": "Ohno Farm Fresh Tomatoes",
+      "location": {
+        "address": "〒501-0434 岐阜県本巣郡北方町小柳２丁目９９",
+        "latitude": 35.431861,
+        "longitude": 136.693031
+      },
+      "merchandise": [
+        "トマト"
+      ],
+      "categories": [
+        "食べ物",
+        "その他",
+        "一度は買ってみたい"
+      ],
+      "features": [
+        "農園で取れた新鮮なトマトを気軽に買うことができる自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/322-image1-20211125043141.jpg",
+          "local_path": "images/3608/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3470",
+      "source_url": "https://jihanki.sagase.com/jihanki/3470/",
+      "name": "Kamigohan Rice Balls",
+      "location": {
+        "address": "〒379-1615 群馬県利根郡みなかみ町小仁田２６５−１",
+        "latitude": 36.753804,
+        "longitude": 138.971415
+      },
+      "merchandise": [
+        "米"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "一度は買ってみたい",
+        "気になるあのお店",
+        "買えるのはここだけ",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "ザ",
+        "国民食"
+      ],
+      "features": [
+        "かみごはんさんの新米が買える自販機。お水も買えます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/184-image1-20211123013631.jpg",
+          "local_path": "images/3470/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3517",
+      "source_url": "https://jihanki.sagase.com/jihanki/3517/",
+      "name": "Toast Sandwich Vending Machine",
+      "location": {
+        "address": "〒376-0307 群馬県みどり市東町花輪１９６６−１１",
+        "latitude": 36.521883,
+        "longitude": 139.30686
+      },
+      "merchandise": [
+        "トーストサンド"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "一度は買ってみたい",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "変わらない美味しさのトーストサンド（ハムチーズ）が買えるレトロな自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/231-image1-20211123101034.jpg",
+          "local_path": "images/3517/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3841",
+      "source_url": "https://jihanki.sagase.com/jihanki/3841/",
+      "name": "Cope Bread Vending Machine",
+      "location": {
+        "address": "〒226-0027　神奈川県横浜市緑区長津田５丁目３−１５",
+        "latitude": 35.530725,
+        "longitude": 139.49622
+      },
+      "merchandise": [
+        "プチバタール",
+        "チーズフランス",
+        "プチフランス",
+        "バタークッペ",
+        "黒糖",
+        "プチロール",
+        "食パン（日替わりあり）",
+        "あんパン（こし",
+        "つぶ",
+        "かぼちゃ",
+        "くるみ）",
+        "ドーナツ",
+        "セーグル",
+        "プンパニッケル",
+        "アプフェルブロート"
+      ],
+      "categories": [
+        "電子マネー対応",
+        "食べ物",
+        "名店の味",
+        "気になるあのお店",
+        "買えるのはここだけ",
+        "空腹時にガツンと",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "美味しいパンがたくさん！"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/448-image1-20230420002419.jpg",
+          "local_path": "images/3841/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/448-image2-20230420002419.jpg",
+          "local_path": "images/3841/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3366",
+      "source_url": "https://jihanki.sagase.com/jihanki/3366/",
+      "name": "Pizzeria Pesca",
+      "location": {
+        "address": "〒371-0804 群馬県前橋市六供町１０３０",
+        "latitude": 36.366579,
+        "longitude": 139.076879
+      },
+      "merchandise": [
+        "オリジナルドレッシング",
+        "オイル"
+      ],
+      "categories": [
+        "食材",
+        "名店の味",
+        "気になるあのお店",
+        "ワクワク",
+        "お土産に是非"
+      ],
+      "features": [
+        "PIZZERIA PESCA!の特製生ドレッシング(500円)と辛口万能オイル(600円)が買える自販機。シェフの味が家でも楽しめます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/81-image1-20211116020000.jpg",
+          "local_path": "images/3366/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3590",
+      "source_url": "https://jihanki.sagase.com/jihanki/3590/",
+      "name": "Furusato Regional Rice",
+      "location": {
+        "address": "〒169-0073 東京都新宿区百人町２丁目１７−１",
+        "latitude": 35.701865,
+        "longitude": 139.698809
+      },
+      "merchandise": [
+        "お米"
+      ],
+      "categories": [],
+      "features": [
+        "地域限定のお米を気軽に買うことができます。一人暮らしの方でもおすすめです。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/304-image1-20211124144600.jpg",
+          "local_path": "images/3590/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3537",
+      "source_url": "https://jihanki.sagase.com/jihanki/3537/",
+      "name": "Pokemon Goods Vending Machine",
+      "location": {
+        "address": "〒144-0041 東京都大田区羽田空港３丁目４",
+        "latitude": 35.551115,
+        "longitude": 139.7897
+      },
+      "merchandise": [
+        "ポケモングッズ"
+      ],
+      "categories": [
+        "一度は買ってみたい",
+        "お土産に是非",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "かわいいポケモンのグッズを買うことができる自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/251-image1-20211123191144.jpg",
+          "local_path": "images/3537/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3347",
+      "source_url": "https://jihanki.sagase.com/jihanki/3347/",
+      "name": "Iwashita New Ginger Museum",
+      "location": {
+        "address": "〒328-0034 栃木県栃木市本町１−２５",
+        "latitude": 36.374443,
+        "longitude": 139.740419
+      },
+      "merchandise": [
+        "岩下漬けの素"
+      ],
+      "categories": [
+        "食材",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非"
+      ],
+      "features": [
+        "話題の新生姜を使った岩下漬けの素が買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/62-image1-20211115142256.jpg",
+          "local_path": "images/3347/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3571",
+      "source_url": "https://jihanki.sagase.com/jihanki/3571/",
+      "name": "Tsukishima Monja Okoge",
+      "location": {
+        "address": "〒104-0052 東京都中央区月島３丁目８−９",
+        "latitude": 35.663353,
+        "longitude": 139.781334
+      },
+      "merchandise": [
+        "もんじゃ"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "ワクワク",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる"
+      ],
+      "features": [
+        "月島もんじゃ おこげさんのお店のもんじゃが家でも楽しめる自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/285-image1-20211124070245.jpg",
+          "local_path": "images/3571/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3551",
+      "source_url": "https://jihanki.sagase.com/jihanki/3551/",
+      "name": "Feed Me Orange Fresh Juice",
+      "location": {
+        "address": "〒150-0041 東京都渋谷区神南１丁目２２−６",
+        "latitude": 35.660885,
+        "longitude": 139.701102
+      },
+      "merchandise": [
+        "生絞りオレンジジュース"
+      ],
+      "categories": [
+        "飲み物",
+        "映える",
+        "一度は買ってみたい",
+        "ワクワク",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "一杯に3～4個のオレンジを使用し、その場で絞る自販機。とてもフレッシュで飲みやすい。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/265-image1-20211124010453.jpg",
+          "local_path": "images/3551/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4163",
+      "source_url": "https://jihanki.sagase.com/jihanki/4163/",
+      "name": "GK Hearty Ramen Akabane Station",
+      "location": {
+        "address": "東京都北区赤羽西1-4-7",
+        "latitude": 35.776333,
+        "longitude": 139.721009
+      },
+      "merchandise": [
+        "二郎系冷凍ラーメン"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美"
+      ],
+      "features": [
+        "二郎系の人気ラーメン店の冷凍ラーメンを集めた自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/467-image1-20240322013913.jpg",
+          "local_path": "images/4163/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/467-image2-20240322013913.jpg",
+          "local_path": "images/4163/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/467-image3-20240322013913.jpg",
+          "local_path": "images/4163/3.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3742",
+      "source_url": "https://jihanki.sagase.com/jihanki/3742/",
+      "name": "Hanok Korean Kimchi",
+      "location": {
+        "address": "〒320-0833 栃木県宇都宮市不動前３丁目１−２２",
+        "latitude": 36.545208,
+        "longitude": 139.879017
+      },
+      "merchandise": [
+        "キムチ",
+        "チャンジャ"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "名店の味",
+        "お土産に是非",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "お酒のお供に"
+      ],
+      "features": [
+        "白菜キムチ、大根キムチなど種類豊富な本格・手作りキムチが買える自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/425-image1-20220902155709.jpg",
+          "local_path": "images/3742/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3718",
+      "source_url": "https://jihanki.sagase.com/jihanki/3718/",
+      "name": "Mamesho Ubukata Peanuts",
+      "location": {
+        "address": "千葉県八街市八街に95",
+        "latitude": 35.660911,
+        "longitude": 140.323304
+      },
+      "merchandise": [
+        "落花生"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "気になるあのお店",
+        "ワクワク",
+        "リラックスしたいときに",
+        "お酒のお供に",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "千葉県八街産の落花生を、工場直販しております。煎りたて・詰立ての美味しい本場の味を是非お試しください。電子マネーも対応しています。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/401-image1-20220701134647.jpg",
+          "local_path": "images/3718/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/401-image2-20220701134920.jpg",
+          "local_path": "images/3718/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/401-image3-20220701134920.jpg",
+          "local_path": "images/3718/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/401-image4-20220701134920.jpg",
+          "local_path": "images/3718/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/401-image5-20220701134920.jpg",
+          "local_path": "images/3718/5.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3306",
+      "source_url": "https://jihanki.sagase.com/jihanki/3306/",
+      "name": "Yorozuya Miura Pocket Shop",
+      "location": {
+        "address": "岩手県北上市立花１４地割２１−１　北上展勝地レストハウス入口",
+        "latitude": 39.272154,
+        "longitude": 141.126406
+      },
+      "merchandise": [
+        "食べ物",
+        "お菓子",
+        "グッズ"
+      ],
+      "categories": [
+        "食べ物",
+        "グッズ",
+        "その他",
+        "一度は買ってみたい",
+        "買えるのはここだけ",
+        "ワクワク",
+        "お土産に是非",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "秋田のおみやげ自販機。幼虫チョコをはじめ、バラエティ豊かなお土産が勢ぞろい。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/22-image1-20211109062703.jpg",
+          "local_path": "images/3306/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/22-image2-20211109062703.jpg",
+          "local_path": "images/3306/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/22-image3-20211109062703.jpg",
+          "local_path": "images/3306/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/22-image4-20211109062703.jpg",
+          "local_path": "images/3306/4.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3467",
+      "source_url": "https://jihanki.sagase.com/jihanki/3467/",
+      "name": "Misono Strawberry Land",
+      "location": {
+        "address": "〒336-0965 埼玉県さいたま市緑区間宮８０３",
+        "latitude": 35.879591,
+        "longitude": 139.715787
+      },
+      "merchandise": [
+        "苺"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "名店の味",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "美園いちごランドさんこだわりの、大粒の甘い苺が買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/181-image1-20211123012624.jpg",
+          "local_path": "images/3467/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/181-image2-20211123012624.jpg",
+          "local_path": "images/3467/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3312",
+      "source_url": "https://jihanki.sagase.com/jihanki/3312/",
+      "name": "NOCO Bonbon Sweets",
+      "location": {
+        "address": "千葉県千葉市稲毛区小深町280-65",
+        "latitude": 35.664096,
+        "longitude": 140.150671
+      },
+      "merchandise": [
+        "マカロン"
+      ],
+      "categories": [
+        "食べ物",
+        "名店の味",
+        "ワクワク",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "頑張った自分にご褒美",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "NOCObonbonさんの店前にある、こだわりのマカロンがいつでも買える自販機。いろんな味が楽しめます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/28-image1-20211109073621.jpg",
+          "local_path": "images/3312/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3456",
+      "source_url": "https://jihanki.sagase.com/jihanki/3456/",
+      "name": "Origami Paper Vending Machine",
+      "location": {
+        "address": "〒321-1401 栃木県日光市上鉢石町１０２４",
+        "latitude": 36.753086,
+        "longitude": 139.605275
+      },
+      "merchandise": [
+        "折り紙"
+      ],
+      "categories": [
+        "グッズ",
+        "その他",
+        "一度は買ってみたい",
+        "買えるのはここだけ",
+        "ワクワク",
+        "お土産に是非"
+      ],
+      "features": [
+        "日光東照宮近くの、折り紙の作品が買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/170-image1-20211123002617.jpg",
+          "local_path": "images/3456/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/170-image2-20211123002617.jpg",
+          "local_path": "images/3456/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3558",
+      "source_url": "https://jihanki.sagase.com/jihanki/3558/",
+      "name": "Tom and Jerry Goods",
+      "location": {
+        "address": "〒180-0004 東京都武蔵野市吉祥寺本町２丁目３−１　屋上",
+        "latitude": 35.705102,
+        "longitude": 139.577922
+      },
+      "merchandise": [
+        "グッズ"
+      ],
+      "categories": [
+        "グッズ",
+        "一度は買ってみたい"
+      ],
+      "features": [
+        "大人気のトムとジェリーのグッズが買える可愛らしいデザインの自販機。コースターやポーチがあります。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/272-image1-20211124014853.jpg",
+          "local_path": "images/3558/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/272-image2-20211124014853.jpg",
+          "local_path": "images/3558/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3772",
+      "source_url": "https://jihanki.sagase.com/jihanki/3772/",
+      "name": "Italian Bar Eight North",
+      "location": {
+        "address": "〒276-0020 千葉県八千代市勝田台北1-3-19新緑ビル1F",
+        "latitude": 35.717213,
+        "longitude": 140.125575
+      },
+      "merchandise": [
+        "パスタ",
+        "リゾット",
+        "オードブル",
+        "お肉料理など"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "一度は買ってみたい",
+        "名店の味",
+        "気になるあのお店",
+        "ワクワク",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "頑張った自分にご褒美"
+      ],
+      "features": [
+        "エイトノースが手掛ける冷凍食品【お家でお店の味シリーズ】を販売している冷凍自販機です。湯煎での簡単調理や冷蔵庫で解凍するだけでお店の味を楽しめます。ちょっとした記念日などのお祝いや、家呑みなどにぜひご利用ください。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/440-image1-20230120074844.jpg",
+          "local_path": "images/3772/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/440-image2-20230120074844.jpg",
+          "local_path": "images/3772/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/440-image3-20230120074844.jpg",
+          "local_path": "images/3772/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/440-image4-20230120074844.jpg",
+          "local_path": "images/3772/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/440-image5-20230120074844.jpg",
+          "local_path": "images/3772/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/440-image6-20230120074844.jpg",
+          "local_path": "images/3772/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3451",
+      "source_url": "https://jihanki.sagase.com/jihanki/3451/",
+      "name": "Fortune Telling Omikuji Machine",
+      "location": {
+        "address": "〒819-1304 福岡県糸島市志摩桜井４２２７",
+        "latitude": 33.628369,
+        "longitude": 130.192436
+      },
+      "merchandise": [
+        "おみくじ"
+      ],
+      "categories": [
+        "グッズ",
+        "その他",
+        "一度は買ってみたい",
+        "買えるのはここだけ"
+      ],
+      "features": [
+        "櫻井神社のおみくじが20円で買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/165-image1-20211123000359.jpg",
+          "local_path": "images/3451/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3344",
+      "source_url": "https://jihanki.sagase.com/jihanki/3344/",
+      "name": "Ikoi no Mise Cafe Rio",
+      "location": {
+        "address": "〒276-0033 千葉県八千代市八千代台南１丁目１−１０",
+        "latitude": 35.700215,
+        "longitude": 140.089699
+      },
+      "merchandise": [
+        "肉"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非"
+      ],
+      "features": [
+        "喫茶Rioの、ヘルシー＆ジューシーなポークが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/59-image1-20211115140229.jpg",
+          "local_path": "images/3344/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/59-image2-20211115140229.jpg",
+          "local_path": "images/3344/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3455",
+      "source_url": "https://jihanki.sagase.com/jihanki/3455/",
+      "name": "Kumamon Character Goods",
+      "location": {
+        "address": "〒144-0041 東京都大田区羽田空港２丁目",
+        "latitude": 35.544451,
+        "longitude": 139.767973
+      },
+      "merchandise": [
+        "くまモンのグッズ"
+      ],
+      "categories": [
+        "グッズ",
+        "ワクワク",
+        "お土産に是非",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "国際線のターミナルにあり、日本人だけではなく外国人にも人気の自動販売機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/169-image1-20211123002607.jpg",
+          "local_path": "images/3455/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3483",
+      "source_url": "https://jihanki.sagase.com/jihanki/3483/",
+      "name": "Robo Shop Robot Goods",
+      "location": {
+        "address": "〒135-0064 東京都江東区青海１丁目１−１０",
+        "latitude": 35.625394,
+        "longitude": 139.776318
+      },
+      "merchandise": [
+        "フィギュア"
+      ],
+      "categories": [
+        "グッズ",
+        "映える",
+        "ワクワク"
+      ],
+      "features": [
+        "中国全土で1,300台以上展開している人気の自販機です豊富な商品をわくわくしながら選ぶ楽しさがたくさん詰まっています"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/197-image1-20211123033051.jpg",
+          "local_path": "images/3483/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3307",
+      "source_url": "https://jihanki.sagase.com/jihanki/3307/",
+      "name": "Gohozoyama Nakayamadera Temple",
+      "location": {
+        "address": "佐賀県三養基郡基山町小倉１６４５",
+        "latitude": 33.427822,
+        "longitude": 130.533522
+      },
+      "merchandise": [
+        "おみくじ",
+        "お守り"
+      ],
+      "categories": [
+        "グッズ",
+        "その他",
+        "お土産に是非"
+      ],
+      "features": [
+        "御宝蔵山 中山寺のおみくじやお守りが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/23-image1-20211109063516.jpg",
+          "local_path": "images/3307/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3638",
+      "source_url": "https://jihanki.sagase.com/jihanki/3638/",
+      "name": "Pacuti Sisters Sweets",
+      "location": {
+        "address": "〒276-0046 千葉県八千代市大和田新田８８５−５",
+        "latitude": 35.733067,
+        "longitude": 140.08356
+      },
+      "merchandise": [
+        "パクチー（ペースト",
+        "ドライ",
+        "クッキー）"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "ワクワク",
+        "お土産に是非",
+        "リラックスしたいときに"
+      ],
+      "features": [
+        "PACUTI SISTERSさんのパクチーやパクチーを使ったオリジナル商品がいつでも買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/352-image1-20211125155624.jpg",
+          "local_path": "images/3638/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/352-image2-20211125155624.jpg",
+          "local_path": "images/3638/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3531",
+      "source_url": "https://jihanki.sagase.com/jihanki/3531/",
+      "name": "Sanrio Lottery Machine",
+      "location": {
+        "address": "〒144-0041 東京都大田区羽田空港２丁目",
+        "latitude": 35.545561,
+        "longitude": 139.765871
+      },
+      "merchandise": [
+        "サンリオのくじ"
+      ],
+      "categories": [
+        "グッズ",
+        "一度は買ってみたい",
+        "ワクワク"
+      ],
+      "features": [
+        "サンリオのかわいい商品を気軽に買うことができる自販機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/245-image1-20211123170855.jpg",
+          "local_path": "images/3531/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3383",
+      "source_url": "https://jihanki.sagase.com/jihanki/3383/",
+      "name": "Creators Art Vending Machine",
+      "location": {
+        "address": "〒329-0201 栃木県小山市粟宮１丁目１３−４１",
+        "latitude": 36.292904,
+        "longitude": 139.78649
+      },
+      "merchandise": [
+        "グッズ"
+      ],
+      "categories": [
+        "グッズ",
+        "買えるのはここだけ",
+        "ワクワク"
+      ],
+      "features": [
+        "NPO法人あおりんごによる、ハンドメイド作家さんの商品を販売している自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/98-image1-20211116052148.jpg",
+          "local_path": "images/3383/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/98-image2-20211116052148.jpg",
+          "local_path": "images/3383/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3493",
+      "source_url": "https://jihanki.sagase.com/jihanki/3493/",
+      "name": "Koji Miso Vending Machine",
+      "location": {
+        "address": "〒939-8081 富山県富山市堀川小泉町７９３−１０",
+        "latitude": 36.676332,
+        "longitude": 137.22473
+      },
+      "merchandise": [
+        "麹味噌味噌甘酒"
+      ],
+      "categories": [
+        "食材",
+        "その他",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非"
+      ],
+      "features": [
+        "自家製の麹と味噌を手軽に買うことができ、とても便利な自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/207-image1-20211123051209.jpg",
+          "local_path": "images/3493/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3327",
+      "source_url": "https://jihanki.sagase.com/jihanki/3327/",
+      "name": "Asahiya Honten Sweets",
+      "location": {
+        "address": "〒248-0005 神奈川県鎌倉市雪ノ下３丁目３−２１旭屋本店店舗前",
+        "latitude": 35.323602,
+        "longitude": 139.558178
+      },
+      "merchandise": [
+        "くずバー"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "ワクワク",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "旭屋本店のバラエティ豊かな味が楽しめるくずバーが買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/42-image1-20211114105816.jpg",
+          "local_path": "images/3327/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3516",
+      "source_url": "https://jihanki.sagase.com/jihanki/3516/",
+      "name": "Kuroki Textile Goods",
+      "location": {
+        "address": "〒819-0165 福岡県福岡市西区今津４７９８−１４１",
+        "latitude": 33.60956,
+        "longitude": 130.243605
+      },
+      "merchandise": [
+        "博多織"
+      ],
+      "categories": [
+        "グッズ",
+        "その他",
+        "映える",
+        "一度は買ってみたい"
+      ],
+      "features": [
+        "黒木織物さんの美しい柄の博多織が買える自販機。御朱印帳や名刺入れが買えます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/230-image1-20211123100615.jpg",
+          "local_path": "images/3516/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/230-image2-20211123100615.jpg",
+          "local_path": "images/3516/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3557",
+      "source_url": "https://jihanki.sagase.com/jihanki/3557/",
+      "name": "Crest Mystery Machine",
+      "location": {
+        "address": "〒904-0116 沖縄県中頭郡北谷町北谷１丁目２−６",
+        "latitude": 26.309126,
+        "longitude": 127.762766
+      },
+      "merchandise": [
+        "雑貨",
+        "琉歌が書かれたミニ掛け軸"
+      ],
+      "categories": [
+        "グッズ",
+        "その他",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "日常の中に当たり前に「しまくとぅば」がある環境をつくることを目的として設置された、文化に触れられる自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/271-image1-20211124013904.jpg",
+          "local_path": "images/3557/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3593",
+      "source_url": "https://jihanki.sagase.com/jihanki/3593/",
+      "name": "Pop Mart Blind Box",
+      "location": {
+        "address": "〒150-0001 東京都渋谷区神宮前１丁目１６−４ 原宿アルタ",
+        "latitude": 35.671063,
+        "longitude": 139.705054
+      },
+      "merchandise": [
+        "フィギュア"
+      ],
+      "categories": [
+        "電子マネー対応",
+        "グッズ",
+        "一度は買ってみたい"
+      ],
+      "features": [
+        "様々な人気のフィギュアを購入することができる自販機です外装もとてもおしゃれです"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/307-image1-20211124152954.jpg",
+          "local_path": "images/3593/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3526",
+      "source_url": "https://jihanki.sagase.com/jihanki/3526/",
+      "name": "Anime Figure Vending Machine",
+      "location": {
+        "address": "〒144-0041 東京都大田区羽田空港２丁目",
+        "latitude": 35.546926,
+        "longitude": 139.766816
+      },
+      "merchandise": [
+        "フィギュア"
+      ],
+      "categories": [
+        "グッズ",
+        "ワクワク",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "アニメの人気キャラクターのフィギュアを買うことができる自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/240-image1-20211123162212.jpg",
+          "local_path": "images/3526/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3527",
+      "source_url": "https://jihanki.sagase.com/jihanki/3527/",
+      "name": "Face Mask Vending Machine",
+      "location": {
+        "address": "〒144-0041 東京都大田区羽田空港２丁目",
+        "latitude": 35.547345,
+        "longitude": 139.766988
+      },
+      "merchandise": [
+        "マスク"
+      ],
+      "categories": [
+        "グッズ"
+      ],
+      "features": [
+        "清潔なマスクを気軽に買うことができる自販機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/241-image1-20211123162733.jpg",
+          "local_path": "images/3527/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3444",
+      "source_url": "https://jihanki.sagase.com/jihanki/3444/",
+      "name": "Cocon Sweets",
+      "location": {
+        "address": "〒424-0017 静岡県静岡市清水区天王東８−１３",
+        "latitude": 35.03079,
+        "longitude": 138.461338
+      },
+      "merchandise": [
+        "メロンパン手作りキット"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "ちびっこ大好き",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "自宅で簡単に焼きたてメロンパンが作れるキットが買える自販機。冷凍生地×６個・オーブンシート１枚・グラニュー糖２０ｇ・簡単レシピ・リーフレットがついて1000円。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/159-image1-20211120110740.jpg",
+          "local_path": "images/3444/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4657",
+      "source_url": "https://jihanki.sagase.com/jihanki/4657/",
+      "name": "55 Minutes Snack Break",
+      "location": {
+        "address": "岡山県赤磐市桜が丘東5-5-46",
+        "latitude": 34.783432,
+        "longitude": 134.041053
+      },
+      "merchandise": [
+        "ドリンク",
+        "チケット",
+        "犬のおやつ",
+        "駄菓子"
+      ],
+      "categories": [
+        "飲み物",
+        "食べ物",
+        "チケット",
+        "クーポン",
+        "ワクワク"
+      ],
+      "features": [
+        "わくわくお楽しみ自販機"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/496-image1-20250414035756.jpg",
+          "local_path": "images/4657/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/496-image2-20250414035756.jpg",
+          "local_path": "images/4657/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/496-image3-20250414035756.jpg",
+          "local_path": "images/4657/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/496-image4-20250414035756.jpg",
+          "local_path": "images/4657/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/496-image5-20250414035756.jpg",
+          "local_path": "images/4657/5.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3756",
+      "source_url": "https://jihanki.sagase.com/jihanki/3756/",
+      "name": "Innovation Vending Machine 1st Gen",
+      "location": {
+        "address": "〒371-8570 群馬県前橋市大手町１丁目１−１　32階NETSUGEN内",
+        "latitude": 36.390693,
+        "longitude": 139.060272
+      },
+      "merchandise": [
+        "〇コオロギのチョコクランチ(FUTURENAUT) 400円〇丸ごとクリケット　ランダムの4種の味付(FUTURENAUT)500円〇ハーブ香るジャム「ラベンダー×ブルーベリー」(渋川飯塚ファーム)650円〇ハーブティーAKANE（いちご＆ローズヒップ）(渋川飯塚ファーム)880円〇オリーブ抹茶(ジャングルデリバリー)1000円〇レモンフレーバーオリーブオイル(ジャングルデリバリー)1000円〇堀越ファームの肉味噌【ao】(堀越ファーム)900円〇堀越ファームの生姜焼きのたれ【梨】(堀越ファーム)900円〇ランダムぱくぱくクッキー（うさぎパッケージ入り）(２ひきのうさぎ)400円〇こんにゃくのフィナンシェ(２ひきのうさぎ)600円"
+      ],
+      "categories": [
+        "食べ物",
+        "食材",
+        "グッズ",
+        "一度は買ってみたい",
+        "名店の味",
+        "ワクワク",
+        "お土産に是非",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "甘いものは別腹",
+        "意識の高い方へ"
+      ],
+      "features": [
+        "群馬県の事業者による自販機です。商品に記載されているＱRコードを読み込んで、事業者からのアンケートに回答するとクーポンがもらえます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/433-image1-20230512081437.jpg",
+          "local_path": "images/3756/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/433-image2-20230512082106.jpg",
+          "local_path": "images/3756/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/433-image3-20230512082106.jpg",
+          "local_path": "images/3756/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/433-image4-20230512082106.jpg",
+          "local_path": "images/3756/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/433-image5-20230512082106.jpg",
+          "local_path": "images/3756/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/433-image6-20230512082130.jpg",
+          "local_path": "images/3756/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3572",
+      "source_url": "https://jihanki.sagase.com/jihanki/3572/",
+      "name": "Oto Wakuwaku Hot Spring",
+      "location": {
+        "address": "〒857-1161 長崎県佐世保市大塔町",
+        "latitude": 33.156368,
+        "longitude": 129.778674
+      },
+      "merchandise": [
+        "温泉"
+      ],
+      "categories": [
+        "その他",
+        "一度は買ってみたい",
+        "ワクワク",
+        "お土産に是非"
+      ],
+      "features": [
+        "天然温泉が60L100円で買える自販機。家で温泉気分が味わえます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/286-image1-20211124070748.jpg",
+          "local_path": "images/3572/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/286-image2-20211124070748.jpg",
+          "local_path": "images/3572/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3355",
+      "source_url": "https://jihanki.sagase.com/jihanki/3355/",
+      "name": "Hoshiimo Shrine Dried Sweet Potato",
+      "location": {
+        "address": "〒311-1201 茨城県ひたちなか市阿字ケ浦町178番地",
+        "latitude": 36.38308,
+        "longitude": 140.61421
+      },
+      "merchandise": [
+        "干し芋"
+      ],
+      "categories": [
+        "食べ物",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "甘いものは別腹",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "ほしいも神社の休憩所にある自販機。懐かしさいっぱい。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/70-image1-20211116002019.jpg",
+          "local_path": "images/3355/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3721",
+      "source_url": "https://jihanki.sagase.com/jihanki/3721/",
+      "name": "Sandaime Tokunaga Meat",
+      "location": {
+        "address": "富山県中新川郡立山町浦田331-3",
+        "latitude": 36.69872,
+        "longitude": 137.317637
+      },
+      "merchandise": [
+        "徳永の煮豚180g（600円）",
+        "徳永の味付ホルモン200g×2（600円）",
+        "徳永のもつ煮200g×2（800円）",
+        "長州力の旨辛みそホルモン170g×2（1",
+        "000円）",
+        "おつまみ塩焼きとり80g×2（400円）",
+        "徳永のコロコロホルモンコク旨しょうゆ味150g×2（700円）"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "お酒のお供に",
+        "頑張った自分にご褒美",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "お酒のおつまみや夕食のおかずにピッタリなホルモン、チャーシュー専用の自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/404-image1-20220711024553.jpg",
+          "local_path": "images/3721/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/404-image2-20220709050941.jpg",
+          "local_path": "images/3721/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/404-image3-20220709050941.jpg",
+          "local_path": "images/3721/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/404-image4-20220709050941.jpg",
+          "local_path": "images/3721/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/404-image5-20220709050941.jpg",
+          "local_path": "images/3721/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/404-image6-20220711024731.jpg",
+          "local_path": "images/3721/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3588",
+      "source_url": "https://jihanki.sagase.com/jihanki/3588/",
+      "name": "Earring & Piercing Machine",
+      "location": {
+        "address": "〒532-0024 大阪府大阪市淀川区十三本町１丁目２",
+        "latitude": 34.720787,
+        "longitude": 135.481944
+      },
+      "merchandise": [
+        "イアリングピアス"
+      ],
+      "categories": [
+        "一度は買ってみたい",
+        "気になるあの子に"
+      ],
+      "features": [
+        "可愛いピアスやイアリングを気軽に買うことができる自販機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/302-image1-20211124142009.jpg",
+          "local_path": "images/3588/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "4172",
+      "source_url": "https://jihanki.sagase.com/jihanki/4172/",
+      "name": "Yufuin Onsen Mushisha",
+      "location": {
+        "address": "大分県由布市 湯布院町川北1251-1",
+        "latitude": 33.259342,
+        "longitude": 131.341531
+      },
+      "merchandise": [
+        "地卵のプリン"
+      ],
+      "categories": [
+        "食べ物",
+        "映える",
+        "一度は買ってみたい",
+        "名店の味",
+        "気になるあのお店",
+        "ワクワク",
+        "お土産に是非",
+        "リラックスしたいときに",
+        "急に無性に食べたくなる",
+        "頑張った自分にご褒美",
+        "ちびっこ大好き",
+        "気になるあの子に",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "おいしい地卵のプリン3種類を販売してます。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/472-image1-20240419001451.jpg",
+          "local_path": "images/4172/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/472-image2-20240419001451.jpg",
+          "local_path": "images/4172/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/472-image3-20240419001451.jpg",
+          "local_path": "images/4172/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/472-image4-20240419001451.jpg",
+          "local_path": "images/4172/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/472-image5-20240419001451.jpg",
+          "local_path": "images/4172/5.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3331",
+      "source_url": "https://jihanki.sagase.com/jihanki/3331/",
+      "name": "Restaurant Fugetsu",
+      "location": {
+        "address": "〒939-1104 富山県高岡市戸出町３丁目７−１",
+        "latitude": 36.684133,
+        "longitude": 136.980345
+      },
+      "merchandise": [
+        "鶏もつ煮"
+      ],
+      "categories": [
+        "食べ物",
+        "一度は買ってみたい",
+        "名店の味",
+        "お土産に是非",
+        "空腹時にガツンと",
+        "夜食に是非",
+        "急に無性に食べたくなる",
+        "お酒のお供に",
+        "頑張った自分にご褒美",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "老舗食堂 風月の鶏もつ煮が買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/46-image1-20211114112827.jpg",
+          "local_path": "images/3331/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3599",
+      "source_url": "https://jihanki.sagase.com/jihanki/3599/",
+      "name": "Jihanki Ichiba Market",
+      "location": {
+        "address": "〒369-0306 埼玉県児玉郡上里町七本木２９４８−２ メゾンMk 101",
+        "latitude": 36.237143,
+        "longitude": 139.148365
+      },
+      "merchandise": [
+        "ポケモンの虫かご"
+      ],
+      "categories": [
+        "グッズ",
+        "お土産に是非",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "かわいいポケモンの虫かごを買うことができる自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/313-image1-20211124175954.jpg",
+          "local_path": "images/3599/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3486",
+      "source_url": "https://jihanki.sagase.com/jihanki/3486/",
+      "name": "Sakamoto Ryoma Historical Goods",
+      "location": {
+        "address": "〒850-0871 長崎県長崎市麹屋町６−６",
+        "latitude": 32.748617,
+        "longitude": 129.883804
+      },
+      "merchandise": [
+        "坂本龍馬のお守りフィギュア"
+      ],
+      "categories": [
+        "グッズ",
+        "映える",
+        "ワクワク",
+        "お土産に是非"
+      ],
+      "features": [
+        "坂本龍馬ファンなら必ず寄るべき自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/200-image1-20211123035214.jpg",
+          "local_path": "images/3486/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3737",
+      "source_url": "https://jihanki.sagase.com/jihanki/3737/",
+      "name": "Stone & Cafe Ange",
+      "location": {
+        "address": "〒510-0943 三重県四日市市西日野町１８７１−１８１",
+        "latitude": 34.96056,
+        "longitude": 136.576984
+      },
+      "merchandise": [
+        "ストーン"
+      ],
+      "categories": [
+        "グッズ",
+        "一度は買ってみたい",
+        "ワクワク",
+        "空腹時にガツンと"
+      ],
+      "features": [
+        "パワーストーンが24時間買える自販機です。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/420-image1-20220801063606.jpg",
+          "local_path": "images/3737/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/420-image2-20230621020447.jpg",
+          "local_path": "images/3737/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/420-image3-20230621020447.jpg",
+          "local_path": "images/3737/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/420-image4-20230621020447.jpg",
+          "local_path": "images/3737/4.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/420-image5-20230621020447.jpg",
+          "local_path": "images/3737/5.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/420-image6-20230621020447.jpg",
+          "local_path": "images/3737/6.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3293",
+      "source_url": "https://jihanki.sagase.com/jihanki/3293/",
+      "name": "Hygge Comfort Goods",
+      "location": {
+        "address": "高崎市石原町4518",
+        "latitude": 36.309693,
+        "longitude": 139.005723
+      },
+      "merchandise": [
+        "ウンチ袋"
+      ],
+      "categories": [
+        "グッズ",
+        "ワクワク"
+      ],
+      "features": [
+        "お洒落なパッケージと機能性をもった、わんちゃんのウンチ袋販売自販機。飲み物とお菓子も売っています。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/9-image1-20211109025648.jpg",
+          "local_path": "images/3293/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/9-image2-20211109025648.jpg",
+          "local_path": "images/3293/2.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3496",
+      "source_url": "https://jihanki.sagase.com/jihanki/3496/",
+      "name": "Pantograps Design Goods",
+      "location": {
+        "address": "〒231-0861 神奈川県横浜市中区元町３丁目１１９",
+        "latitude": 35.448657,
+        "longitude": 139.670826
+      },
+      "merchandise": [
+        "レース"
+      ],
+      "categories": [
+        "グッズ",
+        "ワクワク"
+      ],
+      "features": [
+        "老舗レース専門店の高級レースをリーズナブルに買うことができる自販機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/210-image1-20211123053330.jpg",
+          "local_path": "images/3496/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3449",
+      "source_url": "https://jihanki.sagase.com/jihanki/3449/",
+      "name": "Yuru Camp Goods",
+      "location": {
+        "address": "山梨県西八代郡市川三郷町岩間437 谷川商事株式会社前",
+        "latitude": 35.499128,
+        "longitude": 138.465773
+      },
+      "merchandise": [
+        "しまりんだんご　こしあん　860円ほうとう　860円もも焼き　（3Dポストカード付き）1290円"
+      ],
+      "categories": [
+        "食べ物",
+        "グッズ",
+        "一度は買ってみたい",
+        "買えるのはここだけ",
+        "お土産に是非",
+        "甘いものは別腹"
+      ],
+      "features": [
+        "大人気アニメゆるキャン△の商品が買える自販機。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/163-image1-20211122235632.jpg",
+          "local_path": "images/3449/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3354",
+      "source_url": "https://jihanki.sagase.com/jihanki/3354/",
+      "name": "Camping Supplies",
+      "location": {
+        "address": "〒811-1355 福岡県福岡市南区桧原",
+        "latitude": 33.516464,
+        "longitude": 130.375328
+      },
+      "merchandise": [
+        "キャンプ用品"
+      ],
+      "categories": [
+        "グッズ"
+      ],
+      "features": [
+        "油山市民の森 キャンプ場にある、キャンプ用品が買える自販機。困ったときに便利！"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/69-image1-20211116001035.jpg",
+          "local_path": "images/3354/1.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/69-image2-20211116001035.jpg",
+          "local_path": "images/3354/2.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/69-image3-20211116001035.jpg",
+          "local_path": "images/3354/3.jpg"
+        },
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/69-image4-20211116001035.jpg",
+          "local_path": "images/3354/4.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3379",
+      "source_url": "https://jihanki.sagase.com/jihanki/3379/",
+      "name": "Kawakami Bubble Wrap",
+      "location": {
+        "address": "〒453-0818 愛知県名古屋市中村区千成通２丁目５０",
+        "latitude": 35.16303,
+        "longitude": 136.866656
+      },
+      "merchandise": [
+        "プチプチ"
+      ],
+      "categories": [
+        "グッズ",
+        "一度は買ってみたい",
+        "懐かしさいっぱい"
+      ],
+      "features": [
+        "クセになるプチプチが買える自販機。500円で60cm×42mもの大きさ。"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/94-image1-20211116045241.jpg",
+          "local_path": "images/3379/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "3546",
+      "source_url": "https://jihanki.sagase.com/jihanki/3546/",
+      "name": "Commemorative Medal Machine",
+      "location": {
+        "address": "〒790-0008 愛媛県松山市大街道３丁目２−４６ ロープウェイ・リフトのりば",
+        "latitude": 33.866052,
+        "longitude": 132.766715
+      },
+      "merchandise": [
+        "メダル"
+      ],
+      "categories": [
+        "グッズ",
+        "一度は買ってみたい",
+        "ちびっこ大好き"
+      ],
+      "features": [
+        "思いで作りに気軽にメダルを作ることができる自販機です"
+      ],
+      "images": [
+        {
+          "url": "https://jihanki.sagase.com/wp/wp-content/uploads/jihanki/260-image1-20211123205657.jpg",
+          "local_path": "images/3546/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5001",
+      "source_url": null,
+      "name": "Weird Vending Machine Corner",
+      "name_en": "Weird Vending Machine Corner",
+      "location": {
+        "address": "2-19-7 Kanda Sudacho, Chiyoda-ku, Tokyo",
+        "latitude": 35.6983,
+        "longitude": 139.7731
+      },
+      "merchandise": [
+        "その他"
+      ],
+      "categories": [
+        "珍しい"
+      ],
+      "features": [
+        "A corner dedicated to strange and unusual vending machines. Multiple weird items available."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5001/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5002",
+      "source_url": null,
+      "name": "Love Letter Vending Machine",
+      "name_en": "Love Letter Vending Machine",
+      "location": {
+        "address": "M's Akihabara Building, Sotokanda, Chiyoda-ku, Tokyo",
+        "latitude": 35.6984,
+        "longitude": 139.7711
+      },
+      "merchandise": [
+        "その他"
+      ],
+      "categories": [
+        "珍しい"
+      ],
+      "features": [
+        "Vending machine selling love letters addressed to \"onii-chan\". Peak Akihabara culture."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5002/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5003",
+      "source_url": null,
+      "name": "Edible Insects Vending Machine",
+      "name_en": "Edible Insects Vending Machine",
+      "location": {
+        "address": "Near Takadanobaba, in front of Kome to Circus izakaya, 2-19-8 Takadanobaba, Shinjuku-ku, Tokyo",
+        "latitude": 35.7044,
+        "longitude": 139.5799
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "珍しい",
+        "食べ物"
+      ],
+      "features": [
+        "Bug snacks vending machine. Crickets, larvae, and other edible insects for the adventurous."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5003/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5004",
+      "source_url": null,
+      "name": "The Bench - Futuristic Vending Machine",
+      "name_en": "The Bench - Futuristic Vending Machine",
+      "location": {
+        "address": "JR Shinjuku Station EATo LUMINE, B1F near West Exit",
+        "latitude": 35.6896,
+        "longitude": 139.7006
+      },
+      "merchandise": [
+        "飲み物"
+      ],
+      "categories": [
+        "珍しい",
+        "飲み物"
+      ],
+      "features": [
+        "Futuristic vending machine that emits scents and plays projection mapping with your purchase. A sensory experience."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5004/1.webp"
+        }
+      ]
+    },
+    {
+      "source_id": "5005",
+      "source_url": null,
+      "name": "MUJI Pocket",
+      "name_en": "MUJI Pocket",
+      "location": {
+        "address": "3-17-1 Shinjuku, Shinjuku-ku, Tokyo",
+        "latitude": 35.6905,
+        "longitude": 139.7003
+      },
+      "merchandise": [
+        "その他"
+      ],
+      "categories": [
+        "珍しい"
+      ],
+      "features": [
+        "MUJI amenities vending machine. Travel essentials, skincare, and everyday items."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5005/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5006",
+      "source_url": null,
+      "name": "Shirts and Spices Shibuya 109",
+      "name_en": "Shirts and Spices Shibuya 109",
+      "location": {
+        "address": "Entrance of Shibuya 109, Shibuya-ku, Tokyo",
+        "latitude": 35.6598,
+        "longitude": 139.6985
+      },
+      "merchandise": [
+        "その他"
+      ],
+      "categories": [
+        "珍しい"
+      ],
+      "features": [
+        "Unusual combo vending machine selling both shirts and spices at the iconic 109 building."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5006/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5007",
+      "source_url": null,
+      "name": "Beetopia Honey",
+      "name_en": "Beetopia Honey",
+      "location": {
+        "address": "In front of Ashville, 1-19-11 Jingumae, Shibuya-ku, Tokyo",
+        "latitude": 35.6702,
+        "longitude": 139.7057
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Premium honey vending machine. Specially selected rich honey and bee-related goods."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5007/1.webp"
+        }
+      ]
+    },
+    {
+      "source_id": "5008",
+      "source_url": null,
+      "name": "Ira Cola",
+      "name_en": "Ira Cola",
+      "location": {
+        "address": "6-20-10 Jingumae, Shibuya-ku, Tokyo",
+        "latitude": 35.6678,
+        "longitude": 139.7089
+      },
+      "merchandise": [
+        "コーラ"
+      ],
+      "categories": [
+        "飲み物",
+        "珍しい"
+      ],
+      "features": [
+        "Specialty cola vending machine for cola enthusiasts. Unique craft cola experience."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5008/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5009",
+      "source_url": null,
+      "name": "Dashi Doraku #1 (Ikebukuro)",
+      "name_en": "Dashi Doraku #1 (Ikebukuro)",
+      "location": {
+        "address": "1-3-9 Higashi-Ikebukuro, Toshima-ku, Tokyo",
+        "latitude": 35.7312,
+        "longitude": 139.7156
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Dashi Doraku series (1 of 7). Premium Japanese dashi (soup stock) vending machine. Authentic flying fish and kelp broth for home cooking."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5009/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5010",
+      "source_url": null,
+      "name": "Blue Bottle Coffee",
+      "name_en": "Blue Bottle Coffee",
+      "location": {
+        "address": "2-8-16 Jiyugaoka, Meguro-ku, Tokyo",
+        "latitude": 35.6077,
+        "longitude": 139.6695
+      },
+      "merchandise": [
+        "コーヒー"
+      ],
+      "categories": [
+        "コーヒー"
+      ],
+      "features": [
+        "Blue Bottle Coffee vending machine. Premium coffee, instant coffee, beans, and even yokan."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5010/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5011",
+      "source_url": null,
+      "name": "Dashi Doraku #2 (Asakusa)",
+      "name_en": "Dashi Doraku #2 (Asakusa)",
+      "location": {
+        "address": "2-18 Asakusa, Taito-ku, Tokyo",
+        "latitude": 35.7148,
+        "longitude": 139.7967
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Dashi Doraku series (2 of 7). Premium dashi stock in the heart of Asakusa tourist area. Great souvenir for foodies."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5011/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5012",
+      "source_url": null,
+      "name": "Dashi Doraku #3 (Nihonbashi)",
+      "name_en": "Dashi Doraku #3 (Nihonbashi)",
+      "location": {
+        "address": "2-11-7 Nihonbashi Kayabacho, Chuo-ku, Tokyo",
+        "latitude": 35.6798,
+        "longitude": 139.7812
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Dashi Doraku series (3 of 7). Premium Japanese dashi in the business district. Office workers grab authentic stock on their way home."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5012/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5013",
+      "source_url": null,
+      "name": "Dashi Doraku #4 (Kasai)",
+      "name_en": "Dashi Doraku #4 (Kasai)",
+      "location": {
+        "address": "9-3-3 Higashikasai, Edogawa-ku, Tokyo",
+        "latitude": 35.6592,
+        "longitude": 139.8731
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Dashi Doraku series (4 of 7). Premium dashi stock in the Kasai area, near the Curry Land machine."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5013/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5014",
+      "source_url": null,
+      "name": "Dashi Doraku #5 (Nishishinkoiwa)",
+      "name_en": "Dashi Doraku #5 (Nishishinkoiwa)",
+      "location": {
+        "address": "1-7-8 Nishishinkoiwa, Katsushika-ku, Tokyo",
+        "latitude": 35.7342,
+        "longitude": 139.8512
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Dashi Doraku series (5 of 7). Premium Japanese dashi in the Katsushika residential area."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5014/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5015",
+      "source_url": null,
+      "name": "Dashi Doraku #6 (Kameari)",
+      "name_en": "Dashi Doraku #6 (Kameari)",
+      "location": {
+        "address": "5-34-4 Kameari, Katsushika-ku, Tokyo",
+        "latitude": 35.7621,
+        "longitude": 139.8478
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Dashi Doraku series (6 of 7). Near famous Kameari station (Kochikame fans!). Grab dashi while hunting for Ryo-san statues."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5015/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5016",
+      "source_url": null,
+      "name": "Steampunk Vending Machine",
+      "name_en": "Steampunk Vending Machine",
+      "location": {
+        "address": "3-9-9 Nishi-Ikuta, Tama-ku, Kawasaki City, Kanagawa",
+        "latitude": 35.6174,
+        "longitude": 139.4512
+      },
+      "merchandise": [
+        "その他"
+      ],
+      "categories": [
+        "珍しい",
+        "レトロ"
+      ],
+      "features": [
+        "Beautifully decorated steampunk-themed vending machine. A work of art!"
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5016/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5017",
+      "source_url": null,
+      "name": "Retro Coffee & Milkshake",
+      "name_en": "Retro Coffee & Milkshake",
+      "location": {
+        "address": "2661-1 Shimomizo, Minami-ku, Sagamihara City, Kanagawa",
+        "latitude": 35.5312,
+        "longitude": 139.3856
+      },
+      "merchandise": [
+        "コーヒー"
+      ],
+      "categories": [
+        "飲み物",
+        "レトロ"
+      ],
+      "features": [
+        "Nostalgic retro vending machine with coffee, milkshakes, and candy. Time travel experience!"
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5017/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5018",
+      "source_url": null,
+      "name": "Used Tire Mart Vending Corner",
+      "name_en": "Used Tire Mart Vending Corner",
+      "location": {
+        "address": "2661-1 Shimomizo, Minami-ku, Sagamihara City, Kanagawa",
+        "latitude": 35.5311,
+        "longitude": 139.3855
+      },
+      "merchandise": [
+        "その他"
+      ],
+      "categories": [
+        "レトロ",
+        "珍しい"
+      ],
+      "features": [
+        "Vintage vending machine corner at a tire shop. Multiple retro machines in one spot."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5018/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5019",
+      "source_url": null,
+      "name": "Dashi Doraku #7 (Saitama)",
+      "name_en": "Dashi Doraku #7 (Saitama)",
+      "location": {
+        "address": "3-1-15 Nishibori, Sakura-ku, Saitama City, Saitama",
+        "latitude": 35.8712,
+        "longitude": 139.6234
+      },
+      "merchandise": [
+        "食べ物"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Dashi Doraku series (7 of 7). The only Saitama location! Complete the full collection for the Dashi Lover badge."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5019/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5020",
+      "source_url": null,
+      "name": "Jiro-style Ramen Vending Machine",
+      "name_en": "Jiro-style Ramen Vending Machine",
+      "location": {
+        "address": "5-16-10 Shirahata, Minami-ku, Saitama City, Saitama (MEGA Don Quijote)",
+        "latitude": 35.8456,
+        "longitude": 139.6534
+      },
+      "merchandise": [
+        "ラーメン"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Frozen Jiro-style ramen from popular shops. Thick noodles, rich broth, lots of garlic!"
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5020/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5021",
+      "source_url": null,
+      "name": "Delicious Roasted Sweet Potato",
+      "name_en": "Delicious Roasted Sweet Potato",
+      "location": {
+        "address": "10-3 Renjakucho, Kawagoe City, Saitama",
+        "latitude": 35.9225,
+        "longitude": 139.4856
+      },
+      "merchandise": [
+        "焼き芋"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Matured baked sweet potatoes using patented method. Honey-sweet Beni Haruka variety. Hot or cold, 24/7."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5021/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5022",
+      "source_url": null,
+      "name": "Thank You Chicken Wings",
+      "name_en": "Thank You Chicken Wings",
+      "location": {
+        "address": "2-11-1 Fujimi, Chuo-ku, Chiba City, Chiba",
+        "latitude": 35.6089,
+        "longitude": 140.1123
+      },
+      "merchandise": [
+        "焼き芋"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "500 yen vending machine with roasted sweet potatoes and chicken wings. Choose your wing flavor!"
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5022/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5023",
+      "source_url": null,
+      "name": "Shimizu Bakery",
+      "name_en": "Shimizu Bakery",
+      "location": {
+        "address": "928-13 Otamachi, Isesaki City, Gunma",
+        "latitude": 36.3089,
+        "longitude": 139.1834
+      },
+      "merchandise": [
+        "パン"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Wide variety of fresh bread. Savory, sweet, and sandwiches from local bakery."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5023/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5024",
+      "source_url": null,
+      "name": "Miwa Somen Nagashi",
+      "name_en": "Miwa Somen Nagashi",
+      "location": {
+        "address": "460-24 Miwa, Sakurai City, Nara",
+        "latitude": 34.5312,
+        "longitude": 135.8523
+      },
+      "merchandise": [
+        "そうめん"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Famous Miwa somen noodles vending machine at the source. Traditional Nara specialty."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5024/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5025",
+      "source_url": null,
+      "name": "Sea Urchin Vending Machine",
+      "name_en": "Sea Urchin Vending Machine",
+      "location": {
+        "address": "Sushi Kappo Shidashi Nangiku, 2-1726-6 Wakamatsucho Nishi, Tondabayashi City, Osaka",
+        "latitude": 34.5012,
+        "longitude": 135.5934
+      },
+      "merchandise": [
+        "うに"
+      ],
+      "categories": [
+        "食べ物",
+        "珍しい"
+      ],
+      "features": [
+        "Fresh sea urchin from a sushi restaurant! Premium uni available 24/7."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5025/1.jpg"
+        }
+      ]
+    },
+    {
+      "source_id": "5026",
+      "source_url": null,
+      "name": "Wagyu Vending Machine",
+      "name_en": "Wagyu Vending Machine",
+      "location": {
+        "address": "120-3 Masuzuka Nishimachi Kitayashiki, Toyota City, Aichi",
+        "latitude": 35.0823,
+        "longitude": 137.1534
+      },
+      "merchandise": [
+        "肉"
+      ],
+      "categories": [
+        "食べ物"
+      ],
+      "features": [
+        "Premium wagyu beef vending machine. High-quality cuts available anytime."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5026/1.jpg"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "manual_entries_added": 34,
+  "manual_source_id_range": "5001-5034"
+}
