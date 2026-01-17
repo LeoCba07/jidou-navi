@@ -100,7 +100,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 65,
     left: 16,
     right: 16,
   },
@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#ffffff',
     borderRadius: 4,
-    padding: 14,
+    padding: 12,
     shadowColor: '#000',
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 0.25,
     shadowRadius: 0,
-    elevation: 6,
+    elevation: 8,
     borderWidth: 3,
     borderColor: 'rgba(0, 0, 0, 0.15)',
   },
