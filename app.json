@@ -43,7 +43,8 @@
       "@rnmapbox/maps",
       "expo-router",
       "expo-image-picker",
-      "expo-font"
+      "expo-font",
+      "expo-localization"
     ],
     "extra": {
       "router": {},

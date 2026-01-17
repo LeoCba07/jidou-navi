@@ -6,7 +6,6 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -14,45 +13,49 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
+import { useAppModal } from '../../src/hooks/useAppModal';
 
 export default function SignupScreen() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
+  const { showError, showSuccess } = useAppModal();
 
   async function handleSignup() {
     // Validation
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email');
+      showError(t('common.error'), t('auth.validation.enterEmail'));
       return;
     }
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      showError(t('common.error'), t('auth.validation.validEmail'));
       return;
     }
     if (!username.trim()) {
-      Alert.alert('Error', 'Please enter a username');
+      showError(t('common.error'), t('auth.validation.enterUsername'));
       return;
     }
     if (username.trim().length < 3) {
-      Alert.alert('Error', 'Username must be at least 3 characters');
+      showError(t('common.error'), t('auth.validation.usernameMinLength'));
       return;
     }
     if (!password) {
-      Alert.alert('Error', 'Please enter a password');
+      showError(t('common.error'), t('auth.validation.enterPassword'));
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      showError(t('common.error'), t('auth.validation.passwordMinLength'));
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      showError(t('common.error'), t('auth.validation.passwordsNoMatch'));
       return;
     }
 
@@ -71,17 +74,17 @@ export default function SignupScreen() {
 
     if (error) {
       setLoading(false);
-      Alert.alert('Sign up failed', error.message);
+      showError(t('auth.errors.signupFailed'), error.message);
       return;
     }
 
     // Profile is created automatically by database trigger on auth.users
 
     setLoading(false);
-    Alert.alert(
-      'Account created!',
-      'Please check your email to verify your account.',
-      [{ text: 'OK', onPress: () => router.replace('/(auth)/login') }]
+    showSuccess(
+      t('auth.accountCreated.title'),
+      t('auth.accountCreated.message'),
+      () => router.replace('/(auth)/login')
     );
   }
 
@@ -101,20 +104,20 @@ export default function SignupScreen() {
               <Ionicons name="storefront-outline" size={48} color="#FF4B4B" />
             </View>
             <Text style={styles.logo}>JidouNavi</Text>
-            <Text style={styles.subtitle}>Create your account</Text>
+            <Text style={styles.subtitle}>{t('auth.createYourAccount')}</Text>
           </View>
 
           {/* Form */}
           <View style={styles.form}>
             <View style={styles.field}>
-              <Text style={styles.label}>Username</Text>
+              <Text style={styles.label}>{t('auth.username')}</Text>
               <View style={styles.inputContainer}>
                 <Ionicons name="person-outline" size={20} color="#999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={username}
                   onChangeText={setUsername}
-                  placeholder="Choose a username"
+                  placeholder={t('auth.usernamePlaceholder')}
                   placeholderTextColor="#999"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -123,14 +126,14 @@ export default function SignupScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>{t('auth.email')}</Text>
               <View style={styles.inputContainer}>
                 <Ionicons name="mail-outline" size={20} color="#999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={email}
                   onChangeText={setEmail}
-                  placeholder="your@email.com"
+                  placeholder={t('auth.emailPlaceholder')}
                   placeholderTextColor="#999"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -140,14 +143,14 @@ export default function SignupScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('auth.password')}</Text>
               <View style={styles.inputContainer}>
                 <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={password}
                   onChangeText={setPassword}
-                  placeholder="At least 6 characters"
+                  placeholder={t('auth.passwordPlaceholder')}
                   placeholderTextColor="#999"
                   secureTextEntry
                 />
@@ -155,14 +158,14 @@ export default function SignupScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Confirm Password</Text>
+              <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
               <View style={styles.inputContainer}>
                 <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
-                  placeholder="Re-enter password"
+                  placeholder={t('auth.confirmPasswordPlaceholder')}
                   placeholderTextColor="#999"
                   secureTextEntry
                 />
@@ -177,16 +180,16 @@ export default function SignupScreen() {
               {loading ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text style={styles.buttonText}>Create Account</Text>
+                <Text style={styles.buttonText}>{t('auth.createAccount')}</Text>
               )}
             </Pressable>
           </View>
 
           {/* Login link */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Already have an account?</Text>
+            <Text style={styles.footerText}>{t('auth.alreadyHaveAccount')}</Text>
             <Pressable onPress={() => router.back()}>
-              <Text style={styles.linkText}>Log In</Text>
+              <Text style={styles.linkText}>{t('auth.login')}</Text>
             </Pressable>
           </View>
         </View>

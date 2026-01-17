@@ -1,0 +1,190 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "ok": "OK",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "save": "Save",
+    "saved": "Saved",
+    "remove": "Remove",
+    "back": "Back",
+    "user": "User"
+  },
+  "auth": {
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "forgotPassword": "Forgot password?",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter password",
+    "username": "Username",
+    "usernamePlaceholder": "Choose a username",
+    "createAccount": "Create Account",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "subtitle": "Discover Japan's vending machines",
+    "createYourAccount": "Create your account",
+    "sendResetLink": "Send Reset Link",
+    "forgotPasswordTitle": "Forgot Password?",
+    "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset your password.",
+    "checkYourEmail": "Check your email",
+    "resetEmailSent": "We've sent a password reset link to {{email}}",
+    "backToLogin": "Back to Login",
+    "validation": {
+      "enterEmail": "Please enter your email",
+      "validEmail": "Please enter a valid email address",
+      "enterPassword": "Please enter your password",
+      "enterUsername": "Please enter a username",
+      "usernameMinLength": "Username must be at least 3 characters",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "passwordsNoMatch": "Passwords do not match"
+    },
+    "errors": {
+      "loginFailed": "Login failed",
+      "signupFailed": "Sign up failed"
+    },
+    "accountCreated": {
+      "title": "Account created!",
+      "message": "Please check your email to verify your account."
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "machinesAdded": "Machines Added",
+    "visits": "Visits",
+    "badges": "Badges",
+    "mySaved": "My Saved",
+    "noSavedMachines": "No saved machines yet",
+    "savedMachinesHint": "Tap the bookmark icon on any machine to save it for later!",
+    "noBadgesYet": "No badges yet",
+    "badgesHint": "Visit machines and add new ones to earn badges!",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "deleteAccount": "Delete Account",
+    "deleteAccountConfirm": {
+      "title": "Delete Account",
+      "message": "Are you sure you want to delete your account? This action cannot be undone. All your data, machines, visits, and badges will be permanently deleted."
+    },
+    "deleteAccountSuccess": {
+      "title": "Account Deleted",
+      "message": "Your account has been permanently deleted."
+    },
+    "deleteAccountError": "Failed to delete account. Please contact support at leandrotrabucco@gmail.com",
+    "logoutConfirm": {
+      "title": "Log Out",
+      "message": "Are you sure you want to log out?"
+    },
+    "removeFromSaved": {
+      "title": "Remove from Saved",
+      "message": "Are you sure you want to remove this machine from your saved list?"
+    },
+    "removeError": "Failed to remove machine from saved list.",
+    "settings": "Settings",
+    "language": "Language"
+  },
+  "map": {
+    "searchPlaceholder": "Search machines...",
+    "searchAccessibilityLabel": "Search for vending machines",
+    "searchAccessibilityHint": "Enter machine name, description, or address",
+    "noMachinesFound": "No machines found",
+    "clearSearch": "Clear search"
+  },
+  "categories": {
+    "all": "All",
+    "drinks": "Drinks",
+    "food": "Food",
+    "gachapon": "Gachapon",
+    "weird": "Weird",
+    "retro": "Retro",
+    "iceCream": "Ice Cream",
+    "coffee": "Coffee",
+    "alcohol": "Alcohol"
+  },
+  "machine": {
+    "unnamed": "Unnamed Machine",
+    "noAddress": "No address",
+    "noPhoto": "No photo",
+    "visits": "{{count}} visits",
+    "visit": "{{count}} visit",
+    "active": "Active",
+    "unverified": "Unverified",
+    "away": "{{distance}} away",
+    "tapForDetails": "Tap for details",
+    "getDirections": "Get Directions",
+    "iVisited": "I Visited",
+    "visited": "Visited",
+    "loginRequired": "Login Required",
+    "loginToSave": "Please log in to save machines.",
+    "loginToCheckIn": "Please log in to check in.",
+    "saveError": "Failed to save machine.",
+    "unsaveError": "Failed to unsave machine.",
+    "checkIn": {
+      "title": "Check In",
+      "question": "Is this vending machine still here?",
+      "yesHere": "Yes, it's here!",
+      "noGone": "No, it's gone",
+      "tooFar": {
+        "title": "Too Far Away",
+        "message": "You need to be closer to the vending machine to check in. Get within 200 meters and try again."
+      },
+      "alreadyVisited": {
+        "title": "Already Checked In",
+        "message": "You've already checked in to this machine recently."
+      },
+      "success": {
+        "title": "Checked In!",
+        "stillHere": "Thanks for confirming this machine is still here!",
+        "gone": "Thanks for letting us know. We'll verify this machine."
+      },
+      "locationRequired": "Please enable location to check in."
+    }
+  },
+  "addMachine": {
+    "title": "Add Machine",
+    "cancel": "Cancel",
+    "takePhoto": "Take Photo",
+    "chooseFromGallery": "Choose from Gallery",
+    "processingImage": "Processing image...",
+    "tapToRemove": "Tap to remove",
+    "name": "Name",
+    "namePlaceholder": "e.g., Banana Juice Machine",
+    "categories": "Categories",
+    "description": "Description",
+    "descriptionPlaceholder": "What makes this machine special?",
+    "location": "Location",
+    "gettingLocation": "Getting location...",
+    "addMachine": "Add Machine",
+    "validation": {
+      "photoRequired": "Please take or select a photo.",
+      "nameRequired": "Please enter a name for the machine.",
+      "descriptionRequired": "Please add a description.",
+      "locationRequired": "Please wait for GPS location or enable location services."
+    },
+    "permissionNeeded": "Please grant camera/gallery access.",
+    "imageError": "Failed to process image. Please try again.",
+    "submitError": "Failed to add machine. Please try again.",
+    "success": "Machine added!"
+  },
+  "badges": {
+    "earned": "Badge Earned!",
+    "earnedPlural": "Badges Earned!",
+    "viewAll": "View All Badges",
+    "awesome": "Awesome!"
+  },
+  "modal": {
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "info": "Info"
+  },
+  "languageSelector": {
+    "title": "Select Language",
+    "changeLanguage": "Change Language"
+  }
+}

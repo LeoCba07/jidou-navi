@@ -1,0 +1,190 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "ok": "OK",
+    "error": "Error",
+    "success": "Éxito",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "remove": "Eliminar",
+    "back": "Volver",
+    "user": "Usuario"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "signup": "Registrarse",
+    "logout": "Cerrar Sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "tu@correo.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "confirmPasswordPlaceholder": "Vuelve a ingresar la contraseña",
+    "username": "Nombre de usuario",
+    "usernamePlaceholder": "Elige un nombre de usuario",
+    "createAccount": "Crear Cuenta",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "subtitle": "Descubre las máquinas expendedoras de Japón",
+    "createYourAccount": "Crea tu cuenta",
+    "sendResetLink": "Enviar enlace",
+    "forgotPasswordTitle": "¿Olvidaste tu contraseña?",
+    "forgotPasswordSubtitle": "Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.",
+    "checkYourEmail": "Revisa tu correo",
+    "resetEmailSent": "Hemos enviado un enlace para restablecer tu contraseña a {{email}}",
+    "backToLogin": "Volver al inicio de sesión",
+    "validation": {
+      "enterEmail": "Por favor ingresa tu correo electrónico",
+      "validEmail": "Por favor ingresa un correo electrónico válido",
+      "enterPassword": "Por favor ingresa tu contraseña",
+      "enterUsername": "Por favor ingresa un nombre de usuario",
+      "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+      "passwordsNoMatch": "Las contraseñas no coinciden"
+    },
+    "errors": {
+      "loginFailed": "Error al iniciar sesión",
+      "signupFailed": "Error al registrarse"
+    },
+    "accountCreated": {
+      "title": "¡Cuenta creada!",
+      "message": "Por favor revisa tu correo para verificar tu cuenta."
+    }
+  },
+  "profile": {
+    "title": "Perfil",
+    "machinesAdded": "Máquinas Añadidas",
+    "visits": "Visitas",
+    "badges": "Insignias",
+    "mySaved": "Mis Guardados",
+    "noSavedMachines": "Aún no hay máquinas guardadas",
+    "savedMachinesHint": "¡Toca el icono de marcador en cualquier máquina para guardarla!",
+    "noBadgesYet": "Aún no hay insignias",
+    "badgesHint": "¡Visita máquinas y añade nuevas para ganar insignias!",
+    "legal": "Legal",
+    "privacyPolicy": "Política de Privacidad",
+    "termsOfService": "Términos de Servicio",
+    "deleteAccount": "Eliminar Cuenta",
+    "deleteAccountConfirm": {
+      "title": "Eliminar Cuenta",
+      "message": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer. Todos tus datos, máquinas, visitas e insignias serán eliminados permanentemente."
+    },
+    "deleteAccountSuccess": {
+      "title": "Cuenta Eliminada",
+      "message": "Tu cuenta ha sido eliminada permanentemente."
+    },
+    "deleteAccountError": "Error al eliminar la cuenta. Por favor contacta a soporte en leandrotrabucco@gmail.com",
+    "logoutConfirm": {
+      "title": "Cerrar Sesión",
+      "message": "¿Estás seguro de que deseas cerrar sesión?"
+    },
+    "removeFromSaved": {
+      "title": "Eliminar de Guardados",
+      "message": "¿Estás seguro de que deseas eliminar esta máquina de tu lista de guardados?"
+    },
+    "removeError": "Error al eliminar la máquina de la lista de guardados.",
+    "settings": "Configuración",
+    "language": "Idioma"
+  },
+  "map": {
+    "searchPlaceholder": "Buscar máquinas...",
+    "searchAccessibilityLabel": "Buscar máquinas expendedoras",
+    "searchAccessibilityHint": "Ingresa nombre, descripción o dirección de la máquina",
+    "noMachinesFound": "No se encontraron máquinas",
+    "clearSearch": "Limpiar búsqueda"
+  },
+  "categories": {
+    "all": "Todas",
+    "drinks": "Bebidas",
+    "food": "Comida",
+    "gachapon": "Gachapon",
+    "weird": "Raras",
+    "retro": "Retro",
+    "iceCream": "Helado",
+    "coffee": "Café",
+    "alcohol": "Alcohol"
+  },
+  "machine": {
+    "unnamed": "Máquina sin nombre",
+    "noAddress": "Sin dirección",
+    "noPhoto": "Sin foto",
+    "visits": "{{count}} visitas",
+    "visit": "{{count}} visita",
+    "active": "Activa",
+    "unverified": "Sin verificar",
+    "away": "a {{distance}}",
+    "tapForDetails": "Toca para más detalles",
+    "getDirections": "Obtener Direcciones",
+    "iVisited": "Visité",
+    "visited": "Visitada",
+    "loginRequired": "Inicio de sesión requerido",
+    "loginToSave": "Por favor inicia sesión para guardar máquinas.",
+    "loginToCheckIn": "Por favor inicia sesión para registrar tu visita.",
+    "saveError": "Error al guardar la máquina.",
+    "unsaveError": "Error al eliminar la máquina de guardados.",
+    "checkIn": {
+      "title": "Registrar Visita",
+      "question": "¿Esta máquina expendedora sigue aquí?",
+      "yesHere": "¡Sí, está aquí!",
+      "noGone": "No, ya no está",
+      "tooFar": {
+        "title": "Muy Lejos",
+        "message": "Necesitas estar más cerca de la máquina expendedora para registrar tu visita. Acércate a menos de 200 metros e intenta de nuevo."
+      },
+      "alreadyVisited": {
+        "title": "Ya Registrado",
+        "message": "Ya has registrado una visita a esta máquina recientemente."
+      },
+      "success": {
+        "title": "¡Visita Registrada!",
+        "stillHere": "¡Gracias por confirmar que esta máquina sigue aquí!",
+        "gone": "Gracias por avisarnos. Verificaremos esta máquina."
+      },
+      "locationRequired": "Por favor habilita la ubicación para registrar tu visita."
+    }
+  },
+  "addMachine": {
+    "title": "Añadir Máquina",
+    "cancel": "Cancelar",
+    "takePhoto": "Tomar Foto",
+    "chooseFromGallery": "Elegir de la Galería",
+    "processingImage": "Procesando imagen...",
+    "tapToRemove": "Toca para eliminar",
+    "name": "Nombre",
+    "namePlaceholder": "ej., Máquina de Jugo de Banana",
+    "categories": "Categorías",
+    "description": "Descripción",
+    "descriptionPlaceholder": "¿Qué hace especial a esta máquina?",
+    "location": "Ubicación",
+    "gettingLocation": "Obteniendo ubicación...",
+    "addMachine": "Añadir Máquina",
+    "validation": {
+      "photoRequired": "Por favor toma o selecciona una foto.",
+      "nameRequired": "Por favor ingresa un nombre para la máquina.",
+      "descriptionRequired": "Por favor añade una descripción.",
+      "locationRequired": "Por favor espera la ubicación GPS o habilita los servicios de ubicación."
+    },
+    "permissionNeeded": "Por favor concede acceso a la cámara/galería.",
+    "imageError": "Error al procesar la imagen. Por favor intenta de nuevo.",
+    "submitError": "Error al añadir la máquina. Por favor intenta de nuevo.",
+    "success": "¡Máquina añadida!"
+  },
+  "badges": {
+    "earned": "¡Insignia Ganada!",
+    "earnedPlural": "¡Insignias Ganadas!",
+    "viewAll": "Ver Todas las Insignias",
+    "awesome": "¡Genial!"
+  },
+  "modal": {
+    "error": "Error",
+    "success": "Éxito",
+    "confirm": "Confirmar",
+    "info": "Info"
+  },
+  "languageSelector": {
+    "title": "Seleccionar Idioma",
+    "changeLanguage": "Cambiar Idioma"
+  }
+}

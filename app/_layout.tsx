@@ -11,19 +11,25 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
+import { I18nextProvider } from 'react-i18next';
+import i18n, { initI18n } from '../src/lib/i18n';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
+import { useLanguageStore } from '../src/store/languageStore';
 import { fetchSavedMachineIds } from '../src/lib/machines';
 import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
 import AppModal from '../src/components/AppModal';
+import LanguageSelector from '../src/components/LanguageSelector';
 
 export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const { user, setUser, setSession, setProfile, isLoading, setLoading } = useAuthStore();
   const { setSavedMachineIds } = useSavedMachinesStore();
+  const { initializeLanguage } = useLanguageStore();
   const [isReady, setIsReady] = useState(false);
+  const [i18nReady, setI18nReady] = useState(false);
 
   const [fontsLoaded] = useFonts({
     PressStart2P: PressStart2P_400Regular,
@@ -32,6 +38,14 @@ export default function RootLayout() {
     'Inter-SemiBold': Inter_600SemiBold,
     'Inter-Bold': Inter_700Bold,
   });
+
+  // Initialize i18n
+  useEffect(() => {
+    initI18n().then(() => {
+      initializeLanguage();
+      setI18nReady(true);
+    });
+  }, []);
 
   // Listen to auth state changes
   useEffect(() => {
@@ -122,8 +136,8 @@ export default function RootLayout() {
     }
   }, [user, segments, isReady]);
 
-  // Show loading screen while checking auth or loading fonts
-  if (!isReady || isLoading || !fontsLoaded) {
+  // Show loading screen while checking auth, loading fonts, or initializing i18n
+  if (!isReady || isLoading || !fontsLoaded || !i18nReady) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#FF4B4B" />
@@ -132,12 +146,13 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <I18nextProvider i18n={i18n}>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }} />
       <BadgeUnlockModal />
       <AppModal />
-    </>
+      <LanguageSelector />
+    </I18nextProvider>
   );
 }
 

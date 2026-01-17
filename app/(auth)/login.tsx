@@ -12,10 +12,12 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,17 +25,17 @@ export default function LoginScreen() {
 
   async function handleLogin() {
     if (!email.trim()) {
-      showError('Error', 'Please enter your email');
+      showError(t('common.error'), t('auth.validation.enterEmail'));
       return;
     }
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      showError('Error', 'Please enter a valid email address');
+      showError(t('common.error'), t('auth.validation.validEmail'));
       return;
     }
     if (!password) {
-      showError('Error', 'Please enter your password');
+      showError(t('common.error'), t('auth.validation.enterPassword'));
       return;
     }
 
@@ -45,7 +47,7 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (error) {
-      showError('Login failed', error.message);
+      showError(t('auth.errors.loginFailed'), error.message);
     }
     // On success, the auth listener in _layout.tsx will redirect
   }
@@ -63,20 +65,20 @@ export default function LoginScreen() {
             <Ionicons name="storefront-outline" size={48} color="#FF4B4B" />
           </View>
           <Text style={styles.logo}>JidouNavi</Text>
-          <Text style={styles.subtitle}>Discover Japan's vending machines</Text>
+          <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
         </View>
 
         {/* Form */}
         <View style={styles.form}>
           <View style={styles.field}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>{t('auth.email')}</Text>
             <View style={styles.inputContainer}>
               <Ionicons name="mail-outline" size={20} color="#999" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
-                placeholder="your@email.com"
+                placeholder={t('auth.emailPlaceholder')}
                 placeholderTextColor="#999"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -86,14 +88,14 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{t('auth.password')}</Text>
             <View style={styles.inputContainer}>
               <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Enter password"
+                placeholder={t('auth.passwordPlaceholder')}
                 placeholderTextColor="#999"
                 secureTextEntry
               />
@@ -104,7 +106,7 @@ export default function LoginScreen() {
             style={styles.forgotLink}
             onPress={() => router.push('/(auth)/forgot-password')}
           >
-            <Text style={styles.forgotText}>Forgot password?</Text>
+            <Text style={styles.forgotText}>{t('auth.forgotPassword')}</Text>
           </Pressable>
 
           <Pressable
@@ -115,16 +117,16 @@ export default function LoginScreen() {
             {loading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text style={styles.buttonText}>Log In</Text>
+              <Text style={styles.buttonText}>{t('auth.login')}</Text>
             )}
           </Pressable>
         </View>
 
         {/* Sign up link */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account?</Text>
+          <Text style={styles.footerText}>{t('auth.dontHaveAccount')}</Text>
           <Pressable onPress={() => router.push('/(auth)/signup')}>
-            <Text style={styles.linkText}>Sign Up</Text>
+            <Text style={styles.linkText}>{t('auth.signup')}</Text>
           </Pressable>
         </View>
       </View>
