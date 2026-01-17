@@ -12,11 +12,14 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
+import { useLanguageStore } from '../../src/store/languageStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { supportedLanguages } from '../../src/lib/i18n';
 
 // Badge type from joined query
 type UserBadge = {
@@ -39,14 +42,19 @@ const RARITY_COLORS: Record<string, string> = {
 };
 
 export default function ProfileScreen() {
+  const { t } = useTranslation();
   const { user, profile } = useAuthStore();
   const { removeSaved } = useSavedMachinesStore();
+  const { currentLanguage, showLanguageSelector } = useLanguageStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
   const [loadingBadges, setLoadingBadges] = useState(true);
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Get current language display name
+  const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
 
   // Fetch user's badges
   async function fetchBadges() {
@@ -85,12 +93,12 @@ export default function ProfileScreen() {
   // Handle unsave action
   function handleUnsave(machineId: string) {
     showConfirm(
-      'Remove from Saved',
-      'Are you sure you want to remove this machine from your saved list?',
+      t('profile.removeFromSaved.title'),
+      t('profile.removeFromSaved.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Remove',
+          text: t('common.remove'),
           style: 'destructive',
           onPress: async () => {
             // Optimistic update
@@ -100,7 +108,7 @@ export default function ProfileScreen() {
             if (!success) {
               // Revert on failure - reload the list
               loadSavedMachines();
-              showError('Error', 'Failed to remove machine from saved list.');
+              showError(t('common.error'), t('profile.removeError'));
             }
           },
         },
@@ -139,10 +147,10 @@ export default function ProfileScreen() {
   }, [user]);
 
   function handleLogout() {
-    showConfirm('Log Out', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
+    showConfirm(t('profile.logoutConfirm.title'), t('profile.logoutConfirm.message'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Log Out',
+        text: t('auth.logout'),
         style: 'destructive',
         onPress: async () => {
           await supabase.auth.signOut();
@@ -153,12 +161,12 @@ export default function ProfileScreen() {
 
   function handleDeleteAccount() {
     showConfirm(
-      'Delete Account',
-      'Are you sure you want to delete your account? This action cannot be undone. All your data, machines, visits, and badges will be permanently deleted.',
+      t('profile.deleteAccountConfirm.title'),
+      t('profile.deleteAccountConfirm.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete Account',
+          text: t('profile.deleteAccount'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -170,16 +178,16 @@ export default function ProfileScreen() {
 
               if (error) {
                 console.error('Delete account error:', error);
-                showError('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
+                showError(t('common.error'), t('profile.deleteAccountError'));
                 return;
               }
 
               // Sign out the user
               await supabase.auth.signOut();
-              showSuccess('Account Deleted', 'Your account has been permanently deleted.');
+              showSuccess(t('profile.deleteAccountSuccess.title'), t('profile.deleteAccountSuccess.message'));
             } catch (err) {
               console.error('Delete account error:', err);
-              showError('Error', 'Failed to delete account. Please contact support at leandrotrabucco@gmail.com');
+              showError(t('common.error'), t('profile.deleteAccountError'));
             }
           },
         },
@@ -191,7 +199,7 @@ export default function ProfileScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Profile</Text>
+        <Text style={styles.title}>{t('profile.title')}</Text>
       </View>
 
       <ScrollView
@@ -211,7 +219,7 @@ export default function ProfileScreen() {
             </View>
           )}
           <Text style={styles.displayName}>
-            {profile?.display_name || profile?.username || 'User'}
+            {profile?.display_name || profile?.username || t('common.user')}
           </Text>
           <Text style={styles.username}>@{profile?.username || 'user'}</Text>
           {profile?.bio && <Text style={styles.bio}>{profile.bio}</Text>}
@@ -222,31 +230,31 @@ export default function ProfileScreen() {
         <View style={styles.statsContainer}>
           <View style={styles.stat}>
             <Text style={styles.statNumber}>{profile?.contribution_count || 0}</Text>
-            <Text style={styles.statLabel}>Machines Added</Text>
+            <Text style={styles.statLabel}>{t('profile.machinesAdded')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.stat}>
             <Text style={styles.statNumber}>{profile?.visit_count || 0}</Text>
-            <Text style={styles.statLabel}>Visits</Text>
+            <Text style={styles.statLabel}>{t('profile.visits')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.stat}>
             <Text style={styles.statNumber}>{profile?.badge_count || 0}</Text>
-            <Text style={styles.statLabel}>Badges</Text>
+            <Text style={styles.statLabel}>{t('profile.badges')}</Text>
           </View>
         </View>
 
         {/* My Saved Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>My Saved</Text>
+          <Text style={styles.sectionTitle}>{t('profile.mySaved')}</Text>
           {loadingSaved ? (
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : savedMachines.length === 0 ? (
             <View style={styles.emptyBadges}>
               <Ionicons name="bookmark-outline" size={48} color="#ccc" />
-              <Text style={styles.emptyText}>No saved machines yet</Text>
+              <Text style={styles.emptyText}>{t('profile.noSavedMachines')}</Text>
               <Text style={styles.emptySubtext}>
-                Tap the bookmark icon on any machine to save it for later!
+                {t('profile.savedMachinesHint')}
               </Text>
             </View>
           ) : (
@@ -269,10 +277,10 @@ export default function ProfileScreen() {
                   )}
                   <View style={styles.savedInfo}>
                     <Text style={styles.savedName} numberOfLines={1}>
-                      {saved.machine.name || 'Unnamed Machine'}
+                      {saved.machine.name || t('machine.unnamed')}
                     </Text>
                     <Text style={styles.savedAddress} numberOfLines={1}>
-                      {saved.machine.address || 'No address'}
+                      {saved.machine.address || t('machine.noAddress')}
                     </Text>
                   </View>
                   <Pressable
@@ -289,15 +297,15 @@ export default function ProfileScreen() {
 
         {/* Badges Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Badges</Text>
+          <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           {loadingBadges ? (
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : badges.length === 0 ? (
             <View style={styles.emptyBadges}>
               <Ionicons name="trophy-outline" size={48} color="#ccc" />
-              <Text style={styles.emptyText}>No badges yet</Text>
+              <Text style={styles.emptyText}>{t('profile.noBadgesYet')}</Text>
               <Text style={styles.emptySubtext}>
-                Visit machines and add new ones to earn badges!
+                {t('profile.badgesHint')}
               </Text>
             </View>
           ) : (
@@ -342,19 +350,37 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Settings Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
+          <View style={styles.legalContainer}>
+            <Pressable
+              style={styles.legalLink}
+              onPress={showLanguageSelector}
+              accessibilityRole="button"
+              accessibilityLabel={t('profile.language')}
+            >
+              <Ionicons name="language-outline" size={20} color="#666" />
+              <Text style={styles.legalLinkText}>{t('profile.language')}</Text>
+              <Text style={styles.languageValue}>{currentLanguageName}</Text>
+              <Ionicons name="chevron-forward" size={20} color="#ccc" />
+            </Pressable>
+          </View>
+        </View>
+
         {/* Legal Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Legal</Text>
+          <Text style={styles.sectionTitle}>{t('profile.legal')}</Text>
           <View style={styles.legalContainer}>
             <Pressable
               style={styles.legalLink}
               onPress={() => router.push('/legal/privacy')}
               accessibilityRole="button"
-              accessibilityLabel="Privacy Policy"
+              accessibilityLabel={t('profile.privacyPolicy')}
               accessibilityHint="Opens privacy policy page"
             >
               <Ionicons name="shield-checkmark-outline" size={20} color="#666" />
-              <Text style={styles.legalLinkText}>Privacy Policy</Text>
+              <Text style={styles.legalLinkText}>{t('profile.privacyPolicy')}</Text>
               <Ionicons name="chevron-forward" size={20} color="#ccc" />
             </Pressable>
             <View style={styles.legalDivider} />
@@ -362,11 +388,11 @@ export default function ProfileScreen() {
               style={styles.legalLink}
               onPress={() => router.push('/legal/terms')}
               accessibilityRole="button"
-              accessibilityLabel="Terms of Service"
+              accessibilityLabel={t('profile.termsOfService')}
               accessibilityHint="Opens terms of service page"
             >
               <Ionicons name="document-text-outline" size={20} color="#666" />
-              <Text style={styles.legalLinkText}>Terms of Service</Text>
+              <Text style={styles.legalLinkText}>{t('profile.termsOfService')}</Text>
               <Ionicons name="chevron-forward" size={20} color="#ccc" />
             </Pressable>
           </View>
@@ -375,12 +401,12 @@ export default function ProfileScreen() {
         {/* Logout button */}
         <Pressable style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={20} color="#FF4B4B" />
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Text style={styles.logoutText}>{t('auth.logout')}</Text>
         </Pressable>
 
         {/* Delete account button */}
         <Pressable style={styles.deleteButton} onPress={handleDeleteAccount}>
-          <Text style={styles.deleteText}>Delete Account</Text>
+          <Text style={styles.deleteText}>{t('profile.deleteAccount')}</Text>
         </Pressable>
       </ScrollView>
     </View>
@@ -575,6 +601,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     color: '#333',
+  },
+  languageValue: {
+    fontSize: 14,
+    color: '#999',
   },
   legalDivider: {
     height: 1,

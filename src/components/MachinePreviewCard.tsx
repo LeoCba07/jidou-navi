@@ -1,6 +1,7 @@
 // Preview card shown when user taps a machine pin
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { NearbyMachine } from '../lib/machines';
 
 type Props = {
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }: Props) {
+  const { t } = useTranslation();
+
   // Use override distance if provided, otherwise fall back to machine's distance
   const actualDistance = distanceMeters ?? machine.distance_meters;
 
@@ -37,7 +40,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
         {/* Info */}
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={1}>
-            {machine.name || 'Unnamed Machine'}
+            {machine.name || t('machine.unnamed')}
           </Text>
 
           {/* Categories */}
@@ -62,7 +65,9 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
             </View>
             <View style={styles.statItem}>
               <Ionicons name="eye-outline" size={14} color="#666" />
-              <Text style={styles.statTextMuted}>{machine.visit_count} visits</Text>
+              <Text style={styles.statTextMuted}>
+                {t('machine.visits', { count: machine.visit_count })}
+              </Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons
@@ -71,14 +76,14 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
                 color={isActive ? '#22C55E' : '#F59E0B'}
               />
               <Text style={[styles.statTextMuted, isActive ? styles.activeText : styles.unknownText]}>
-                {isActive ? 'Active' : 'Unverified'}
+                {isActive ? t('machine.active') : t('machine.unverified')}
               </Text>
             </View>
           </View>
 
           {/* Tap indicator */}
           <View style={styles.tapIndicator}>
-            <Text style={styles.tapText}>Tap for details</Text>
+            <Text style={styles.tapText}>{t('machine.tapForDetails')}</Text>
             <Ionicons name="chevron-forward" size={14} color="#FF4B4B" />
           </View>
         </View>

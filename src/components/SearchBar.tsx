@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { searchMachines, SearchResult } from "../lib/machines";
 
 type SearchBarProps = {
@@ -20,6 +21,7 @@ type SearchBarProps = {
 const DEBOUNCE_MS = 300;
 
 export function SearchBar({ onResultSelect }: SearchBarProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -129,7 +131,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
         <Pressable
           style={styles.overlay}
           onPress={dismissResults}
-          accessibilityLabel="Dismiss search results"
+          accessibilityLabel={t('map.clearSearch')}
         />
       )}
 
@@ -141,19 +143,19 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
             style={styles.input}
             value={query}
             onChangeText={handleSearch}
-            placeholder="Search machines..."
+            placeholder={t('map.searchPlaceholder')}
             placeholderTextColor="#999"
             returnKeyType="search"
             autoCorrect={false}
             autoCapitalize="none"
-            accessibilityLabel="Search for vending machines"
-            accessibilityHint="Enter machine name, description, or address"
+            accessibilityLabel={t('map.searchAccessibilityLabel')}
+            accessibilityHint={t('map.searchAccessibilityHint')}
           />
           {query.length > 0 && (
             <Pressable
               onPress={handleClear}
               style={styles.clearButton}
-              accessibilityLabel="Clear search"
+              accessibilityLabel={t('map.clearSearch')}
               accessibilityRole="button"
             >
               <Ionicons name="close-circle" size={20} color="#999" />
@@ -197,7 +199,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
         {/* No results message */}
         {showResults && results.length === 0 && query.length >= 2 && !isSearching && (
           <View style={styles.resultsContainer}>
-            <Text style={styles.noResults}>No machines found</Text>
+            <Text style={styles.noResults}>{t('map.noMachinesFound')}</Text>
           </View>
         )}
       </View>

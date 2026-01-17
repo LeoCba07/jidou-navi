@@ -1,20 +1,22 @@
 // Horizontal filter bar with category chips for the map
 import { View, ScrollView, Pressable, Text, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useUIStore } from "../store";
 
-// TODO: Consider fetching categories from database for consistency
+// Category definitions with translation keys
 const CATEGORIES = [
-  { slug: "drinks", name: "Drinks", color: "#3C91E6" },
-  { slug: "food", name: "Food", color: "#FF4B4B" },
-  { slug: "gachapon", name: "Gachapon", color: "#FFB7CE" },
-  { slug: "weird", name: "Weird", color: "#9B59B6" },
-  { slug: "retro", name: "Retro", color: "#FFD966" },
-  { slug: "ice-cream", name: "Ice Cream", color: "#E74C3C" },
-  { slug: "coffee", name: "Coffee", color: "#8B4513" },
-  { slug: "alcohol", name: "Alcohol", color: "#F39C12" },
+  { slug: "drinks", translationKey: "categories.drinks", color: "#3C91E6" },
+  { slug: "food", translationKey: "categories.food", color: "#FF4B4B" },
+  { slug: "gachapon", translationKey: "categories.gachapon", color: "#FFB7CE" },
+  { slug: "weird", translationKey: "categories.weird", color: "#9B59B6" },
+  { slug: "retro", translationKey: "categories.retro", color: "#FFD966" },
+  { slug: "ice-cream", translationKey: "categories.iceCream", color: "#E74C3C" },
+  { slug: "coffee", translationKey: "categories.coffee", color: "#8B4513" },
+  { slug: "alcohol", translationKey: "categories.alcohol", color: "#F39C12" },
 ];
 
 export function CategoryFilterBar() {
+  const { t } = useTranslation();
   const selectedCategories = useUIStore((state) => state.selectedCategories);
   const toggleCategory = useUIStore((state) => state.toggleCategory);
   const clearCategories = useUIStore((state) => state.clearCategories);
@@ -32,19 +34,20 @@ export function CategoryFilterBar() {
         <Pressable
           style={[styles.chip, isAllSelected && styles.chipSelected]}
           onPress={clearCategories}
-          accessibilityLabel="Show all categories"
+          accessibilityLabel={t('categories.all')}
           accessibilityRole="button"
         >
           <Text
             style={[styles.chipText, isAllSelected && styles.chipTextSelected]}
           >
-            All
+            {t('categories.all')}
           </Text>
         </Pressable>
 
         {/* Category chips */}
         {CATEGORIES.map((cat) => {
           const isSelected = selectedCategories.includes(cat.slug);
+          const categoryName = t(cat.translationKey);
           return (
             <Pressable
               key={cat.slug}
@@ -53,14 +56,14 @@ export function CategoryFilterBar() {
                 isSelected && { backgroundColor: cat.color },
               ]}
               onPress={() => toggleCategory(cat.slug)}
-              accessibilityLabel={`Filter by ${cat.name} category`}
+              accessibilityLabel={categoryName}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
             >
               <Text
                 style={[styles.chipText, isSelected && styles.chipTextSelected]}
               >
-                {cat.name}
+                {categoryName}
               </Text>
             </Pressable>
           );

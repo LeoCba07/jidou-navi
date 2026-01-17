@@ -13,6 +13,7 @@ import {
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../src/lib/supabase';
 import { useAuthStore } from '../src/store/authStore';
 import { useUIStore } from '../src/store/uiStore';
@@ -22,15 +23,17 @@ import { useAppModal } from '../src/hooks/useAppModal';
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
 
+// Category definitions with translation keys
 const CATEGORIES = [
-  { id: 'drinks', label: 'Drinks' },
-  { id: 'food', label: 'Food' },
-  { id: 'gachapon', label: 'Gachapon' },
-  { id: 'weird', label: 'Weird' },
-  { id: 'retro', label: 'Retro' },
+  { id: 'drinks', translationKey: 'categories.drinks' },
+  { id: 'food', translationKey: 'categories.food' },
+  { id: 'gachapon', translationKey: 'categories.gachapon' },
+  { id: 'weird', translationKey: 'categories.weird' },
+  { id: 'retro', translationKey: 'categories.retro' },
 ];
 
 export default function AddMachineScreen() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const { showError, showSuccess } = useAppModal();
@@ -60,7 +63,7 @@ export default function AddMachineScreen() {
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permission.granted) {
-      showError('Permission needed', 'Please grant camera/gallery access.');
+      showError(t('common.error'), t('addMachine.permissionNeeded'));
       return;
     }
 
@@ -92,7 +95,7 @@ export default function AddMachineScreen() {
       }
     } catch (error) {
       console.error('Image picker error:', error);
-      showError('Error', 'Failed to process image. Please try again.');
+      showError(t('common.error'), t('addMachine.imageError'));
     } finally {
       setCompressing(false);
     }
@@ -106,19 +109,19 @@ export default function AddMachineScreen() {
 
   async function handleSubmit() {
     if (!photo) {
-      showError('Photo required', 'Please take or select a photo.');
+      showError(t('common.error'), t('addMachine.validation.photoRequired'));
       return;
     }
     if (!name.trim()) {
-      showError('Name required', 'Please enter a name for the machine.');
+      showError(t('common.error'), t('addMachine.validation.nameRequired'));
       return;
     }
     if (!description.trim()) {
-      showError('Description required', 'Please add a description.');
+      showError(t('common.error'), t('addMachine.validation.descriptionRequired'));
       return;
     }
     if (!location) {
-      showError('Location required', 'Please wait for GPS location or enable location services.');
+      showError(t('common.error'), t('addMachine.validation.locationRequired'));
       return;
     }
 
@@ -204,16 +207,16 @@ export default function AddMachineScreen() {
 
       if (newBadges.length > 0) {
         // Show success alert, then badge popup, then navigate back
-        showSuccess('Success', 'Machine added!', () => {
+        showSuccess(t('common.success'), t('addMachine.success'), () => {
           showBadgePopup(newBadges, () => router.back());
         });
       } else {
         // No badges - just show success and go back
-        showSuccess('Success', 'Machine added!', () => router.back());
+        showSuccess(t('common.success'), t('addMachine.success'), () => router.back());
       }
     } catch (error: any) {
       console.error('Submit error:', error);
-      showError('Error', error?.message || 'Failed to add machine. Please try again.');
+      showError(t('common.error'), error?.message || t('addMachine.submitError'));
     } finally {
       setSubmitting(false);
     }
@@ -224,9 +227,9 @@ export default function AddMachineScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>Cancel</Text>
+          <Text style={styles.backText}>{t('addMachine.cancel')}</Text>
         </Pressable>
-        <Text style={styles.title}>Add Machine</Text>
+        <Text style={styles.title}>{t('addMachine.title')}</Text>
         <View style={styles.backButton} />
       </View>
 
@@ -236,22 +239,22 @@ export default function AddMachineScreen() {
           {compressing ? (
             <View style={styles.compressingContainer}>
               <ActivityIndicator size="large" color="#FF4B4B" />
-              <Text style={styles.compressingText}>Processing image...</Text>
+              <Text style={styles.compressingText}>{t('addMachine.processingImage')}</Text>
             </View>
           ) : photo ? (
             <Pressable onPress={() => { setPhoto(null); setPhotoSize(null); }}>
               <Image source={{ uri: photo }} style={styles.photo} />
               <Text style={styles.photoHint}>
-                Tap to remove{photoSize ? ` • ${(photoSize / 1024).toFixed(0)}KB` : ''}
+                {t('addMachine.tapToRemove')}{photoSize ? ` • ${(photoSize / 1024).toFixed(0)}KB` : ''}
               </Text>
             </Pressable>
           ) : (
             <View style={styles.photoButtons}>
               <Pressable style={styles.photoButton} onPress={() => pickImage(true)}>
-                <Text style={styles.photoButtonText}>Take Photo</Text>
+                <Text style={styles.photoButtonText}>{t('addMachine.takePhoto')}</Text>
               </Pressable>
               <Pressable style={styles.photoButton} onPress={() => pickImage(false)}>
-                <Text style={styles.photoButtonText}>Choose from Gallery</Text>
+                <Text style={styles.photoButtonText}>{t('addMachine.chooseFromGallery')}</Text>
               </Pressable>
             </View>
           )}
@@ -259,19 +262,19 @@ export default function AddMachineScreen() {
 
         {/* Name */}
         <View style={styles.field}>
-          <Text style={styles.label}>Name</Text>
+          <Text style={styles.label}>{t('addMachine.name')}</Text>
           <TextInput
             style={styles.input}
             value={name}
             onChangeText={setName}
-            placeholder="e.g., Banana Juice Machine"
+            placeholder={t('addMachine.namePlaceholder')}
             placeholderTextColor="#999"
           />
         </View>
 
         {/* Categories */}
         <View style={styles.field}>
-          <Text style={styles.label}>Categories</Text>
+          <Text style={styles.label}>{t('addMachine.categories')}</Text>
           <View style={styles.categories}>
             {CATEGORIES.map((cat) => (
               <Pressable
@@ -288,7 +291,7 @@ export default function AddMachineScreen() {
                     selectedCategories.includes(cat.id) && styles.categoryTextSelected,
                   ]}
                 >
-                  {cat.label}
+                  {t(cat.translationKey)}
                 </Text>
               </Pressable>
             ))}
@@ -297,12 +300,12 @@ export default function AddMachineScreen() {
 
         {/* Description */}
         <View style={styles.field}>
-          <Text style={styles.label}>Description</Text>
+          <Text style={styles.label}>{t('addMachine.description')}</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
             onChangeText={setDescription}
-            placeholder="What makes this machine special?"
+            placeholder={t('addMachine.descriptionPlaceholder')}
             placeholderTextColor="#999"
             multiline
             numberOfLines={3}
@@ -311,9 +314,9 @@ export default function AddMachineScreen() {
 
         {/* Location info */}
         <View style={styles.locationInfo}>
-          <Text style={styles.locationLabel}>Location</Text>
+          <Text style={styles.locationLabel}>{t('addMachine.location')}</Text>
           <Text style={styles.locationText}>
-            {location ? `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}` : 'Getting location...'}
+            {location ? `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}` : t('addMachine.gettingLocation')}
           </Text>
         </View>
 
@@ -326,7 +329,7 @@ export default function AddMachineScreen() {
           {submitting ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text style={styles.submitText}>Add Machine</Text>
+            <Text style={styles.submitText}>{t('addMachine.addMachine')}</Text>
           )}
         </Pressable>
       </ScrollView>

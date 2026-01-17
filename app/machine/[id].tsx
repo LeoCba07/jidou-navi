@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
@@ -21,6 +22,7 @@ import { saveMachine, unsaveMachine } from '../../src/lib/machines';
 import { useAppModal } from '../../src/hooks/useAppModal';
 
 export default function MachineDetailScreen() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
@@ -97,7 +99,7 @@ export default function MachineDetailScreen() {
 
   async function handleSaveToggle() {
     if (!user) {
-      showError('Login Required', 'Please log in to save machines.');
+      showError(t('machine.loginRequired'), t('machine.loginToSave'));
       return;
     }
 
@@ -114,7 +116,7 @@ export default function MachineDetailScreen() {
         if (!success) {
           // Revert on failure
           addSaved(params.id);
-          showError('Error', 'Failed to unsave machine.');
+          showError(t('common.error'), t('machine.unsaveError'));
         }
       } else {
         // Optimistic update - add to store immediately
@@ -123,7 +125,7 @@ export default function MachineDetailScreen() {
         if (!success) {
           // Revert on failure
           removeSaved(params.id);
-          showError('Error', 'Failed to save machine.');
+          showError(t('common.error'), t('machine.saveError'));
         }
       }
     } catch (err) {
@@ -135,7 +137,7 @@ export default function MachineDetailScreen() {
         // Originally not saved: we added optimistically, so remove
         removeSaved(params.id);
       }
-      showError('Error', 'Something went wrong. Please try again.');
+      showError(t('common.error'), t('common.error'));
     } finally {
       setSaving(false);
     }
@@ -143,26 +145,26 @@ export default function MachineDetailScreen() {
 
   function handleCheckIn() {
     if (!user) {
-      showError('Login Required', 'Please log in to check in.');
+      showError(t('machine.loginRequired'), t('machine.loginToCheckIn'));
       return;
     }
 
     // Ask if machine still exists
     showConfirm(
-      'Check In',
-      'Is this vending machine still here?',
+      t('machine.checkIn.title'),
+      t('machine.checkIn.question'),
       [
         {
-          text: 'Cancel',
+          text: t('common.cancel'),
           style: 'cancel',
         },
         {
-          text: "No, it's gone",
+          text: t('machine.checkIn.noGone'),
           style: 'destructive',
           onPress: () => performCheckIn(false),
         },
         {
-          text: "Yes, it's here!",
+          text: t('machine.checkIn.yesHere'),
           style: 'primary',
           onPress: () => performCheckIn(true),
         },
@@ -177,7 +179,7 @@ export default function MachineDetailScreen() {
       // Get current location
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        showError('Location Required', 'Please enable location to check in.');
+        showError(t('common.error'), t('machine.checkIn.locationRequired'));
         setCheckingIn(false);
         return;
       }
@@ -199,14 +201,14 @@ export default function MachineDetailScreen() {
         // Check for specific error messages
         if (error.message.includes('too far')) {
           showError(
-            'Too Far Away',
-            'You need to be closer to the vending machine to check in. Get within 200 meters and try again.'
+            t('machine.checkIn.tooFar.title'),
+            t('machine.checkIn.tooFar.message')
           );
         } else if (error.message.includes('already visited')) {
-          showError('Already Checked In', "You've already checked in to this machine recently.");
+          showError(t('machine.checkIn.alreadyVisited.title'), t('machine.checkIn.alreadyVisited.message'));
           setHasCheckedIn(true); // Disable button since already visited
         } else {
-          showError('Check-in Failed', error.message);
+          showError(t('common.error'), error.message);
         }
         setCheckingIn(false);
         return;
@@ -224,10 +226,10 @@ export default function MachineDetailScreen() {
 
       // Show success message, then badge popup if earned
       showSuccess(
-        'Checked In!',
+        t('machine.checkIn.success.title'),
         stillExists
-          ? 'Thanks for confirming this machine is still here!'
-          : "Thanks for letting us know. We'll verify this machine.",
+          ? t('machine.checkIn.success.stillHere')
+          : t('machine.checkIn.success.gone'),
         () => {
           if (newBadges.length > 0) {
             showBadgePopup(newBadges);
@@ -235,7 +237,7 @@ export default function MachineDetailScreen() {
         }
       );
     } catch (err) {
-      showError('Error', 'Something went wrong. Please try again.');
+      showError(t('common.error'), t('common.error'));
     } finally {
       setCheckingIn(false);
     }
@@ -246,7 +248,7 @@ export default function MachineDetailScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={styles.backText}>← {t('common.back')}</Text>
         </Pressable>
       </View>
 
@@ -256,13 +258,13 @@ export default function MachineDetailScreen() {
           <Image source={{ uri: params.primary_photo_url }} style={styles.photo} />
         ) : (
           <View style={[styles.photo, styles.noPhoto]}>
-            <Text style={styles.noPhotoText}>No photo</Text>
+            <Text style={styles.noPhotoText}>{t('machine.noPhoto')}</Text>
           </View>
         )}
 
         {/* Info */}
         <View style={styles.info}>
-          <Text style={styles.name}>{params.name || 'Unnamed Machine'}</Text>
+          <Text style={styles.name}>{params.name || t('machine.unnamed')}</Text>
 
           {/* Categories */}
           {categories.length > 0 && (
@@ -282,11 +284,11 @@ export default function MachineDetailScreen() {
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
               <Ionicons name="location" size={16} color="#FF4B4B" />
-              <Text style={styles.statDistance}>{distance} away</Text>
+              <Text style={styles.statDistance}>{t('machine.away', { distance })}</Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons name="eye-outline" size={16} color="#666" />
-              <Text style={styles.statText}>{displayVisitCount} visits</Text>
+              <Text style={styles.statText}>{t('machine.visits', { count: displayVisitCount })}</Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons
@@ -295,7 +297,7 @@ export default function MachineDetailScreen() {
                 color={isActive ? '#22C55E' : '#F59E0B'}
               />
               <Text style={[styles.statText, isActive ? styles.activeText : styles.unknownText]}>
-                {isActive ? 'Active' : 'Unverified'}
+                {isActive ? t('machine.active') : t('machine.unverified')}
               </Text>
             </View>
           </View>
@@ -315,7 +317,7 @@ export default function MachineDetailScreen() {
         {/* Action buttons */}
         <View style={styles.actions}>
           <Pressable style={styles.primaryButton} onPress={openDirections}>
-            <Text style={styles.primaryButtonText}>Get Directions</Text>
+            <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
           </Pressable>
 
           <View style={styles.secondaryActions}>
@@ -331,7 +333,7 @@ export default function MachineDetailScreen() {
                 <ActivityIndicator size="small" color="#333" />
               ) : (
                 <Text style={styles.secondaryButtonText}>
-                  {hasCheckedIn ? 'Visited ✓' : 'I Visited'}
+                  {hasCheckedIn ? t('machine.visited') + ' ✓' : t('machine.iVisited')}
                 </Text>
               )}
             </Pressable>
@@ -350,7 +352,7 @@ export default function MachineDetailScreen() {
                     color={isSaved ? '#FF4B4B' : '#333'}
                   />
                   <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]}>
-                    {isSaved ? 'Saved' : 'Save'}
+                    {isSaved ? t('common.saved') : t('common.save')}
                   </Text>
                 </View>
               )}

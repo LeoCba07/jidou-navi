@@ -10,11 +10,13 @@ import {
   Dimensions,
 } from 'react-native';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useUIStore } from '../store/uiStore';
 
 const { width } = Dimensions.get('window');
 
 export default function BadgeUnlockModal() {
+  const { t } = useTranslation();
   const { badgePopup, closeBadgePopup } = useUIStore();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -70,7 +72,7 @@ export default function BadgeUnlockModal() {
   if (!badgePopup) return null;
 
   const { badges, onDismiss } = badgePopup;
-  const title = badges.length === 1 ? 'Badge Earned!' : 'Badges Earned!';
+  const title = badges.length === 1 ? t('badges.earned') : t('badges.earnedPlural');
 
   return (
     <Modal transparent visible animationType="none" onRequestClose={handleClose}>
@@ -113,9 +115,9 @@ export default function BadgeUnlockModal() {
               style={styles.viewAllButton}
               onPress={handleViewAllBadges}
               accessibilityRole="button"
-              accessibilityLabel="View all badges"
+              accessibilityLabel={t('badges.viewAll')}
             >
-              <Text style={styles.viewAllText}>View All Badges</Text>
+              <Text style={styles.viewAllText}>{t('badges.viewAll')}</Text>
             </Pressable>
 
             <Pressable
@@ -125,9 +127,9 @@ export default function BadgeUnlockModal() {
                 onDismiss?.();
               }}
               accessibilityRole="button"
-              accessibilityLabel="Dismiss badge notification"
+              accessibilityLabel={t('badges.awesome')}
             >
-              <Text style={styles.dismissText}>Awesome!</Text>
+              <Text style={styles.dismissText}>{t('badges.awesome')}</Text>
             </Pressable>
           </View>
         </Animated.View>
