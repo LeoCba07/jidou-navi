@@ -10,6 +10,9 @@ import {
   Linking,
   Platform,
   ActivityIndicator,
+  Dimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -18,8 +21,10 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
-import { saveMachine, unsaveMachine } from '../../src/lib/machines';
+import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
 import { useAppModal } from '../../src/hooks/useAppModal';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function MachineDetailScreen() {
   const { t } = useTranslation();
@@ -31,6 +36,8 @@ export default function MachineDetailScreen() {
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -45,6 +52,26 @@ export default function MachineDetailScreen() {
     status: string;
     categories: string;
   }>();
+
+  // Initialize photos with primary one
+  useEffect(() => {
+    if (params.primary_photo_url) {
+      setPhotos([params.primary_photo_url]);
+    }
+  }, [params.primary_photo_url]);
+
+  // Fetch all photos
+  useEffect(() => {
+    async function loadPhotos() {
+      const fetchedPhotos = await fetchMachinePhotos(params.id);
+      if (fetchedPhotos.length > 0) {
+        // If we already have primary, make sure we don't duplicate it if it's in the list
+        // Ideally the API handles order, but let's just use the full list from API
+        setPhotos(fetchedPhotos);
+      }
+    }
+    loadPhotos();
+  }, [params.id]);
 
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
@@ -243,6 +270,13 @@ export default function MachineDetailScreen() {
     }
   }
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const slideSize = event.nativeEvent.layoutMeasurement.width;
+    const index = event.nativeEvent.contentOffset.x / slideSize;
+    const roundIndex = Math.round(index);
+    setActivePhotoIndex(roundIndex);
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -253,14 +287,47 @@ export default function MachineDetailScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        {/* Photo */}
-        {params.primary_photo_url ? (
-          <Image source={{ uri: params.primary_photo_url }} style={styles.photo} />
-        ) : (
-          <View style={[styles.photo, styles.noPhoto]}>
-            <Text style={styles.noPhotoText}>{t('machine.noPhoto')}</Text>
-          </View>
-        )}
+        {/* Photo Carousel */}
+        <View style={styles.carouselContainer}>
+          {photos.length > 0 ? (
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              style={styles.carousel}
+            >
+              {photos.map((photoUrl, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: photoUrl }}
+                  style={styles.photo}
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
+          ) : (
+            <View style={[styles.photo, styles.noPhoto]}>
+              <Text style={styles.noPhotoText}>{t('machine.noPhoto')}</Text>
+            </View>
+          )}
+
+          {/* Pagination Dots */}
+          {photos.length > 1 && (
+            <View style={styles.pagination}>
+              {photos.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.paginationDot,
+                    index === activePhotoIndex && styles.paginationDotActive,
+                  ]}
+                />
+              ))}
+            </View>
+          )}
+        </View>
 
         {/* Info */}
         <View style={styles.info}>
@@ -387,14 +454,38 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  photo: {
-    width: '100%',
+  carouselContainer: {
+    position: 'relative',
+  },
+  carousel: {
     height: 250,
+  },
+  photo: {
+    width: SCREEN_WIDTH,
+    height: 250,
+  },
+  pagination: {
+    position: 'absolute',
+    bottom: 16,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    gap: 8,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  paginationDotActive: {
+    backgroundColor: '#fff',
+    width: 20,
   },
   noPhoto: {
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
+    width: SCREEN_WIDTH,
   },
   noPhotoText: {
     color: '#999',
