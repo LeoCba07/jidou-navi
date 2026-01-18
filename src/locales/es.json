@@ -119,6 +119,8 @@
     "getDirections": "Obtener Direcciones",
     "iVisited": "Visité",
     "visited": "Visitada",
+    "photoCarousel": "Carrusel de fotos",
+    "photoLabel": "Foto de máquina {{current}} de {{total}}",
     "loginRequired": "Inicio de sesión requerido",
     "loginToSave": "Por favor inicia sesión para guardar máquinas.",
     "loginToCheckIn": "Por favor inicia sesión para registrar tu visita.",
