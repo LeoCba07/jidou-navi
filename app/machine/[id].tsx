@@ -63,7 +63,16 @@ export default function MachineDetailScreen() {
       }
 
       const fetchedPhotos = await fetchMachinePhotos(params.id);
-      if (!isMounted || fetchedPhotos.length === 0) {
+      if (!isMounted) {
+        return;
+      }
+
+      // If no photos were fetched and no primary photo, clear the array
+      if (fetchedPhotos.length === 0) {
+        if (!params.primary_photo_url) {
+          setPhotos([]);
+        }
+        // Otherwise keep the primary photo that was seeded
         return;
       }
 
@@ -315,7 +324,6 @@ export default function MachineDetailScreen() {
               scrollEventThrottle={16}
               style={styles.carousel}
               accessibilityLabel={t('machine.photoCarousel')}
-              accessibilityRole="none"
             >
               {photos.map((photoUrl, index) => (
                 <Image
