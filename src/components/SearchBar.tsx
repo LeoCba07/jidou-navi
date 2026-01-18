@@ -12,8 +12,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { searchMachines, SearchResult } from "../lib/machines";
+import { useTopInset } from "../hooks/useTopInset";
 
 type SearchBarProps = {
   onResultSelect?: (result: SearchResult) => void;
@@ -125,8 +125,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
     setShowResults(false);
   };
 
-  const insets = useSafeAreaInsets();
-  const topInset = insets.top > 0 ? insets.top : 20;
+  const topInset = useTopInset();
 
   return (
     <>
@@ -139,6 +138,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
         />
       )}
 
+      {/* Note: the dynamic `top` here intentionally overrides the static `top` in styles.container */}
       <View style={[styles.container, { top: topInset + 10 }]}>
         {/* Search input */}
         <View style={styles.inputContainer}>
