@@ -208,7 +208,7 @@ export default function MapScreen() {
       <MapView
         ref={mapRef}
         style={styles.map}
-        onRegionDidChange={handleRegionChange}
+        onMapIdle={handleRegionChange}
         onPress={handleMapPress}
         scaleBarEnabled={false}
         compassEnabled={false}

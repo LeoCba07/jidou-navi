@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { searchMachines, SearchResult } from "../lib/machines";
 
 type SearchBarProps = {
@@ -124,6 +125,9 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
     setShowResults(false);
   };
 
+  const insets = useSafeAreaInsets();
+  const topInset = insets.top > 0 ? insets.top : 20;
+
   return (
     <>
       {/* Overlay to dismiss results when tapping outside */}
@@ -135,7 +139,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
         />
       )}
 
-      <View style={styles.container}>
+      <View style={[styles.container, { top: topInset + 10 }]}>
         {/* Search input */}
         <View style={styles.inputContainer}>
           <Ionicons name="search" size={20} color="#999" style={styles.icon} />
