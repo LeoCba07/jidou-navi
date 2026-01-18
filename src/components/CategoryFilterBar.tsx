@@ -1,6 +1,7 @@
 // Horizontal filter bar with category chips for the map
 import { View, ScrollView, Pressable, Text, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUIStore } from "../store";
 
 // Category definitions with translation keys
@@ -21,10 +22,13 @@ export function CategoryFilterBar() {
   const toggleCategory = useUIStore((state) => state.toggleCategory);
   const clearCategories = useUIStore((state) => state.clearCategories);
 
+  const insets = useSafeAreaInsets();
+  const topInset = insets.top > 0 ? insets.top : 20;
+
   const isAllSelected = selectedCategories.length === 0;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { top: topInset + 60 }]}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
