@@ -247,7 +247,7 @@ export default function MapScreen() {
                 0.1,
               ],
               iconAllowOverlap: true,
-              iconAnchor: 'top',
+              iconAnchor: 'bottom',
               symbolSortKey: [
                 'case',
                 ['==', ['get', 'isSelected'], true],
