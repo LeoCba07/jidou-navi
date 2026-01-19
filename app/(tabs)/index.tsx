@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, CircleLayer } from '@rnmapbox/maps';
+import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, SymbolLayer, Images } from '@rnmapbox/maps';
 import { router } from 'expo-router';
 import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine, SearchResult, calculateDistance } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
@@ -16,6 +16,11 @@ Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '');
 
 // Default center: Tokyo
 const TOKYO = { latitude: 35.6762, longitude: 139.6503 };
+
+// Marker images for SymbolLayer
+const markerImages = {
+  'vending-marker': require('../../assets/marker.png'),
+};
 
 export default function MapScreen() {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -47,6 +52,7 @@ export default function MapScreen() {
       properties: {
         id: machine.id,
         name: machine.name,
+        isSelected: selectedMachine?.id === machine.id,
       },
     }));
 
@@ -54,7 +60,7 @@ export default function MapScreen() {
       type: 'FeatureCollection' as const,
       features,
     };
-  }, [filteredMachines]);
+  }, [filteredMachines, selectedMachine]);
 
   // Clear selected machine if it's no longer visible after filtering
   useEffect(() => {
@@ -221,38 +227,33 @@ export default function MapScreen() {
         />
         <LocationPuck puckBearing="heading" puckBearingEnabled />
 
+        {/* Preload marker image */}
+        <Images images={markerImages} />
+
         {/* Machine pins using ShapeSource (more stable than MarkerView) */}
         <ShapeSource
           id="machines"
           shape={machinesGeoJSON}
           onPress={handleShapePress}
         >
-          {/* Outer glow/shadow */}
-          <CircleLayer
-            id="machine-glow"
+          <SymbolLayer
+            id="machine-markers"
             style={{
-              circleRadius: 16,
-              circleColor: 'rgba(255, 75, 75, 0.2)',
-              circleBlur: 0.8,
-            }}
-          />
-          {/* Main pin circle */}
-          <CircleLayer
-            id="machine-circles"
-            style={{
-              circleRadius: 12,
-              circleColor: '#FF4B4B',
-              circleStrokeWidth: 3,
-              circleStrokeColor: '#ffffff',
-            }}
-          />
-          {/* Inner highlight for depth */}
-          <CircleLayer
-            id="machine-highlight"
-            style={{
-              circleRadius: 5,
-              circleColor: 'rgba(255, 255, 255, 0.4)',
-              circleTranslate: [-2, -2],
+              iconImage: 'vending-marker',
+              iconSize: [
+                'case',
+                ['==', ['get', 'isSelected'], true],
+                0.15,
+                0.1,
+              ],
+              iconAllowOverlap: true,
+              iconAnchor: 'top',
+              symbolSortKey: [
+                'case',
+                ['==', ['get', 'isSelected'], true],
+                1,
+                0,
+              ],
             }}
           />
         </ShapeSource>
@@ -315,14 +316,6 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  pin: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FF4B4B',
-    borderWidth: 3,
-    borderColor: 'white',
-  },
   recenterButton: {
     position: 'absolute',
     bottom: 12,
