@@ -19,6 +19,62 @@ export type NewlyEarnedBadge = Badge & {
   unlocked_at: string;
 };
 
+// Fetch category visit counts for a user
+async function getCategoryVisitCounts(
+  userId: string
+): Promise<Record<string, number>> {
+  const { data, error } = await supabase
+    .from('visits')
+    .select(`
+      machine_id,
+      machines!inner (
+        machine_categories!inner (
+          categories!inner (
+            slug
+          )
+        )
+      )
+    `)
+    .eq('user_id', userId);
+
+  if (error || !data) {
+    console.error('Error fetching category visits:', error);
+    return {};
+  }
+
+  // Count visits per category
+  const counts: Record<string, number> = {};
+  for (const visit of data) {
+    const machines = visit.machines as {
+      machine_categories: { categories: { slug: string } }[];
+    };
+    if (machines?.machine_categories) {
+      for (const mc of machines.machine_categories) {
+        const slug = mc.categories?.slug;
+        if (slug) {
+          counts[slug] = (counts[slug] || 0) + 1;
+        }
+      }
+    }
+  }
+  return counts;
+}
+
+// Fetch verification count (visits where still_exists = true)
+async function getVerificationCount(userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('visits')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('still_exists', true);
+
+  if (error) {
+    console.error('Error fetching verification count:', error);
+    return 0;
+  }
+  return count || 0;
+}
+
 // Check if user earned any new badges and award them
 // Returns array of newly earned badges (for showing popup)
 export async function checkAndAwardBadges(
@@ -38,6 +94,12 @@ export async function checkAndAwardBadges(
     console.error('Error fetching profile for badge check:', profileError);
     return [];
   }
+
+  // Fetch category visit counts and verification count in parallel
+  const [categoryVisitCounts, verificationCount] = await Promise.all([
+    getCategoryVisitCounts(user.id),
+    getVerificationCount(user.id),
+  ]);
 
   // Fetch all badges
   const { data: allBadges, error: badgesError } = await supabase
@@ -78,6 +140,8 @@ export async function checkAndAwardBadges(
     const isEarned = checkBadgeEligibility(typedBadge, {
       visit_count: profile.visit_count ?? 0,
       contribution_count: profile.contribution_count ?? 0,
+      category_visit_counts: categoryVisitCounts,
+      verification_count: verificationCount,
     });
 
     if (isEarned) {
@@ -120,28 +184,32 @@ export async function checkAndAwardBadges(
 // Check if user meets badge requirements based on trigger type
 function checkBadgeEligibility(
   badge: Badge,
-  profile: { visit_count: number; contribution_count: number }
+  stats: {
+    visit_count: number;
+    contribution_count: number;
+    category_visit_counts: Record<string, number>;
+    verification_count: number;
+  }
 ): boolean {
   const trigger = badge.trigger_value;
   if (!trigger) return false;
 
   switch (badge.trigger_type) {
     case 'visit_count':
-      return profile.visit_count >= (trigger.count || 0);
+      return stats.visit_count >= (trigger.count || 0);
 
     case 'contribution_count':
-      return profile.contribution_count >= (trigger.count || 0);
+      return stats.contribution_count >= (trigger.count || 0);
 
-    case 'category_visit':
-      // TODO: Implement category-specific visit tracking
-      // This requires tracking visits per category, which isn't in the current profile
-      // For now, skip these badges
-      return false;
+    case 'category_visit': {
+      const category = trigger.category;
+      if (!category) return false;
+      const categoryCount = stats.category_visit_counts[category] || 0;
+      return categoryCount >= (trigger.count || 0);
+    }
 
     case 'verification_count':
-      // TODO: Implement verification count tracking
-      // This requires tracking how many times user verified machines exist
-      return false;
+      return stats.verification_count >= (trigger.count || 0);
 
     default:
       return false;

@@ -433,16 +433,41 @@ INSERT INTO categories (slug, name, description, icon_name, color, display_order
     ('alcohol', 'Alcohol', 'Beer, sake, and spirits', 'beer', '#F39C12', 8);
 
 INSERT INTO badges (slug, name, description, trigger_type, trigger_value, rarity, display_order) VALUES
+    -- Visit milestones
     ('first_find', 'First Find', 'Visit your first vending machine', 'visit_count', '{"count": 1}', 'common', 1),
     ('explorer_5', 'Explorer', 'Visit 5 different machines', 'visit_count', '{"count": 5}', 'common', 2),
     ('adventurer_25', 'Adventurer', 'Visit 25 different machines', 'visit_count', '{"count": 25}', 'rare', 3),
-    ('master_100', 'Vending Master', 'Visit 100 different machines', 'visit_count', '{"count": 100}', 'epic', 4),
-    ('first_contribution', 'Contributor', 'Add your first machine to the map', 'contribution_count', '{"count": 1}', 'common', 5),
-    ('cartographer_10', 'Cartographer', 'Add 10 machines to the map', 'contribution_count', '{"count": 10}', 'rare', 6),
-    ('weird_hunter', 'Weird Hunter', 'Visit 5 machines tagged as Weird', 'category_visit', '{"category": "weird", "count": 5}', 'rare', 7),
-    ('gachapon_addict', 'Gachapon Addict', 'Visit 10 gachapon machines', 'category_visit', '{"category": "gachapon", "count": 10}', 'rare', 8),
-    ('retro_lover', 'Retro Lover', 'Visit 5 retro machines', 'category_visit', '{"category": "retro", "count": 5}', 'rare', 9),
-    ('verifier', 'Verifier', 'Verify 10 machines still exist', 'verification_count', '{"count": 10}', 'common', 10);
+    ('urban_forager', 'Urban Forager', 'The streets are your supermarket', 'visit_count', '{"count": 50}', 'rare', 4),
+    ('master_100', 'Vending Master', 'Visit 100 different machines', 'visit_count', '{"count": 100}', 'epic', 5),
+    ('vending_sensei', 'Vending Sensei', 'You have mastered the art of the machine', 'visit_count', '{"count": 250}', 'epic', 6),
+    ('legend', 'Legend of Jidouhanbaiki', 'Your name echoes through vending history', 'visit_count', '{"count": 500}', 'legendary', 7),
+
+    -- Contribution milestones
+    ('first_contribution', 'Contributor', 'Add your first machine to the map', 'contribution_count', '{"count": 1}', 'common', 10),
+    ('spotter', 'Spotter', 'Your eyes are trained', 'contribution_count', '{"count": 5}', 'common', 11),
+    ('cartographer_10', 'Cartographer', 'Add 10 machines to the map', 'contribution_count', '{"count": 10}', 'rare', 12),
+    ('pathfinder', 'Pathfinder', 'Building the map, one pin at a time', 'contribution_count', '{"count": 25}', 'rare', 13),
+    ('archaeologist', 'Vending Archaeologist', 'Unearthing hidden treasures', 'contribution_count', '{"count": 50}', 'epic', 14),
+    ('legendary_mapper', 'Legendary Mapper', 'The community owes you a Pocari Sweat', 'contribution_count', '{"count": 100}', 'legendary', 15),
+
+    -- Category specialist badges
+    ('weird_hunter', 'Weird Hunter', 'Visit 5 machines tagged as Weird', 'category_visit', '{"category": "weird", "count": 5}', 'rare', 20),
+    ('oddity_collector', 'Oddity Collector', 'Seeker of the strange', 'category_visit', '{"category": "weird", "count": 10}', 'epic', 21),
+    ('gachapon_addict', 'Gachapon Addict', 'Visit 10 gachapon machines', 'category_visit', '{"category": "gachapon", "count": 10}', 'rare', 22),
+    ('capsule_commander', 'Capsule Commander', 'The gacha gods smile upon you', 'category_visit', '{"category": "gachapon", "count": 25}', 'epic', 23),
+    ('retro_lover', 'Retro Lover', 'Visit 5 retro machines', 'category_visit', '{"category": "retro", "count": 5}', 'rare', 24),
+    ('time_traveler', 'Time Traveler', 'Living in the Showa era', 'category_visit', '{"category": "retro", "count": 10}', 'epic', 25),
+    ('caffeine_addict', 'Caffeine Addict', 'Running on liquid courage', 'category_visit', '{"category": "coffee", "count": 10}', 'rare', 26),
+    ('thirst_quencher', 'Thirst Quencher', 'Hydration is your mission', 'category_visit', '{"category": "drinks", "count": 15}', 'common', 27),
+    ('frozen_explorer', 'Frozen Explorer', 'Brain freeze champion', 'category_visit', '{"category": "ice-cream", "count": 5}', 'rare', 28),
+    ('liquid_courage', 'Liquid Courage', 'Found the good stuff', 'category_visit', '{"category": "alcohol", "count": 5}', 'rare', 29),
+    ('snack_attack', 'Snack Attack', 'Fueled by vending cuisine', 'category_visit', '{"category": "food", "count": 10}', 'rare', 30),
+
+    -- Verification badges
+    ('verifier', 'Verifier', 'Verify 10 machines still exist', 'verification_count', '{"count": 10}', 'common', 40),
+    ('truth_seeker', 'Truth Seeker', 'Keeping the map honest', 'verification_count', '{"count": 5}', 'common', 41),
+    ('fact_checker', 'Fact Checker', 'Guardian of accuracy', 'verification_count', '{"count": 25}', 'rare', 42),
+    ('data_integrity', 'Data Integrity Officer', 'The database thanks you', 'verification_count', '{"count": 50}', 'epic', 43);
 
 -- 9. HELPER VIEWS
 -- ================================
