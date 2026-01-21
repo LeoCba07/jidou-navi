@@ -484,13 +484,19 @@ export default function MachineDetailScreen() {
         visible={isFullScreen}
         transparent={true}
         animationType="fade"
-        onRequestClose={() => setIsFullScreen(false)}
+        onRequestClose={() => {
+          StatusBar.setHidden(false);
+          setIsFullScreen(false);
+        }}
       >
         <View style={styles.fullScreenContainer}>
           <StatusBar hidden />
           <Pressable
             style={styles.closeButton}
-            onPress={() => setIsFullScreen(false)}
+            onPress={() => {
+              StatusBar.setHidden(false);
+              setIsFullScreen(false);
+            }}
           >
             <Ionicons name="close" size={28} color="#fff" />
           </Pressable>
