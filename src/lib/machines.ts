@@ -83,6 +83,41 @@ export async function fetchNearbyMachines(
   }
 }
 
+// Bounds type for map viewport queries
+export type MapBounds = {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+};
+
+// Fetch machines within bounding box (for map viewport)
+// Returns null on network failure so caller can keep cached data
+export async function fetchMachinesInBounds(
+  bounds: MapBounds,
+  limit: number = 200
+): Promise<NearbyMachine[] | null> {
+  try {
+    const { data, error } = await supabase.rpc('machines_in_bounds', {
+      min_lat: bounds.minLat,
+      max_lat: bounds.maxLat,
+      min_lng: bounds.minLng,
+      max_lng: bounds.maxLng,
+      limit_count: limit,
+    });
+
+    if (error) {
+      console.error('Error fetching machines in bounds:', error);
+      return null;
+    }
+
+    return (data || []) as NearbyMachine[];
+  } catch (e) {
+    console.error('Network error fetching machines in bounds:', e);
+    return null;
+  }
+}
+
 // Search machines by name, description, or address (fuzzy search)
 export async function searchMachines(
   searchTerm: string,

@@ -5,11 +5,12 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, SymbolLayer, Images } from '@rnmapbox/maps';
 import { router } from 'expo-router';
-import { fetchNearbyMachines, filterMachinesByCategories, NearbyMachine, SearchResult, calculateDistance } from '../../src/lib/machines';
+import { filterMachinesByCategories, NearbyMachine, SearchResult, calculateDistance, MapBounds } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
 import { SearchBar } from '../../src/components/SearchBar';
 import { CategoryFilterBar } from '../../src/components/CategoryFilterBar';
-import { useUIStore } from '../../src/store';
+import { useUIStore, useMachinesCacheStore } from '../../src/store';
+import { useMapFetch } from '../../src/hooks/useMapFetch';
 
 // Initialize Mapbox with token from env
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '');
@@ -24,16 +25,20 @@ const markerImages = {
 
 export default function MapScreen() {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [machines, setMachines] = useState<NearbyMachine[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMachine, setSelectedMachine] = useState<NearbyMachine | null>(null);
   const mapRef = useRef<MapView>(null);
   const cameraRef = useRef<Camera>(null);
-  const regionChangeTimeout = useRef<NodeJS.Timeout | null>(null);
   const markerPressedRef = useRef<boolean>(false);
 
   // Category filter state from Zustand
   const selectedCategories = useUIStore((state) => state.selectedCategories);
+
+  // Machines from cache store
+  const machines = useMachinesCacheStore((state) => state.visibleMachines);
+
+  // Map fetching hook
+  const { handleRegionChange, forceFetch, cleanup } = useMapFetch();
 
   // Filter machines by selected categories
   const filteredMachines = useMemo(() => {
@@ -87,49 +92,48 @@ export default function MapScreen() {
     })();
   }, []);
 
-  // Fetch machines when location is available
+  // Initial fetch when location is available
   useEffect(() => {
-    if (location) {
-      loadMachines(location.latitude, location.longitude);
+    if (location && mapRef.current) {
+      // Get initial bounds and fetch
+      (async () => {
+        const bounds = await mapRef.current?.getVisibleBounds();
+        if (bounds) {
+          const mapBounds: MapBounds = {
+            minLat: Math.min(bounds[0][1], bounds[1][1]),
+            maxLat: Math.max(bounds[0][1], bounds[1][1]),
+            minLng: Math.min(bounds[0][0], bounds[1][0]),
+            maxLng: Math.max(bounds[0][0], bounds[1][0]),
+          };
+          forceFetch(mapBounds);
+        }
+      })();
     }
-  }, [location]);
+  }, [location, forceFetch]);
 
-  // Cleanup timeout on unmount
+  // Cleanup on unmount
   useEffect(() => {
-    return () => {
-      if (regionChangeTimeout.current) {
-        clearTimeout(regionChangeTimeout.current);
-      }
-    };
-  }, []);
+    return cleanup;
+  }, [cleanup]);
 
-  // Fetch machines from Supabase
-  // On error (e.g., offline), keeps existing cached machines visible
-  async function loadMachines(lat: number, lng: number) {
-    const data = await fetchNearbyMachines(lat, lng);
-    // Only update if we got data - null means network error, keep cached
-    if (data !== null) {
-      setMachines(data);
-    } else {
-      console.log('Offline or network error - keeping cached machines');
+  // Handle map region change - fetch machines for new viewport
+  async function onRegionDidChange() {
+    if (!mapRef.current) return;
+
+    const [bounds, center] = await Promise.all([
+      mapRef.current.getVisibleBounds(),
+      mapRef.current.getZoom(),
+    ]);
+
+    if (bounds && center !== undefined) {
+      const mapBounds: MapBounds = {
+        minLat: Math.min(bounds[0][1], bounds[1][1]),
+        maxLat: Math.max(bounds[0][1], bounds[1][1]),
+        minLng: Math.min(bounds[0][0], bounds[1][0]),
+        maxLng: Math.max(bounds[0][0], bounds[1][0]),
+      };
+      handleRegionChange(mapBounds, center);
     }
-  }
-
-  // Reload machines when map stops moving (with debouncing)
-  async function handleRegionChange() {
-    // Clear previous timeout
-    if (regionChangeTimeout.current) {
-      clearTimeout(regionChangeTimeout.current);
-    }
-
-    // Set new timeout to fetch machines after 500ms of no movement
-    regionChangeTimeout.current = setTimeout(async () => {
-      if (!mapRef.current) return;
-      const center = await mapRef.current.getCenter();
-      if (center) {
-        loadMachines(center[1], center[0]); // [lng, lat] -> lat, lng
-      }
-    }, 500);
   }
 
   // Close preview when tapping on empty map area
@@ -180,23 +184,41 @@ export default function MapScreen() {
       animationDuration: 1000,
     });
 
-    // Reload machines around the selected location
-    const nearbyMachines = await fetchNearbyMachines(result.latitude, result.longitude);
+    // Force fetch machines around the selected location
+    // Use a small bounding box around the search result
+    const delta = 0.01; // ~1km
+    const searchBounds: MapBounds = {
+      minLat: result.latitude - delta,
+      maxLat: result.latitude + delta,
+      minLng: result.longitude - delta,
+      maxLng: result.longitude + delta,
+    };
+    forceFetch(searchBounds);
 
-    if (nearbyMachines !== null) {
-      setMachines(nearbyMachines);
-      // Find the selected machine in the loaded results and show preview
-      const selectedFromSearch = nearbyMachines.find(m => m.id === result.id);
+    // Wait a moment for fetch to complete, then find and select the machine
+    setTimeout(() => {
+      const currentMachines = useMachinesCacheStore.getState().visibleMachines;
+      const selectedFromSearch = currentMachines.find(m => m.id === result.id);
       if (selectedFromSearch) {
         setSelectedMachine(selectedFromSearch);
+      } else {
+        // Machine might not be in the fetched results yet - create a preview from search result
+        const machineFromSearch: NearbyMachine = {
+          id: result.id,
+          name: result.name,
+          description: result.description,
+          address: result.address,
+          latitude: result.latitude,
+          longitude: result.longitude,
+          distance_meters: 0,
+          categories: null,
+          primary_photo_url: '',
+          status: result.status,
+          visit_count: result.visit_count,
+        };
+        setSelectedMachine(machineFromSearch);
       }
-    } else {
-      // Offline - try to find machine in existing cache
-      const cachedMachine = machines.find(m => m.id === result.id);
-      if (cachedMachine) {
-        setSelectedMachine(cachedMachine);
-      }
-    }
+    }, 500);
   }
 
   if (loading) {
@@ -214,7 +236,7 @@ export default function MapScreen() {
       <MapView
         ref={mapRef}
         style={styles.map}
-        onMapIdle={handleRegionChange}
+        onMapIdle={onRegionDidChange}
         onPress={handleMapPress}
         scaleBarEnabled={false}
         compassEnabled={false}
