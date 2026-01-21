@@ -302,7 +302,12 @@ export default function MachineDetailScreen() {
               style={styles.carousel}
             >
               {photos.map((photoUrl, index) => (
-                <Pressable key={index} onPress={() => setIsFullScreen(true)}>
+                <Pressable
+                  key={index}
+                  onPress={() => setIsFullScreen(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('machine.viewPhotoFullScreen', 'View image in full screen')}
+                >
                   <Image
                     source={{ uri: photoUrl }}
                     style={styles.photo}
