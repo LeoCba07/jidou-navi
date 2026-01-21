@@ -92,24 +92,20 @@ export default function MapScreen() {
     })();
   }, []);
 
-  // Initial fetch when location is available
-  useEffect(() => {
-    if (location && mapRef.current) {
-      // Get initial bounds and fetch
-      (async () => {
-        const bounds = await mapRef.current?.getVisibleBounds();
-        if (bounds) {
-          const mapBounds: MapBounds = {
-            minLat: Math.min(bounds[0][1], bounds[1][1]),
-            maxLat: Math.max(bounds[0][1], bounds[1][1]),
-            minLng: Math.min(bounds[0][0], bounds[1][0]),
-            maxLng: Math.max(bounds[0][0], bounds[1][0]),
-          };
-          forceFetch(mapBounds);
-        }
-      })();
+  // Initial fetch when map finishes loading
+  async function onMapLoaded() {
+    if (!mapRef.current) return;
+    const bounds = await mapRef.current.getVisibleBounds();
+    if (bounds) {
+      const mapBounds: MapBounds = {
+        minLat: Math.min(bounds[0][1], bounds[1][1]),
+        maxLat: Math.max(bounds[0][1], bounds[1][1]),
+        minLng: Math.min(bounds[0][0], bounds[1][0]),
+        maxLng: Math.max(bounds[0][0], bounds[1][0]),
+      };
+      forceFetch(mapBounds);
     }
-  }, [location, forceFetch]);
+  }
 
   // Cleanup on unmount
   useEffect(() => {
@@ -236,6 +232,7 @@ export default function MapScreen() {
       <MapView
         ref={mapRef}
         style={styles.map}
+        onDidFinishLoadingMap={onMapLoaded}
         onMapIdle={onRegionDidChange}
         onPress={handleMapPress}
         scaleBarEnabled={false}
