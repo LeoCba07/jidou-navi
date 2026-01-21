@@ -5,14 +5,8 @@ import { useMachinesCacheStore } from '../store/machinesCacheStore';
 
 const THROTTLE_MS = 300;
 const DEBOUNCE_MS = 500;
-const MIN_ZOOM_LEVEL = 10; // Don't fetch when zoomed out too far
 
-interface UseMapFetchOptions {
-  minZoom?: number;
-}
-
-export function useMapFetch(options: UseMapFetchOptions = {}) {
-  const { minZoom = MIN_ZOOM_LEVEL } = options;
+export function useMapFetch() {
 
   const lastFetchTime = useRef<number>(0);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
@@ -48,12 +42,7 @@ export function useMapFetch(options: UseMapFetchOptions = {}) {
 
   // Main fetch handler with throttle + debounce hybrid
   const handleRegionChange = useCallback(
-    (bounds: MapBounds, zoomLevel: number) => {
-      // Skip if zoomed out too far
-      if (zoomLevel < minZoom) {
-        return;
-      }
-
+    (bounds: MapBounds) => {
       // Clear any pending debounced fetch
       if (debounceTimer.current) {
         clearTimeout(debounceTimer.current);
@@ -80,7 +69,7 @@ export function useMapFetch(options: UseMapFetchOptions = {}) {
         }
       }, DEBOUNCE_MS);
     },
-    [fetchMachinesForBounds, boundsExtendedSignificantly, minZoom]
+    [fetchMachinesForBounds, boundsExtendedSignificantly]
   );
 
   // Force fetch (bypasses throttle/debounce, used for initial load or search results)

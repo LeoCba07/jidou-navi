@@ -116,19 +116,16 @@ export default function MapScreen() {
   async function onRegionDidChange() {
     if (!mapRef.current) return;
 
-    const [bounds, center] = await Promise.all([
-      mapRef.current.getVisibleBounds(),
-      mapRef.current.getZoom(),
-    ]);
+    const bounds = await mapRef.current.getVisibleBounds();
 
-    if (bounds && center !== undefined) {
+    if (bounds) {
       const mapBounds: MapBounds = {
         minLat: Math.min(bounds[0][1], bounds[1][1]),
         maxLat: Math.max(bounds[0][1], bounds[1][1]),
         minLng: Math.min(bounds[0][0], bounds[1][0]),
         maxLng: Math.max(bounds[0][0], bounds[1][0]),
       };
-      handleRegionChange(mapBounds, center);
+      handleRegionChange(mapBounds);
     }
   }
 
