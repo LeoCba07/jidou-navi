@@ -186,5 +186,12 @@
   "languageSelector": {
     "title": "Select Language",
     "changeLanguage": "Change Language"
+  },
+  "share": {
+    "visited": "VISITED",
+    "shareToSocial": "Share to Social",
+    "maybeLater": "Maybe later",
+    "notAvailable": "Sharing is not available on this device",
+    "dialogTitle": "Share your vending machine discovery!"
   }
 }

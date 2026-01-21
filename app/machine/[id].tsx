@@ -23,6 +23,7 @@ import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import type { ShareCardData } from '../../src/components/ShareableCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -31,6 +32,7 @@ export default function MachineDetailScreen() {
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
+  const showShareCard = useUIStore((state) => state.showShareCard);
   const { showError, showSuccess, showConfirm } = useAppModal();
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
@@ -251,7 +253,15 @@ export default function MachineDetailScreen() {
       // Check for badge unlocks
       const newBadges = await checkAndAwardBadges(params.id);
 
-      // Show success message, then badge popup if earned
+      // Prepare share card data
+      const shareData: ShareCardData = {
+        machineName: params.name || '',
+        machineAddress: params.address || '',
+        machinePhotoUrl: photos[0] || params.primary_photo_url || '',
+        categories: categories,
+      };
+
+      // Show success message, then badge popup if earned, then share card
       showSuccess(
         t('machine.checkIn.success.title'),
         stillExists
@@ -259,7 +269,13 @@ export default function MachineDetailScreen() {
           : t('machine.checkIn.success.gone'),
         () => {
           if (newBadges.length > 0) {
-            showBadgePopup(newBadges);
+            // Show badge popup, then share card after dismissing
+            showBadgePopup(newBadges, () => {
+              showShareCard(shareData);
+            });
+          } else {
+            // No badges - show share card directly
+            showShareCard(shareData);
           }
         }
       );

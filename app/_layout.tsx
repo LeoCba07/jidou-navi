@@ -21,6 +21,7 @@ import { fetchSavedMachineIds } from '../src/lib/machines';
 import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
 import AppModal from '../src/components/AppModal';
 import LanguageSelector from '../src/components/LanguageSelector';
+import ShareableCard from '../src/components/ShareableCard';
 
 export default function RootLayout() {
   const router = useRouter();
@@ -152,6 +153,7 @@ export default function RootLayout() {
       <BadgeUnlockModal />
       <AppModal />
       <LanguageSelector />
+      <ShareableCard />
     </I18nextProvider>
   );
 }
