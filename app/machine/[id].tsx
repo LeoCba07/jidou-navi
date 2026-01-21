@@ -27,6 +27,7 @@ import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/ma
 import { useAppModal } from '../../src/hooks/useAppModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const MODAL_SCROLL_DELAY = 100; // ms to wait for modal to render before scrolling
 
 export default function MachineDetailScreen() {
   const { t } = useTranslation();
@@ -115,13 +116,15 @@ export default function MachineDetailScreen() {
   useEffect(() => {
     if (isFullScreen && fullScreenScrollViewRef.current) {
       // Use setTimeout to ensure the modal is fully rendered before scrolling
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         fullScreenScrollViewRef.current?.scrollTo({
           x: activePhotoIndex * SCREEN_WIDTH,
           y: 0,
           animated: false,
         });
-      }, 100);
+      }, MODAL_SCROLL_DELAY);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [isFullScreen, activePhotoIndex]);
 
