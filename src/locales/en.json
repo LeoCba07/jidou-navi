@@ -119,6 +119,8 @@
     "getDirections": "Get Directions",
     "iVisited": "I Visited",
     "visited": "Visited",
+    "photoCarousel": "Photo carousel",
+    "photoLabel": "Machine photo {{current}} of {{total}}",
     "loginRequired": "Login Required",
     "loginToSave": "Please log in to save machines.",
     "loginToCheckIn": "Please log in to check in.",
