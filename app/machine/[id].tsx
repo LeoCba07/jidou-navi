@@ -10,7 +10,7 @@ import {
   Linking,
   Platform,
   ActivityIndicator,
-  Dimensions,
+  useWindowDimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
@@ -24,9 +24,8 @@ import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
 import { useAppModal } from '../../src/hooks/useAppModal';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 export default function MachineDetailScreen() {
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
@@ -53,25 +52,48 @@ export default function MachineDetailScreen() {
     categories: string;
   }>();
 
-  // Initialize photos with primary one
+  // Initialize and fetch photos in a single effect to avoid race conditions
   useEffect(() => {
-    if (params.primary_photo_url) {
-      setPhotos([params.primary_photo_url]);
-    }
-  }, [params.primary_photo_url]);
+    let isMounted = true;
 
-  // Fetch all photos
-  useEffect(() => {
     async function loadPhotos() {
-      const fetchedPhotos = await fetchMachinePhotos(params.id);
-      if (fetchedPhotos.length > 0) {
-        // If we already have primary, make sure we don't duplicate it if it's in the list
-        // Ideally the API handles order, but let's just use the full list from API
-        setPhotos(fetchedPhotos);
+      // Seed with primary photo if available
+      if (params.primary_photo_url) {
+        setPhotos([params.primary_photo_url]);
       }
+
+      const fetchedPhotos = await fetchMachinePhotos(params.id);
+      if (!isMounted) {
+        return;
+      }
+
+      // If no photos were fetched and no primary photo, clear the array
+      if (fetchedPhotos.length === 0) {
+        if (!params.primary_photo_url) {
+          setPhotos([]);
+        }
+        // Otherwise keep the primary photo that was seeded
+        return;
+      }
+
+      let finalPhotos = fetchedPhotos;
+
+      // Ensure primary photo is present and first, without duplication
+      if (params.primary_photo_url) {
+        const primary = params.primary_photo_url;
+        const withoutPrimary = fetchedPhotos.filter((p) => p !== primary);
+        finalPhotos = [primary, ...withoutPrimary];
+      }
+
+      setPhotos(finalPhotos);
     }
+
     loadPhotos();
-  }, [params.id]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [params.id, params.primary_photo_url]);
 
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
@@ -272,6 +294,10 @@ export default function MachineDetailScreen() {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
+    // Guard against division by zero
+    if (!slideSize || slideSize === 0) {
+      return;
+    }
     const index = event.nativeEvent.contentOffset.x / slideSize;
     const roundIndex = Math.round(index);
     setActivePhotoIndex(roundIndex);
@@ -297,13 +323,16 @@ export default function MachineDetailScreen() {
               onScroll={handleScroll}
               scrollEventThrottle={16}
               style={styles.carousel}
+              accessibilityLabel={t('machine.photoCarousel')}
             >
               {photos.map((photoUrl, index) => (
                 <Image
-                  key={index}
+                  key={photoUrl}
                   source={{ uri: photoUrl }}
                   style={styles.photo}
                   resizeMode="cover"
+                  accessibilityLabel={t('machine.photoLabel', { current: index + 1, total: photos.length })}
+                  accessibilityRole="image"
                 />
               ))}
             </ScrollView>
@@ -316,9 +345,9 @@ export default function MachineDetailScreen() {
           {/* Pagination Dots */}
           {photos.length > 1 && (
             <View style={styles.pagination}>
-              {photos.map((_, index) => (
+              {photos.map((photoUrl, index) => (
                 <View
-                  key={index}
+                  key={photoUrl}
                   style={[
                     styles.paginationDot,
                     index === activePhotoIndex && styles.paginationDotActive,
