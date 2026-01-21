@@ -1,5 +1,5 @@
 // Machine detail screen
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -41,6 +41,7 @@ export default function MachineDetailScreen() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const fullScreenScrollViewRef = useRef<ScrollView>(null);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -109,6 +110,22 @@ export default function MachineDetailScreen() {
 
     checkRecentVisit();
   }, [user, params.id]);
+
+  // Scroll to the active photo when full-screen modal opens
+  useEffect(() => {
+    if (isFullScreen && fullScreenScrollViewRef.current) {
+      // Use a small delay to ensure the modal is fully rendered before scrolling
+      const timer = setTimeout(() => {
+        fullScreenScrollViewRef.current?.scrollTo({
+          x: activePhotoIndex * SCREEN_WIDTH,
+          y: 0,
+          animated: false,
+        });
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isFullScreen, activePhotoIndex]);
 
   const distance = Number(params.distance_meters) < 1000
     ? `${Math.round(Number(params.distance_meters))}m`
@@ -454,17 +471,19 @@ export default function MachineDetailScreen() {
               StatusBar.setHidden(false);
               setIsFullScreen(false);
             }}
+            accessibilityLabel="Close full screen viewer"
+            accessibilityRole="button"
           >
             <Ionicons name="close" size={28} color="#fff" />
           </Pressable>
           
           <ScrollView
+            ref={fullScreenScrollViewRef}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onScroll={handleScroll}
             scrollEventThrottle={16}
-            contentOffset={{ x: activePhotoIndex * SCREEN_WIDTH, y: 0 }}
             style={styles.fullScreenCarousel}
           >
             {photos.map((photoUrl, index) => (
