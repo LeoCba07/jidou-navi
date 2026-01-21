@@ -98,25 +98,20 @@ export async function fetchMachinesInBounds(
   limit: number = 200
 ): Promise<NearbyMachine[] | null> {
   try {
-    // Note: machines_in_bounds is a custom RPC function that needs to be added to database.types.ts
-    // after running `supabase gen types typescript` or it can be called with type assertion
-    const { data, error } = await supabase.rpc(
-      'machines_in_bounds' as any,
-      {
-        min_lat: bounds.minLat,
-        max_lat: bounds.maxLat,
-        min_lng: bounds.minLng,
-        max_lng: bounds.maxLng,
-        limit_count: limit,
-      } as any
-    );
+    const { data, error } = await supabase.rpc('machines_in_bounds', {
+      min_lat: bounds.minLat,
+      max_lat: bounds.maxLat,
+      min_lng: bounds.minLng,
+      max_lng: bounds.maxLng,
+      limit_count: limit,
+    });
 
     if (error) {
       console.error('Error fetching machines in bounds:', error);
       return null;
     }
 
-    return (data || []) as unknown as NearbyMachine[];
+    return (data || []) as NearbyMachine[];
   } catch (e) {
     console.error('Network error fetching machines in bounds:', e);
     return null;

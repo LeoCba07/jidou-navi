@@ -940,6 +940,28 @@ export type Database = {
       geomfromewkt: { Args: { "": string }; Returns: unknown }
       gettransactionid: { Args: never; Returns: unknown }
       longtransactionsenabled: { Args: never; Returns: boolean }
+      machines_in_bounds: {
+        Args: {
+          limit_count?: number
+          max_lat: number
+          max_lng: number
+          min_lat: number
+          min_lng: number
+        }
+        Returns: {
+          address: string
+          categories: Json
+          description: string
+          distance_meters: number
+          id: string
+          latitude: number
+          longitude: number
+          name: string
+          primary_photo_url: string
+          status: Database["public"]["Enums"]["machine_status"]
+          visit_count: number
+        }[]
+      }
       nearby_machines: {
         Args: {
           category_slug?: string
