@@ -80,7 +80,7 @@ function shouldRefetch(newBounds: MapBounds, lastBounds: MapBounds | null): bool
   const latOverflow = latOverflowMin + latOverflowMax;
   const lngOverflow = lngOverflowMin + lngOverflowMax;
 
-  return (latOverflow / oldLatRange > 0.3) || (lngOverflow / oldLngRange > 0.3);
+  return (latOverflow / oldLatRange > 0.1) || (lngOverflow / oldLngRange > 0.1);
 }
 
 export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
