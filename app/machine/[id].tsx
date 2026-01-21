@@ -115,6 +115,10 @@ export default function MachineDetailScreen() {
   }, [user, params.id]);
 
   // Scroll to the active photo when full-screen modal opens
+  // Note: Only depends on isFullScreen, not activePhotoIndex, because:
+  // - We want to sync scroll position only when modal opens
+  // - activePhotoIndex updates as user scrolls in the modal (via handleScroll)
+  // - Including activePhotoIndex would cause unwanted scrolling during user interaction
   useEffect(() => {
     if (isFullScreen && fullScreenScrollViewRef.current) {
       // Use a small delay to ensure the modal is fully rendered before scrolling
