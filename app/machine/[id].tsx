@@ -28,6 +28,9 @@ import { useAppModal } from '../../src/hooks/useAppModal';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+// Constants for full-screen modal behavior
+const MODAL_SCROLL_DELAY_MS = 100;
+
 export default function MachineDetailScreen() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
@@ -121,11 +124,11 @@ export default function MachineDetailScreen() {
           y: 0,
           animated: false,
         });
-      }, 100);
+      }, MODAL_SCROLL_DELAY_MS);
 
       return () => clearTimeout(timer);
     }
-  }, [isFullScreen, activePhotoIndex]);
+  }, [isFullScreen]);
 
   const distance = Number(params.distance_meters) < 1000
     ? `${Math.round(Number(params.distance_meters))}m`
