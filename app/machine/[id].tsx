@@ -13,6 +13,8 @@ import {
   Dimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  Modal,
+  StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -38,6 +40,7 @@ export default function MachineDetailScreen() {
   const [saving, setSaving] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -299,12 +302,13 @@ export default function MachineDetailScreen() {
               style={styles.carousel}
             >
               {photos.map((photoUrl, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: photoUrl }}
-                  style={styles.photo}
-                  resizeMode="cover"
-                />
+                <Pressable key={index} onPress={() => setIsFullScreen(true)}>
+                  <Image
+                    source={{ uri: photoUrl }}
+                    style={styles.photo}
+                    resizeMode="cover"
+                  />
+                </Pressable>
               ))}
             </ScrollView>
           ) : (
@@ -427,6 +431,49 @@ export default function MachineDetailScreen() {
           </View>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={isFullScreen}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsFullScreen(false)}
+      >
+        <View style={styles.fullScreenContainer}>
+          <StatusBar hidden />
+          <Pressable
+            style={styles.closeButton}
+            onPress={() => setIsFullScreen(false)}
+          >
+            <Ionicons name="close" size={28} color="#fff" />
+          </Pressable>
+          
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            contentOffset={{ x: activePhotoIndex * SCREEN_WIDTH, y: 0 }}
+            style={styles.fullScreenCarousel}
+          >
+            {photos.map((photoUrl, index) => (
+              <View key={index} style={styles.fullScreenPhotoContainer}>
+                <Image
+                  source={{ uri: photoUrl }}
+                  style={styles.fullScreenPhoto}
+                  resizeMode="contain"
+                />
+              </View>
+            ))}
+          </ScrollView>
+
+          <View style={styles.fullScreenPagination}>
+            <Text style={styles.fullScreenPaginationText}>
+              {activePhotoIndex + 1} / {photos.length}
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -625,5 +672,48 @@ const styles = StyleSheet.create({
   },
   savedText: {
     color: '#FF4B4B',
+  },
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    zIndex: 10,
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+  },
+  fullScreenCarousel: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+  },
+  fullScreenPhotoContainer: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenPhoto: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+  },
+  fullScreenPagination: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  fullScreenPaginationText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
