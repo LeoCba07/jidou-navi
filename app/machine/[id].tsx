@@ -1,5 +1,5 @@
 // Machine detail screen
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -41,6 +41,7 @@ export default function MachineDetailScreen() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const fullScreenScrollViewRef = useRef<ScrollView>(null);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -109,6 +110,20 @@ export default function MachineDetailScreen() {
 
     checkRecentVisit();
   }, [user, params.id]);
+
+  // Scroll to active photo when full screen modal opens
+  useEffect(() => {
+    if (isFullScreen && fullScreenScrollViewRef.current) {
+      // Use setTimeout to ensure the modal is fully rendered before scrolling
+      setTimeout(() => {
+        fullScreenScrollViewRef.current?.scrollTo({
+          x: activePhotoIndex * SCREEN_WIDTH,
+          y: 0,
+          animated: false,
+        });
+      }, 100);
+    }
+  }, [isFullScreen, activePhotoIndex]);
 
   const distance = Number(params.distance_meters) < 1000
     ? `${Math.round(Number(params.distance_meters))}m`
@@ -459,12 +474,12 @@ export default function MachineDetailScreen() {
           </Pressable>
           
           <ScrollView
+            ref={fullScreenScrollViewRef}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onScroll={handleScroll}
             scrollEventThrottle={16}
-            contentOffset={{ x: activePhotoIndex * SCREEN_WIDTH, y: 0 }}
             style={styles.fullScreenCarousel}
           >
             {photos.map((photoUrl, index) => (
