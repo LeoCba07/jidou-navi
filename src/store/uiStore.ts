@@ -3,6 +3,7 @@
 import { create } from 'zustand';
 import type { NewlyEarnedBadge } from '../lib/badges';
 import type { AppModalConfig } from '../components/AppModal';
+import type { ShareCardData } from '../components/ShareableCard';
 
 interface BadgePopupData {
   badges: NewlyEarnedBadge[];
@@ -14,6 +15,7 @@ interface UIState {
   isAddMachineModalOpen: boolean;
   badgePopup: BadgePopupData | null;
   appModal: AppModalConfig | null;
+  shareCard: ShareCardData | null;
   toggleCategory: (category: string) => void;
   clearCategories: () => void;
   setAddMachineModalOpen: (isOpen: boolean) => void;
@@ -21,6 +23,8 @@ interface UIState {
   closeBadgePopup: () => void;
   showModal: (config: AppModalConfig) => void;
   hideModal: () => void;
+  showShareCard: (data: ShareCardData) => void;
+  closeShareCard: () => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -28,6 +32,7 @@ export const useUIStore = create<UIState>((set) => ({
   isAddMachineModalOpen: false,
   badgePopup: null,
   appModal: null,
+  shareCard: null,
   toggleCategory: (category) =>
     set((state) => ({
       selectedCategories: state.selectedCategories.includes(category)
@@ -41,4 +46,6 @@ export const useUIStore = create<UIState>((set) => ({
   closeBadgePopup: () => set({ badgePopup: null }),
   showModal: (config) => set({ appModal: config }),
   hideModal: () => set({ appModal: null }),
+  showShareCard: (data) => set({ shareCard: data }),
+  closeShareCard: () => set({ shareCard: null }),
 }));

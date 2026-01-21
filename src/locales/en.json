@@ -119,6 +119,8 @@
     "getDirections": "Get Directions",
     "iVisited": "I Visited",
     "visited": "Visited",
+    "photoCarousel": "Photo carousel",
+    "photoLabel": "Machine photo {{current}} of {{total}}",
     "loginRequired": "Login Required",
     "loginToSave": "Please log in to save machines.",
     "loginToCheckIn": "Please log in to check in.",
@@ -186,5 +188,12 @@
   "languageSelector": {
     "title": "Select Language",
     "changeLanguage": "Change Language"
+  },
+  "share": {
+    "visited": "VISITED",
+    "shareToSocial": "Share to Social",
+    "maybeLater": "Maybe later",
+    "notAvailable": "Sharing is not available on this device",
+    "dialogTitle": "Share your vending machine discovery!"
   }
 }

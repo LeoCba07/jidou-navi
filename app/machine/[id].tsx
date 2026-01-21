@@ -10,7 +10,7 @@ import {
   Linking,
   Platform,
   ActivityIndicator,
-  Dimensions,
+  useWindowDimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
   Modal,
@@ -25,14 +25,15 @@ import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
 import { useAppModal } from '../../src/hooks/useAppModal';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+import type { ShareCardData } from '../../src/components/ShareableCard';
 
 export default function MachineDetailScreen() {
+  const { width: SCREEN_WIDTH } = useWindowDimensions();
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
+  const showShareCard = useUIStore((state) => state.showShareCard);
   const { showError, showSuccess, showConfirm } = useAppModal();
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
@@ -56,25 +57,48 @@ export default function MachineDetailScreen() {
     categories: string;
   }>();
 
-  // Initialize photos with primary one
+  // Initialize and fetch photos in a single effect to avoid race conditions
   useEffect(() => {
-    if (params.primary_photo_url) {
-      setPhotos([params.primary_photo_url]);
-    }
-  }, [params.primary_photo_url]);
+    let isMounted = true;
 
-  // Fetch all photos
-  useEffect(() => {
     async function loadPhotos() {
-      const fetchedPhotos = await fetchMachinePhotos(params.id);
-      if (fetchedPhotos.length > 0) {
-        // If we already have primary, make sure we don't duplicate it if it's in the list
-        // Ideally the API handles order, but let's just use the full list from API
-        setPhotos(fetchedPhotos);
+      // Seed with primary photo if available
+      if (params.primary_photo_url) {
+        setPhotos([params.primary_photo_url]);
       }
+
+      const fetchedPhotos = await fetchMachinePhotos(params.id);
+      if (!isMounted) {
+        return;
+      }
+
+      // If no photos were fetched and no primary photo, clear the array
+      if (fetchedPhotos.length === 0) {
+        if (!params.primary_photo_url) {
+          setPhotos([]);
+        }
+        // Otherwise keep the primary photo that was seeded
+        return;
+      }
+
+      let finalPhotos = fetchedPhotos;
+
+      // Ensure primary photo is present and first, without duplication
+      if (params.primary_photo_url) {
+        const primary = params.primary_photo_url;
+        const withoutPrimary = fetchedPhotos.filter((p) => p !== primary);
+        finalPhotos = [primary, ...withoutPrimary];
+      }
+
+      setPhotos(finalPhotos);
     }
+
     loadPhotos();
-  }, [params.id]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [params.id, params.primary_photo_url]);
 
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
@@ -254,7 +278,15 @@ export default function MachineDetailScreen() {
       // Check for badge unlocks
       const newBadges = await checkAndAwardBadges(params.id);
 
-      // Show success message, then badge popup if earned
+      // Prepare share card data
+      const shareData: ShareCardData = {
+        machineName: params.name || '',
+        machineAddress: params.address || '',
+        machinePhotoUrl: photos[0] || params.primary_photo_url || '',
+        categories: categories,
+      };
+
+      // Show success message, then badge popup if earned, then share card
       showSuccess(
         t('machine.checkIn.success.title'),
         stillExists
@@ -262,7 +294,13 @@ export default function MachineDetailScreen() {
           : t('machine.checkIn.success.gone'),
         () => {
           if (newBadges.length > 0) {
-            showBadgePopup(newBadges);
+            // Show badge popup, then share card after dismissing
+            showBadgePopup(newBadges, () => {
+              showShareCard(shareData);
+            });
+          } else {
+            // No badges - show share card directly
+            showShareCard(shareData);
           }
         }
       );
@@ -275,6 +313,10 @@ export default function MachineDetailScreen() {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
+    // Guard against division by zero
+    if (!slideSize || slideSize === 0) {
+      return;
+    }
     const index = event.nativeEvent.contentOffset.x / slideSize;
     const roundIndex = Math.round(index);
     setActivePhotoIndex(roundIndex);
@@ -300,9 +342,15 @@ export default function MachineDetailScreen() {
               onScroll={handleScroll}
               scrollEventThrottle={16}
               style={styles.carousel}
+              accessibilityLabel={t('machine.photoCarousel')}
             >
               {photos.map((photoUrl, index) => (
-                <Pressable key={index} onPress={() => setIsFullScreen(true)}>
+                <Pressable
+                  key={photoUrl}
+                  onPress={() => setIsFullScreen(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('machine.viewPhotoFullScreen', { current: index + 1, total: photos.length })}
+                >
                   <Image
                     source={{ uri: photoUrl }}
                     style={styles.photo}
@@ -320,9 +368,9 @@ export default function MachineDetailScreen() {
           {/* Pagination Dots */}
           {photos.length > 1 && (
             <View style={styles.pagination}>
-              {photos.map((_, index) => (
+              {photos.map((photoUrl, index) => (
                 <View
-                  key={index}
+                  key={photoUrl}
                   style={[
                     styles.paginationDot,
                     index === activePhotoIndex && styles.paginationDotActive,
