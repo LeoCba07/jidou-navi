@@ -1,5 +1,5 @@
 // Machine detail screen
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -27,6 +27,9 @@ import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/ma
 import { useAppModal } from '../../src/hooks/useAppModal';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
+// Constants for full-screen modal behavior
+const MODAL_SCROLL_DELAY_MS = 100;
+
 export default function MachineDetailScreen() {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const { t } = useTranslation();
@@ -42,6 +45,7 @@ export default function MachineDetailScreen() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const fullScreenScrollViewRef = useRef<ScrollView>(null);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -133,6 +137,26 @@ export default function MachineDetailScreen() {
 
     checkRecentVisit();
   }, [user, params.id]);
+
+  // Scroll to the active photo when full-screen modal opens
+  // Note: Only depends on isFullScreen, not activePhotoIndex, because:
+  // - We want to sync scroll position only when modal opens
+  // - activePhotoIndex updates as user scrolls in the modal (via handleScroll)
+  // - Including activePhotoIndex would cause unwanted scrolling during user interaction
+  useEffect(() => {
+    if (isFullScreen && fullScreenScrollViewRef.current) {
+      // Use a small delay to ensure the modal is fully rendered before scrolling
+      const timer = setTimeout(() => {
+        fullScreenScrollViewRef.current?.scrollTo({
+          x: activePhotoIndex * SCREEN_WIDTH,
+          y: 0,
+          animated: false,
+        });
+      }, MODAL_SCROLL_DELAY_MS);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isFullScreen]);
 
   const distance = Number(params.distance_meters) < 1000
     ? `${Math.round(Number(params.distance_meters))}m`
@@ -497,17 +521,19 @@ export default function MachineDetailScreen() {
               StatusBar.setHidden(false);
               setIsFullScreen(false);
             }}
+            accessibilityLabel="Close full screen viewer"
+            accessibilityRole="button"
           >
             <Ionicons name="close" size={28} color="#fff" />
           </Pressable>
           
           <ScrollView
+            ref={fullScreenScrollViewRef}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onScroll={handleScroll}
             scrollEventThrottle={16}
-            contentOffset={{ x: activePhotoIndex * SCREEN_WIDTH, y: 0 }}
             style={styles.fullScreenCarousel}
           >
             {photos.map((photoUrl, index) => (
