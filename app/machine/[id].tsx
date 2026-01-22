@@ -576,7 +576,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   backText: {
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
     color: '#FF4B4B',
   },
   content: {
@@ -618,15 +619,16 @@ const styles = StyleSheet.create({
   noPhotoText: {
     color: '#999',
     fontSize: 16,
+    fontFamily: 'Inter',
   },
   info: {
     padding: 16,
   },
   name: {
-    fontSize: 14,
-    fontFamily: 'PressStart2P',
+    fontSize: 20,
+    fontFamily: 'DotGothic16',
     color: '#333',
-    lineHeight: 22,
+    lineHeight: 26,
     marginBottom: 12,
   },
   categoriesRow: {
@@ -642,7 +644,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
   statsRow: {
@@ -664,11 +666,12 @@ const styles = StyleSheet.create({
   },
   statDistance: {
     fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
     color: '#FF4B4B',
-    fontWeight: '600',
   },
   statText: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#666',
   },
   activeText: {
@@ -686,6 +689,7 @@ const styles = StyleSheet.create({
   address: {
     flex: 1,
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#666',
     lineHeight: 20,
   },
@@ -715,8 +719,8 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
+    fontSize: 15,
+    fontFamily: 'Silkscreen',
   },
   secondaryActions: {
     flexDirection: 'row',
@@ -740,8 +744,8 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#333',
-    fontSize: 15,
-    fontWeight: '500',
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
   },
   buttonDisabled: {
     opacity: 0.6,

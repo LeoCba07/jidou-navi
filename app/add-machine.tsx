@@ -356,12 +356,13 @@ const styles = StyleSheet.create({
     width: 60,
   },
   backText: {
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
     color: '#FF4B4B',
   },
   title: {
-    fontSize: 12,
-    fontFamily: 'PressStart2P',
+    fontSize: 18,
+    fontFamily: 'DotGothic16',
     color: '#333',
   },
   content: {
@@ -378,6 +379,7 @@ const styles = StyleSheet.create({
   },
   photoHint: {
     textAlign: 'center',
+    fontFamily: 'Inter',
     color: '#999',
     marginTop: 8,
     fontSize: 13,
@@ -395,6 +397,7 @@ const styles = StyleSheet.create({
   compressingText: {
     marginTop: 12,
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#666',
   },
   photoButton: {
@@ -411,9 +414,9 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   photoButtonText: {
-    fontSize: 16,
+    fontSize: 15,
+    fontFamily: 'Silkscreen',
     color: '#333',
-    fontWeight: '500',
   },
   field: {
     marginBottom: 20,
@@ -457,6 +460,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 14,
+    fontFamily: 'Silkscreen',
     color: '#333',
   },
   categoryTextSelected: {
@@ -470,11 +474,13 @@ const styles = StyleSheet.create({
   },
   locationLabel: {
     fontSize: 12,
+    fontFamily: 'Inter',
     color: '#999',
     marginBottom: 4,
   },
   locationText: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#666',
   },
   submitButton: {
@@ -495,8 +501,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   submitText: {
-    fontSize: 16,
+    fontSize: 15,
     color: 'white',
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'Silkscreen',
   },
 });

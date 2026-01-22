@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
     marginBottom: 6,
   },
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
   statsRow: {
@@ -170,11 +170,12 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 13,
+    fontFamily: 'Inter-SemiBold',
     color: '#FF4B4B',
-    fontWeight: '600',
   },
   statTextMuted: {
     fontSize: 12,
+    fontFamily: 'Inter',
     color: '#666',
   },
   activeText: {
@@ -190,8 +191,8 @@ const styles = StyleSheet.create({
   },
   tapText: {
     fontSize: 12,
+    fontFamily: 'Silkscreen',
     color: '#FF4B4B',
-    fontWeight: '500',
   },
   closeButton: {
     position: 'absolute',

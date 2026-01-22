@@ -246,6 +246,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     fontSize: 16,
+    fontFamily: "Inter",
     color: "#333",
   },
   clearButton: {
@@ -276,17 +277,19 @@ const styles = StyleSheet.create({
   },
   resultName: {
     fontSize: 15,
-    fontWeight: "500",
+    fontFamily: "Inter-Medium",
     color: "#333",
     marginBottom: 2,
   },
   resultAddress: {
     fontSize: 13,
+    fontFamily: "Inter",
     color: "#666",
   },
   noResults: {
     padding: 16,
     textAlign: "center",
+    fontFamily: "Inter",
     color: "#999",
     fontSize: 14,
   },

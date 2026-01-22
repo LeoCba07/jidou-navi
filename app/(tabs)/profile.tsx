@@ -451,8 +451,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 14,
-    fontFamily: 'PressStart2P',
+    fontSize: 20,
+    fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
   scrollView: {
@@ -543,10 +543,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 10,
-    fontFamily: 'PressStart2P',
+    fontSize: 13,
+    fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
     marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   badgeLoader: {
     marginTop: 20,
@@ -559,12 +561,13 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#666',
     marginTop: 12,
   },
   emptySubtext: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#999',
     textAlign: 'center',
     marginTop: 4,
@@ -599,13 +602,14 @@ const styles = StyleSheet.create({
   },
   badgeName: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     textAlign: 'center',
     marginBottom: 4,
   },
   badgeDescription: {
     fontSize: 10,
+    fontFamily: 'Inter',
     color: '#999',
     textAlign: 'center',
     lineHeight: 13,
@@ -624,10 +628,12 @@ const styles = StyleSheet.create({
   legalLinkText: {
     flex: 1,
     fontSize: 15,
+    fontFamily: 'Inter',
     color: '#333',
   },
   languageValue: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#999',
   },
   legalDivider: {
@@ -648,9 +654,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   logoutText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#FF4B4B',
-    fontWeight: '600',
+    fontFamily: 'Silkscreen',
   },
   deleteButton: {
     alignItems: 'center',
@@ -659,7 +665,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   deleteText: {
-    fontSize: 13,
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
     color: '#FF4B4B',
     textDecorationLine: 'underline',
   },
@@ -696,12 +703,13 @@ const styles = StyleSheet.create({
   },
   savedName: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
   },
   savedAddress: {
     fontSize: 13,
+    fontFamily: 'Inter',
     color: '#666',
   },
   unsaveButton: {
@@ -715,6 +723,7 @@ const styles = StyleSheet.create({
   },
   supportText: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#666',
     textAlign: 'center',
     lineHeight: 20,
@@ -737,7 +746,7 @@ const styles = StyleSheet.create({
   },
   supportButtonText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'Silkscreen',
     color: '#fff',
   },
 });

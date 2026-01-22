@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
     fontSize: 40,
   },
   title: {
-    fontSize: 12,
-    fontFamily: 'PressStart2P',
+    fontSize: 18,
+    fontFamily: 'DotGothic16',
     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
@@ -215,12 +215,13 @@ const styles = StyleSheet.create({
   },
   badgeName: {
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#333',
     marginBottom: 2,
   },
   badgeDescription: {
     fontSize: 13,
+    fontFamily: 'Inter',
     color: '#666',
     lineHeight: 18,
   },
@@ -233,9 +234,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewAllText: {
-    fontSize: 15,
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
     color: '#3C91E6',
-    fontWeight: '500',
   },
   dismissButton: {
     backgroundColor: '#FF4B4B',
@@ -251,8 +252,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   dismissText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#fff',
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'Silkscreen',
   },
 });

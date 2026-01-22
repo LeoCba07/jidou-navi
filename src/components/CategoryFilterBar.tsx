@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
     borderColor: "#000",
   },
   chipText: {
-    fontSize: 13,
-    fontFamily: "Inter-Medium",
+    fontSize: 14,
+    fontFamily: "Silkscreen",
     color: "#333",
   },
   chipTextSelected: {

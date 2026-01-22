@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 12,
-    fontFamily: 'PressStart2P',
+    fontSize: 18,
+    fontFamily: 'DotGothic16',
     color: '#333',
     marginBottom: 20,
     textAlign: 'center',
@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.15)',
   },
   cancelText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
+    fontSize: 15,
+    fontFamily: 'Silkscreen',
     color: '#666',
   },
 });

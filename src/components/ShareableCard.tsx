@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   checkinText: {
     color: '#fff',
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: 'Silkscreen',
   },
   content: {
     padding: 16,
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
   locationRow: {
@@ -323,6 +323,7 @@ const styles = StyleSheet.create({
   locationText: {
     flex: 1,
     fontSize: 12,
+    fontFamily: 'Inter',
     color: '#666',
   },
   divider: {
@@ -351,7 +352,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#333',
   },
   branding: {
@@ -424,8 +425,8 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
+    fontSize: 15,
+    fontFamily: 'Silkscreen',
   },
   skipButton: {
     marginTop: 16,
@@ -434,5 +435,6 @@ const styles = StyleSheet.create({
   skipText: {
     color: 'rgba(255, 255, 255, 0.7)',
     fontSize: 14,
+    fontFamily: 'Silkscreen',
   },
 });

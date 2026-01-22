@@ -138,13 +138,14 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   title: {
-    fontSize: 14,
-    fontFamily: 'PressStart2P',
+    fontSize: 20,
+    fontFamily: 'DotGothic16',
     color: '#2B2B2B',
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 16,
+    fontFamily: 'Inter',
     color: '#666',
     lineHeight: 22,
   },
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 8,
   },
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
+    fontFamily: 'Inter',
     color: '#2B2B2B',
   },
   button: {
@@ -187,9 +189,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 15,
     color: 'white',
-    fontWeight: '600',
+    fontFamily: 'Silkscreen',
   },
   // Success state
   successIcon: {
@@ -198,14 +200,15 @@ const styles = StyleSheet.create({
     marginTop: 60,
   },
   successTitle: {
-    fontSize: 12,
-    fontFamily: 'PressStart2P',
+    fontSize: 20,
+    fontFamily: 'DotGothic16',
     color: '#2B2B2B',
     textAlign: 'center',
     marginBottom: 12,
   },
   successText: {
     fontSize: 16,
+    fontFamily: 'Inter',
     color: '#666',
     textAlign: 'center',
     marginBottom: 32,

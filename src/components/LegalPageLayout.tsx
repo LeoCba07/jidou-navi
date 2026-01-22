@@ -69,12 +69,13 @@ const styles = StyleSheet.create({
     width: 60,
   },
   backText: {
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
     color: '#FF4B4B',
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontFamily: 'DotGothic16',
     color: '#333',
   },
   content: {
@@ -85,24 +86,29 @@ const styles = StyleSheet.create({
   },
   lastUpdated: {
     fontSize: 12,
+    fontFamily: 'Inter',
     color: '#999',
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 14,
+    fontFamily: 'Inter-Bold',
     color: '#333',
     marginTop: 20,
     marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   paragraph: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#555',
     lineHeight: 22,
     marginBottom: 8,
   },
   bulletPoint: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#555',
     lineHeight: 22,
     marginLeft: 8,

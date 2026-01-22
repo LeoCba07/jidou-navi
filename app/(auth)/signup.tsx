@@ -298,10 +298,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 17,
+    fontSize: 15,
     color: 'white',
-    fontFamily: 'Inter-Bold',
-    letterSpacing: 0.5,
+    fontFamily: 'Silkscreen',
   },
   footer: {
     flexDirection: 'row',
@@ -316,6 +315,6 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 14,
     color: '#FF4B4B',
-    fontFamily: 'Inter-SemiBold',
+    fontFamily: 'Silkscreen',
   },
 });

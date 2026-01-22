@@ -253,8 +253,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 14,
-    fontFamily: 'PressStart2P',
+    fontSize: 20,
+    fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
   scrollView: {
@@ -274,9 +274,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 10,
-    fontFamily: 'PressStart2P',
+    fontSize: 13,
+    fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   emptyState: {
     backgroundColor: '#fff',
@@ -286,6 +288,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
+    fontFamily: 'Inter',
     color: '#999',
     marginTop: 12,
     textAlign: 'center',
@@ -323,12 +326,13 @@ const styles = StyleSheet.create({
   },
   machineName: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
   },
   machineAddress: {
     fontSize: 13,
+    fontFamily: 'Inter',
     color: '#666',
     marginBottom: 6,
   },
@@ -339,6 +343,7 @@ const styles = StyleSheet.create({
   },
   statsText: {
     fontSize: 12,
+    fontFamily: 'Inter',
     color: '#666',
   },
   bookmarkButton: {
