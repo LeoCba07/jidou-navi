@@ -5,6 +5,8 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import { DotGothic16_400Regular } from '@expo-google-fonts/dotgothic16';
+import { Silkscreen_400Regular, Silkscreen_700Bold } from '@expo-google-fonts/silkscreen';
 import {
   Inter_400Regular,
   Inter_500Medium,
@@ -33,12 +35,16 @@ export default function RootLayout() {
   const [i18nReady, setI18nReady] = useState(false);
 
   const [fontsLoaded] = useFonts({
-    PressStart2P: PressStart2P_400Regular,
-    Inter: Inter_400Regular,
+    PressStart2P: PressStart2P_400Regular, // Branding / Logo
+    Inter: Inter_400Regular,               // Body text
     'Inter-Medium': Inter_500Medium,
     'Inter-SemiBold': Inter_600SemiBold,
-    'Inter-Bold': Inter_700Bold,
+    'Inter-Bold': Inter_700Bold,           // Section titles
+    DotGothic16: DotGothic16_400Regular,  // Page titles
+    Silkscreen: Silkscreen_400Regular,     // UI elements, buttons
+    'Silkscreen-Bold': Silkscreen_700Bold,
   });
+
 
   // Initialize i18n
   useEffect(() => {
