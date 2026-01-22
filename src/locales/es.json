@@ -172,11 +172,16 @@
     "location": "Ubicación",
     "gettingLocation": "Obteniendo ubicación...",
     "addMachine": "Añadir Máquina",
+    "devMode": "Modo Dev",
+    "latitude": "Latitud",
+    "longitude": "Longitud",
+    "toggleDevMode": "Alternar modo desarrollador para entrada manual de ubicación",
     "validation": {
       "photoRequired": "Por favor toma o selecciona una foto.",
       "nameRequired": "Por favor ingresa un nombre para la máquina.",
       "descriptionRequired": "Por favor añade una descripción.",
-      "locationRequired": "Por favor espera la ubicación GPS o habilita los servicios de ubicación."
+      "locationRequired": "Por favor espera la ubicación GPS o habilita los servicios de ubicación.",
+      "invalidCoordinates": "Coordenadas inválidas"
     },
     "permissionNeeded": "Por favor concede acceso a la cámara/galería.",
     "imageError": "Error al procesar la imagen. Por favor intenta de nuevo.",

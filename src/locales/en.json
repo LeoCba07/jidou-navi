@@ -172,11 +172,16 @@
     "location": "Location",
     "gettingLocation": "Getting location...",
     "addMachine": "Add Machine",
+    "devMode": "Dev Mode",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "toggleDevMode": "Toggle developer mode for manual location entry",
     "validation": {
       "photoRequired": "Please take or select a photo.",
       "nameRequired": "Please enter a name for the machine.",
       "descriptionRequired": "Please add a description.",
-      "locationRequired": "Please wait for GPS location or enable location services."
+      "locationRequired": "Please wait for GPS location or enable location services.",
+      "invalidCoordinates": "Invalid coordinates"
     },
     "permissionNeeded": "Please grant camera/gallery access.",
     "imageError": "Failed to process image. Please try again.",

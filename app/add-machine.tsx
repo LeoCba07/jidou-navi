@@ -133,10 +133,19 @@ export default function AddMachineScreen() {
     if (isManualLocation) {
       const lat = parseFloat(manualLat);
       const lng = parseFloat(manualLng);
+      
+      // Basic number check
       if (isNaN(lat) || isNaN(lng)) {
-        showError(t('common.error'), 'Invalid coordinates');
+        showError(t('common.error'), t('addMachine.validation.invalidCoordinates'));
         return;
       }
+
+      // Bounds check: Lat -90 to 90, Lng -180 to 180
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showError(t('common.error'), t('addMachine.validation.invalidCoordinates'));
+        return;
+      }
+
       finalLat = lat;
       finalLng = lng;
     }
@@ -339,7 +348,7 @@ export default function AddMachineScreen() {
             <Text style={styles.locationLabel}>{t('addMachine.location')}</Text>
             {isDev && (
               <View style={styles.manualToggle}>
-                <Text style={styles.manualLabel}>Dev Mode</Text>
+                <Text style={styles.manualLabel}>{t('addMachine.devMode')}</Text>
                 <Switch
                   value={isManualLocation}
                   onValueChange={(val) => {
@@ -350,6 +359,7 @@ export default function AddMachineScreen() {
                     }
                   }}
                   trackColor={{ false: '#767577', true: '#FF4B4B' }}
+                  accessibilityLabel={t('addMachine.toggleDevMode')}
                 />
               </View>
             )}
@@ -358,23 +368,25 @@ export default function AddMachineScreen() {
           {isManualLocation ? (
             <View style={styles.manualInputs}>
               <View style={styles.halfInput}>
-                <Text style={styles.inputLabel}>Latitude</Text>
+                <Text style={styles.inputLabel}>{t('addMachine.latitude')}</Text>
                 <TextInput
                   style={styles.input}
                   value={manualLat}
                   onChangeText={setManualLat}
-                  keyboardType="numeric"
+                  keyboardType="numbers-and-punctuation"
                   placeholder="e.g. 35.6895"
+                  accessibilityLabel={t('addMachine.latitude')}
                 />
               </View>
               <View style={styles.halfInput}>
-                <Text style={styles.inputLabel}>Longitude</Text>
+                <Text style={styles.inputLabel}>{t('addMachine.longitude')}</Text>
                 <TextInput
                   style={styles.input}
                   value={manualLng}
                   onChangeText={setManualLng}
-                  keyboardType="numeric"
+                  keyboardType="numbers-and-punctuation"
                   placeholder="e.g. 139.6917"
+                  accessibilityLabel={t('addMachine.longitude')}
                 />
               </View>
             </View>
