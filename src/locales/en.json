@@ -1,4 +1,9 @@
 {
+  "tabs": {
+    "map": "Map",
+    "discover": "Discover",
+    "profile": "Profile"
+  },
   "common": {
     "cancel": "Cancel",
     "ok": "OK",
@@ -195,5 +200,13 @@
     "maybeLater": "Maybe later",
     "notAvailable": "Sharing is not available on this device",
     "dialogTitle": "Share your vending machine discovery!"
+  },
+  "discover": {
+    "title": "Discover",
+    "popular": "Popular",
+    "recentlyAdded": "Recently Added",
+    "visits": "visits",
+    "noPopular": "No popular machines yet",
+    "noRecent": "No recent machines yet"
   }
 }

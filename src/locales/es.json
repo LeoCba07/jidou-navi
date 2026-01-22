@@ -1,4 +1,9 @@
 {
+  "tabs": {
+    "map": "Mapa",
+    "discover": "Descubrir",
+    "profile": "Perfil"
+  },
   "common": {
     "cancel": "Cancelar",
     "ok": "OK",
@@ -188,5 +193,20 @@
   "languageSelector": {
     "title": "Seleccionar Idioma",
     "changeLanguage": "Cambiar Idioma"
+  },
+  "share": {
+    "visited": "VISITADA",
+    "shareToSocial": "Compartir en Redes",
+    "maybeLater": "Quizás después",
+    "notAvailable": "Compartir no está disponible en este dispositivo",
+    "dialogTitle": "¡Comparte tu descubrimiento de máquina expendedora!"
+  },
+  "discover": {
+    "title": "Descubrir",
+    "popular": "Popular",
+    "recentlyAdded": "Recientes",
+    "visits": "visitas",
+    "noPopular": "Aún no hay máquinas populares",
+    "noRecent": "Aún no hay máquinas recientes"
   }
 }
