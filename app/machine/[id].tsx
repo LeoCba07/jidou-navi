@@ -10,12 +10,14 @@ import {
   Linking,
   Platform,
   ActivityIndicator,
-  useWindowDimensions,
+  Dimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
   Modal,
   StatusBar,
 } from 'react-native';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
@@ -31,7 +33,6 @@ import type { ShareCardData } from '../../src/components/ShareableCard';
 const MODAL_SCROLL_DELAY_MS = 100;
 
 export default function MachineDetailScreen() {
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
