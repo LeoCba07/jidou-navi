@@ -121,6 +121,7 @@
     "visited": "Visitada",
     "photoCarousel": "Carrusel de fotos",
     "photoLabel": "Foto de máquina {{current}} de {{total}}",
+    "viewPhotoFullScreen": "Ver foto en pantalla completa",
     "loginRequired": "Inicio de sesión requerido",
     "loginToSave": "Por favor inicia sesión para guardar máquinas.",
     "loginToCheckIn": "Por favor inicia sesión para registrar tu visita.",
@@ -188,5 +189,8 @@
   "languageSelector": {
     "title": "Seleccionar Idioma",
     "changeLanguage": "Cambiar Idioma"
+  },
+  "accessibility": {
+    "closeFullScreenViewer": "Cerrar visor de pantalla completa"
   }
 }
