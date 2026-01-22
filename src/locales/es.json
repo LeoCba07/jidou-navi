@@ -1,4 +1,9 @@
 {
+  "tabs": {
+    "map": "Mapa",
+    "discover": "Descubrir",
+    "profile": "Perfil"
+  },
   "common": {
     "cancel": "Cancelar",
     "ok": "OK",
@@ -86,7 +91,11 @@
     },
     "removeError": "Error al eliminar la máquina de la lista de guardados.",
     "settings": "Configuración",
-    "language": "Idioma"
+    "language": "Idioma",
+    "supportUs": "Apóyanos",
+    "supportDescription": "JidouNavi está creado por amantes de las máquinas expendedoras que visitaron y fotografiaron personalmente estas máquinas. Tu apoyo nos ayuda a mantener la app y añadir nuevas funciones.",
+    "supportButton": "Invítanos un Café",
+    "supportLinkError": "No se pudo abrir el enlace. Por favor intenta más tarde."
   },
   "map": {
     "searchPlaceholder": "Buscar máquinas...",
@@ -190,7 +199,19 @@
     "title": "Seleccionar Idioma",
     "changeLanguage": "Cambiar Idioma"
   },
-  "accessibility": {
-    "closeFullScreenViewer": "Cerrar visor de pantalla completa"
+  "share": {
+    "visited": "VISITADA",
+    "shareToSocial": "Compartir en Redes",
+    "maybeLater": "Quizás después",
+    "notAvailable": "Compartir no está disponible en este dispositivo",
+    "dialogTitle": "¡Comparte tu descubrimiento de máquina expendedora!"
+  },
+  "discover": {
+    "title": "Descubrir",
+    "popular": "Popular",
+    "recentlyAdded": "Recientes",
+    "visits": "visitas",
+    "noPopular": "Aún no hay máquinas populares",
+    "noRecent": "Aún no hay máquinas recientes"
   }
 }

@@ -1,4 +1,9 @@
 {
+  "tabs": {
+    "map": "Map",
+    "discover": "Discover",
+    "profile": "Profile"
+  },
   "common": {
     "cancel": "Cancel",
     "ok": "OK",
@@ -86,7 +91,11 @@
     },
     "removeError": "Failed to remove machine from saved list.",
     "settings": "Settings",
-    "language": "Language"
+    "language": "Language",
+    "supportUs": "Support Us",
+    "supportDescription": "JidouNavi is built by vending machine lovers who personally visited and photographed these machines. Your support helps us keep the app running and add new features.",
+    "supportButton": "Buy Us a Coffee",
+    "supportLinkError": "Could not open the support link. Please try again later."
   },
   "map": {
     "searchPlaceholder": "Search machines...",
@@ -197,7 +206,12 @@
     "notAvailable": "Sharing is not available on this device",
     "dialogTitle": "Share your vending machine discovery!"
   },
-  "accessibility": {
-    "closeFullScreenViewer": "Close full screen viewer"
+  "discover": {
+    "title": "Discover",
+    "popular": "Popular",
+    "recentlyAdded": "Recently Added",
+    "visits": "visits",
+    "noPopular": "No popular machines yet",
+    "noRecent": "No recent machines yet"
   }
 }

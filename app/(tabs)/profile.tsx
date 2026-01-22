@@ -9,6 +9,7 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -368,6 +369,29 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Support Us Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t('profile.supportUs')}</Text>
+          <View style={styles.supportContainer}>
+            <Text style={styles.supportText}>{t('profile.supportDescription')}</Text>
+            <Pressable
+              style={styles.supportButton}
+              onPress={() => {
+                // TODO: Replace with actual Buy Me a Coffee / Ko-fi link
+                const supportUrl = 'https://buymeacoffee.com/jidounavi';
+                Linking.openURL(supportUrl).catch(() => {
+                  showInfo(t('profile.supportUs'), t('profile.supportLinkError'));
+                });
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={t('profile.supportButton')}
+            >
+              <Ionicons name="heart" size={18} color="#fff" />
+              <Text style={styles.supportButtonText}>{t('profile.supportButton')}</Text>
+            </Pressable>
+          </View>
+        </View>
+
         {/* Legal Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('profile.legal')}</Text>
@@ -682,5 +706,38 @@ const styles = StyleSheet.create({
   },
   unsaveButton: {
     padding: 8,
+  },
+  supportContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+  },
+  supportText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  supportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#FF4B4B',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 0,
+    elevation: 3,
+  },
+  supportButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#fff',
   },
 });

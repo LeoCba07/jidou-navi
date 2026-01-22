@@ -256,6 +256,85 @@ export async function fetchSavedMachineIds(): Promise<string[]> {
   return data?.map((item) => item.machine_id) || [];
 }
 
+// Type for discover/trending machine
+export type DiscoverMachine = {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  primary_photo_url: string | null;
+  status: string;
+  visit_count: number;
+  created_at: string;
+  categories: MachineCategory[] | null;
+};
+
+// Fetch popular machines (sorted by visit count)
+export async function fetchPopularMachines(limit: number = 20): Promise<DiscoverMachine[]> {
+  const { data, error } = await supabase
+    .from('machines_with_details')
+    .select(`
+      id,
+      name,
+      description,
+      address,
+      latitude,
+      longitude,
+      primary_photo_url,
+      status,
+      visit_count,
+      created_at,
+      categories
+    `)
+    .eq('status', 'active')
+    .order('visit_count', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching popular machines:', error);
+    return [];
+  }
+
+  return (data || []).map(m => ({
+    ...m,
+    categories: m.categories as MachineCategory[] | null,
+  })) as DiscoverMachine[];
+}
+
+// Fetch recently added machines
+export async function fetchRecentMachines(limit: number = 20): Promise<DiscoverMachine[]> {
+  const { data, error } = await supabase
+    .from('machines_with_details')
+    .select(`
+      id,
+      name,
+      description,
+      address,
+      latitude,
+      longitude,
+      primary_photo_url,
+      status,
+      visit_count,
+      created_at,
+      categories
+    `)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching recent machines:', error);
+    return [];
+  }
+
+  return (data || []).map(m => ({
+    ...m,
+    categories: m.categories as MachineCategory[] | null,
+  })) as DiscoverMachine[];
+}
+
 // Fetch saved machines with full details
 export async function fetchSavedMachines(): Promise<SavedMachine[]> {
   const { data, error } = await supabase
