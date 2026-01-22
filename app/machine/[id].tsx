@@ -10,7 +10,7 @@ import {
   Linking,
   Platform,
   ActivityIndicator,
-  useWindowDimensions,
+  Dimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
   Modal,
@@ -27,11 +27,12 @@ import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/ma
 import { useAppModal } from '../../src/hooks/useAppModal';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
 // Constants for full-screen modal behavior
 const MODAL_SCROLL_DELAY_MS = 100;
 
 export default function MachineDetailScreen() {
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
@@ -509,7 +510,6 @@ export default function MachineDetailScreen() {
         transparent={true}
         animationType="fade"
         onRequestClose={() => {
-          StatusBar.setHidden(false);
           setIsFullScreen(false);
         }}
       >
@@ -518,10 +518,9 @@ export default function MachineDetailScreen() {
           <Pressable
             style={styles.closeButton}
             onPress={() => {
-              StatusBar.setHidden(false);
               setIsFullScreen(false);
             }}
-            accessibilityLabel="Close full screen viewer"
+            accessibilityLabel={t('accessibility.closeFullScreenViewer', 'Close full screen viewer')}
             accessibilityRole="button"
           >
             <Ionicons name="close" size={28} color="#fff" />
@@ -537,11 +536,13 @@ export default function MachineDetailScreen() {
             style={styles.fullScreenCarousel}
           >
             {photos.map((photoUrl, index) => (
-              <View key={index} style={styles.fullScreenPhotoContainer}>
+              <View key={photoUrl} style={styles.fullScreenPhotoContainer}>
                 <Image
                   source={{ uri: photoUrl }}
                   style={styles.fullScreenPhoto}
                   resizeMode="contain"
+                  accessibilityRole="image"
+                  accessibilityLabel={t('machine.photoLabel', { current: index + 1, total: photos.length })}
                 />
               </View>
             ))}
