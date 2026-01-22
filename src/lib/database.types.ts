@@ -355,6 +355,7 @@ export type Database = {
           created_at: string | null
           display_name: string | null
           id: string
+          role: string | null
           updated_at: string | null
           username: string | null
           visit_count: number | null
@@ -367,6 +368,7 @@ export type Database = {
           created_at?: string | null
           display_name?: string | null
           id: string
+          role?: string | null
           updated_at?: string | null
           username?: string | null
           visit_count?: number | null
@@ -379,6 +381,7 @@ export type Database = {
           created_at?: string | null
           display_name?: string | null
           id?: string
+          role?: string | null
           updated_at?: string | null
           username?: string | null
           visit_count?: number | null

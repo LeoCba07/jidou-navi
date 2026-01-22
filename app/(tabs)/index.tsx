@@ -358,7 +358,8 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     bottom: 10,
-    left: 10,
+    left: '50%',
+    marginLeft: -25,
     width: 50,
     height: 50,
     borderRadius: 4,
