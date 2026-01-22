@@ -91,7 +91,11 @@
     },
     "removeError": "Error al eliminar la máquina de la lista de guardados.",
     "settings": "Configuración",
-    "language": "Idioma"
+    "language": "Idioma",
+    "supportUs": "Apóyanos",
+    "supportDescription": "JidouNavi está creado por amantes de las máquinas expendedoras que visitaron y fotografiaron personalmente estas máquinas. Tu apoyo nos ayuda a mantener la app y añadir nuevas funciones.",
+    "supportButton": "Invítanos un Café",
+    "supportLinkError": "No se pudo abrir el enlace. Por favor intenta más tarde."
   },
   "map": {
     "searchPlaceholder": "Buscar máquinas...",

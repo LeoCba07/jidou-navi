@@ -91,7 +91,11 @@
     },
     "removeError": "Failed to remove machine from saved list.",
     "settings": "Settings",
-    "language": "Language"
+    "language": "Language",
+    "supportUs": "Support Us",
+    "supportDescription": "JidouNavi is built by vending machine lovers who personally visited and photographed these machines. Your support helps us keep the app running and add new features.",
+    "supportButton": "Buy Us a Coffee",
+    "supportLinkError": "Could not open the support link. Please try again later."
   },
   "map": {
     "searchPlaceholder": "Search machines...",
