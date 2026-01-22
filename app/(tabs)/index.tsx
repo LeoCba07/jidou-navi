@@ -234,6 +234,8 @@ export default function MapScreen() {
         onPress={handleMapPress}
         scaleBarEnabled={false}
         compassEnabled={false}
+        logoPosition={{ bottom: 1, right: 3 }}
+        attributionPosition={{ bottom: 1, right: 88 }}
       >
         <Camera
           ref={cameraRef}
@@ -286,6 +288,11 @@ export default function MapScreen() {
         <Ionicons name="locate" size={28} color="#333" />
       </Pressable>
 
+      {/* Add machine FAB */}
+      <Pressable style={styles.fab} onPress={() => router.push('/add-machine')}>
+        <Ionicons name="add" size={26} color="white" />
+      </Pressable>
+
       {/* Preview card */}
       {selectedMachine && (() => {
         // Calculate actual distance from user's location
@@ -334,18 +341,36 @@ const styles = StyleSheet.create({
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   recenterButton: {
     position: 'absolute',
-    bottom: 12,
-    right: 12,
-    width: 46,
-    height: 46,
-    borderRadius: 24,
+    bottom: 28,
+    right: 10,
+    width: 42,
+    height: 42,
+    borderRadius: 20,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 10,
+    left: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 4,
+    backgroundColor: '#FF4B4B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#CC3C3C',
+    shadowColor: '#000',
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 0,
     elevation: 5,
   },
 });
