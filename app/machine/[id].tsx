@@ -1,5 +1,5 @@
 // Machine detail screen
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
   useWindowDimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  Modal,
+  StatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
@@ -24,6 +26,9 @@ import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import type { ShareCardData } from '../../src/components/ShareableCard';
+
+// Constants for full-screen modal behavior
+const MODAL_SCROLL_DELAY_MS = 100;
 
 export default function MachineDetailScreen() {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -39,6 +44,8 @@ export default function MachineDetailScreen() {
   const [saving, setSaving] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const fullScreenScrollViewRef = useRef<ScrollView>(null);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -130,6 +137,26 @@ export default function MachineDetailScreen() {
 
     checkRecentVisit();
   }, [user, params.id]);
+
+  // Scroll to the active photo when full-screen modal opens
+  // Note: Only depends on isFullScreen, not activePhotoIndex, because:
+  // - We want to sync scroll position only when modal opens
+  // - activePhotoIndex updates as user scrolls in the modal (via handleScroll)
+  // - Including activePhotoIndex would cause unwanted scrolling during user interaction
+  useEffect(() => {
+    if (isFullScreen && fullScreenScrollViewRef.current) {
+      // Use a small delay to ensure the modal is fully rendered before scrolling
+      const timer = setTimeout(() => {
+        fullScreenScrollViewRef.current?.scrollTo({
+          x: activePhotoIndex * SCREEN_WIDTH,
+          y: 0,
+          animated: false,
+        });
+      }, MODAL_SCROLL_DELAY_MS);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isFullScreen]);
 
   const distance = Number(params.distance_meters) < 1000
     ? `${Math.round(Number(params.distance_meters))}m`
@@ -342,14 +369,18 @@ export default function MachineDetailScreen() {
               accessibilityLabel={t('machine.photoCarousel')}
             >
               {photos.map((photoUrl, index) => (
-                <Image
+                <Pressable
                   key={photoUrl}
-                  source={{ uri: photoUrl }}
-                  style={styles.photo}
-                  resizeMode="cover"
-                  accessibilityLabel={t('machine.photoLabel', { current: index + 1, total: photos.length })}
-                  accessibilityRole="image"
-                />
+                  onPress={() => setIsFullScreen(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('machine.viewPhotoFullScreen', { current: index + 1, total: photos.length })}
+                >
+                  <Image
+                    source={{ uri: photoUrl }}
+                    style={styles.photo}
+                    resizeMode="cover"
+                  />
+                </Pressable>
               ))}
             </ScrollView>
           ) : (
@@ -472,6 +503,57 @@ export default function MachineDetailScreen() {
           </View>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={isFullScreen}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => {
+          StatusBar.setHidden(false);
+          setIsFullScreen(false);
+        }}
+      >
+        <View style={styles.fullScreenContainer}>
+          <StatusBar hidden />
+          <Pressable
+            style={styles.closeButton}
+            onPress={() => {
+              StatusBar.setHidden(false);
+              setIsFullScreen(false);
+            }}
+            accessibilityLabel="Close full screen viewer"
+            accessibilityRole="button"
+          >
+            <Ionicons name="close" size={28} color="#fff" />
+          </Pressable>
+          
+          <ScrollView
+            ref={fullScreenScrollViewRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            style={styles.fullScreenCarousel}
+          >
+            {photos.map((photoUrl, index) => (
+              <View key={index} style={styles.fullScreenPhotoContainer}>
+                <Image
+                  source={{ uri: photoUrl }}
+                  style={styles.fullScreenPhoto}
+                  resizeMode="contain"
+                />
+              </View>
+            ))}
+          </ScrollView>
+
+          <View style={styles.fullScreenPagination}>
+            <Text style={styles.fullScreenPaginationText}>
+              {activePhotoIndex + 1} / {photos.length}
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -670,5 +752,48 @@ const styles = StyleSheet.create({
   },
   savedText: {
     color: '#FF4B4B',
+  },
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    zIndex: 10,
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+  },
+  fullScreenCarousel: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+  },
+  fullScreenPhotoContainer: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenPhoto: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+  },
+  fullScreenPagination: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  fullScreenPaginationText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
