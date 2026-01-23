@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   backButton: {
-    width: 60,
+    minWidth: 80,
   },
   backText: {
     fontSize: 14,

@@ -257,7 +257,7 @@ export default function AddMachineScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>{t('addMachine.cancel')}</Text>
+          <Text style={styles.backText} numberOfLines={1}>{t('addMachine.cancel')}</Text>
         </Pressable>
         <Text style={styles.title}>{t('addMachine.title')}</Text>
         <View style={styles.backButton} />
@@ -430,10 +430,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   backButton: {
-    width: 80,
+    width: 100,
   },
   backText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Silkscreen',
     color: '#FF4B4B',
   },
