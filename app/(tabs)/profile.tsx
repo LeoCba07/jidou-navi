@@ -272,7 +272,11 @@ export default function ProfileScreen() {
         <View style={styles.userSection}>
           <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
             <Image 
-              source={profile?.avatar_url ? { uri: profile.avatar_url } : DEFAULT_AVATAR} 
+              source={
+                profile?.avatar_url 
+                  ? { uri: `${profile.avatar_url}${profile.avatar_url.includes('?') ? '&' : '?'}t=${profile.updated_at ? new Date(profile.updated_at).getTime() : Date.now()}` } 
+                  : DEFAULT_AVATAR
+              } 
               style={styles.avatar} 
             />
             <View style={styles.editAvatarButton}>

@@ -21,14 +21,22 @@ export async function tryRequestAppReview() {
     // 2. Check frequency
     const lastRequestTimestamp = await AsyncStorage.getItem(STORAGE_KEY_LAST_REVIEW_REQUEST);
     if (lastRequestTimestamp) {
-      const lastRequestDate = new Date(parseInt(lastRequestTimestamp, 10));
-      const now = new Date();
-      const diffTime = Math.abs(now.getTime() - lastRequestDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const lastRequestTimeMs = parseInt(lastRequestTimestamp, 10);
+      
+      if (Number.isNaN(lastRequestTimeMs)) {
+        // Corrupted timestamp; clear it and proceed
+        await AsyncStorage.removeItem(STORAGE_KEY_LAST_REVIEW_REQUEST);
+      } else {
+        const lastRequestDate = new Date(lastRequestTimeMs);
+        const now = new Date();
+        const diffTime = Math.abs(now.getTime() - lastRequestDate.getTime());
+        // Use floor to ensure full days have passed
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-      if (diffDays < MIN_DAYS_BETWEEN_REQUESTS) {
-        // Too soon
-        return;
+        if (diffDays < MIN_DAYS_BETWEEN_REQUESTS) {
+          // Too soon
+          return;
+        }
       }
     }
 
