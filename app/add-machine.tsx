@@ -20,6 +20,7 @@ import { useAuthStore } from '../src/store/authStore';
 import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
 import { useAppModal } from '../src/hooks/useAppModal';
+import { tryRequestAppReview } from '../src/lib/review';
 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
@@ -238,11 +239,17 @@ export default function AddMachineScreen() {
       if (newBadges.length > 0) {
         // Show success alert, then badge popup, then navigate back
         showSuccess(t('common.success'), t('addMachine.success'), () => {
-          showBadgePopup(newBadges, () => router.back());
+          showBadgePopup(newBadges, () => {
+            tryRequestAppReview();
+            router.back();
+          });
         });
       } else {
         // No badges - just show success and go back
-        showSuccess(t('common.success'), t('addMachine.success'), () => router.back());
+        showSuccess(t('common.success'), t('addMachine.success'), () => {
+          tryRequestAppReview();
+          router.back();
+        });
       }
     } catch (error: any) {
       console.error('Submit error:', error);
