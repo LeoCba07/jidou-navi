@@ -19,11 +19,13 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
+import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
+import { uploadPhoto } from '../../src/lib/storage';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
@@ -34,7 +36,7 @@ const MODAL_SCROLL_DELAY_MS = 100;
 
 export default function MachineDetailScreen() {
   const { t } = useTranslation();
-  const { user } = useAuthStore();
+  const { user, profile } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const showShareCard = useUIStore((state) => state.showShareCard);
@@ -43,6 +45,7 @@ export default function MachineDetailScreen() {
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -336,6 +339,102 @@ export default function MachineDetailScreen() {
     }
   }
 
+  async function handleAddPhoto() {
+    if (!user) {
+      showError(t('machine.loginRequired'), t('machine.loginToSave'));
+      return;
+    }
+
+    const isDev = profile?.role === 'developer' || profile?.role === 'admin';
+
+    // 1. Check location (unless dev)
+    if (!isDev) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        showError(t('common.error'), t('machine.checkIn.locationRequired'));
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      
+      // Basic Haversine for client-side quick feedback
+      const R = 6371e3; // metres
+      const φ1 = location.coords.latitude * Math.PI/180;
+      const φ2 = Number(params.latitude) * Math.PI/180;
+      const Δφ = (Number(params.latitude)-location.coords.latitude) * Math.PI/180;
+      const Δλ = (Number(params.longitude)-location.coords.longitude) * Math.PI/180;
+
+      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const d = R * c;
+
+      if (d > 200) {
+        showError(t('machine.checkIn.tooFar.title'), t('machine.checkIn.tooFar.message'));
+        return;
+      }
+    }
+
+    // 2. Pick Image
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      showError(t('common.error'), t('addMachine.permissionNeeded'));
+      return;
+    }
+
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ['images'],
+        quality: 0.5,
+        allowsEditing: true,
+        aspect: [4, 3],
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        await uploadPhotoAction(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Image picker error:', error);
+      showError(t('common.error'), t('machine.uploadError'));
+    }
+  }
+
+  async function uploadPhotoAction(uri: string) {
+    setUploading(true);
+    try {
+      if (!user) return;
+
+      const fileName = `machine_${params.id}_${Date.now()}.jpg`;
+      
+      // Use the storage helper
+      const publicUrl = await uploadPhoto(
+        user.id, 
+        params.id, 
+        { uri, type: 'image/jpeg', name: fileName }
+      );
+
+      const { error: insertError } = await supabase.from('machine_photos').insert({
+        machine_id: params.id,
+        photo_url: publicUrl,
+        uploaded_by: user.id,
+        status: 'active', // Assuming auto-approve for now or pending if moderation required
+      });
+
+      if (insertError) throw insertError;
+
+      // Update local photos state
+      setPhotos(prev => [...prev, publicUrl]);
+      showSuccess(t('common.success'), t('machine.photoAdded'));
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      showError(t('common.error'), t('machine.uploadError'));
+    } finally {
+      setUploading(false);
+    }
+  }
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
     // Guard against division by zero
@@ -465,6 +564,25 @@ export default function MachineDetailScreen() {
           </Pressable>
 
           <View style={styles.secondaryActions}>
+            <Pressable
+              style={[
+                styles.secondaryButton,
+                uploading && styles.buttonDisabled,
+              ]}
+              onPress={handleAddPhoto}
+              disabled={uploading}
+              accessibilityLabel={t('machine.addPhoto')}
+              accessibilityRole="button"
+            >
+              {uploading ? (
+                <ActivityIndicator size="small" color="#333" />
+              ) : (
+                <View style={styles.saveButtonContent}>
+                  <Ionicons name="camera-outline" size={18} color="#333" />
+                  <Text style={styles.secondaryButtonText}>{t('machine.addPhoto')}</Text>
+                </View>
+              )}
+            </Pressable>
             <Pressable
               style={[
                 styles.secondaryButton,
@@ -724,12 +842,13 @@ const styles = StyleSheet.create({
   },
   secondaryActions: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
   },
   secondaryButton: {
     flex: 1,
     backgroundColor: '#f0f0f0',
     paddingVertical: 14,
+    paddingHorizontal: 4,
     borderRadius: 2,
     alignItems: 'center',
     justifyContent: 'center',
@@ -744,7 +863,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#333',
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Silkscreen',
   },
   buttonDisabled: {

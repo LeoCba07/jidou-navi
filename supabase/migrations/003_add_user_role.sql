@@ -29,7 +29,9 @@ BEGIN
     IF auth.role() = 'service_role' THEN
         RETURN NEW;
     ELSE
-        RAISE EXCEPTION 'You are not allowed to update the role field.';
+        -- Force role to 'user' if it's not service_role, effectively ignoring client input for this field
+        -- OR raise exception. Raising exception is safer/clearer.
+        RAISE EXCEPTION 'You are not allowed to set or update the role field.';
     END IF;
   END IF;
   RETURN NEW;
@@ -37,6 +39,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_role_update
-BEFORE UPDATE ON profiles
+BEFORE INSERT OR UPDATE ON profiles
 FOR EACH ROW
 EXECUTE FUNCTION prevent_role_update();
