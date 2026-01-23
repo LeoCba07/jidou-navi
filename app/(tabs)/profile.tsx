@@ -46,7 +46,7 @@ const RARITY_COLORS: Record<string, string> = {
 };
 
 // Default avatar image (placeholder until actual asset is provided)
-const DEFAULT_AVATAR = require('../../assets/icon.png');
+const DEFAULT_AVATAR = require('../../assets/default-avatar.jpg');
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
