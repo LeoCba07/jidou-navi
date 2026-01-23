@@ -45,6 +45,9 @@ const RARITY_COLORS: Record<string, string> = {
   epic: '#8B5CF6',
 };
 
+// Default avatar image (placeholder until actual asset is provided)
+const DEFAULT_AVATAR = require('../../assets/icon.png');
+
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile, setProfile } = useAuthStore();
@@ -267,13 +270,10 @@ export default function ProfileScreen() {
         {/* User info */}
         <View style={styles.userSection}>
           <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
-            {profile?.avatar_url ? (
-              <Image source={{ uri: profile.avatar_url }} style={styles.avatar} />
-            ) : (
-              <View style={styles.avatarPlaceholder}>
-                <Ionicons name="person" size={40} color="#999" />
-              </View>
-            )}
+            <Image 
+              source={profile?.avatar_url ? { uri: profile.avatar_url } : DEFAULT_AVATAR} 
+              style={styles.avatar} 
+            />
             <View style={styles.editAvatarButton}>
               {uploadingAvatar ? (
                 <ActivityIndicator size="small" color="#fff" />
@@ -536,14 +536,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-  },
-  avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#eee',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   editAvatarButton: {
     position: 'absolute',
