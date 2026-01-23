@@ -64,6 +64,8 @@
     "visits": "Visitas",
     "badges": "Insignias",
     "mySaved": "Mis Guardados",
+    "avatarUpdated": "¡Foto de perfil actualizada!",
+    "avatarUpdateError": "Error al actualizar la foto de perfil.",
     "noSavedMachines": "Aún no hay máquinas guardadas",
     "savedMachinesHint": "¡Toca el icono de marcador en cualquier máquina para guardarla!",
     "noBadgesYet": "Aún no hay insignias",

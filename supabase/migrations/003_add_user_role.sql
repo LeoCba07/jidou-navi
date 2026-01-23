@@ -15,25 +15,28 @@ COMMENT ON COLUMN profiles.role IS 'User role: user, developer, admin';
 CREATE OR REPLACE FUNCTION prevent_role_update()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- If the role is being changed
-  IF NEW.role IS DISTINCT FROM OLD.role THEN
-    -- Allow if it's a superuser/service role (using a simplified check or relying on session variables)
-    -- In Supabase, usually we check auth.uid() vs the target row id in RLS.
-    -- But here we want to block the *user* from changing it, even if RLS allows UPDATE on the row.
-    -- A robust way is to check if the current user is 'postgres' or if a specific admin secret is present.
-    -- For simplicity in this migration: Raises exception if a normal user tries to change it.
-    -- NOTE: Ideally this logic should be in an RLS policy or separate admin function, 
-    -- but a trigger works as a hard constraint.
-    
-    -- Check if we are running as service_role (admin) or if the role is not changing
-    IF auth.role() = 'service_role' THEN
-        RETURN NEW;
-    ELSE
-        -- Force role to 'user' if it's not service_role, effectively ignoring client input for this field
-        -- OR raise exception. Raising exception is safer/clearer.
-        RAISE EXCEPTION 'You are not allowed to set or update the role field.';
+  -- Check if we are running as service_role (admin)
+  IF auth.role() = 'service_role' THEN
+      RETURN NEW;
+  END IF;
+
+  -- For INSERT: Only allow NULL or 'user'
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.role IS NOT NULL AND NEW.role != 'user' THEN
+      RAISE EXCEPTION 'You are not allowed to set a privileged role on creation.';
+    END IF;
+    -- Force default role if not set or provided as 'user'
+    NEW.role := COALESCE(NEW.role, 'user');
+    RETURN NEW;
+  END IF;
+
+  -- For UPDATE: Prevent role changes
+  IF TG_OP = 'UPDATE' THEN
+    IF NEW.role IS DISTINCT FROM OLD.role THEN
+      RAISE EXCEPTION 'You are not allowed to update the role field.';
     END IF;
   END IF;
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

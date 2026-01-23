@@ -10,15 +10,18 @@ import {
   ActivityIndicator,
   RefreshControl,
   Linking,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useLanguageStore } from '../../src/store/languageStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
+import { uploadAvatar } from '../../src/lib/storage';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { supportedLanguages } from '../../src/lib/i18n';
 
@@ -42,9 +45,12 @@ const RARITY_COLORS: Record<string, string> = {
   epic: '#8B5CF6',
 };
 
+// Default avatar image (placeholder until actual asset is provided)
+const DEFAULT_AVATAR = require('../../assets/icon.png');
+
 export default function ProfileScreen() {
   const { t } = useTranslation();
-  const { user, profile } = useAuthStore();
+  const { user, profile, setProfile } = useAuthStore();
   const { removeSaved } = useSavedMachinesStore();
   const { currentLanguage, showLanguageSelector } = useLanguageStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
@@ -53,9 +59,60 @@ export default function ProfileScreen() {
   const [loadingBadges, setLoadingBadges] = useState(true);
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   // Get current language display name
   const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
+
+  async function handleEditAvatar() {
+    if (!user) return;
+
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      showError(t('common.error'), t('addMachine.permissionNeeded'));
+      return;
+    }
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setUploadingAvatar(true);
+        const asset = result.assets[0];
+        const fileName = `avatar_${Date.now()}.jpg`;
+        
+        const publicUrl = await uploadAvatar(user.id, {
+          uri: asset.uri,
+          type: 'image/jpeg',
+          name: fileName,
+        });
+
+        const { error } = await supabase
+          .from('profiles')
+          .update({ avatar_url: publicUrl })
+          .eq('id', user.id);
+
+        if (error) throw error;
+
+        // Update local state
+        if (profile) {
+          setProfile({ ...profile, avatar_url: publicUrl });
+        }
+        
+        showSuccess(t('common.success'), t('profile.avatarUpdated'));
+      }
+    } catch (error) {
+      console.error('Avatar upload error:', error);
+      showError(t('common.error'), t('profile.avatarUpdateError'));
+    } finally {
+      setUploadingAvatar(false);
+    }
+  }
 
   // Fetch user's badges
   async function fetchBadges() {
@@ -212,13 +269,19 @@ export default function ProfileScreen() {
       >
         {/* User info */}
         <View style={styles.userSection}>
-          {profile?.avatar_url ? (
-            <Image source={{ uri: profile.avatar_url }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <Ionicons name="person" size={40} color="#999" />
+          <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
+            <Image 
+              source={profile?.avatar_url ? { uri: profile.avatar_url } : DEFAULT_AVATAR} 
+              style={styles.avatar} 
+            />
+            <View style={styles.editAvatarButton}>
+              {uploadingAvatar ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Ionicons name="camera" size={16} color="#fff" />
+              )}
             </View>
-          )}
+          </Pressable>
           <Text style={styles.displayName}>
             {profile?.display_name || profile?.username || t('common.user')}
           </Text>
@@ -465,20 +528,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: 12,
+  },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 12,
   },
-  avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#eee',
+  editAvatarButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#FF4B4B',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   displayName: {
     fontSize: 22,

@@ -3,6 +3,7 @@
 import { supabase } from './supabase';
 
 const BUCKET = 'machine-photos';
+const AVATAR_BUCKET = 'avatars';
 
 // Upload a photo, returns the public URL
 export async function uploadPhoto(
@@ -25,9 +26,53 @@ export async function uploadPhoto(
   return getPhotoUrl(path);
 }
 
+// Upload an avatar, returns the public URL
+export async function uploadAvatar(
+  userId: string,
+  file: { uri: string; type: string; name: string; size?: number }
+): Promise<string> {
+  // 1. Validation
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+  if (file.size && file.size > MAX_SIZE) {
+    throw new Error('File size exceeds 5MB limit');
+  }
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Invalid file type. Only JPG, PNG and WebP are allowed.');
+  }
+
+  // 2. Preserve extension
+  const extensionMatch = file.name.match(/\.[^./]+$/);
+  const extension = extensionMatch ? extensionMatch[0] : '.jpg';
+  
+  // 3. Path logic
+  // To avoid bloat, we could use a fixed name like 'avatar{extension}', 
+  // but caching is an issue. Better: list and delete old ones or use a predictable path.
+  // For now, let's use a predictable path that we can easily cleanup if we had a list function,
+  // or just use 'avatar' + extension and let 'upsert' handle it if the name is identical.
+  // However, users might change extensions.
+  const path = `${userId}/avatar${extension}`;
+
+  // 4. Upload with upsert
+  const { error } = await supabase.storage
+    .from(AVATAR_BUCKET)
+    .upload(path, {
+      uri: file.uri,
+      type: file.type,
+      name: file.name,
+    } as any, {
+      upsert: true,
+    });
+
+  if (error) throw error;
+
+  return getPhotoUrl(path);
+}
+
 // Get public URL for a photo
 export function getPhotoUrl(path: string): string {
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  const { data } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path);
   return data.publicUrl;
 }
 
