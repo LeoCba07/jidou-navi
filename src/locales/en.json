@@ -136,6 +136,9 @@
     "loginToCheckIn": "Please log in to check in.",
     "saveError": "Failed to save machine.",
     "unsaveError": "Failed to unsave machine.",
+    "addPhoto": "Add Photo",
+    "photoAdded": "Photo added successfully!",
+    "uploadError": "Failed to upload photo.",
     "checkIn": {
       "title": "Check In",
       "question": "Is this vending machine still here?",

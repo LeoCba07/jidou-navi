@@ -134,8 +134,8 @@ export default function AddMachineScreen() {
       const lat = parseFloat(manualLat);
       const lng = parseFloat(manualLng);
       
-      // Basic number check
-      if (isNaN(lat) || isNaN(lng)) {
+      // Basic number check (must be finite numbers)
+      if (isNaN(lat) || isNaN(lng) || !isFinite(lat) || !isFinite(lng)) {
         showError(t('common.error'), t('addMachine.validation.invalidCoordinates'));
         return;
       }

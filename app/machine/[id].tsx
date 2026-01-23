@@ -25,6 +25,7 @@ import { supabase } from '../../src/lib/supabase';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
+import { uploadPhoto } from '../../src/lib/storage';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
@@ -356,16 +357,7 @@ export default function MachineDetailScreen() {
 
       const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       
-      // Calculate distance (simple haversine or use DB function if needed, 
-      // but for client-side quick check we can use a helper or just trust the user is close enough if we reuse checkIn logic?)
-      // Actually, let's use the RPC logic or just simple distance calc here if possible. 
-      // Ideally we should use a consistent method. For now, let's assume if they are viewing it they might be close, 
-      // but strictly we should check distance.
-      // Since I don't want to duplicate the haversine logic here, I'll rely on the existing 'distance_meters' if accurate, 
-      // OR better: Just skip strict server-side distance for photos for now, or implement client-side check.
-      // Let's implement a basic client-side check using the params.latitude/longitude.
-      
-      // Basic Haversine for client check
+      // Basic Haversine for client-side quick feedback
       const R = 6371e3; // metres
       const φ1 = location.coords.latitude * Math.PI/180;
       const φ2 = Number(params.latitude) * Math.PI/180;
@@ -400,45 +392,39 @@ export default function MachineDetailScreen() {
       });
 
       if (!result.canceled && result.assets[0]) {
-        await uploadPhoto(result.assets[0].uri);
+        await uploadPhotoAction(result.assets[0].uri);
       }
     } catch (error) {
       console.error('Image picker error:', error);
+      showError(t('common.error'), t('machine.uploadError'));
     }
   }
 
-  async function uploadPhoto(uri: string) {
+  async function uploadPhotoAction(uri: string) {
     setUploading(true);
     try {
+      if (!user) return;
+
       const fileName = `machine_${params.id}_${Date.now()}.jpg`;
-      const formData = new FormData();
-      formData.append('file', {
-        uri: uri,
-        name: fileName,
-        type: 'image/jpeg',
-      } as any);
-
-      const { error: uploadError } = await supabase.storage
-        .from('machine-photos')
-        .upload(fileName, formData, { contentType: 'multipart/form-data' });
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from('machine-photos')
-        .getPublicUrl(fileName);
+      
+      // Use the storage helper
+      const publicUrl = await uploadPhoto(
+        user.id, 
+        params.id, 
+        { uri, type: 'image/jpeg', name: fileName }
+      );
 
       const { error: insertError } = await supabase.from('machine_photos').insert({
         machine_id: params.id,
-        photo_url: urlData.publicUrl,
-        uploaded_by: user?.id,
+        photo_url: publicUrl,
+        uploaded_by: user.id,
         status: 'active', // Assuming auto-approve for now or pending if moderation required
       });
 
       if (insertError) throw insertError;
 
       // Update local photos state
-      setPhotos(prev => [...prev, urlData.publicUrl]);
+      setPhotos(prev => [...prev, publicUrl]);
       showSuccess(t('common.success'), t('machine.photoAdded'));
 
     } catch (error) {
@@ -585,6 +571,8 @@ export default function MachineDetailScreen() {
               ]}
               onPress={handleAddPhoto}
               disabled={uploading}
+              accessibilityLabel={t('machine.addPhoto')}
+              accessibilityRole="button"
             >
               {uploading ? (
                 <ActivityIndicator size="small" color="#333" />

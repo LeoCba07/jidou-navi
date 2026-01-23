@@ -136,6 +136,9 @@
     "loginToCheckIn": "Por favor inicia sesión para registrar tu visita.",
     "saveError": "Error al guardar la máquina.",
     "unsaveError": "Error al eliminar la máquina de guardados.",
+    "addPhoto": "Añadir Foto",
+    "photoAdded": "¡Foto añadida con éxito!",
+    "uploadError": "Error al subir la foto.",
     "checkIn": {
       "title": "Registrar Visita",
       "question": "¿Esta máquina expendedora sigue aquí?",
