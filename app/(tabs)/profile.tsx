@@ -45,8 +45,8 @@ const RARITY_COLORS: Record<string, string> = {
   epic: '#8B5CF6',
 };
 
-// Default avatar image (placeholder until actual asset is provided)
-const DEFAULT_AVATAR = require('../../assets/icon.png');
+// Default avatar image used when user has no custom avatar
+const DEFAULT_AVATAR = require('../../assets/default-avatar.jpg');
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
