@@ -47,11 +47,8 @@ export async function uploadAvatar(
   const extension = extensionMatch ? extensionMatch[0] : '.jpg';
   
   // 3. Path logic
-  // To avoid bloat, we could use a fixed name like 'avatar{extension}', 
-  // but caching is an issue. Better: list and delete old ones or use a predictable path.
-  // For now, let's use a predictable path that we can easily cleanup if we had a list function,
-  // or just use 'avatar' + extension and let 'upsert' handle it if the name is identical.
-  // However, users might change extensions.
+  // Use a fixed name 'avatar' + extension to ensure we overwrite the old one
+  // and prevent storage bloat.
   const path = `${userId}/avatar${extension}`;
 
   // 4. Upload with upsert

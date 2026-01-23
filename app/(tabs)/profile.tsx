@@ -101,7 +101,8 @@ export default function ProfileScreen() {
 
         // Update local state
         if (profile) {
-          setProfile({ ...profile, avatar_url: publicUrl });
+          // Add timestamp to bust cache since we reuse the filename
+          setProfile({ ...profile, avatar_url: `${publicUrl}?t=${Date.now()}` });
         }
         
         showSuccess(t('common.success'), t('profile.avatarUpdated'));
