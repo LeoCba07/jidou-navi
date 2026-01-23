@@ -9,6 +9,7 @@ import {
   Pressable,
   StyleSheet,
   ActivityIndicator,
+  Switch,
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -34,7 +35,7 @@ const CATEGORIES = [
 
 export default function AddMachineScreen() {
   const { t } = useTranslation();
-  const { user } = useAuthStore();
+  const { user, profile } = useAuthStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const { showError, showSuccess } = useAppModal();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -45,6 +46,11 @@ export default function AddMachineScreen() {
   const [description, setDescription] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [isManualLocation, setIsManualLocation] = useState(false);
+  const [manualLat, setManualLat] = useState('');
+  const [manualLng, setManualLng] = useState('');
+
+  const isDev = profile?.role === 'developer' || profile?.role === 'admin';
 
   // Get current location on mount
   useEffect(() => {
@@ -120,7 +126,31 @@ export default function AddMachineScreen() {
       showError(t('common.error'), t('addMachine.validation.descriptionRequired'));
       return;
     }
-    if (!location) {
+
+    let finalLat = location?.latitude;
+    let finalLng = location?.longitude;
+
+    if (isManualLocation) {
+      const lat = parseFloat(manualLat);
+      const lng = parseFloat(manualLng);
+      
+      // Basic number check
+      if (isNaN(lat) || isNaN(lng)) {
+        showError(t('common.error'), t('addMachine.validation.invalidCoordinates'));
+        return;
+      }
+
+      // Bounds check: Lat -90 to 90, Lng -180 to 180
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showError(t('common.error'), t('addMachine.validation.invalidCoordinates'));
+        return;
+      }
+
+      finalLat = lat;
+      finalLng = lng;
+    }
+
+    if (!finalLat || !finalLng) {
       showError(t('common.error'), t('addMachine.validation.locationRequired'));
       return;
     }
@@ -154,9 +184,9 @@ export default function AddMachineScreen() {
       const { data: machine, error: insertError } = await supabase.from('machines').insert({
         name: name,
         description: description,
-        latitude: location?.latitude,
-        longitude: location?.longitude,
-        location: `POINT(${location?.longitude} ${location?.latitude})`,
+        latitude: finalLat,
+        longitude: finalLng,
+        location: `POINT(${finalLng} ${finalLat})`,
         status: 'active',
         contributor_id: user?.id,
       }).select('id').single();
@@ -314,10 +344,57 @@ export default function AddMachineScreen() {
 
         {/* Location info */}
         <View style={styles.locationInfo}>
-          <Text style={styles.locationLabel}>{t('addMachine.location')}</Text>
-          <Text style={styles.locationText}>
-            {location ? `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}` : t('addMachine.gettingLocation')}
-          </Text>
+          <View style={styles.locationHeader}>
+            <Text style={styles.locationLabel}>{t('addMachine.location')}</Text>
+            {isDev && (
+              <View style={styles.manualToggle}>
+                <Text style={styles.manualLabel}>{t('addMachine.devMode')}</Text>
+                <Switch
+                  value={isManualLocation}
+                  onValueChange={(val) => {
+                    setIsManualLocation(val);
+                    if (val && location) {
+                      setManualLat(location.latitude.toString());
+                      setManualLng(location.longitude.toString());
+                    }
+                  }}
+                  trackColor={{ false: '#767577', true: '#FF4B4B' }}
+                  accessibilityLabel={t('addMachine.toggleDevMode')}
+                />
+              </View>
+            )}
+          </View>
+          
+          {isManualLocation ? (
+            <View style={styles.manualInputs}>
+              <View style={styles.halfInput}>
+                <Text style={styles.inputLabel}>{t('addMachine.latitude')}</Text>
+                <TextInput
+                  style={styles.input}
+                  value={manualLat}
+                  onChangeText={setManualLat}
+                  keyboardType="numbers-and-punctuation"
+                  placeholder="e.g. 35.6895"
+                  accessibilityLabel={t('addMachine.latitude')}
+                />
+              </View>
+              <View style={styles.halfInput}>
+                <Text style={styles.inputLabel}>{t('addMachine.longitude')}</Text>
+                <TextInput
+                  style={styles.input}
+                  value={manualLng}
+                  onChangeText={setManualLng}
+                  keyboardType="numbers-and-punctuation"
+                  placeholder="e.g. 139.6917"
+                  accessibilityLabel={t('addMachine.longitude')}
+                />
+              </View>
+            </View>
+          ) : (
+            <Text style={styles.locationText}>
+              {location ? `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}` : t('addMachine.gettingLocation')}
+            </Text>
+          )}
         </View>
 
         {/* Submit */}
@@ -346,7 +423,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 50,
+    paddingTop: 60,
     paddingHorizontal: 16,
     paddingBottom: 12,
     borderBottomWidth: 1,
@@ -472,11 +549,40 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 24,
   },
+  locationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  manualToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  manualLabel: {
+    fontSize: 12,
+    fontFamily: 'Silkscreen',
+    color: '#FF4B4B',
+  },
+  manualInputs: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  halfInput: {
+    flex: 1,
+  },
+  inputLabel: {
+    fontSize: 10,
+    fontFamily: 'Inter',
+    color: '#666',
+    marginBottom: 4,
+  },
   locationLabel: {
     fontSize: 12,
     fontFamily: 'Inter',
     color: '#999',
-    marginBottom: 4,
   },
   locationText: {
     fontSize: 14,
