@@ -64,6 +64,8 @@
     "visits": "Visits",
     "badges": "Badges",
     "mySaved": "My Saved",
+    "avatarUpdated": "Profile picture updated!",
+    "avatarUpdateError": "Failed to update profile picture.",
     "noSavedMachines": "No saved machines yet",
     "savedMachinesHint": "Tap the bookmark icon on any machine to save it for later!",
     "noBadgesYet": "No badges yet",
