@@ -26,6 +26,7 @@ import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
+import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
@@ -330,6 +331,8 @@ export default function MachineDetailScreen() {
             // No badges - show share card directly
             showShareCard(shareData);
           }
+          // Try to request app review
+          tryRequestAppReview();
         }
       );
     } catch (err) {
@@ -425,7 +428,9 @@ export default function MachineDetailScreen() {
 
       // Update local photos state
       setPhotos(prev => [...prev, publicUrl]);
-      showSuccess(t('common.success'), t('machine.photoAdded'));
+      showSuccess(t('common.success'), t('machine.photoAdded'), () => {
+        tryRequestAppReview();
+      });
 
     } catch (error) {
       console.error('Upload error:', error);

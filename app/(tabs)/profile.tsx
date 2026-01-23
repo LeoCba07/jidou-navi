@@ -101,7 +101,8 @@ export default function ProfileScreen() {
 
         // Update local state
         if (profile) {
-          setProfile({ ...profile, avatar_url: publicUrl });
+          // Add timestamp to bust cache since we reuse the filename
+          setProfile({ ...profile, avatar_url: `${publicUrl}?t=${Date.now()}` });
         }
         
         showSuccess(t('common.success'), t('profile.avatarUpdated'));
@@ -271,7 +272,11 @@ export default function ProfileScreen() {
         <View style={styles.userSection}>
           <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
             <Image 
-              source={profile?.avatar_url ? { uri: profile.avatar_url } : DEFAULT_AVATAR} 
+              source={
+                profile?.avatar_url 
+                  ? { uri: `${profile.avatar_url}${profile.avatar_url.includes('?') ? '&' : '?'}t=${profile.updated_at ? new Date(profile.updated_at).getTime() : Date.now()}` } 
+                  : DEFAULT_AVATAR
+              } 
               style={styles.avatar} 
             />
             <View style={styles.editAvatarButton}>
