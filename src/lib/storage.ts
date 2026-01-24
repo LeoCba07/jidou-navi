@@ -1,7 +1,7 @@
 // Storage helpers for machine photos
 // Bucket must be created first - already ran supabase/storage.sql in Supabase
 import { supabase } from './supabase';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const BUCKET = 'machine-photos';
 const AVATAR_BUCKET = 'avatars';
