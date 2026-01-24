@@ -92,22 +92,19 @@ export default function ProfileScreen() {
           name: fileName,
         });
 
-        // Add timestamp to URL for cache busting
-        const timestamp = Date.now();
-        const urlWithTimestamp = `${publicUrl}?t=${timestamp}`;
-
         const { error } = await supabase
           .from('profiles')
-          .update({ avatar_url: urlWithTimestamp })
+          .update({ avatar_url: publicUrl })
           .eq('id', user.id);
 
         if (error) throw error;
 
-        // Update local state with new URL (includes timestamp)
+        // Update local state and force re-render with new timestamp
+        const newTimestamp = Date.now();
         if (profile) {
-          setProfile({ ...profile, avatar_url: urlWithTimestamp });
-          setAvatarTimestamp(timestamp);
+          setProfile({ ...profile, avatar_url: publicUrl });
         }
+        setAvatarTimestamp(newTimestamp);
 
         showSuccess(t('common.success'), t('profile.avatarUpdated'));
       }
@@ -310,9 +307,10 @@ export default function ProfileScreen() {
             </Pressable>
             <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
               <Image
+                key={avatarTimestamp}
                 source={
                   profile?.avatar_url
-                    ? { uri: profile.avatar_url }
+                    ? { uri: `${profile.avatar_url.split('?')[0]}?t=${avatarTimestamp}` }
                     : DEFAULT_AVATAR
                 }
                 style={styles.avatar}
