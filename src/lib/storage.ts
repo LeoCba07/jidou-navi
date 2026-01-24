@@ -1,6 +1,7 @@
 // Storage helpers for machine photos
 // Bucket must be created first - already ran supabase/storage.sql in Supabase
 import { supabase } from './supabase';
+import * as FileSystem from 'expo-file-system';
 
 const BUCKET = 'machine-photos';
 const AVATAR_BUCKET = 'avatars';
@@ -13,17 +14,32 @@ export async function uploadPhoto(
 ): Promise<string> {
   const path = `${userId}/${machineId}/${Date.now()}-${file.name}`;
 
+  // Read file as base64 and convert to ArrayBuffer
+  const base64 = await FileSystem.readAsStringAsync(file.uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const arrayBuffer = base64ToArrayBuffer(base64);
+
   const { error } = await supabase.storage
     .from(BUCKET)
-    .upload(path, {
-      uri: file.uri,
-      type: file.type,
-      name: file.name,
-    } as any);
+    .upload(path, arrayBuffer, {
+      contentType: file.type,
+    });
 
   if (error) throw error;
 
   return getPhotoUrl(path);
+}
+
+// Helper to decode base64 to ArrayBuffer (avoids external dependency)
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
+  const binaryString = global.atob ? global.atob(base64) : Buffer.from(base64, 'base64').toString('binary');
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
 }
 
 // Upload an avatar, returns the public URL
@@ -45,20 +61,21 @@ export async function uploadAvatar(
   // 2. Preserve extension
   const extensionMatch = file.name.match(/\.[^./]+$/);
   const extension = extensionMatch ? extensionMatch[0] : '.jpg';
-  
-  // 3. Path logic
-  // Use a fixed name 'avatar' + extension to ensure we overwrite the old one
-  // and prevent storage bloat.
+
+  // 3. Path logic - use fixed name to overwrite old avatar
   const path = `${userId}/avatar${extension}`;
 
-  // 4. Upload with upsert
+  // 4. Read file as base64 and convert to ArrayBuffer
+  const base64 = await FileSystem.readAsStringAsync(file.uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const arrayBuffer = base64ToArrayBuffer(base64);
+
+  // 5. Upload with upsert
   const { error } = await supabase.storage
     .from(AVATAR_BUCKET)
-    .upload(path, {
-      uri: file.uri,
-      type: file.type,
-      name: file.name,
-    } as any, {
+    .upload(path, arrayBuffer, {
+      contentType: file.type,
       upsert: true,
     });
 
