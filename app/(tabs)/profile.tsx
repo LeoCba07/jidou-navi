@@ -377,7 +377,7 @@ export default function ProfileScreen() {
                     style={styles.unsaveButton}
                     onPress={() => handleUnsave(saved.machine_id)}
                   >
-                    <Text style={styles.unsaveButtonText}>{t('common.unsave')}</Text>
+                    <Ionicons name="bookmark" size={20} color="#FF4B4B" />
                   </Pressable>
                 </Pressable>
               ))}
@@ -843,17 +843,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   unsaveButton: {
-    backgroundColor: '#FFF3E7',
-    borderWidth: 2,
-    borderColor: '#FF4B4B',
-    borderRadius: 4,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  unsaveButtonText: {
-    fontSize: 11,
-    fontFamily: 'Silkscreen',
-    color: '#FF4B4B',
+    padding: 8,
   },
   supportContainer: {
     backgroundColor: '#fff',
