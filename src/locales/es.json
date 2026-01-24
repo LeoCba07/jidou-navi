@@ -61,6 +61,7 @@
   },
   "profile": {
     "title": "Perfil",
+    "accountSettings": "Configuración de Cuenta",
     "machinesAdded": "Máquinas Añadidas",
     "visits": "Visitas",
     "badges": "Insignias",

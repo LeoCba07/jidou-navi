@@ -61,6 +61,7 @@
   },
   "profile": {
     "title": "Profile",
+    "accountSettings": "Account Settings",
     "machinesAdded": "Machines Added",
     "visits": "Visits",
     "badges": "Badges",

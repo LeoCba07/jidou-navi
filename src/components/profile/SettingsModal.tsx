@@ -64,7 +64,11 @@ export default function SettingsModal({
           </View>
 
           {/* Content */}
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
             {/* Email */}
             <View style={styles.section}>
               <View style={styles.itemRow}>
@@ -204,6 +208,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 400,
+    height: 500,
     maxHeight: '80%',
     backgroundColor: '#fff',
     borderRadius: 4,
@@ -214,6 +219,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 0,
     elevation: 10,
+    overflow: 'hidden',
+    flexDirection: 'column',
   },
   header: {
     flexDirection: 'row',
@@ -233,6 +240,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
   section: {
     padding: 16,

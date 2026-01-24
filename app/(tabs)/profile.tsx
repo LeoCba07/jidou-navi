@@ -57,6 +57,7 @@ export default function ProfileScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
 
   async function handleEditAvatar() {
     if (!user) return;
@@ -95,10 +96,10 @@ export default function ProfileScreen() {
 
         // Update local state
         if (profile) {
-          // Add timestamp to bust cache since we reuse the filename
-          setProfile({ ...profile, avatar_url: `${publicUrl}?t=${Date.now()}` });
+          setProfile({ ...profile, avatar_url: publicUrl });
+          setAvatarTimestamp(Date.now()); // Bust cache
         }
-        
+
         showSuccess(t('common.success'), t('profile.avatarUpdated'));
       }
     } catch (error) {
@@ -276,7 +277,7 @@ export default function ProfileScreen() {
             <Image
               source={
                 profile?.avatar_url
-                  ? { uri: profile.avatar_url }
+                  ? { uri: `${profile.avatar_url}?t=${avatarTimestamp}` }
                   : DEFAULT_AVATAR
               }
               style={styles.avatar}
