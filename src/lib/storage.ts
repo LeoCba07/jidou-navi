@@ -16,7 +16,7 @@ export async function uploadPhoto(
 
   // Read file as base64 and convert to ArrayBuffer
   const base64 = await FileSystem.readAsStringAsync(file.uri, {
-    encoding: FileSystem.EncodingType.Base64,
+    encoding: 'base64',
   });
   const arrayBuffer = base64ToArrayBuffer(base64);
 
@@ -67,7 +67,7 @@ export async function uploadAvatar(
 
   // 4. Read file as base64 and convert to ArrayBuffer
   const base64 = await FileSystem.readAsStringAsync(file.uri, {
-    encoding: FileSystem.EncodingType.Base64,
+    encoding: 'base64',
   });
   const arrayBuffer = base64ToArrayBuffer(base64);
 
