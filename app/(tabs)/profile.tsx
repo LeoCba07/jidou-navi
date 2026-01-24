@@ -300,18 +300,33 @@ export default function ProfileScreen() {
 
         {/* Stats */}
         <View style={styles.statsContainer}>
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{profile?.contribution_count || 0}</Text>
-            <Text style={styles.statLabel}>{t('profile.machinesAdded')}</Text>
+          <View style={styles.statsTopRow}>
+            <View style={styles.stat}>
+              <View style={styles.statContent}>
+                <Ionicons name="cube-outline" size={18} color="#FF4B4B" />
+                <Text style={[styles.statNumber, { color: '#FF4B4B' }]}>
+                  {profile?.contribution_count || 0}
+                </Text>
+              </View>
+              <Text style={styles.statLabel}>{t('profile.machinesAdded')}</Text>
+            </View>
+            <View style={styles.stat}>
+              <View style={styles.statContent}>
+                <Ionicons name="footsteps-outline" size={18} color="#3C91E6" />
+                <Text style={[styles.statNumber, { color: '#3C91E6' }]}>
+                  {profile?.visit_count || 0}
+                </Text>
+              </View>
+              <Text style={styles.statLabel}>{t('profile.visits')}</Text>
+            </View>
           </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{profile?.visit_count || 0}</Text>
-            <Text style={styles.statLabel}>{t('profile.visits')}</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{profile?.badge_count || 0}</Text>
+          <View style={styles.badgesStat}>
+            <View style={styles.statContent}>
+              <Ionicons name="trophy-outline" size={18} color="#FFD966" />
+              <Text style={[styles.statNumber, { color: '#FFD966' }]}>
+                {profile?.badge_count || 0}
+              </Text>
+            </View>
             <Text style={styles.statLabel}>{t('profile.badges')}</Text>
           </View>
         </View>
@@ -600,38 +615,49 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   statsContainer: {
-    flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 2,
     padding: 20,
     marginBottom: 24,
-    borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
+    borderWidth: 3,
+    borderColor: '#FF4B4B',
     shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 0.25,
     shadowRadius: 0,
     elevation: 3,
+  },
+  statsTopRow: {
+    flexDirection: 'row',
+    gap: 20,
+    marginBottom: 16,
   },
   stat: {
     flex: 1,
     alignItems: 'center',
   },
-  statDivider: {
-    width: 1,
-    backgroundColor: '#eee',
+  statContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 6,
   },
   statNumber: {
-    fontSize: 24,
-    fontFamily: 'Inter-Bold',
-    color: '#FF4B4B',
-    marginBottom: 4,
+    fontSize: 26,
+    fontFamily: 'DotGothic16',
+    marginBottom: 0,
   },
   statLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter',
+    fontSize: 13,
+    fontFamily: 'Inter-SemiBold',
     color: '#666',
     textAlign: 'center',
+  },
+  badgesStat: {
+    alignItems: 'center',
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
   },
   section: {
     marginBottom: 24,
