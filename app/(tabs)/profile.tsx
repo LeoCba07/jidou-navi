@@ -291,8 +291,11 @@ export default function ProfileScreen() {
             {profile?.display_name || profile?.username || t('common.user')}
           </Text>
           <Text style={styles.username}>@{profile?.username || 'user'}</Text>
-          {profile?.bio && <Text style={styles.bio}>{profile.bio}</Text>}
-          <Text style={styles.email}>{user?.email}</Text>
+          {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
+          <View style={styles.emailCard}>
+            <Ionicons name="mail-outline" size={16} color="#999" />
+            <Text style={styles.emailText}>{user?.email}</Text>
+          </View>
         </View>
 
         {/* Stats */}
@@ -541,6 +544,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    borderWidth: 3,
+    borderColor: '#FF4B4B',
   },
   editAvatarButton: {
     position: 'absolute',
@@ -559,13 +564,13 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
-    marginBottom: 2,
+    marginBottom: 4,
   },
   username: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Inter',
-    color: '#666',
-    marginBottom: 8,
+    color: '#999',
+    marginBottom: 12,
   },
   bio: {
     fontSize: 14,
@@ -573,12 +578,23 @@ const styles = StyleSheet.create({
     color: '#444',
     textAlign: 'center',
     marginBottom: 8,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
-  email: {
+  emailCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#f9f9f9',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 6,
+    marginTop: 8,
+    alignSelf: 'center',
+  },
+  emailText: {
     fontSize: 12,
     fontFamily: 'Inter',
-    color: '#999',
+    color: '#666',
   },
   statsContainer: {
     flexDirection: 'row',
