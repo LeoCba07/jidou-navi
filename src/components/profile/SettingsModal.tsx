@@ -76,7 +76,11 @@ export default function SettingsModal({
             <View style={styles.section}>
               <Pressable
                 style={styles.itemRow}
-                onPress={showLanguageSelector}
+                onPress={() => {
+                  onClose();
+                  // Small delay to let the modal close animation finish
+                  setTimeout(showLanguageSelector, 300);
+                }}
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.language')}
               >
