@@ -329,30 +329,41 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Stats Progress Cards */}
+        {/* Stats Section */}
         <View style={styles.statsDashboard}>
-          <StatProgressCard
-            icon="cube-outline"
-            label={t('profile.machinesDiscovered')}
-            currentCount={profile?.contribution_count || 0}
-            color="#FF4B4B"
-            triggerType="contribution_count"
-            allBadges={allBadges}
-          />
+          {/* Simple stat blocks row */}
+          <View style={styles.statsRow}>
+            <View style={styles.statBlock}>
+              <View style={styles.statBlockHeader}>
+                <Ionicons name="cube-outline" size={18} color="#FF4B4B" />
+                <Text style={[styles.statBlockLabel, { color: '#FF4B4B' }]}>
+                  {t('profile.machinesAdded')}
+                </Text>
+              </View>
+              <Text style={[styles.statBlockNumber, { color: '#FF4B4B' }]}>
+                {profile?.contribution_count || 0}
+              </Text>
+            </View>
+            <View style={styles.statBlock}>
+              <View style={styles.statBlockHeader}>
+                <Ionicons name="trophy-outline" size={18} color="#FFD966" />
+                <Text style={[styles.statBlockLabel, { color: '#FFD966' }]}>
+                  {t('profile.badges')}
+                </Text>
+              </View>
+              <Text style={[styles.statBlockNumber, { color: '#FFD966' }]}>
+                {profile?.badge_count || 0}
+              </Text>
+            </View>
+          </View>
+
+          {/* Progress card for visits */}
           <StatProgressCard
             icon="footsteps-outline"
             label={t('profile.machinesVisited')}
             currentCount={profile?.visit_count || 0}
             color="#3C91E6"
             triggerType="visit_count"
-            allBadges={allBadges}
-          />
-          <StatProgressCard
-            icon="trophy-outline"
-            label={t('profile.badgesUnlocked')}
-            currentCount={profile?.badge_count || 0}
-            color="#FFD966"
-            triggerType={null}
             allBadges={allBadges}
           />
         </View>
@@ -577,6 +588,41 @@ const styles = StyleSheet.create({
   },
   statsDashboard: {
     marginBottom: 24,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 12,
+  },
+  statBlock: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 2,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 0,
+    elevation: 2,
+    alignItems: 'center',
+  },
+  statBlockHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 8,
+  },
+  statBlockLabel: {
+    fontSize: 11,
+    fontFamily: 'Inter-Bold',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  statBlockNumber: {
+    fontSize: 32,
+    fontFamily: 'DotGothic16',
   },
   section: {
     marginBottom: 24,

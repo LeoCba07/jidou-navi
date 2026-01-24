@@ -1,5 +1,4 @@
-// BadgeShowcase - displays unlocked and locked badges with rarity filters
-import { useState } from 'react';
+// BadgeShowcase - displays unlocked and locked badges
 import { View, Text, StyleSheet, ScrollView, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -30,8 +29,6 @@ interface BadgeShowcaseProps {
   onEarnedBadgePress: (badge: UserBadge['badge']) => void;
 }
 
-type RarityFilter = 'all' | 'common' | 'rare' | 'epic';
-
 // Rarity colors for badge borders
 const RARITY_COLORS: Record<string, string> = {
   common: '#9CA3AF',
@@ -53,7 +50,6 @@ function calculateBadgeProgress(
     case 'contribution_count':
       current = userStats.contribution_count;
       break;
-    // category_visit and verification_count would need additional data
     default:
       current = 0;
   }
@@ -70,7 +66,6 @@ export default function BadgeShowcase({
   onEarnedBadgePress,
 }: BadgeShowcaseProps) {
   const { t } = useTranslation();
-  const [activeFilter, setActiveFilter] = useState<RarityFilter>('all');
 
   // Get IDs of earned badges
   const earnedBadgeIds = new Set(earnedBadges.map((ub) => ub.badge.id));
@@ -78,61 +73,35 @@ export default function BadgeShowcase({
   // Separate locked badges
   const lockedBadges = allBadges.filter((b) => !earnedBadgeIds.has(b.id));
 
-  // Filter by rarity
-  const filterByRarity = <T extends { rarity?: string | null }>(items: T[]): T[] => {
-    if (activeFilter === 'all') return items;
-    return items.filter((item) => (item.rarity || 'common') === activeFilter);
-  };
-
-  const filteredEarned = filterByRarity(
-    earnedBadges.map((ub) => ({ ...ub, rarity: ub.badge.rarity }))
-  );
-  const filteredLocked = filterByRarity(lockedBadges);
-
-  const filters: { key: RarityFilter; label: string }[] = [
-    { key: 'all', label: t('profile.filterAll') },
-    { key: 'common', label: t('profile.filterCommon') },
-    { key: 'rare', label: t('profile.filterRare') },
-    { key: 'epic', label: t('profile.filterEpic') },
-  ];
+  // No badges exist at all
+  if (allBadges.length === 0) {
+    return (
+      <View style={styles.emptyState}>
+        <Ionicons name="trophy-outline" size={48} color="#ccc" />
+        <Text style={styles.emptyText}>{t('profile.noBadgesYet')}</Text>
+        <Text style={styles.emptySubtext}>{t('profile.badgesHint')}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Filter tabs */}
-      <View style={styles.filterTabs}>
-        {filters.map((filter) => (
-          <Pressable
-            key={filter.key}
-            style={[
-              styles.filterTab,
-              activeFilter === filter.key && styles.filterTabActive,
-            ]}
-            onPress={() => setActiveFilter(filter.key)}
-          >
-            <Text
-              style={[
-                styles.filterTabText,
-                activeFilter === filter.key && styles.filterTabTextActive,
-              ]}
-            >
-              {filter.label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-
       {/* Unlocked badges section */}
-      {filteredEarned.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>
-            {t('profile.unlockedBadges')} ({filteredEarned.length})
-          </Text>
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>
+          {t('profile.unlockedBadges')} ({earnedBadges.length})
+        </Text>
+        {earnedBadges.length === 0 ? (
+          <View style={styles.emptySection}>
+            <Text style={styles.emptySectionText}>{t('profile.noBadgesYet')}</Text>
+          </View>
+        ) : (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.badgesScroll}
           >
-            {filteredEarned.map((userBadge) => (
+            {earnedBadges.map((userBadge) => (
               <Pressable
                 key={userBadge.id}
                 style={[
@@ -158,27 +127,24 @@ export default function BadgeShowcase({
                 <Text style={styles.badgeName} numberOfLines={1}>
                   {userBadge.badge.name}
                 </Text>
-                <Text style={styles.badgeDescription} numberOfLines={2}>
-                  {userBadge.badge.description}
-                </Text>
               </Pressable>
             ))}
           </ScrollView>
-        </View>
-      )}
+        )}
+      </View>
 
       {/* Locked badges section */}
-      {filteredLocked.length > 0 && (
+      {lockedBadges.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>
-            {t('profile.lockedBadges')} ({filteredLocked.length})
+            {t('profile.lockedBadges')} ({lockedBadges.length})
           </Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.badgesScroll}
           >
-            {filteredLocked.map((badge) => {
+            {lockedBadges.map((badge) => {
               const progress = calculateBadgeProgress(badge, userStats);
               return (
                 <LockedBadgeCard
@@ -197,56 +163,21 @@ export default function BadgeShowcase({
           </ScrollView>
         </View>
       )}
-
-      {/* Empty state */}
-      {filteredEarned.length === 0 && filteredLocked.length === 0 && (
-        <View style={styles.emptyState}>
-          <Ionicons name="trophy-outline" size={48} color="#ccc" />
-          <Text style={styles.emptyText}>{t('profile.noBadgesYet')}</Text>
-          <Text style={styles.emptySubtext}>{t('profile.badgesHint')}</Text>
-        </View>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 8,
-  },
-  filterTabs: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    gap: 8,
-  },
-  filterTab: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 2,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  filterTabActive: {
-    backgroundColor: '#FF4B4B',
-    borderColor: '#2B2B2B',
-  },
-  filterTabText: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: '#666',
-  },
-  filterTabTextActive: {
-    color: '#fff',
+    gap: 16,
   },
   section: {
-    marginBottom: 16,
+    gap: 10,
   },
   sectionLabel: {
     fontSize: 12,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
-    marginBottom: 10,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -254,7 +185,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   badgeItem: {
-    width: 110,
+    width: 100,
     backgroundColor: '#fff',
     borderRadius: 2,
     padding: 12,
@@ -267,30 +198,22 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   badgeIcon: {
-    width: 40,
-    height: 40,
+    width: 36,
+    height: 36,
     marginBottom: 8,
   },
   badgeIconPlaceholder: {
-    width: 40,
-    height: 40,
+    width: 36,
+    height: 36,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
   },
   badgeName: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     textAlign: 'center',
-    marginBottom: 4,
-  },
-  badgeDescription: {
-    fontSize: 10,
-    fontFamily: 'Inter',
-    color: '#999',
-    textAlign: 'center',
-    lineHeight: 13,
   },
   emptyState: {
     backgroundColor: '#fff',
@@ -310,5 +233,16 @@ const styles = StyleSheet.create({
     color: '#999',
     textAlign: 'center',
     marginTop: 4,
+  },
+  emptySection: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+  },
+  emptySectionText: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    color: '#999',
   },
 });
