@@ -22,6 +22,8 @@ import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/m
 import { uploadAvatar } from '../../src/lib/storage';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import SettingsModal from '../../src/components/profile/SettingsModal';
+import StatProgressCard from '../../src/components/profile/StatProgressCard';
+import type { Badge } from '../../src/lib/badges';
 
 // Badge type from joined query
 type UserBadge = {
@@ -52,6 +54,7 @@ export default function ProfileScreen() {
   const { removeSaved } = useSavedMachinesStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
   const [badges, setBadges] = useState<UserBadge[]>([]);
+  const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
   const [loadingBadges, setLoadingBadges] = useState(true);
   const [loadingSaved, setLoadingSaved] = useState(true);
@@ -137,6 +140,18 @@ export default function ProfileScreen() {
     setLoadingBadges(false);
   }
 
+  // Fetch all badges for milestone tracking
+  async function fetchAllBadges() {
+    const { data, error } = await supabase
+      .from('badges')
+      .select('*')
+      .order('display_order', { ascending: true });
+
+    if (!error && data) {
+      setAllBadges(data as Badge[]);
+    }
+  }
+
   // Fetch user's saved machines
   async function loadSavedMachines() {
     if (!user) return;
@@ -192,12 +207,13 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     fetchBadges();
+    fetchAllBadges();
     loadSavedMachines();
   }, [user]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchBadges(), loadSavedMachines()]);
+    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines()]);
     setRefreshing(false);
   }, [user]);
 
@@ -298,37 +314,32 @@ export default function ProfileScreen() {
           {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
         </View>
 
-        {/* Stats */}
-        <View style={styles.statsContainer}>
-          <View style={styles.stat}>
-            <View style={styles.statContent}>
-              <Ionicons name="cube-outline" size={18} color="#FF4B4B" />
-              <Text style={[styles.statNumber, { color: '#FF4B4B' }]}>
-                {profile?.contribution_count || 0}
-              </Text>
-            </View>
-            <Text style={styles.statLabel}>{t('profile.machinesAdded')}</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <View style={styles.statContent}>
-              <Ionicons name="footsteps-outline" size={18} color="#3C91E6" />
-              <Text style={[styles.statNumber, { color: '#3C91E6' }]}>
-                {profile?.visit_count || 0}
-              </Text>
-            </View>
-            <Text style={styles.statLabel}>{t('profile.visits')}</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <View style={styles.statContent}>
-              <Ionicons name="trophy-outline" size={18} color="#FFD966" />
-              <Text style={[styles.statNumber, { color: '#FFD966' }]}>
-                {profile?.badge_count || 0}
-              </Text>
-            </View>
-            <Text style={styles.statLabel}>{t('profile.badges')}</Text>
-          </View>
+        {/* Stats Progress Cards */}
+        <View style={styles.statsDashboard}>
+          <StatProgressCard
+            icon="cube-outline"
+            label={t('profile.machinesDiscovered')}
+            currentCount={profile?.contribution_count || 0}
+            color="#FF4B4B"
+            triggerType="contribution_count"
+            allBadges={allBadges}
+          />
+          <StatProgressCard
+            icon="footsteps-outline"
+            label={t('profile.machinesVisited')}
+            currentCount={profile?.visit_count || 0}
+            color="#3C91E6"
+            triggerType="visit_count"
+            allBadges={allBadges}
+          />
+          <StatProgressCard
+            icon="trophy-outline"
+            label={t('profile.badgesUnlocked')}
+            currentCount={profile?.badge_count || 0}
+            color="#FFD966"
+            triggerType={null}
+            allBadges={allBadges}
+          />
         </View>
 
         {/* My Saved Section */}
@@ -556,44 +567,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingHorizontal: 16,
   },
-  statsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    padding: 20,
+  statsDashboard: {
     marginBottom: 24,
-    borderWidth: 3,
-    borderColor: '#FF4B4B',
-    shadowColor: '#000',
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 0.25,
-    shadowRadius: 0,
-    elevation: 3,
-  },
-  stat: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 6,
-  },
-  statDivider: {
-    width: 1,
-    backgroundColor: '#eee',
-  },
-  statNumber: {
-    fontSize: 26,
-    fontFamily: 'DotGothic16',
-    marginBottom: 0,
-  },
-  statLabel: {
-    fontSize: 13,
-    fontFamily: 'Inter-SemiBold',
-    color: '#666',
-    textAlign: 'center',
   },
   section: {
     marginBottom: 24,
