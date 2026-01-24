@@ -1,4 +1,5 @@
 // Settings modal - account settings, language, support, legal, logout
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -11,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useLanguageStore } from '../../store/languageStore';
-import { supportedLanguages } from '../../lib/i18n';
+import { supportedLanguages, LanguageCode } from '../../lib/i18n';
 
 interface SettingsModalProps {
   visible: boolean;
@@ -31,24 +32,44 @@ export default function SettingsModal({
   onDeleteAccount,
 }: SettingsModalProps) {
   const { t } = useTranslation();
-  const { currentLanguage, showLanguageSelector } = useLanguageStore();
+  const { currentLanguage, setCurrentLanguage } = useLanguageStore();
+  const [currentScreen, setCurrentScreen] = useState<'main' | 'language'>('main');
 
   // Get current language display name
   const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
+
+  // Reset to main screen when modal closes
+  function handleClose() {
+    setCurrentScreen('main');
+    onClose();
+  }
+
+  // Handle language selection
+  async function handleLanguageSelect(code: LanguageCode) {
+    await setCurrentLanguage(code);
+    setCurrentScreen('main');
+  }
 
   return (
     <Modal
       transparent
       visible={visible}
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>{t('profile.accountSettings')}</Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            {currentScreen === 'language' && (
+              <Pressable onPress={() => setCurrentScreen('main')} style={styles.backButton}>
+                <Ionicons name="arrow-back" size={24} color="#666" />
+              </Pressable>
+            )}
+            <Text style={styles.title}>
+              {currentScreen === 'language' ? t('profile.language') : t('profile.accountSettings')}
+            </Text>
+            <Pressable onPress={handleClose} style={styles.closeButton}>
               <Ionicons name="close" size={24} color="#666" />
             </Pressable>
           </View>
@@ -59,6 +80,8 @@ export default function SettingsModal({
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
+            {currentScreen === 'main' ? (
+              <>
             {/* Email */}
             <View style={styles.section}>
               <View style={styles.itemRow}>
@@ -76,11 +99,7 @@ export default function SettingsModal({
             <View style={styles.section}>
               <Pressable
                 style={styles.itemRow}
-                onPress={() => {
-                  onClose();
-                  // Small delay to let the modal close animation finish
-                  setTimeout(showLanguageSelector, 300);
-                }}
+                onPress={() => setCurrentScreen('language')}
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.language')}
               >
@@ -166,6 +185,36 @@ export default function SettingsModal({
                 <Text style={styles.deleteText}>{t('profile.deleteAccount')}</Text>
               </Pressable>
             </View>
+              </>
+            ) : (
+              /* Language Selection Screen */
+              <View style={styles.languageScreen}>
+                <View style={styles.languageList}>
+                  {supportedLanguages.map((language) => {
+                    const isSelected = currentLanguage === language.code;
+                    return (
+                      <Pressable
+                        key={language.code}
+                        style={[styles.languageItem, isSelected && styles.languageItemSelected]}
+                        onPress={() => handleLanguageSelect(language.code)}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: isSelected }}
+                      >
+                        <View style={styles.languageInfo}>
+                          <Text style={[styles.languageName, isSelected && styles.languageNameSelected]}>
+                            {language.nativeName}
+                          </Text>
+                          <Text style={styles.languageNameEnglish}>{language.name}</Text>
+                        </View>
+                        {isSelected && (
+                          <Ionicons name="checkmark-circle" size={24} color="#FF4B4B" />
+                        )}
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
           </ScrollView>
         </View>
       </View>
@@ -206,13 +255,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: '#eee',
   },
+  backButton: {
+    padding: 4,
+    marginRight: 12,
+  },
   title: {
+    flex: 1,
     fontSize: 18,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
   closeButton: {
     padding: 4,
+    marginLeft: 12,
   },
   scrollView: {
     flex: 1,
@@ -276,5 +331,43 @@ const styles = StyleSheet.create({
     fontFamily: 'Silkscreen',
     color: '#FF4B4B',
     textDecorationLine: 'underline',
+  },
+  languageScreen: {
+    padding: 16,
+  },
+  languageList: {
+    width: '100%',
+    gap: 10,
+  },
+  languageItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  languageItemSelected: {
+    borderColor: '#FF4B4B',
+    backgroundColor: '#FFF5F5',
+  },
+  languageInfo: {
+    flex: 1,
+  },
+  languageName: {
+    fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
+    color: '#333',
+    marginBottom: 2,
+  },
+  languageNameSelected: {
+    color: '#FF4B4B',
+  },
+  languageNameEnglish: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    color: '#666',
   },
 });
