@@ -300,27 +300,27 @@ export default function ProfileScreen() {
 
         {/* Stats */}
         <View style={styles.statsContainer}>
-          <View style={styles.statsTopRow}>
-            <View style={styles.stat}>
-              <View style={styles.statContent}>
-                <Ionicons name="cube-outline" size={18} color="#FF4B4B" />
-                <Text style={[styles.statNumber, { color: '#FF4B4B' }]}>
-                  {profile?.contribution_count || 0}
-                </Text>
-              </View>
-              <Text style={styles.statLabel}>{t('profile.machinesAdded')}</Text>
+          <View style={styles.stat}>
+            <View style={styles.statContent}>
+              <Ionicons name="cube-outline" size={18} color="#FF4B4B" />
+              <Text style={[styles.statNumber, { color: '#FF4B4B' }]}>
+                {profile?.contribution_count || 0}
+              </Text>
             </View>
-            <View style={styles.stat}>
-              <View style={styles.statContent}>
-                <Ionicons name="footsteps-outline" size={18} color="#3C91E6" />
-                <Text style={[styles.statNumber, { color: '#3C91E6' }]}>
-                  {profile?.visit_count || 0}
-                </Text>
-              </View>
-              <Text style={styles.statLabel}>{t('profile.visits')}</Text>
-            </View>
+            <Text style={styles.statLabel}>{t('profile.machinesAdded')}</Text>
           </View>
-          <View style={styles.badgesStat}>
+          <View style={styles.statDivider} />
+          <View style={styles.stat}>
+            <View style={styles.statContent}>
+              <Ionicons name="footsteps-outline" size={18} color="#3C91E6" />
+              <Text style={[styles.statNumber, { color: '#3C91E6' }]}>
+                {profile?.visit_count || 0}
+              </Text>
+            </View>
+            <Text style={styles.statLabel}>{t('profile.visits')}</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.stat}>
             <View style={styles.statContent}>
               <Ionicons name="trophy-outline" size={18} color="#FFD966" />
               <Text style={[styles.statNumber, { color: '#FFD966' }]}>
@@ -615,6 +615,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   statsContainer: {
+    flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 2,
     padding: 20,
@@ -627,11 +628,6 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 3,
   },
-  statsTopRow: {
-    flexDirection: 'row',
-    gap: 20,
-    marginBottom: 16,
-  },
   stat: {
     flex: 1,
     alignItems: 'center',
@@ -641,6 +637,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     marginBottom: 6,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: '#eee',
   },
   statNumber: {
     fontSize: 26,
@@ -652,12 +652,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     color: '#666',
     textAlign: 'center',
-  },
-  badgesStat: {
-    alignItems: 'center',
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
   },
   section: {
     marginBottom: 24,
