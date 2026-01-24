@@ -51,6 +51,7 @@ export default function ProfileScreen() {
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
+  const [visitedMachineIds, setVisitedMachineIds] = useState<Set<string>>(new Set());
   const [loadingBadges, setLoadingBadges] = useState(true);
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -152,11 +153,23 @@ export default function ProfileScreen() {
     }
   }
 
-  // Fetch user's saved machines
+  // Fetch user's saved machines with visited status
   async function loadSavedMachines() {
     if (!user) return;
-    const data = await fetchSavedMachines();
-    setSavedMachines(data);
+    const machines = await fetchSavedMachines();
+    setSavedMachines(machines);
+
+    // Get which saved machines have been visited
+    if (machines.length > 0) {
+      const machineIds = machines.map((sm) => sm.machine_id);
+      const { data: visits } = await supabase
+        .from('visits')
+        .select('machine_id')
+        .eq('user_id', user.id)
+        .in('machine_id', machineIds);
+
+      setVisitedMachineIds(new Set(visits?.map((v) => v.machine_id) || []));
+    }
     setLoadingSaved(false);
   }
 
@@ -342,17 +355,17 @@ export default function ProfileScreen() {
           />
         </View>
 
-        {/* My Saved Section */}
+        {/* Quest Log Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.mySaved')}</Text>
+          <Text style={styles.sectionTitle}>{t('profile.questLog')}</Text>
           {loadingSaved ? (
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : savedMachines.length === 0 ? (
             <View style={styles.emptyBadges}>
               <Ionicons name="bookmark-outline" size={48} color="#ccc" />
-              <Text style={styles.emptyText}>{t('profile.noSavedMachines')}</Text>
+              <Text style={styles.emptyText}>{t('profile.noQuestLog')}</Text>
               <Text style={styles.emptySubtext}>
-                {t('profile.savedMachinesHint')}
+                {t('profile.questLogHint')}
               </Text>
             </View>
           ) : (
@@ -374,9 +387,14 @@ export default function ProfileScreen() {
                     </View>
                   )}
                   <View style={styles.savedInfo}>
-                    <Text style={styles.savedName} numberOfLines={1}>
-                      {saved.machine.name || t('machine.unnamed')}
-                    </Text>
+                    <View style={styles.savedNameRow}>
+                      <Text style={styles.savedName} numberOfLines={1}>
+                        {saved.machine.name || t('machine.unnamed')}
+                      </Text>
+                      {visitedMachineIds.has(saved.machine_id) && (
+                        <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
+                      )}
+                    </View>
                     <View style={styles.savedAddressRow}>
                       <Ionicons name="location-outline" size={14} color="#999" />
                       <Text style={styles.savedAddress} numberOfLines={1}>
@@ -613,11 +631,17 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
   },
+  savedNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 6,
+  },
   savedName: {
     fontSize: 15,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
-    marginBottom: 6,
+    flex: 1,
   },
   savedAddressRow: {
     flexDirection: 'row',
