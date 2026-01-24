@@ -6,13 +6,11 @@ import {
   Pressable,
   StyleSheet,
   ScrollView,
-  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useLanguageStore } from '../../store/languageStore';
-import { useAppModal } from '../../hooks/useAppModal';
 import { supportedLanguages } from '../../lib/i18n';
 
 interface SettingsModalProps {
@@ -34,17 +32,9 @@ export default function SettingsModal({
 }: SettingsModalProps) {
   const { t } = useTranslation();
   const { currentLanguage, showLanguageSelector } = useLanguageStore();
-  const { showInfo } = useAppModal();
 
   // Get current language display name
   const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
-
-  function handleSupportUs() {
-    const supportUrl = 'https://buymeacoffee.com/jidounavi';
-    Linking.openURL(supportUrl).catch(() => {
-      showInfo(t('profile.supportUs'), t('profile.supportLinkError'));
-    });
-  }
 
   return (
     <Modal
@@ -94,24 +84,6 @@ export default function SettingsModal({
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.language')}</Text>
                   <Text style={styles.itemValue}>{currentLanguageName}</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
-              </Pressable>
-            </View>
-
-            <View style={styles.divider} />
-
-            {/* Support Us */}
-            <View style={styles.section}>
-              <Pressable
-                style={styles.itemRow}
-                onPress={handleSupportUs}
-                accessibilityRole="button"
-                accessibilityLabel={t('profile.supportUs')}
-              >
-                <Ionicons name="heart" size={20} color="#666" />
-                <View style={styles.itemContent}>
-                  <Text style={styles.itemLabel}>{t('profile.supportUs')}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />
               </Pressable>
