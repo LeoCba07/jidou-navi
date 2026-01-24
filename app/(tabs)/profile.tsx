@@ -23,6 +23,8 @@ import { uploadAvatar } from '../../src/lib/storage';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import SettingsModal from '../../src/components/profile/SettingsModal';
 import StatProgressCard from '../../src/components/profile/StatProgressCard';
+import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
+import BadgeRequirementModal from '../../src/components/profile/BadgeRequirementModal';
 import type { Badge } from '../../src/lib/badges';
 
 // Badge type from joined query
@@ -36,13 +38,6 @@ type UserBadge = {
     icon_url: string | null;
     rarity: string | null;
   };
-};
-
-// Rarity colors for badge borders
-const RARITY_COLORS: Record<string, string> = {
-  common: '#9CA3AF',
-  rare: '#3B82F6',
-  epic: '#8B5CF6',
 };
 
 // Default avatar image used when user has no custom avatar
@@ -62,6 +57,11 @@ export default function ProfileScreen() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
+  const [badgeRequirementModalVisible, setBadgeRequirementModalVisible] = useState(false);
+  const [selectedLockedBadge, setSelectedLockedBadge] = useState<{
+    badge: Badge;
+    progress: { current: number; required: number };
+  } | null>(null);
 
   async function handleEditAvatar() {
     if (!user) return;
@@ -401,53 +401,20 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           {loadingBadges ? (
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
-          ) : badges.length === 0 ? (
-            <View style={styles.emptyBadges}>
-              <Ionicons name="trophy-outline" size={48} color="#ccc" />
-              <Text style={styles.emptyText}>{t('profile.noBadgesYet')}</Text>
-              <Text style={styles.emptySubtext}>
-                {t('profile.badgesHint')}
-              </Text>
-            </View>
           ) : (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.badgesScroll}
-            >
-              {badges.map((userBadge) => (
-                <Pressable
-                  key={userBadge.id}
-                  style={[
-                    styles.badgeItem,
-                    {
-                      borderColor:
-                        RARITY_COLORS[userBadge.badge.rarity || 'common'] || RARITY_COLORS.common,
-                    },
-                  ]}
-                  onPress={() =>
-                    showInfo(userBadge.badge.name, userBadge.badge.description)
-                  }
-                >
-                  {userBadge.badge.icon_url ? (
-                    <Image
-                      source={{ uri: userBadge.badge.icon_url }}
-                      style={styles.badgeIcon}
-                    />
-                  ) : (
-                    <View style={styles.badgeIconPlaceholder}>
-                      <Ionicons name="trophy" size={24} color="#FF4B4B" />
-                    </View>
-                  )}
-                  <Text style={styles.badgeName} numberOfLines={1}>
-                    {userBadge.badge.name}
-                  </Text>
-                  <Text style={styles.badgeDescription} numberOfLines={2}>
-                    {userBadge.badge.description}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
+            <BadgeShowcase
+              earnedBadges={badges}
+              allBadges={allBadges}
+              userStats={{
+                visit_count: profile?.visit_count || 0,
+                contribution_count: profile?.contribution_count || 0,
+              }}
+              onLockedBadgePress={(badge, progress) => {
+                setSelectedLockedBadge({ badge, progress });
+                setBadgeRequirementModalVisible(true);
+              }}
+              onEarnedBadgePress={(badge) => showInfo(badge.name, badge.description)}
+            />
           )}
         </View>
 
@@ -482,6 +449,14 @@ export default function ProfileScreen() {
         profile={profile}
         onLogout={handleLogout}
         onDeleteAccount={handleDeleteAccount}
+      />
+
+      {/* Badge Requirement Modal */}
+      <BadgeRequirementModal
+        badge={selectedLockedBadge?.badge || null}
+        userProgress={selectedLockedBadge?.progress || { current: 0, required: 0 }}
+        visible={badgeRequirementModalVisible}
+        onClose={() => setBadgeRequirementModalVisible(false)}
       />
     </View>
   );
@@ -602,48 +577,6 @@ const styles = StyleSheet.create({
     color: '#999',
     textAlign: 'center',
     marginTop: 4,
-  },
-  badgesScroll: {
-    gap: 12,
-  },
-  badgeItem: {
-    width: 110,
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    padding: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 0,
-    elevation: 2,
-  },
-  badgeIcon: {
-    width: 40,
-    height: 40,
-    marginBottom: 8,
-  },
-  badgeIconPlaceholder: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  badgeName: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2B2B2B',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  badgeDescription: {
-    fontSize: 10,
-    fontFamily: 'Inter',
-    color: '#999',
-    textAlign: 'center',
-    lineHeight: 13,
   },
   savedList: {
     gap: 12,
