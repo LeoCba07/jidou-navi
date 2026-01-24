@@ -346,12 +346,12 @@ export default function ProfileScreen() {
             </View>
             <View style={styles.statBlock}>
               <View style={styles.statBlockHeader}>
-                <Ionicons name="trophy-outline" size={18} color="#FFD966" />
-                <Text style={[styles.statBlockLabel, { color: '#FFD966' }]}>
+                <Ionicons name="trophy-outline" size={18} color="#D97706" />
+                <Text style={[styles.statBlockLabel, { color: '#D97706' }]}>
                   {t('profile.badges')}
                 </Text>
               </View>
-              <Text style={[styles.statBlockNumber, { color: '#FFD966' }]}>
+              <Text style={[styles.statBlockNumber, { color: '#D97706' }]}>
                 {profile?.badge_count || 0}
               </Text>
             </View>
