@@ -271,13 +271,13 @@ export default function ProfileScreen() {
         {/* User info */}
         <View style={styles.userSection}>
           <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
-            <Image 
+            <Image
               source={
-                profile?.avatar_url 
-                  ? { uri: `${profile.avatar_url}${profile.avatar_url.includes('?') ? '&' : '?'}t=${profile.updated_at ? new Date(profile.updated_at).getTime() : Date.now()}` } 
+                profile?.avatar_url
+                  ? { uri: profile.avatar_url }
                   : DEFAULT_AVATAR
-              } 
-              style={styles.avatar} 
+              }
+              style={styles.avatar}
             />
             <View style={styles.editAvatarButton}>
               {uploadingAvatar ? (
@@ -559,10 +559,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 4,
     borderColor: '#FF4B4B',
   },
   editAvatarButton: {

@@ -64,12 +64,12 @@ export async function uploadAvatar(
 
   if (error) throw error;
 
-  return getPhotoUrl(path);
+  return getPhotoUrl(path, AVATAR_BUCKET);
 }
 
 // Get public URL for a photo
-export function getPhotoUrl(path: string): string {
-  const { data } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path);
+export function getPhotoUrl(path: string, bucket: string = BUCKET): string {
+  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
 }
 
