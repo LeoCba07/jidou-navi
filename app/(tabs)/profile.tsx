@@ -340,7 +340,7 @@ export default function ProfileScreen() {
                   {saved.machine.primary_photo_url ? (
                     <Image
                       source={{ uri: saved.machine.primary_photo_url }}
-                      style={styles.savedPhoto}
+                      style={[styles.savedPhoto, styles.savedPhotoWithImage]}
                     />
                   ) : (
                     <View style={[styles.savedPhoto, styles.savedPhotoPlaceholder]}>
@@ -351,15 +351,18 @@ export default function ProfileScreen() {
                     <Text style={styles.savedName} numberOfLines={1}>
                       {saved.machine.name || t('machine.unnamed')}
                     </Text>
-                    <Text style={styles.savedAddress} numberOfLines={1}>
-                      {saved.machine.address || t('machine.noAddress')}
-                    </Text>
+                    <View style={styles.savedAddressRow}>
+                      <Ionicons name="location-outline" size={14} color="#999" />
+                      <Text style={styles.savedAddress} numberOfLines={1}>
+                        {saved.machine.address || t('machine.noAddress')}
+                      </Text>
+                    </View>
                   </View>
                   <Pressable
                     style={styles.unsaveButton}
                     onPress={() => handleUnsave(saved.machine_id)}
                   >
-                    <Ionicons name="bookmark" size={20} color="#FF4B4B" />
+                    <Text style={styles.unsaveButtonText}>{t('common.unsave')}</Text>
                   </Pressable>
                 </Pressable>
               ))}
@@ -773,15 +776,19 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'rgba(0, 0, 0, 0.1)',
     shadowColor: '#000',
-    shadowOffset: { width: 3, height: 3 },
+    shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 0,
     elevation: 2,
   },
   savedPhoto: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     borderRadius: 8,
+  },
+  savedPhotoWithImage: {
+    borderWidth: 2,
+    borderColor: '#FF4B4B',
   },
   savedPhotoPlaceholder: {
     backgroundColor: '#f0f0f0',
@@ -796,15 +803,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
-    marginBottom: 4,
+    marginBottom: 6,
+  },
+  savedAddressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   savedAddress: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Inter',
-    color: '#666',
+    color: '#999',
+    flex: 1,
   },
   unsaveButton: {
-    padding: 8,
+    backgroundColor: '#FFF3E7',
+    borderWidth: 2,
+    borderColor: '#FF4B4B',
+    borderRadius: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  unsaveButtonText: {
+    fontSize: 11,
+    fontFamily: 'Silkscreen',
+    color: '#FF4B4B',
   },
   supportContainer: {
     backgroundColor: '#fff',
