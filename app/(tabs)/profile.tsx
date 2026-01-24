@@ -293,38 +293,40 @@ export default function ProfileScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF4B4B" />
         }
       >
-        {/* User info */}
+        {/* Hero Card - Character Sheet */}
         <View style={styles.userSection}>
-          <Pressable
-            style={styles.settingsGear}
-            onPress={() => setSettingsModalVisible(true)}
-            accessibilityRole="button"
-            accessibilityLabel={t('profile.accountSettings')}
-          >
-            <Ionicons name="settings-outline" size={22} color="#666" />
-          </Pressable>
-          <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
-            <Image
-              source={
-                profile?.avatar_url
-                  ? { uri: `${profile.avatar_url}?t=${avatarTimestamp}` }
-                  : DEFAULT_AVATAR
-              }
-              style={styles.avatar}
-            />
-            <View style={styles.editAvatarButton}>
-              {uploadingAvatar ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Ionicons name="camera" size={16} color="#fff" />
-              )}
-            </View>
-          </Pressable>
-          <Text style={styles.displayName}>
-            {profile?.display_name || profile?.username || t('common.user')}
-          </Text>
-          <Text style={styles.username}>@{profile?.username || 'user'}</Text>
-          {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
+          <View style={styles.heroCard}>
+            <Pressable
+              style={styles.settingsGear}
+              onPress={() => setSettingsModalVisible(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('profile.accountSettings')}
+            >
+              <Ionicons name="settings-outline" size={20} color="#666" />
+            </Pressable>
+            <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
+              <Image
+                source={
+                  profile?.avatar_url
+                    ? { uri: `${profile.avatar_url}?t=${avatarTimestamp}` }
+                    : DEFAULT_AVATAR
+                }
+                style={styles.avatar}
+              />
+              <View style={styles.editAvatarButton}>
+                {uploadingAvatar ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Ionicons name="camera" size={16} color="#fff" />
+                )}
+              </View>
+            </Pressable>
+            <Text style={styles.displayName}>
+              {profile?.display_name || profile?.username || t('common.user')}
+            </Text>
+            <Text style={styles.username}>@{profile?.username || 'user'}</Text>
+            {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
+          </View>
         </View>
 
         {/* Stats Progress Cards */}
@@ -505,14 +507,26 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   userSection: {
-    alignItems: 'center',
     marginBottom: 24,
+  },
+  heroCard: {
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    padding: 24,
+    borderWidth: 3,
+    borderColor: '#FF4B4B',
+    shadowColor: '#000',
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
+    elevation: 4,
     position: 'relative',
+    alignItems: 'center',
   },
   settingsGear: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 16,
+    right: 16,
     padding: 8,
     zIndex: 1,
   },
@@ -541,10 +555,11 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   displayName: {
-    fontSize: 22,
-    fontFamily: 'Inter-Bold',
+    fontSize: 24,
+    fontFamily: 'DotGothic16',
     color: '#2B2B2B',
     marginBottom: 4,
+    textAlign: 'center',
   },
   username: {
     fontSize: 13,
