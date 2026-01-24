@@ -9,8 +9,6 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
-  Linking,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -18,12 +16,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
-import { useLanguageStore } from '../../src/store/languageStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
 import { uploadAvatar } from '../../src/lib/storage';
 import { useAppModal } from '../../src/hooks/useAppModal';
-import { supportedLanguages } from '../../src/lib/i18n';
+import SettingsModal from '../../src/components/profile/SettingsModal';
 
 // Badge type from joined query
 type UserBadge = {
@@ -52,7 +49,6 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile, setProfile } = useAuthStore();
   const { removeSaved } = useSavedMachinesStore();
-  const { currentLanguage, showLanguageSelector } = useLanguageStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
@@ -60,9 +56,7 @@ export default function ProfileScreen() {
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-
-  // Get current language display name
-  const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
   async function handleEditAvatar() {
     if (!user) return;
@@ -270,6 +264,14 @@ export default function ProfileScreen() {
       >
         {/* User info */}
         <View style={styles.userSection}>
+          <Pressable
+            style={styles.settingsGear}
+            onPress={() => setSettingsModalVisible(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t('profile.accountSettings')}
+          >
+            <Ionicons name="settings-outline" size={22} color="#666" />
+          </Pressable>
           <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
             <Image
               source={
@@ -292,10 +294,6 @@ export default function ProfileScreen() {
           </Text>
           <Text style={styles.username}>@{profile?.username || 'user'}</Text>
           {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
-          <View style={styles.emailCard}>
-            <Ionicons name="mail-outline" size={16} color="#999" />
-            <Text style={styles.emailText}>{user?.email}</Text>
-          </View>
         </View>
 
         {/* Stats */}
@@ -439,89 +437,17 @@ export default function ProfileScreen() {
             </ScrollView>
           )}
         </View>
-
-        {/* Settings Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
-          <View style={styles.legalContainer}>
-            <Pressable
-              style={styles.legalLink}
-              onPress={showLanguageSelector}
-              accessibilityRole="button"
-              accessibilityLabel={t('profile.language')}
-            >
-              <Ionicons name="language-outline" size={20} color="#666" />
-              <Text style={styles.legalLinkText}>{t('profile.language')}</Text>
-              <Text style={styles.languageValue}>{currentLanguageName}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Support Us Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.supportUs')}</Text>
-          <View style={styles.supportContainer}>
-            <Text style={styles.supportText}>{t('profile.supportDescription')}</Text>
-            <Pressable
-              style={styles.supportButton}
-              onPress={() => {
-                // TODO: Replace with actual Buy Me a Coffee / Ko-fi link
-                const supportUrl = 'https://buymeacoffee.com/jidounavi';
-                Linking.openURL(supportUrl).catch(() => {
-                  showInfo(t('profile.supportUs'), t('profile.supportLinkError'));
-                });
-              }}
-              accessibilityRole="button"
-              accessibilityLabel={t('profile.supportButton')}
-            >
-              <Ionicons name="heart" size={18} color="#fff" />
-              <Text style={styles.supportButtonText}>{t('profile.supportButton')}</Text>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Legal Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.legal')}</Text>
-          <View style={styles.legalContainer}>
-            <Pressable
-              style={styles.legalLink}
-              onPress={() => router.push('/legal/privacy')}
-              accessibilityRole="button"
-              accessibilityLabel={t('profile.privacyPolicy')}
-              accessibilityHint="Opens privacy policy page"
-            >
-              <Ionicons name="shield-checkmark-outline" size={20} color="#666" />
-              <Text style={styles.legalLinkText}>{t('profile.privacyPolicy')}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </Pressable>
-            <View style={styles.legalDivider} />
-            <Pressable
-              style={styles.legalLink}
-              onPress={() => router.push('/legal/terms')}
-              accessibilityRole="button"
-              accessibilityLabel={t('profile.termsOfService')}
-              accessibilityHint="Opens terms of service page"
-            >
-              <Ionicons name="document-text-outline" size={20} color="#666" />
-              <Text style={styles.legalLinkText}>{t('profile.termsOfService')}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Logout button */}
-        <Pressable style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="log-out-outline" size={20} color="#FF4B4B" />
-          <Text style={styles.logoutText}>{t('auth.logout')}</Text>
-        </Pressable>
-
-        {/* Delete account button */}
-        <Pressable style={styles.deleteButton} onPress={handleDeleteAccount}>
-          <Text style={styles.deleteText}>{t('profile.deleteAccount')}</Text>
-        </Pressable>
       </ScrollView>
+
+      {/* Settings Modal */}
+      <SettingsModal
+        visible={settingsModalVisible}
+        onClose={() => setSettingsModalVisible(false)}
+        user={user}
+        profile={profile}
+        onLogout={handleLogout}
+        onDeleteAccount={handleDeleteAccount}
+      />
     </View>
   );
 }
@@ -553,6 +479,14 @@ const styles = StyleSheet.create({
   userSection: {
     alignItems: 'center',
     marginBottom: 24,
+    position: 'relative',
+  },
+  settingsGear: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 8,
+    zIndex: 1,
   },
   avatarContainer: {
     position: 'relative',
@@ -597,22 +531,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
     paddingHorizontal: 16,
-  },
-  emailCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#f9f9f9',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 6,
-    marginTop: 8,
-    alignSelf: 'center',
-  },
-  emailText: {
-    fontSize: 12,
-    fontFamily: 'Inter',
-    color: '#666',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -728,62 +646,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 13,
   },
-  legalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  legalLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    gap: 12,
-  },
-  legalLinkText: {
-    flex: 1,
-    fontSize: 15,
-    fontFamily: 'Inter',
-    color: '#333',
-  },
-  languageValue: {
-    fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#999',
-  },
-  legalDivider: {
-    height: 1,
-    backgroundColor: '#eee',
-    marginLeft: 48,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#fff',
-    paddingVertical: 14,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FF4B4B',
-    marginBottom: 12,
-  },
-  logoutText: {
-    fontSize: 15,
-    color: '#FF4B4B',
-    fontFamily: 'Silkscreen',
-  },
-  deleteButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    marginBottom: 40,
-  },
-  deleteText: {
-    fontSize: 14,
-    fontFamily: 'Silkscreen',
-    color: '#FF4B4B',
-    textDecorationLine: 'underline',
-  },
   savedList: {
     gap: 12,
   },
@@ -838,39 +700,5 @@ const styles = StyleSheet.create({
   },
   unsaveButton: {
     padding: 8,
-  },
-  supportContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    alignItems: 'center',
-  },
-  supportText: {
-    fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: 16,
-  },
-  supportButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#FF4B4B',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 0,
-    elevation: 3,
-  },
-  supportButtonText: {
-    fontSize: 15,
-    fontFamily: 'Silkscreen',
-    color: '#fff',
   },
 });
