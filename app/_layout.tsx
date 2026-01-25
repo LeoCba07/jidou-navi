@@ -25,6 +25,7 @@ import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
 import AppModal from '../src/components/AppModal';
 import LanguageSelector from '../src/components/LanguageSelector';
 import ShareableCard from '../src/components/ShareableCard';
+import ErrorBoundary from '../src/components/ErrorBoundary';
 
 export default function RootLayout() {
   const router = useRouter();
@@ -160,14 +161,16 @@ export default function RootLayout() {
   }
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }} />
-      <BadgeUnlockModal />
-      <AppModal />
-      <LanguageSelector />
-      <ShareableCard />
-    </I18nextProvider>
+    <ErrorBoundary>
+      <I18nextProvider i18n={i18n}>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false }} />
+        <BadgeUnlockModal />
+        <AppModal />
+        <LanguageSelector />
+        <ShareableCard />
+      </I18nextProvider>
+    </ErrorBoundary>
   );
 }
 
