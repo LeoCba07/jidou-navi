@@ -56,3 +56,4 @@ backups/*.sql
 # Claude context
 CLAUDE.md
 claude.md
+GEMINI.md

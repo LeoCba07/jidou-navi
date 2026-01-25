@@ -16,6 +16,7 @@ import {
 import { I18nextProvider } from 'react-i18next';
 import i18n, { initI18n } from '../src/lib/i18n';
 import { supabase } from '../src/lib/supabase';
+import { Analytics } from '../src/lib/analytics';
 import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
 import { useLanguageStore } from '../src/store/languageStore';
@@ -63,6 +64,8 @@ export default function RootLayout() {
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
         loadSavedMachines();
+        // Track app_open for authenticated user
+        Analytics.track('app_open');
       }
       setLoading(false);
       setIsReady(true);
@@ -76,6 +79,10 @@ export default function RootLayout() {
         if (session?.user) {
           fetchProfile(session.user.id, session.user.email);
           loadSavedMachines();
+          // Track app_open when user logs in if they weren't before
+          if (event === 'SIGNED_IN') {
+            Analytics.track('app_open');
+          }
         } else {
           setProfile(null);
           setSavedMachineIds([]); // Clear saved machines on logout

@@ -22,6 +22,7 @@ import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
+import { Analytics } from '../../src/lib/analytics';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
@@ -65,6 +66,15 @@ export default function MachineDetailScreen() {
     status: string;
     categories: string;
   }>();
+
+  useEffect(() => {
+    if (params.id) {
+      Analytics.track('machine_view', {
+        machine_id: params.id,
+        machine_name: params.name,
+      });
+    }
+  }, [params.id]);
 
   // Initialize and fetch photos in a single effect to avoid race conditions
   useEffect(() => {
@@ -301,6 +311,11 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
 
+      Analytics.track('check_in', {
+        machine_id: params.id,
+        machine_name: params.name,
+      });
+
       // Small delay to allow profile counts to update via DB trigger
       await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -309,6 +324,7 @@ export default function MachineDetailScreen() {
 
       // Prepare share card data
       const shareData: ShareCardData = {
+        machineId: params.id,
         machineName: params.name || '',
         machineAddress: params.address || '',
         machinePhotoUrl: photos[0] || params.primary_photo_url || '',
@@ -428,6 +444,11 @@ export default function MachineDetailScreen() {
 
       // Update local photos state
       setPhotos(prev => [...prev, publicUrl]);
+      
+      Analytics.track('photo_upload', {
+        machine_id: params.id,
+      });
+
       showSuccess(t('common.success'), t('machine.photoAdded'), () => {
         tryRequestAppReview();
       });
