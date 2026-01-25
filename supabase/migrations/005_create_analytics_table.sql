@@ -1,7 +1,10 @@
--- Create analytics_events table
-CREATE TABLE IF NOT EXISTS public.analytics_events (
+-- Drop table if exists for a clean slate
+DROP TABLE IF EXISTS public.analytics_events;
+
+-- Create analytics_events table referencing profiles
+CREATE TABLE public.analytics_events (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
     event_name TEXT NOT NULL,
     properties JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -17,6 +20,3 @@ CREATE POLICY "Users can insert their own analytics events"
     FOR INSERT
     TO authenticated
     WITH CHECK (auth.uid() = user_id);
-
--- Allow admins/developers to view all events (optional, depending on if we build a dashboard)
--- For now, we'll just allow insertion. Data analysis will happen via Supabase Dashboard.

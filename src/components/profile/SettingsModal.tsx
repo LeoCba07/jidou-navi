@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { User } from '@supabase/supabase-js';
 import { useTranslation } from 'react-i18next';
 import { useLanguageStore } from '../../store/languageStore';
 import { supportedLanguages, LanguageCode } from '../../lib/i18n';
@@ -17,7 +18,7 @@ import { supportedLanguages, LanguageCode } from '../../lib/i18n';
 interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
-  user: { email: string } | null;
+  user: User | null;
   profile: any;
   onLogout: () => void;
   onDeleteAccount: () => void;

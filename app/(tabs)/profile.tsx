@@ -478,7 +478,7 @@ export default function ProfileScreen() {
       <SettingsModal
         visible={settingsModalVisible}
         onClose={() => setSettingsModalVisible(false)}
-        user={user as any}
+        user={user}
         profile={profile}
         onLogout={handleLogout}
         onDeleteAccount={handleDeleteAccount}

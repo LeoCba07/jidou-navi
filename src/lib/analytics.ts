@@ -26,15 +26,15 @@ export const Analytics = {
         return;
       }
 
-      // Explicitly cast to unknown then to the expected insert type to avoid complex overload matching issues
-      // or rely on the improved database.types.ts
+      const payload: Database['public']['Tables']['analytics_events']['Insert'] = {
+        user_id: user.id,
+        event_name: event,
+        properties: properties,
+      };
+
       const { error } = await supabase
         .from('analytics_events')
-        .insert({
-          user_id: user.id,
-          event_name: event,
-          properties: properties,
-        });
+        .insert(payload);
 
       if (error) {
         console.error('[Analytics] Error logging event:', error);

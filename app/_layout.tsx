@@ -55,12 +55,6 @@ export default function RootLayout() {
     });
   }, []);
 
-  useEffect(() => {
-    if (isReady && fontsLoaded && i18nReady) {
-      Analytics.track('app_open');
-    }
-  }, [isReady, fontsLoaded, i18nReady]);
-
   // Listen to auth state changes
   useEffect(() => {
     // Check initial session
@@ -70,6 +64,8 @@ export default function RootLayout() {
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
         loadSavedMachines();
+        // Track app_open for authenticated user
+        Analytics.track('app_open');
       }
       setLoading(false);
       setIsReady(true);
@@ -83,6 +79,10 @@ export default function RootLayout() {
         if (session?.user) {
           fetchProfile(session.user.id, session.user.email);
           loadSavedMachines();
+          // Track app_open when user logs in if they weren't before
+          if (event === 'SIGNED_IN') {
+            Analytics.track('app_open');
+          }
         } else {
           setProfile(null);
           setSavedMachineIds([]); // Clear saved machines on logout
