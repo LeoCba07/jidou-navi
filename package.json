@@ -7,7 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "seed": "npx tsx scripts/seed-machines.ts"
+    "seed": "npx tsx scripts/seed-machines.ts",
+    "backup": "npx tsx scripts/backup-db.ts"
   },
   "dependencies": {
     "@expo-google-fonts/dotgothic16": "^0.4.1",
