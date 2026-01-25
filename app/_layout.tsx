@@ -16,6 +16,7 @@ import {
 import { I18nextProvider } from 'react-i18next';
 import i18n, { initI18n } from '../src/lib/i18n';
 import { supabase } from '../src/lib/supabase';
+import { Analytics } from '../src/lib/analytics';
 import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
 import { useLanguageStore } from '../src/store/languageStore';
@@ -53,6 +54,12 @@ export default function RootLayout() {
       setI18nReady(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (isReady && fontsLoaded && i18nReady) {
+      Analytics.track('app_open');
+    }
+  }, [isReady, fontsLoaded, i18nReady]);
 
   // Listen to auth state changes
   useEffect(() => {

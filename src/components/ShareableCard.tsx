@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import { Analytics } from '../lib/analytics';
 import { useUIStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
 
@@ -23,6 +24,7 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
 
 export interface ShareCardData {
+  machineId: string;
   machineName: string;
   machineAddress: string;
   machinePhotoUrl: string;
@@ -42,7 +44,7 @@ export default function ShareableCard() {
   const username = profile?.username || profile?.display_name || t('common.user');
 
   async function handleShare() {
-    if (!cardRef.current) return;
+    if (!cardRef.current || !shareCard) return;
 
     setSharing(true);
     try {
@@ -66,6 +68,11 @@ export default function ShareableCard() {
         mimeType: 'image/png',
         dialogTitle: t('share.dialogTitle'),
         UTI: 'public.png',
+      });
+
+      Analytics.track('share_machine', {
+        machine_id: shareCard.machineId,
+        machine_name: shareCard.machineName,
       });
 
       // Clean up temp file
