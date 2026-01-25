@@ -4,6 +4,10 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
+import { initSentry } from '../src/lib/sentry';
+
+// Initialize Sentry as early as possible
+initSentry();
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { DotGothic16_400Regular } from '@expo-google-fonts/dotgothic16';
 import { Silkscreen_400Regular, Silkscreen_700Bold } from '@expo-google-fonts/silkscreen';
