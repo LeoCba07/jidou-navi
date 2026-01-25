@@ -50,6 +50,9 @@ yarn-error.*
 # Environment
 .env
 
+# Backups
+backups/*.sql
+
 # Claude context
 CLAUDE.md
 claude.md

@@ -18,13 +18,18 @@ You can find this connection string in your Supabase Dashboard under **Settings 
 To run a backup manually, execute the following command:
 
 ```bash
-npx tsx scripts/backup-db.ts
+npm run backup
 ```
 
 This will:
 1.  Connect to your remote database using `DATABASE_URL`.
 2.  Dump the schema and data using `pg_dump` (via Supabase CLI).
 3.  Save the resulting SQL file to the `backups/` directory with a timestamp.
+
+Alternatively, you can run it via `npx` if preferred:
+```bash
+npx tsx scripts/backup-db.ts
+```
 
 ## Restoring a Backup
 
