@@ -57,3 +57,6 @@ backups/*.sql
 CLAUDE.md
 claude.md
 GEMINI.md
+
+# Asset generation notes
+badge-generation.md
