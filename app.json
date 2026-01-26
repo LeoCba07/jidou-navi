@@ -51,10 +51,9 @@
       [
         "@sentry/react-native/expo",
         {
-          "organization": "placeholder",
-          "project": "placeholder",
-          "url": "https://sentry.io/",
-          "enableAutoUploadSourceMaps": false
+          "organization": "jidou-navi",
+          "project": "react-native",
+          "url": "https://sentry.io/"
         }
       ],
       [
