@@ -48,7 +48,15 @@
       "expo-font",
       "expo-localization",
       "expo-secure-store",
-      "@sentry/react-native",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "placeholder",
+          "project": "placeholder",
+          "url": "https://sentry.io/",
+          "enableAutoUploadSourceMaps": false
+        }
+      ],
       [
         "expo-location",
         {
