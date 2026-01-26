@@ -116,7 +116,10 @@
     "searchAccessibilityLabel": "Buscar máquinas expendedoras",
     "searchAccessibilityHint": "Ingresa nombre, descripción o dirección de la máquina",
     "noMachinesFound": "No se encontraron máquinas",
-    "clearSearch": "Limpiar búsqueda"
+    "clearSearch": "Limpiar búsqueda",
+    "fetchError": "No se pudieron cargar las máquinas",
+    "retry": "Reintentar",
+    "searchError": "Error en la búsqueda. Intenta de nuevo."
   },
   "categories": {
     "all": "Todas",
@@ -135,6 +138,9 @@
     "noPhoto": "Sin foto",
     "visits": "{{count}} visitas",
     "visit": "{{count}} visita",
+    "verifications": "{{count}} verificada",
+    "lastVerified": "Verificada {{date}}",
+    "neverVerified": "Aún no verificada",
     "active": "Activa",
     "unverified": "Sin verificar",
     "away": "a {{distance}}",
@@ -153,6 +159,8 @@
     "addPhoto": "Añadir Foto",
     "photoAdded": "¡Foto añadida con éxito!",
     "uploadError": "Error al subir la foto.",
+    "stalePrompt": "Esta máquina no ha sido verificada recientemente. ¿Puedes confirmar que sigue aquí?",
+    "verifyNow": "Verificar Ahora",
     "checkIn": {
       "title": "Registrar Visita",
       "question": "¿Esta máquina expendedora sigue aquí?",

@@ -20,6 +20,7 @@ export default function LoginScreen() {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showError } = useAppModal();
 
@@ -97,8 +98,20 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 placeholder={t('auth.passwordPlaceholder')}
                 placeholderTextColor="#999"
-                secureTextEntry
+                secureTextEntry={!showPassword}
               />
+              <Pressable
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeButton}
+                accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+                accessibilityRole="button"
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={20}
+                  color="#999"
+                />
+              </Pressable>
             </View>
           </View>
 
@@ -215,6 +228,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter',
     color: '#2B2B2B',
+  },
+  eyeButton: {
+    padding: 4,
   },
   forgotLink: {
     alignSelf: 'flex-end',

@@ -27,6 +27,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   // Refs for debounce and race condition handling
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -45,6 +46,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
   const handleSearch = useCallback((text: string) => {
     setQuery(text);
     latestQueryRef.current = text;
+    setSearchError(null);
 
     // Clear previous debounce
     if (debounceRef.current) {
@@ -62,23 +64,13 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
 
     // Debounce the actual search
     debounceRef.current = setTimeout(async () => {
-      try {
-        const data = await searchMachines(text);
-        // Only update if this is still the latest query (race condition fix)
-        if (latestQueryRef.current === text) {
-          setResults(data);
-          setShowResults(true);
-        }
-      } catch (error) {
-        // Handle error gracefully
-        if (latestQueryRef.current === text) {
-          setResults([]);
-          setShowResults(false);
-        }
-      } finally {
-        if (latestQueryRef.current === text) {
-          setIsSearching(false);
-        }
+      const { data, error } = await searchMachines(text);
+      // Only update if this is still the latest query (race condition fix)
+      if (latestQueryRef.current === text) {
+        setResults(data);
+        setSearchError(error);
+        setShowResults(true);
+        setIsSearching(false);
       }
     }, DEBOUNCE_MS);
   }, []);
@@ -114,6 +106,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
     setQuery("");
     setResults([]);
     setShowResults(false);
+    setSearchError(null);
     latestQueryRef.current = "";
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -200,8 +193,18 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
           </View>
         )}
 
+        {/* Error message */}
+        {showResults && searchError && !isSearching && (
+          <View style={styles.resultsContainer}>
+            <View style={styles.errorContainer}>
+              <Ionicons name="warning-outline" size={18} color="#EF4444" />
+              <Text style={styles.errorText}>{t('map.searchError')}</Text>
+            </View>
+          </View>
+        )}
+
         {/* No results message */}
-        {showResults && results.length === 0 && query.length >= 2 && !isSearching && (
+        {showResults && results.length === 0 && query.length >= 2 && !isSearching && !searchError && (
           <View style={styles.resultsContainer}>
             <Text style={styles.noResults}>{t('map.noMachinesFound')}</Text>
           </View>
@@ -291,6 +294,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Inter",
     color: "#999",
+    fontSize: 14,
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    gap: 8,
+  },
+  errorText: {
+    fontFamily: "Inter",
+    color: "#EF4444",
     fontSize: 14,
   },
 });

@@ -23,6 +23,8 @@ export default function SignupScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showError, showSuccess } = useAppModal();
 
@@ -152,8 +154,20 @@ export default function SignupScreen() {
                   onChangeText={setPassword}
                   placeholder={t('auth.passwordPlaceholder')}
                   placeholderTextColor="#999"
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                 />
+                <Pressable
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeButton}
+                  accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+                  accessibilityRole="button"
+                >
+                  <Ionicons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color="#999"
+                  />
+                </Pressable>
               </View>
             </View>
 
@@ -167,8 +181,20 @@ export default function SignupScreen() {
                   onChangeText={setConfirmPassword}
                   placeholder={t('auth.confirmPasswordPlaceholder')}
                   placeholderTextColor="#999"
-                  secureTextEntry
+                  secureTextEntry={!showConfirmPassword}
                 />
+                <Pressable
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={styles.eyeButton}
+                  accessibilityLabel={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  accessibilityRole="button"
+                >
+                  <Ionicons
+                    name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color="#999"
+                  />
+                </Pressable>
               </View>
             </View>
 
@@ -279,6 +305,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter',
     color: '#2B2B2B',
+  },
+  eyeButton: {
+    padding: 4,
   },
   button: {
     backgroundColor: '#FF4B4B',

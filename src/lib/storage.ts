@@ -10,8 +10,19 @@ const AVATAR_BUCKET = 'avatars';
 export async function uploadPhoto(
   userId: string,
   machineId: string,
-  file: { uri: string; type: string; name: string }
+  file: { uri: string; type: string; name: string; size?: number }
 ): Promise<string> {
+  // Validation
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+  if (file.size && file.size > MAX_SIZE) {
+    throw new Error('File size exceeds 5MB limit');
+  }
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Invalid file type. Only JPG, PNG and WebP are allowed.');
+  }
+
   const path = `${userId}/${machineId}/${Date.now()}-${file.name}`;
 
   // Read file as base64 and convert to ArrayBuffer

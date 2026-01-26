@@ -29,6 +29,7 @@ import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/ma
 import { uploadPhoto } from '../../src/lib/storage';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { ImageSkeleton } from '../../src/components/ImageSkeleton';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -49,6 +50,7 @@ export default function MachineDetailScreen() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const fullScreenScrollViewRef = useRef<ScrollView>(null);
@@ -63,6 +65,8 @@ export default function MachineDetailScreen() {
     distance_meters: string;
     primary_photo_url: string;
     visit_count: string;
+    verification_count: string;
+    last_verified_at: string;
     status: string;
     categories: string;
   }>();
@@ -121,6 +125,51 @@ export default function MachineDetailScreen() {
 
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
+  const verificationCount = Number(params.verification_count || 0);
+
+  // Format relative date for last verified
+  const formatRelativeDate = (dateString: string | undefined): string | null => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'today';
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    return `${Math.floor(diffDays / 365)} years ago`;
+  };
+
+  const lastVerifiedText = formatRelativeDate(params.last_verified_at);
+
+  // Get freshness color based on last verified date
+  const getFreshnessColor = (): string => {
+    if (!params.last_verified_at) return '#F59E0B'; // Yellow - unknown
+    const date = new Date(params.last_verified_at);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 30) return '#22C55E'; // Green - fresh
+    if (diffDays <= 90) return '#F59E0B'; // Yellow - getting stale
+    return '#EF4444'; // Red - stale
+  };
+
+  const freshnessColor = getFreshnessColor();
+
+  // Check if should show re-verification prompt (>90 days since last verified and user hasn't checked in)
+  const shouldShowVerifyPrompt = (): boolean => {
+    if (hasCheckedIn) return false;
+    if (!params.last_verified_at) return true; // Never verified
+    const date = new Date(params.last_verified_at);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    return diffDays > 90;
+  };
 
   // Parse categories from JSON string
   const categories = params.categories ? JSON.parse(params.categories) : [];
@@ -501,11 +550,22 @@ export default function MachineDetailScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={t('machine.viewPhotoFullScreen', { current: index + 1, total: photos.length })}
                 >
-                  <Image
-                    source={{ uri: photoUrl }}
-                    style={styles.photo}
-                    resizeMode="cover"
-                  />
+                  <View style={styles.photoWrapper}>
+                    {!loadedImages.has(photoUrl) && (
+                      <ImageSkeleton style={styles.photoSkeleton} />
+                    )}
+                    <Image
+                      source={{ uri: photoUrl }}
+                      style={[
+                        styles.photo,
+                        !loadedImages.has(photoUrl) && styles.photoHidden,
+                      ]}
+                      resizeMode="cover"
+                      onLoad={() => {
+                        setLoadedImages(prev => new Set([...prev, photoUrl]));
+                      }}
+                    />
+                  </View>
                 </Pressable>
               ))}
             </ScrollView>
@@ -560,6 +620,10 @@ export default function MachineDetailScreen() {
               <Text style={styles.statText}>{t('machine.visits', { count: displayVisitCount })}</Text>
             </View>
             <View style={styles.statItem}>
+              <Ionicons name="shield-checkmark-outline" size={16} color="#22C55E" />
+              <Text style={styles.statText}>{t('machine.verifications', { count: verificationCount })}</Text>
+            </View>
+            <View style={styles.statItem}>
               <Ionicons
                 name={isActive ? 'checkmark-circle' : 'help-circle'}
                 size={16}
@@ -570,6 +634,31 @@ export default function MachineDetailScreen() {
               </Text>
             </View>
           </View>
+
+          {/* Last verified info with freshness indicator */}
+          <View style={styles.freshnessRow}>
+            <View style={[styles.freshnessIndicator, { backgroundColor: freshnessColor }]} />
+            <Text style={styles.lastVerified}>
+              {lastVerifiedText
+                ? t('machine.lastVerified', { date: lastVerifiedText })
+                : t('machine.neverVerified')}
+            </Text>
+          </View>
+
+          {/* Re-verification prompt for stale machines */}
+          {shouldShowVerifyPrompt() && (
+            <View style={styles.verifyPrompt}>
+              <Ionicons name="alert-circle-outline" size={20} color="#F59E0B" />
+              <Text style={styles.verifyPromptText}>{t('machine.stalePrompt')}</Text>
+              <Pressable
+                style={styles.verifyButton}
+                onPress={handleCheckIn}
+                disabled={checkingIn}
+              >
+                <Text style={styles.verifyButtonText}>{t('machine.verifyNow')}</Text>
+              </Pressable>
+            </View>
+          )}
 
           {params.address && (
             <View style={styles.addressRow}>
@@ -706,15 +795,15 @@ export default function MachineDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FDF3E7',
   },
   header: {
     paddingTop: 50,
     paddingHorizontal: 16,
     paddingBottom: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#FDF3E7',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#E8DDD1',
   },
   backButton: {
     paddingVertical: 8,
@@ -733,9 +822,23 @@ const styles = StyleSheet.create({
   carousel: {
     height: 250,
   },
+  photoWrapper: {
+    width: SCREEN_WIDTH,
+    height: 250,
+    position: 'relative',
+  },
   photo: {
     width: SCREEN_WIDTH,
     height: 250,
+  },
+  photoSkeleton: {
+    position: 'absolute',
+    width: SCREEN_WIDTH,
+    height: 250,
+    zIndex: 1,
+  },
+  photoHidden: {
+    opacity: 0,
   },
   pagination: {
     position: 'absolute',
@@ -743,6 +846,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'center',
     gap: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
   paginationDot: {
     width: 8,
@@ -823,6 +930,52 @@ const styles = StyleSheet.create({
   },
   unknownText: {
     color: '#F59E0B',
+  },
+  freshnessRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  freshnessIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  lastVerified: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    color: '#999',
+  },
+  verifyPrompt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: '#F59E0B',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+  },
+  verifyPromptText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: 'Inter',
+    color: '#92400E',
+    lineHeight: 18,
+  },
+  verifyButton: {
+    backgroundColor: '#F59E0B',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+  },
+  verifyButtonText: {
+    fontSize: 13,
+    fontFamily: 'Silkscreen',
+    color: '#fff',
   },
   addressRow: {
     flexDirection: 'row',

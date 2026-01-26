@@ -116,7 +116,10 @@
     "searchAccessibilityLabel": "Search for vending machines",
     "searchAccessibilityHint": "Enter machine name, description, or address",
     "noMachinesFound": "No machines found",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "fetchError": "Couldn't load machines",
+    "retry": "Retry",
+    "searchError": "Search failed. Please try again."
   },
   "categories": {
     "all": "All",
@@ -135,6 +138,9 @@
     "noPhoto": "No photo",
     "visits": "{{count}} visits",
     "visit": "{{count}} visit",
+    "verifications": "{{count}} verified",
+    "lastVerified": "Last verified {{date}}",
+    "neverVerified": "Not yet verified",
     "active": "Active",
     "unverified": "Unverified",
     "away": "{{distance}} away",
@@ -153,6 +159,8 @@
     "addPhoto": "Add Photo",
     "photoAdded": "Photo added successfully!",
     "uploadError": "Failed to upload photo.",
+    "stalePrompt": "This machine hasn't been verified recently. Can you help confirm it's still here?",
+    "verifyNow": "Verify Now",
     "checkIn": {
       "title": "Check In",
       "question": "Is this vending machine still here?",

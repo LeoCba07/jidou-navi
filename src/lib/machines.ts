@@ -53,6 +53,8 @@ export type NearbyMachine = {
   primary_photo_url: string;
   status: string;
   visit_count: number;
+  verification_count?: number;
+  last_verified_at?: string;
 };
 
 // Fetch machines within radius of a location
@@ -118,26 +120,37 @@ export async function fetchMachinesInBounds(
   }
 }
 
+// Search result with error handling
+export type SearchResponse = {
+  data: SearchResult[];
+  error: string | null;
+};
+
 // Search machines by name, description, or address (fuzzy search)
 export async function searchMachines(
   searchTerm: string,
   limit: number = 20
-): Promise<SearchResult[]> {
+): Promise<SearchResponse> {
   if (!searchTerm.trim()) {
-    return [];
+    return { data: [], error: null };
   }
 
-  const { data, error } = await supabase.rpc('search_machines', {
-    search_term: searchTerm.trim(),
-    limit_count: limit,
-  });
+  try {
+    const { data, error } = await supabase.rpc('search_machines', {
+      search_term: searchTerm.trim(),
+      limit_count: limit,
+    });
 
-  if (error) {
-    console.error('Error searching machines:', error);
-    return [];
+    if (error) {
+      console.error('Error searching machines:', error);
+      return { data: [], error: 'search_failed' };
+    }
+
+    return { data: data || [], error: null };
+  } catch (e) {
+    console.error('Network error searching machines:', e);
+    return { data: [], error: 'search_failed' };
   }
-
-  return data || [];
 }
 
 // Filter machines by selected categories (OR logic)

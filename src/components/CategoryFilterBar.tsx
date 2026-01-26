@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   chipSelected: {
-    backgroundColor: "#2B2B2B",
-    borderColor: "#000",
+    backgroundColor: "#FF4B4B",
+    borderColor: "#CC3C3C",
   },
   chipText: {
     fontSize: 14,

@@ -424,7 +424,7 @@ export default function AddMachineScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FDF3E7',
   },
   header: {
     flexDirection: 'row',
@@ -433,8 +433,9 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 16,
     paddingBottom: 12,
+    backgroundColor: '#FDF3E7',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#E8DDD1',
   },
   backButton: {
     width: 100,

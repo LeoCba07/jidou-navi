@@ -20,12 +20,14 @@ interface MachinesCacheState {
   visibleMachines: NearbyMachine[];
   lastFetchBounds: MapBounds | null;
   isFetching: boolean;
+  fetchError: string | null;
 
   // Actions
   fetchMachinesForBounds: (bounds: MapBounds) => Promise<void>;
   getMachinesInBounds: (bounds: MapBounds) => NearbyMachine[];
   clearCache: () => void;
   setVisibleMachines: (machines: NearbyMachine[]) => void;
+  clearError: () => void;
 }
 
 // Convert lat/lng to tile key
@@ -88,6 +90,7 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
   visibleMachines: [],
   lastFetchBounds: null,
   isFetching: false,
+  fetchError: null,
 
   fetchMachinesForBounds: async (bounds: MapBounds) => {
     const state = get();
@@ -118,13 +121,13 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
     }
 
     // Fetch machines for the expanded bounds
-    set({ isFetching: true });
+    set({ isFetching: true, fetchError: null });
 
     const data = await fetchMachinesInBounds(expandedBounds);
 
     if (data === null) {
-      // Network error - keep using cache
-      set({ isFetching: false });
+      // Network error - keep using cache and set error
+      set({ isFetching: false, fetchError: 'fetch_failed' });
       return;
     }
 
@@ -153,6 +156,7 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
       tileCache: newCache,
       lastFetchBounds: expandedBounds,
       isFetching: false,
+      fetchError: null,
     });
 
     // Update visible machines
@@ -196,5 +200,9 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
 
   setVisibleMachines: (machines: NearbyMachine[]) => {
     set({ visibleMachines: machines });
+  },
+
+  clearError: () => {
+    set({ fetchError: null });
   },
 }));

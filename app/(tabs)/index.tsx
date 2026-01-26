@@ -1,6 +1,6 @@
 // Map screen - shows Mapbox map with machine pins
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { View, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, SymbolLayer, Images } from '@rnmapbox/maps';
@@ -11,6 +11,7 @@ import { SearchBar } from '../../src/components/SearchBar';
 import { CategoryFilterBar } from '../../src/components/CategoryFilterBar';
 import { useUIStore, useMachinesCacheStore } from '../../src/store';
 import { useMapFetch } from '../../src/hooks/useMapFetch';
+import { useTranslation } from 'react-i18next';
 
 // Initialize Mapbox with token from env
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '');
@@ -24,6 +25,7 @@ const markerImages = {
 };
 
 export default function MapScreen() {
+  const { t } = useTranslation();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedMachine, setSelectedMachine] = useState<NearbyMachine | null>(null);
@@ -36,6 +38,8 @@ export default function MapScreen() {
 
   // Machines from cache store
   const machines = useMachinesCacheStore((state) => state.visibleMachines);
+  const fetchError = useMachinesCacheStore((state) => state.fetchError);
+  const clearError = useMachinesCacheStore((state) => state.clearError);
 
   // Map fetching hook
   const { handleRegionChange, forceFetch, cleanup } = useMapFetch();
@@ -163,6 +167,22 @@ export default function MapScreen() {
     });
   }
 
+  // Retry fetching machines after an error
+  async function handleRetry() {
+    clearError();
+    if (!mapRef.current) return;
+    const bounds = await mapRef.current.getVisibleBounds();
+    if (bounds) {
+      const mapBounds: MapBounds = {
+        minLat: Math.min(bounds[0][1], bounds[1][1]),
+        maxLat: Math.max(bounds[0][1], bounds[1][1]),
+        minLng: Math.min(bounds[0][0], bounds[1][0]),
+        maxLng: Math.max(bounds[0][0], bounds[1][0]),
+      };
+      forceFetch(mapBounds);
+    }
+  }
+
   // Handle search result selection - center map on result and show preview
   async function handleSearchResult(result: SearchResult) {
     if (!cameraRef.current) return;
@@ -283,6 +303,20 @@ export default function MapScreen() {
       {/* Category filter bar */}
       <CategoryFilterBar />
 
+      {/* Error banner */}
+      {fetchError && (
+        <View style={styles.errorBanner}>
+          <Ionicons name="cloud-offline-outline" size={18} color="#fff" />
+          <Text style={styles.errorText}>{t('map.fetchError')}</Text>
+          <Pressable style={styles.retryButton} onPress={handleRetry}>
+            <Text style={styles.retryText}>{t('map.retry')}</Text>
+          </Pressable>
+          <Pressable style={styles.dismissButton} onPress={clearError}>
+            <Ionicons name="close" size={18} color="#fff" />
+          </Pressable>
+        </View>
+      )}
+
       {/* Recenter button */}
       <Pressable style={styles.recenterButton} onPress={centerOnUser}>
         <Ionicons name="locate" size={28} color="#333" />
@@ -322,6 +356,8 @@ export default function MapScreen() {
                   distance_meters: String(actualDistance),
                   primary_photo_url: selectedMachine.primary_photo_url || '',
                   visit_count: String(selectedMachine.visit_count),
+                  verification_count: String(selectedMachine.verification_count || 0),
+                  last_verified_at: selectedMachine.last_verified_at || '',
                   status: selectedMachine.status || '',
                   categories: JSON.stringify(selectedMachine.categories || []),
                 },
@@ -339,6 +375,44 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  errorBanner: {
+    position: 'absolute',
+    top: 140,
+    left: 16,
+    right: 16,
+    backgroundColor: '#EF4444',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  errorText: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Inter-Medium',
+  },
+  retryButton: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+  },
+  retryText: {
+    color: '#fff',
+    fontSize: 13,
+    fontFamily: 'Inter-SemiBold',
+  },
+  dismissButton: {
+    padding: 4,
+  },
   recenterButton: {
     position: 'absolute',
     bottom: 28,
