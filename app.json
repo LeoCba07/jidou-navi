@@ -48,7 +48,13 @@
       "expo-font",
       "expo-localization",
       "expo-secure-store",
-      "@sentry/react-native"
+      "@sentry/react-native",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "JidouNavi needs your location to show nearby vending machines and allow check-ins."
+        }
+      ]
     ],
     "extra": {
       "router": {},
