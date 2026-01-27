@@ -215,3 +215,128 @@ function checkBadgeEligibility(
       return false;
   }
 }
+
+// Badge opportunity for unlocking by visiting a machine
+export type BadgeOpportunity = {
+  badge: Badge;
+  currentProgress: number;
+  requiredProgress: number;
+  progressPercent: number;
+  willUnlockWithVisit: boolean;
+  motivationalMessage: 'willUnlock' | 'visitMore';
+  remaining: number;
+};
+
+// Get badges that user can progress toward or unlock by visiting a machine
+export async function getUnlockableBadgesForMachine(
+  machineCategories: string[]
+): Promise<BadgeOpportunity[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  // Fetch user's profile stats
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('visit_count, contribution_count')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError || !profile) {
+    return [];
+  }
+
+  // Fetch category visit counts
+  const categoryVisitCounts = await getCategoryVisitCounts(user.id);
+
+  // Fetch all badges
+  const { data: allBadges, error: badgesError } = await supabase
+    .from('badges')
+    .select('*');
+
+  if (badgesError || !allBadges) {
+    return [];
+  }
+
+  // Fetch user's already earned badges
+  const { data: earnedBadges } = await supabase
+    .from('user_badges')
+    .select('badge_id')
+    .eq('user_id', user.id);
+
+  const earnedBadgeIds = new Set(earnedBadges?.map((b) => b.badge_id) || []);
+
+  const opportunities: BadgeOpportunity[] = [];
+
+  for (const badge of allBadges) {
+    // Skip if already earned
+    if (earnedBadgeIds.has(badge.id)) continue;
+
+    const typedBadge: Badge = {
+      ...badge,
+      trigger_value: badge.trigger_value as Badge['trigger_value'],
+    };
+
+    const trigger = typedBadge.trigger_value;
+    if (!trigger || !trigger.count) continue;
+
+    let currentProgress = 0;
+    let isRelevant = false;
+
+    switch (typedBadge.trigger_type) {
+      case 'visit_count':
+        currentProgress = profile.visit_count ?? 0;
+        isRelevant = true;
+        break;
+
+      case 'category_visit': {
+        const category = trigger.category;
+        if (category && machineCategories.includes(category)) {
+          currentProgress = categoryVisitCounts[category] || 0;
+          isRelevant = true;
+        }
+        break;
+      }
+
+      case 'verification_count':
+        // Visiting also verifies if user confirms still exists
+        const { count } = await supabase
+          .from('visits')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('still_exists', true);
+        currentProgress = count || 0;
+        isRelevant = true;
+        break;
+    }
+
+    if (!isRelevant) continue;
+
+    const requiredProgress = trigger.count;
+    const progressPercent = Math.min(100, (currentProgress / requiredProgress) * 100);
+    const remaining = requiredProgress - currentProgress;
+    const willUnlockWithVisit = remaining === 1;
+
+    // Only show badges with >50% progress or will unlock
+    if (progressPercent < 50 && !willUnlockWithVisit) continue;
+
+    opportunities.push({
+      badge: typedBadge,
+      currentProgress,
+      requiredProgress,
+      progressPercent,
+      willUnlockWithVisit,
+      motivationalMessage: willUnlockWithVisit ? 'willUnlock' : 'visitMore',
+      remaining,
+    });
+  }
+
+  // Sort: badges that will unlock first, then by progress percent descending
+  opportunities.sort((a, b) => {
+    if (a.willUnlockWithVisit && !b.willUnlockWithVisit) return -1;
+    if (!a.willUnlockWithVisit && b.willUnlockWithVisit) return 1;
+    return b.progressPercent - a.progressPercent;
+  });
+
+  // Return max 3 badges
+  return opportunities.slice(0, 3);
+}
