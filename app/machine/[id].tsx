@@ -16,7 +16,13 @@ import {
   Modal,
   StatusBar,
 } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
+// Clipboard with fallback for dev builds where native module may not be available
+let Clipboard: { setStringAsync?: (text: string) => Promise<boolean> } | null = null;
+try {
+  Clipboard = require('expo-clipboard');
+} catch {
+  // expo-clipboard not available in this build
+}
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
@@ -265,10 +271,15 @@ export default function MachineDetailScreen() {
   }
 
   async function handleCopyAddress() {
-    if (params.address) {
-      await Clipboard.setStringAsync(params.address);
-      setAddressCopied(true);
-      setTimeout(() => setAddressCopied(false), 2000);
+    if (params.address && Clipboard?.setStringAsync) {
+      try {
+        await Clipboard.setStringAsync(params.address);
+        setAddressCopied(true);
+        setTimeout(() => setAddressCopied(false), 2000);
+      } catch (error) {
+        // Clipboard not available, fail silently
+        console.warn('Clipboard not available:', error);
+      }
     }
   }
 
@@ -696,15 +707,17 @@ export default function MachineDetailScreen() {
                 <Ionicons name="location-outline" size={18} color={COLORS.textMuted} />
                 <Text style={styles.address}>{params.address}</Text>
               </View>
-              <Pressable
-                style={styles.copyButton}
-                onPress={handleCopyAddress}
-                accessibilityLabel={t('machine.copyAddress')}
-              >
-                <Text style={styles.copyButtonText}>
-                  {addressCopied ? t('machine.addressCopied') : t('machine.copyAddress')}
-                </Text>
-              </Pressable>
+              {Clipboard?.setStringAsync && (
+                <Pressable
+                  style={styles.copyButton}
+                  onPress={handleCopyAddress}
+                  accessibilityLabel={t('machine.copyAddress')}
+                >
+                  <Text style={styles.copyButtonText}>
+                    {addressCopied ? t('machine.addressCopied') : t('machine.copyAddress')}
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </View>
         )}
