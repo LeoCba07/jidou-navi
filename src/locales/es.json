@@ -161,6 +161,31 @@
     "uploadError": "Error al subir la foto.",
     "stalePrompt": "Esta máquina no ha sido verificada recientemente. ¿Puedes confirmar que sigue aquí?",
     "verifyNow": "Verificar Ahora",
+    "stats": {
+      "visits": "Visitas",
+      "verified": "Verificado",
+      "status": "Estado",
+      "lastVerified": "Última Verificación",
+      "never": "Nunca"
+    },
+    "yourActivity": "Tu Actividad",
+    "youVisitedOn": "Visitaste el {{date}}",
+    "neverCheckedIn": "Aún no has registrado visita",
+    "visitToEarn": "¡Visita para ganar insignias!",
+    "youAreVisitor": "¡Eres el visitante #{{number}}!",
+    "unlockByVisiting": "Desbloquea Visitando",
+    "visitMoreToUnlock": "¡Visita {{count}} más para desbloquear!",
+    "thisWillUnlock": "¡Esto lo desbloqueará!",
+    "progressCount": "{{current}}/{{required}} visitas",
+    "copyAddress": "Copiar",
+    "addressCopied": "¡Copiado!",
+    "popularity": {
+      "hiddenGem": "Joya Oculta",
+      "discovered": "Descubierta",
+      "rising": "En Ascenso",
+      "popular": "Popular",
+      "legendary": "Legendaria"
+    },
     "checkIn": {
       "title": "Registrar Visita",
       "question": "¿Esta máquina expendedora sigue aquí?",

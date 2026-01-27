@@ -161,6 +161,31 @@
     "uploadError": "Failed to upload photo.",
     "stalePrompt": "This machine hasn't been verified recently. Can you help confirm it's still here?",
     "verifyNow": "Verify Now",
+    "stats": {
+      "visits": "Visits",
+      "verified": "Verified",
+      "status": "Status",
+      "lastVerified": "Last Verified",
+      "never": "Never"
+    },
+    "yourActivity": "Your Activity",
+    "youVisitedOn": "You visited on {{date}}",
+    "neverCheckedIn": "You haven't checked in yet",
+    "visitToEarn": "Visit to earn badges!",
+    "youAreVisitor": "You're visitor #{{number}}!",
+    "unlockByVisiting": "Unlock by Visiting",
+    "visitMoreToUnlock": "Visit {{count}} more to unlock!",
+    "thisWillUnlock": "This will unlock it!",
+    "progressCount": "{{current}}/{{required}} visits",
+    "copyAddress": "Copy",
+    "addressCopied": "Copied!",
+    "popularity": {
+      "hiddenGem": "Hidden Gem",
+      "discovered": "Discovered",
+      "rising": "Rising",
+      "popular": "Popular",
+      "legendary": "Legendary"
+    },
     "checkIn": {
       "title": "Check In",
       "question": "Is this vending machine still here?",
