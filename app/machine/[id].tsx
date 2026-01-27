@@ -16,6 +16,7 @@ import {
   Modal,
   StatusBar,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
@@ -30,6 +31,11 @@ import { uploadPhoto } from '../../src/lib/storage';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
+import { StatsGrid } from '../../src/components/machine/StatsGrid';
+import { PopularityBadge } from '../../src/components/machine/PopularityBadge';
+import { UserActivityCard } from '../../src/components/machine/UserActivityCard';
+import { UnlockByVisiting } from '../../src/components/machine/UnlockByVisiting';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -54,6 +60,8 @@ export default function MachineDetailScreen() {
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const fullScreenScrollViewRef = useRef<ScrollView>(null);
+  const [userVisit, setUserVisit] = useState<{ visited_at: string; visitor_number: number } | null>(null);
+  const [addressCopied, setAddressCopied] = useState(false);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -178,28 +186,45 @@ export default function MachineDetailScreen() {
   // Check if machine is saved
   const isSaved = savedMachineIds.has(params.id);
 
-  // Check if user already visited this machine recently (within 3 days)
+  // Check if user already visited this machine and get visit data
   useEffect(() => {
-    async function checkRecentVisit() {
+    async function fetchUserVisitData() {
       if (!user) return;
 
-      const threeDaysAgo = new Date();
-      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-
-      const { data } = await supabase
+      // Get user's visit to this machine (if any)
+      const { data: visitData } = await supabase
         .from('visits')
-        .select('id')
+        .select('id, visited_at')
         .eq('user_id', user.id)
         .eq('machine_id', params.id)
-        .gte('visited_at', threeDaysAgo.toISOString())
+        .order('visited_at', { ascending: false })
         .limit(1);
 
-      if (data && data.length > 0) {
-        setHasCheckedIn(true);
+      if (visitData && visitData.length > 0 && visitData[0].visited_at) {
+        const visitedAt = visitData[0].visited_at;
+
+        // Get visitor number (count of visits before this user's first visit)
+        const { count: visitorNumber } = await supabase
+          .from('visits')
+          .select('*', { count: 'exact', head: true })
+          .eq('machine_id', params.id)
+          .lte('visited_at', visitedAt);
+
+        setUserVisit({
+          visited_at: visitedAt,
+          visitor_number: visitorNumber || 1,
+        });
+
+        // Check if visit was within 3 days
+        const threeDaysAgo = new Date();
+        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+        if (new Date(visitedAt) >= threeDaysAgo) {
+          setHasCheckedIn(true);
+        }
       }
     }
 
-    checkRecentVisit();
+    fetchUserVisitData();
   }, [user, params.id]);
 
   // Scroll to the active photo when full-screen modal opens
@@ -237,6 +262,14 @@ export default function MachineDetailScreen() {
     });
 
     if (url) Linking.openURL(url);
+  }
+
+  async function handleCopyAddress() {
+    if (params.address) {
+      await Clipboard.setStringAsync(params.address);
+      setAddressCopied(true);
+      setTimeout(() => setAddressCopied(false), 2000);
+    }
   }
 
   async function handleSaveToggle() {
@@ -589,11 +622,23 @@ export default function MachineDetailScreen() {
               ))}
             </View>
           )}
+
+          {/* Photo count badge */}
+          {photos.length > 1 && (
+            <View style={styles.photoCountBadge}>
+              <Text style={styles.photoCountText}>
+                {activePhotoIndex + 1}/{photos.length}
+              </Text>
+            </View>
+          )}
         </View>
 
-        {/* Info */}
-        <View style={styles.info}>
-          <Text style={styles.name}>{params.name || t('machine.unnamed')}</Text>
+        {/* Title Card */}
+        <View style={styles.titleCard}>
+          <View style={styles.titleRow}>
+            <Text style={styles.name}>{params.name || t('machine.unnamed')}</Text>
+            <PopularityBadge visitCount={displayVisitCount} />
+          </View>
 
           {/* Categories */}
           {categories.length > 0 && (
@@ -609,44 +654,73 @@ export default function MachineDetailScreen() {
             </View>
           )}
 
-          {/* Stats row */}
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Ionicons name="location" size={16} color="#FF4B4B" />
-              <Text style={styles.statDistance}>{t('machine.away', { distance })}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Ionicons name="eye-outline" size={16} color="#666" />
-              <Text style={styles.statText}>{t('machine.visits', { count: displayVisitCount })}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Ionicons name="shield-checkmark-outline" size={16} color="#22C55E" />
-              <Text style={styles.statText}>{t('machine.verifications', { count: verificationCount })}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Ionicons
-                name={isActive ? 'checkmark-circle' : 'help-circle'}
-                size={16}
-                color={isActive ? '#22C55E' : '#F59E0B'}
-              />
-              <Text style={[styles.statText, isActive ? styles.activeText : styles.unknownText]}>
-                {isActive ? t('machine.active') : t('machine.unverified')}
-              </Text>
+          {/* Distance pill */}
+          <View style={styles.distancePill}>
+            <Ionicons name="location" size={14} color={COLORS.primary} />
+            <Text style={styles.distanceText}>{t('machine.away', { distance })}</Text>
+          </View>
+        </View>
+
+        {/* Stats Grid */}
+        <View style={styles.section}>
+          <StatsGrid
+            visitCount={displayVisitCount}
+            verificationCount={verificationCount}
+            isActive={isActive}
+            lastVerifiedText={lastVerifiedText}
+            freshnessColor={freshnessColor}
+          />
+        </View>
+
+        {/* User Activity Card */}
+        <View style={styles.section}>
+          <UserActivityCard
+            userVisit={userVisit}
+            isLoggedIn={!!user}
+          />
+        </View>
+
+        {/* Unlock By Visiting */}
+        <View style={styles.section}>
+          <UnlockByVisiting
+            machineCategories={categories.map((c: any) => c.slug)}
+            isLoggedIn={!!user}
+          />
+        </View>
+
+        {/* Location Card */}
+        {params.address && (
+          <View style={styles.section}>
+            <View style={styles.locationCard}>
+              <View style={styles.addressContent}>
+                <Ionicons name="location-outline" size={18} color={COLORS.textMuted} />
+                <Text style={styles.address}>{params.address}</Text>
+              </View>
+              <Pressable
+                style={styles.copyButton}
+                onPress={handleCopyAddress}
+                accessibilityLabel={t('machine.copyAddress')}
+              >
+                <Text style={styles.copyButtonText}>
+                  {addressCopied ? t('machine.addressCopied') : t('machine.copyAddress')}
+                </Text>
+              </Pressable>
             </View>
           </View>
+        )}
 
-          {/* Last verified info with freshness indicator */}
-          <View style={styles.freshnessRow}>
-            <View style={[styles.freshnessIndicator, { backgroundColor: freshnessColor }]} />
-            <Text style={styles.lastVerified}>
-              {lastVerifiedText
-                ? t('machine.lastVerified', { date: lastVerifiedText })
-                : t('machine.neverVerified')}
-            </Text>
+        {/* Description Card */}
+        {params.description && (
+          <View style={styles.section}>
+            <View style={styles.descriptionCard}>
+              <Text style={styles.description}>{params.description}</Text>
+            </View>
           </View>
+        )}
 
-          {/* Re-verification prompt for stale machines */}
-          {shouldShowVerifyPrompt() && (
+        {/* Re-verification prompt for stale machines */}
+        {shouldShowVerifyPrompt() && (
+          <View style={styles.section}>
             <View style={styles.verifyPrompt}>
               <Ionicons name="alert-circle-outline" size={20} color="#F59E0B" />
               <Text style={styles.verifyPromptText}>{t('machine.stalePrompt')}</Text>
@@ -658,26 +732,17 @@ export default function MachineDetailScreen() {
                 <Text style={styles.verifyButtonText}>{t('machine.verifyNow')}</Text>
               </Pressable>
             </View>
-          )}
-
-          {params.address && (
-            <View style={styles.addressRow}>
-              <Ionicons name="map-outline" size={16} color="#666" />
-              <Text style={styles.address}>{params.address}</Text>
-            </View>
-          )}
-
-          {params.description && (
-            <Text style={styles.description}>{params.description}</Text>
-          )}
-        </View>
+          </View>
+        )}
 
         {/* Action buttons */}
         <View style={styles.actions}>
+          {/* Primary action - full width */}
           <Pressable style={styles.primaryButton} onPress={openDirections}>
             <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
           </Pressable>
 
+          {/* Secondary actions - two buttons */}
           <View style={styles.secondaryActions}>
             <Pressable
               style={[
@@ -690,10 +755,10 @@ export default function MachineDetailScreen() {
               accessibilityRole="button"
             >
               {uploading ? (
-                <ActivityIndicator size="small" color="#333" />
+                <ActivityIndicator size="small" color={COLORS.text} />
               ) : (
-                <View style={styles.saveButtonContent}>
-                  <Ionicons name="camera-outline" size={18} color="#333" />
+                <View style={styles.buttonContent}>
+                  <Ionicons name="camera-outline" size={18} color={COLORS.text} />
                   <Text style={styles.secondaryButtonText}>{t('machine.addPhoto')}</Text>
                 </View>
               )}
@@ -707,34 +772,43 @@ export default function MachineDetailScreen() {
               disabled={checkingIn || hasCheckedIn}
             >
               {checkingIn ? (
-                <ActivityIndicator size="small" color="#333" />
+                <ActivityIndicator size="small" color={COLORS.text} />
               ) : (
-                <Text style={styles.secondaryButtonText}>
-                  {hasCheckedIn ? t('machine.visited') + ' ✓' : t('machine.iVisited')}
-                </Text>
-              )}
-            </Pressable>
-            <Pressable
-              style={[styles.secondaryButton, saving && styles.buttonDisabled]}
-              onPress={handleSaveToggle}
-              disabled={saving}
-            >
-              {saving ? (
-                <ActivityIndicator size="small" color="#333" />
-              ) : (
-                <View style={styles.saveButtonContent}>
+                <View style={styles.buttonContent}>
                   <Ionicons
-                    name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                    name={hasCheckedIn ? 'checkmark-circle' : 'checkmark-circle-outline'}
                     size={18}
-                    color={isSaved ? '#FF4B4B' : '#333'}
+                    color={hasCheckedIn ? COLORS.success : COLORS.text}
                   />
-                  <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]}>
-                    {isSaved ? t('common.saved') : t('common.save')}
+                  <Text style={[styles.secondaryButtonText, hasCheckedIn && styles.visitedText]}>
+                    {hasCheckedIn ? t('machine.visited') : t('machine.iVisited')}
                   </Text>
                 </View>
               )}
             </Pressable>
           </View>
+
+          {/* Tertiary action - save/bookmark link */}
+          <Pressable
+            style={styles.tertiaryButton}
+            onPress={handleSaveToggle}
+            disabled={saving}
+          >
+            {saving ? (
+              <ActivityIndicator size="small" color={COLORS.primary} />
+            ) : (
+              <View style={styles.buttonContent}>
+                <Ionicons
+                  name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                  size={18}
+                  color={isSaved ? COLORS.primary : COLORS.textMuted}
+                />
+                <Text style={[styles.tertiaryButtonText, isSaved && styles.savedText]}>
+                  {isSaved ? t('common.saved') : t('common.save')}
+                </Text>
+              </View>
+            )}
+          </Pressable>
         </View>
       </ScrollView>
 
@@ -795,23 +869,23 @@ export default function MachineDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF3E7',
+    backgroundColor: COLORS.background,
   },
   header: {
     paddingTop: 50,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: '#FDF3E7',
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.md,
+    backgroundColor: COLORS.background,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8DDD1',
+    borderBottomColor: COLORS.backgroundDark,
   },
   backButton: {
-    paddingVertical: 8,
+    paddingVertical: SPACING.sm,
   },
   backText: {
     fontSize: 14,
-    fontFamily: 'Silkscreen',
-    color: '#FF4B4B',
+    fontFamily: FONTS.button,
+    color: COLORS.primary,
   },
   content: {
     flex: 1,
@@ -842,14 +916,14 @@ const styles = StyleSheet.create({
   },
   pagination: {
     position: 'absolute',
-    bottom: 16,
+    bottom: SPACING.lg,
+    left: SPACING.lg,
     flexDirection: 'row',
-    alignSelf: 'center',
-    gap: 8,
+    gap: SPACING.sm,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.lg,
   },
   paginationDot: {
     width: 8,
@@ -861,6 +935,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     width: 20,
   },
+  photoCountBadge: {
+    position: 'absolute',
+    bottom: SPACING.lg,
+    right: SPACING.lg,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  photoCountText: {
+    color: '#fff',
+    fontSize: 12,
+    fontFamily: FONTS.bodySemiBold,
+  },
   noPhoto: {
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
@@ -868,193 +956,218 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
   },
   noPhotoText: {
-    color: '#999',
+    color: COLORS.textLight,
     fontSize: 16,
-    fontFamily: 'Inter',
+    fontFamily: FONTS.body,
   },
-  info: {
-    padding: 16,
+  // Title Card
+  titleCard: {
+    backgroundColor: COLORS.surface,
+    margin: SPACING.lg,
+    marginBottom: 0,
+    padding: SPACING.xl,
+    borderRadius: BORDER_RADIUS.pixel,
+    borderWidth: 2,
+    borderColor: COLORS.backgroundDark,
+    ...SHADOWS.pixel,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: SPACING.sm,
+    marginBottom: SPACING.md,
   },
   name: {
-    fontSize: 20,
-    fontFamily: 'DotGothic16',
-    color: '#333',
-    lineHeight: 26,
-    marginBottom: 12,
+    flex: 1,
+    fontSize: 24,
+    fontFamily: FONTS.title,
+    color: COLORS.text,
+    lineHeight: 32,
   },
   categoriesRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 16,
+    gap: SPACING.sm,
+    marginBottom: SPACING.md,
   },
   categoryChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 2,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.pixel,
   },
   categoryText: {
-    fontSize: 13,
-    fontFamily: 'Inter-SemiBold',
+    fontSize: 11,
+    fontFamily: FONTS.button,
     color: '#fff',
+    textTransform: 'uppercase',
   },
-  statsRow: {
+  distancePill: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
-    marginBottom: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 4,
+    alignItems: 'center',
+    gap: SPACING.xs,
+    backgroundColor: '#FEF2F2',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: BORDER_RADIUS.round,
+    alignSelf: 'flex-start',
+  },
+  distanceText: {
+    fontSize: 12,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.primary,
+  },
+  // Sections
+  section: {
+    paddingHorizontal: SPACING.lg,
+    marginTop: SPACING.xxl,
+  },
+  // Location Card
+  locationCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.sm,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: '#eee',
-  },
-  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'space-between',
+    gap: SPACING.md,
   },
-  statDistance: {
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#FF4B4B',
-  },
-  statText: {
-    fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#666',
-  },
-  activeText: {
-    color: '#22C55E',
-  },
-  unknownText: {
-    color: '#F59E0B',
-  },
-  freshnessRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
-  },
-  freshnessIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  lastVerified: {
-    fontSize: 13,
-    fontFamily: 'Inter',
-    color: '#999',
-  },
-  verifyPrompt: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 8,
-    backgroundColor: '#FEF3C7',
-    borderWidth: 1,
-    borderColor: '#F59E0B',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-  },
-  verifyPromptText: {
+  addressContent: {
     flex: 1,
-    fontSize: 13,
-    fontFamily: 'Inter',
-    color: '#92400E',
-    lineHeight: 18,
-  },
-  verifyButton: {
-    backgroundColor: '#F59E0B',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 4,
-  },
-  verifyButtonText: {
-    fontSize: 13,
-    fontFamily: 'Silkscreen',
-    color: '#fff',
-  },
-  addressRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 8,
-    marginBottom: 12,
+    gap: SPACING.sm,
   },
   address: {
     flex: 1,
     fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
     lineHeight: 20,
+  },
+  copyButton: {
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  copyButtonText: {
+    fontSize: 12,
+    fontFamily: FONTS.button,
+    color: COLORS.text,
+  },
+  // Description Card
+  descriptionCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.sm,
+    padding: SPACING.lg,
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   description: {
     fontSize: 15,
-    fontFamily: 'Inter',
-    color: '#444',
-    lineHeight: 22,
+    fontFamily: FONTS.body,
+    color: COLORS.text,
+    lineHeight: 24,
   },
+  // Verify Prompt
+  verifyPrompt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: SPACING.sm,
+    backgroundColor: '#FEF3C7',
+    borderWidth: 1,
+    borderColor: COLORS.warning,
+    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.md,
+  },
+  verifyPromptText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: FONTS.body,
+    color: '#92400E',
+    lineHeight: 18,
+  },
+  verifyButton: {
+    backgroundColor: COLORS.warning,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  verifyButtonText: {
+    fontSize: 13,
+    fontFamily: FONTS.button,
+    color: '#fff',
+  },
+  // Actions
   actions: {
-    padding: 16,
+    padding: SPACING.lg,
     paddingBottom: 60,
-    gap: 12,
+    gap: SPACING.lg,
+    marginTop: SPACING.xxl,
   },
   primaryButton: {
-    backgroundColor: '#FF4B4B',
-    paddingVertical: 16,
-    borderRadius: 2,
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.lg,
+    borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#CC3C3C',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 0,
-    elevation: 4,
+    borderColor: COLORS.primaryDark,
+    ...SHADOWS.pixelLarge,
   },
   primaryButtonText: {
     color: '#fff',
     fontSize: 15,
-    fontFamily: 'Silkscreen',
+    fontFamily: FONTS.button,
   },
   secondaryActions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: SPACING.md,
   },
   secondaryButton: {
     flex: 1,
     backgroundColor: '#f0f0f0',
-    paddingVertical: 14,
-    paddingHorizontal: 4,
-    borderRadius: 2,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.sm,
+    borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 48,
     borderWidth: 2,
     borderColor: 'rgba(0, 0, 0, 0.15)',
-    shadowColor: '#000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 0,
-    elevation: 2,
+    ...SHADOWS.pixel,
   },
   secondaryButtonText: {
-    color: '#333',
+    color: COLORS.text,
     fontSize: 12,
-    fontFamily: 'Silkscreen',
+    fontFamily: FONTS.button,
+  },
+  tertiaryButton: {
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tertiaryButtonText: {
+    color: COLORS.textMuted,
+    fontSize: 14,
+    fontFamily: FONTS.body,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
-  saveButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  visitedText: {
+    color: COLORS.success,
   },
   savedText: {
-    color: '#FF4B4B',
+    color: COLORS.primary,
   },
   fullScreenContainer: {
     flex: 1,
