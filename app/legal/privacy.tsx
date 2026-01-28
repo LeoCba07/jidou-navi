@@ -59,7 +59,7 @@ export default function PrivacyPolicyScreen() {
       <SectionTitle>8. Contact Us</SectionTitle>
       <Paragraph>
         If you have questions about this privacy policy or your data, please contact us at:
-        leandrotrabucco@gmail.com
+        jidou.navi@gmail.com
       </Paragraph>
     </LegalPageLayout>
   );
