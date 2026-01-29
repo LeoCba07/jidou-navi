@@ -40,4 +40,4 @@ GRANT EXECUTE ON FUNCTION delete_user_account() TO authenticated;
 -- Note: To fully delete auth.users, you need to:
 -- 1. Use Supabase Dashboard > Authentication > Users > Delete User
 -- 2. Or create a Supabase Edge Function with service_role key
--- 3. Or have users contact support at leandrotrabucco@gmail.com
+-- 3. Or have users contact support at jidou.navi@gmail.com

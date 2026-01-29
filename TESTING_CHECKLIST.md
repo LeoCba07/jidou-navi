@@ -178,10 +178,10 @@
 ### Legal Section
 - [✓] "Privacy Policy" link visible
 - [✓] Tap → Opens privacy policy page
-- [✓] Contact email shows: leandrotrabucco@gmail.com
+- [✓] Contact email shows: jidou.navi@gmail.com
 - [✓] "Terms of Service" link visible
 - [✓] Tap → Opens terms page
-- [✓] Contact email shows: leandrotrabucco@gmail.com
+- [✓] Contact email shows: jidou.navi@gmail.com
 - [✓] Back button works on legal pages
 
 ### Logout
@@ -199,7 +199,7 @@
 - [✓] Delete Account → Profile and data deleted
 - [✓] User automatically logged out
 - [✓] Cannot log back in with same credentials
-- [✓] If error → Shows contact email (leandrotrabucco@gmail.com)
+- [✓] If error → Shows contact email (jidou.navi@gmail.com)
 
 ### Pull to Refresh
 - [✓] Pull down → Shows loading indicator
