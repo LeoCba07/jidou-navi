@@ -25,7 +25,7 @@ export function initSentry() {
   });
 
   // Global handler for errors outside React components (e.g. in async logic or listeners)
-  if (!__DEV__) {
+  if (!__DEV__ && typeof ErrorUtils !== 'undefined') {
     const defaultErrorHandler = (ErrorUtils as any).getGlobalHandler();
     (ErrorUtils as any).setGlobalHandler((error: any, isFatal?: boolean) => {
       Sentry.captureException(error, {
