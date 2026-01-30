@@ -1,4 +1,5 @@
 // Terms of Service screen
+import { useTranslation } from 'react-i18next';
 import LegalPageLayout, {
   LastUpdated,
   SectionTitle,
@@ -7,82 +8,58 @@ import LegalPageLayout, {
 } from '../../src/components/LegalPageLayout';
 
 export default function TermsOfServiceScreen() {
+  const { t } = useTranslation();
+
   return (
-    <LegalPageLayout title="Terms of Service">
-      <LastUpdated date="December 2024" />
+    <LegalPageLayout title={t('legal.terms.title')}>
+      <LastUpdated date={t('legal.updateDate')} />
 
-      <SectionTitle>1. Acceptance of Terms</SectionTitle>
-      <Paragraph>
-        By using JidouNavi, you agree to these Terms of Service. If you do not agree to these terms,
-        please do not use the app.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section1Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section1Text')}</Paragraph>
 
-      <SectionTitle>2. Description of Service</SectionTitle>
-      <Paragraph>
-        JidouNavi is a crowdsourced platform for discovering and sharing vending machine locations.
-        Users can add new machines, check in at locations, earn badges, and explore nearby machines.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section2Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section2Text')}</Paragraph>
 
-      <SectionTitle>3. User Accounts</SectionTitle>
-      <Paragraph>You must create an account to use most features. You are responsible for:</Paragraph>
-      <BulletPoint>Maintaining the security of your account</BulletPoint>
-      <BulletPoint>All activities that occur under your account</BulletPoint>
-      <BulletPoint>Providing accurate information</BulletPoint>
+      <SectionTitle>{t('legal.terms.section3Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section3Intro')}</Paragraph>
+      <BulletPoint>{t('legal.terms.section3Bullet1')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section3Bullet2')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section3Bullet3')}</BulletPoint>
 
-      <SectionTitle>4. User Content</SectionTitle>
-      <Paragraph>When you submit content (photos, locations, descriptions), you:</Paragraph>
-      <BulletPoint>Grant us a license to use and display this content</BulletPoint>
-      <BulletPoint>Confirm you have the right to share this content</BulletPoint>
-      <BulletPoint>Agree not to submit inappropriate or illegal content</BulletPoint>
+      <SectionTitle>{t('legal.terms.section4Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section4Intro')}</Paragraph>
+      <BulletPoint>{t('legal.terms.section4Bullet1')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section4Bullet2')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section4Bullet3')}</BulletPoint>
 
-      <SectionTitle>5. Acceptable Use</SectionTitle>
-      <Paragraph>You agree not to:</Paragraph>
-      <BulletPoint>Submit false or misleading information</BulletPoint>
-      <BulletPoint>Harass other users or engage in harmful behavior</BulletPoint>
-      <BulletPoint>Attempt to manipulate the badge or leaderboard system</BulletPoint>
-      <BulletPoint>Use the app for any illegal purpose</BulletPoint>
-      <BulletPoint>Interfere with the proper functioning of the app</BulletPoint>
+      <SectionTitle>{t('legal.terms.section5Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section5Intro')}</Paragraph>
+      <BulletPoint>{t('legal.terms.section5Bullet1')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section5Bullet2')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section5Bullet3')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section5Bullet4')}</BulletPoint>
+      <BulletPoint>{t('legal.terms.section5Bullet5')}</BulletPoint>
 
-      <SectionTitle>6. Location Accuracy</SectionTitle>
-      <Paragraph>
-        Vending machine locations are user-contributed and may not always be accurate. We do not guarantee
-        the accuracy of any location data. Machines may be removed, relocated, or out of service.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section6Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section6Text')}</Paragraph>
 
-      <SectionTitle>7. Intellectual Property</SectionTitle>
-      <Paragraph>
-        The JidouNavi app, including its design, features, and branding, is owned by us. User-submitted
-        content remains the property of users but is licensed to us for display within the app.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section7Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section7Text')}</Paragraph>
 
-      <SectionTitle>8. Termination</SectionTitle>
-      <Paragraph>
-        We may suspend or terminate your account if you violate these terms. You may delete your account
-        at any time through the app settings.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section8Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section8Text')}</Paragraph>
 
-      <SectionTitle>9. Disclaimer of Warranties</SectionTitle>
-      <Paragraph>
-        The app is provided "as is" without warranties of any kind. We do not guarantee uninterrupted
-        service or that the app will be error-free.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section9Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section9Text')}</Paragraph>
 
-      <SectionTitle>10. Limitation of Liability</SectionTitle>
-      <Paragraph>
-        To the maximum extent permitted by law, we are not liable for any indirect, incidental, or
-        consequential damages arising from your use of the app.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section10Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section10Text')}</Paragraph>
 
-      <SectionTitle>11. Changes to Terms</SectionTitle>
-      <Paragraph>
-        We may update these terms from time to time. Continued use of the app after changes constitutes
-        acceptance of the new terms.
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section11Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section11Text')}</Paragraph>
 
-      <SectionTitle>12. Contact</SectionTitle>
-      <Paragraph>
-        For questions about these terms, contact us at: jidou.navi@gmail.com
-      </Paragraph>
+      <SectionTitle>{t('legal.terms.section12Title')}</SectionTitle>
+      <Paragraph>{t('legal.terms.section12Text')}</Paragraph>
     </LegalPageLayout>
   );
 }

@@ -1,4 +1,5 @@
 // Privacy Policy screen
+import { useTranslation } from 'react-i18next';
 import LegalPageLayout, {
   LastUpdated,
   SectionTitle,
@@ -7,60 +8,47 @@ import LegalPageLayout, {
 } from '../../src/components/LegalPageLayout';
 
 export default function PrivacyPolicyScreen() {
+  const { t } = useTranslation();
+
   return (
-    <LegalPageLayout title="Privacy Policy">
-      <LastUpdated date="December 2024" />
+    <LegalPageLayout title={t('legal.privacy.title')}>
+      <LastUpdated date={t('legal.updateDate')} />
 
-      <SectionTitle>1. Introduction</SectionTitle>
-      <Paragraph>
-        Welcome to JidouNavi. We respect your privacy and are committed to protecting your personal data.
-        This privacy policy explains how we collect, use, and safeguard your information when you use our app.
-      </Paragraph>
+      <SectionTitle>{t('legal.privacy.section1Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section1Text')}</Paragraph>
 
-      <SectionTitle>2. Information We Collect</SectionTitle>
-      <Paragraph>We collect the following types of information:</Paragraph>
-      <BulletPoint>Account information (email, username)</BulletPoint>
-      <BulletPoint>Location data (when you add or visit vending machines)</BulletPoint>
-      <BulletPoint>Photos you upload of vending machines</BulletPoint>
-      <BulletPoint>Usage data (visits, contributions, badges earned)</BulletPoint>
+      <SectionTitle>{t('legal.privacy.section2Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section2Intro')}</Paragraph>
+      <BulletPoint>{t('legal.privacy.section2Bullet1')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section2Bullet2')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section2Bullet3')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section2Bullet4')}</BulletPoint>
 
-      <SectionTitle>3. How We Use Your Information</SectionTitle>
-      <Paragraph>We use your information to:</Paragraph>
-      <BulletPoint>Provide and improve our services</BulletPoint>
-      <BulletPoint>Show nearby vending machines on the map</BulletPoint>
-      <BulletPoint>Track your contributions and award badges</BulletPoint>
-      <BulletPoint>Communicate with you about your account</BulletPoint>
+      <SectionTitle>{t('legal.privacy.section3Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section3Intro')}</Paragraph>
+      <BulletPoint>{t('legal.privacy.section3Bullet1')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section3Bullet2')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section3Bullet3')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section3Bullet4')}</BulletPoint>
 
-      <SectionTitle>4. Location Data</SectionTitle>
-      <Paragraph>
-        We collect location data only when you explicitly use location-based features (finding nearby machines,
-        adding a new machine, or checking in). You can control location permissions through your device settings.
-      </Paragraph>
+      <SectionTitle>{t('legal.privacy.section4Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section4Text')}</Paragraph>
 
-      <SectionTitle>5. Data Sharing</SectionTitle>
-      <Paragraph>
-        We do not sell your personal data. Your contributions (machine locations, photos) are shared publicly
-        to help other users discover vending machines. Your email and account details remain private.
-      </Paragraph>
+      <SectionTitle>{t('legal.privacy.section5Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section5Text')}</Paragraph>
 
-      <SectionTitle>6. Data Security</SectionTitle>
-      <Paragraph>
-        We use industry-standard security measures to protect your data, including encryption in transit
-        and at rest. Your data is stored securely using Supabase infrastructure.
-      </Paragraph>
+      <SectionTitle>{t('legal.privacy.section6Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section6Text')}</Paragraph>
 
-      <SectionTitle>7. Your Rights</SectionTitle>
-      <Paragraph>You have the right to:</Paragraph>
-      <BulletPoint>Access your personal data</BulletPoint>
-      <BulletPoint>Request correction of your data</BulletPoint>
-      <BulletPoint>Request deletion of your account</BulletPoint>
-      <BulletPoint>Withdraw consent for location tracking</BulletPoint>
+      <SectionTitle>{t('legal.privacy.section7Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section7Intro')}</Paragraph>
+      <BulletPoint>{t('legal.privacy.section7Bullet1')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section7Bullet2')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section7Bullet3')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section7Bullet4')}</BulletPoint>
 
-      <SectionTitle>8. Contact Us</SectionTitle>
-      <Paragraph>
-        If you have questions about this privacy policy or your data, please contact us at:
-        jidou.navi@gmail.com
-      </Paragraph>
+      <SectionTitle>{t('legal.privacy.section8Title')}</SectionTitle>
+      <Paragraph>{t('legal.privacy.section8Text')}</Paragraph>
     </LegalPageLayout>
   );
 }

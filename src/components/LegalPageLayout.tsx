@@ -2,6 +2,7 @@
 import { ReactNode } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   title: string;
@@ -9,6 +10,8 @@ type Props = {
 };
 
 export default function LegalPageLayout({ title, children }: Props) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -17,9 +20,9 @@ export default function LegalPageLayout({ title, children }: Props) {
           onPress={() => router.back()}
           style={styles.backButton}
           accessibilityRole="button"
-          accessibilityLabel="Go back"
+          accessibilityLabel={t('legal.goBack')}
         >
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={styles.backText}>{t('legal.back')}</Text>
         </Pressable>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.backButton} />
@@ -35,7 +38,8 @@ export default function LegalPageLayout({ title, children }: Props) {
 
 // Exported style components for content
 export function LastUpdated({ date }: { date: string }) {
-  return <Text style={styles.lastUpdated}>Last updated: {date}</Text>;
+  const { t } = useTranslation();
+  return <Text style={styles.lastUpdated}>{t('legal.lastUpdated', { date })}</Text>;
 }
 
 export function SectionTitle({ children }: { children: string }) {
@@ -74,9 +78,11 @@ const styles = StyleSheet.create({
     color: '#FF4B4B',
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'DotGothic16',
     color: '#333',
+    flex: 1,
+    textAlign: 'center',
   },
   content: {
     flex: 1,
