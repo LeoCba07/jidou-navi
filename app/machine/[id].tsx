@@ -32,7 +32,7 @@ import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
-import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
+import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -65,6 +65,7 @@ export default function MachineDetailScreen() {
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [liveDistance, setLiveDistance] = useState<number | null>(null);
   const fullScreenScrollViewRef = useRef<ScrollView>(null);
   const [userVisit, setUserVisit] = useState<{ visited_at: string; visitor_number: number } | null>(null);
   const [addressCopied, setAddressCopied] = useState(false);
@@ -93,6 +94,50 @@ export default function MachineDetailScreen() {
       });
     }
   }, [params.id]);
+
+  // Calculate distance if missing (e.g. coming from Profile/Bookmarks)
+  useEffect(() => {
+    let isMounted = true;
+
+    async function calculateMissingDistance() {
+      // Only calculate if distance is 0 or missing, and we have target coordinates
+      if ((!params.distance_meters || params.distance_meters === '0') && params.latitude && params.longitude) {
+        try {
+          // Check permissions first
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') return;
+
+          // Try to get last known position first (faster)
+          let location = await Location.getLastKnownPositionAsync({});
+          
+          // If no last known position, request current position
+          if (!location) {
+            location = await Location.getCurrentPositionAsync({
+              accuracy: Location.Accuracy.Balanced,
+            });
+          }
+
+          if (location && isMounted) {
+            const dist = calculateDistance(
+              location.coords.latitude,
+              location.coords.longitude,
+              Number(params.latitude),
+              Number(params.longitude)
+            );
+            setLiveDistance(dist);
+          }
+        } catch (error) {
+          console.log('Error calculating distance:', error);
+        }
+      }
+    }
+
+    calculateMissingDistance();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [params.distance_meters, params.latitude, params.longitude]);
 
   // Initialize and fetch photos in a single effect to avoid race conditions
   useEffect(() => {
@@ -253,9 +298,17 @@ export default function MachineDetailScreen() {
     }
   }, [isFullScreen]);
 
-  const distance = Number(params.distance_meters) < 1000
-    ? `${Math.round(Number(params.distance_meters))}m`
-    : `${(Number(params.distance_meters) / 1000).toFixed(1)}km`;
+  const parsedDistance = Number(params.distance_meters);
+  const displayDistance =
+    (Number.isFinite(liveDistance as number) ? (liveDistance as number) : null) ??
+    (Number.isFinite(parsedDistance) ? parsedDistance : null);
+    
+  const distance =
+    displayDistance == null || displayDistance === 0
+      ? t('machine.calculating') // Or a placeholder like "-"
+      : displayDistance < 1000
+        ? `${Math.round(displayDistance)}m`
+        : `${(displayDistance / 1000).toFixed(1)}km`;
 
   function openDirections() {
     const lat = params.latitude;
