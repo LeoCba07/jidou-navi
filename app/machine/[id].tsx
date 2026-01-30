@@ -30,6 +30,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
+import { Sentry } from '../../src/lib/sentry';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
@@ -508,6 +509,7 @@ export default function MachineDetailScreen() {
       }
     } catch (error) {
       console.error('Image picker error:', error);
+      Sentry.captureException(error, { tags: { context: 'image_picker' } });
       showError(t('common.error'), t('machine.uploadError'));
     }
   }
@@ -548,6 +550,10 @@ export default function MachineDetailScreen() {
 
     } catch (error) {
       console.error('Upload error:', error);
+      Sentry.captureException(error, { 
+        tags: { context: 'photo_upload' },
+        extra: { machineId: params.id }
+      });
       showError(t('common.error'), t('machine.uploadError'));
     } finally {
       setUploading(false);

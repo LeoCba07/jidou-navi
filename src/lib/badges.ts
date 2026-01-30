@@ -1,5 +1,6 @@
 // Badge unlock logic - checks and awards badges based on user stats
 import { supabase } from './supabase';
+import { Sentry } from './sentry';
 
 export type Badge = {
   id: string;
@@ -39,6 +40,7 @@ async function getCategoryVisitCounts(
 
   if (error || !data) {
     console.error('Error fetching category visits:', error);
+    Sentry.captureException(error, { tags: { context: 'badges_category_visits' } });
     return {};
   }
 
@@ -70,6 +72,7 @@ async function getVerificationCount(userId: string): Promise<number> {
 
   if (error) {
     console.error('Error fetching verification count:', error);
+    Sentry.captureException(error, { tags: { context: 'badges_verification_count' } });
     return 0;
   }
   return count || 0;
@@ -92,6 +95,7 @@ export async function checkAndAwardBadges(
 
   if (profileError || !profile) {
     console.error('Error fetching profile for badge check:', profileError);
+    Sentry.captureException(profileError, { tags: { context: 'badges_profile_fetch' } });
     return [];
   }
 
@@ -108,6 +112,7 @@ export async function checkAndAwardBadges(
 
   if (badgesError || !allBadges) {
     console.error('Error fetching badges:', badgesError);
+    Sentry.captureException(badgesError, { tags: { context: 'badges_fetch_all' } });
     return [];
   }
 
@@ -119,6 +124,7 @@ export async function checkAndAwardBadges(
 
   if (earnedError) {
     console.error('Error fetching earned badges:', earnedError);
+    Sentry.captureException(earnedError, { tags: { context: 'badges_fetch_earned' } });
     return [];
   }
 
@@ -169,6 +175,7 @@ export async function checkAndAwardBadges(
     // Log error but don't fail completely - some badges might have been duplicates
     if (insertError.code !== '23505') {
       console.error('Error awarding badges:', insertError);
+      Sentry.captureException(insertError, { tags: { context: 'badges_award_insert' } });
     }
     return [];
   }
