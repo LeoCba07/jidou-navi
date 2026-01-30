@@ -83,24 +83,27 @@ export default function MachineDetailScreen() {
 
   // Calculate distance if missing (e.g. coming from Profile/Bookmarks)
   useEffect(() => {
+    let isMounted = true;
+
     async function calculateMissingDistance() {
       // Only calculate if distance is 0 or missing, and we have target coordinates
       if ((!params.distance_meters || params.distance_meters === '0') && params.latitude && params.longitude) {
         try {
+          // Check permissions first
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') return;
+
           // Try to get last known position first (faster)
           let location = await Location.getLastKnownPositionAsync({});
           
           // If no last known position, request current position
           if (!location) {
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status === 'granted') {
-              location = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.Balanced,
-              });
-            }
+            location = await Location.getCurrentPositionAsync({
+              accuracy: Location.Accuracy.Balanced,
+            });
           }
 
-          if (location) {
+          if (location && isMounted) {
             const dist = calculateDistance(
               location.coords.latitude,
               location.coords.longitude,
@@ -116,6 +119,10 @@ export default function MachineDetailScreen() {
     }
 
     calculateMissingDistance();
+
+    return () => {
+      isMounted = false;
+    };
   }, [params.distance_meters, params.latitude, params.longitude]);
 
   // Initialize and fetch photos in a single effect to avoid race conditions
@@ -260,10 +267,17 @@ export default function MachineDetailScreen() {
     }
   }, [isFullScreen]);
 
-  const displayDistance = liveDistance ?? Number(params.distance_meters);
-  const distance = displayDistance < 1000
-    ? `${Math.round(displayDistance)}m`
-    : `${(displayDistance / 1000).toFixed(1)}km`;
+  const parsedDistance = Number(params.distance_meters);
+  const displayDistance =
+    (Number.isFinite(liveDistance as number) ? (liveDistance as number) : null) ??
+    (Number.isFinite(parsedDistance) ? parsedDistance : null);
+    
+  const distance =
+    displayDistance == null || displayDistance === 0
+      ? t('machine.calculating') // Or a placeholder like "-"
+      : displayDistance < 1000
+        ? `${Math.round(displayDistance)}m`
+        : `${(displayDistance / 1000).toFixed(1)}km`;
 
   function openDirections() {
     const lat = params.latitude;
