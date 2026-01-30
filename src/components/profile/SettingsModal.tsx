@@ -14,12 +14,15 @@ import { User } from '@supabase/supabase-js';
 import { useTranslation } from 'react-i18next';
 import { useLanguageStore } from '../../store/languageStore';
 import { supportedLanguages, LanguageCode } from '../../lib/i18n';
+import { Tables } from '../../lib/database.types';
+
+type Profile = Tables<'profiles'>;
 
 interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
   user: User | null;
-  profile: any;
+  profile: Profile | null;
   onLogout: () => void;
   onDeleteAccount: () => void;
 }
@@ -38,6 +41,9 @@ export default function SettingsModal({
 
   // Get current language display name
   const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
+
+  // Check if user is admin
+  const isAdmin = profile?.role === 'admin';
 
   // Reset to main screen when modal closes
   function handleClose() {
@@ -83,6 +89,31 @@ export default function SettingsModal({
           >
             {currentScreen === 'main' ? (
               <>
+            {/* Admin Dashboard Link (only for admins) */}
+            {isAdmin && (
+              <>
+                <View style={styles.section}>
+                  <Pressable
+                    style={styles.itemRow}
+                    onPress={() => {
+                      onClose();
+                      router.push('/admin');
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('admin.dashboard')}
+                  >
+                    <Ionicons name="shield-checkmark" size={20} color="#FF4B4B" />
+                    <View style={styles.itemContent}>
+                      <Text style={[styles.itemLabel, { color: '#FF4B4B' }]}>{t('admin.dashboard')}</Text>
+                      <Text style={styles.itemValue}>{t('admin.reviewSubmissions')}</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color="#FF4B4B" />
+                  </Pressable>
+                </View>
+                <View style={styles.divider} />
+              </>
+            )}
+
             {/* Email */}
             <View style={styles.section}>
               <View style={styles.itemRow}>

@@ -109,7 +109,11 @@
     "supportUs": "Support Us",
     "supportDescription": "JidouNavi is built by two passionate developers who personally visited and photographed many of these machines. Your support helps us keep the app alive and continue building new features for the community.",
     "supportButton": "Buy Us a Coffee",
-    "supportLinkError": "Could not open the support link. Please try again later."
+    "supportLinkError": "Could not open the support link. Please try again later.",
+    "mySubmissions": "My Submissions",
+    "pendingReview": "Pending",
+    "rejected": "Not Approved",
+    "pendingHint": "Under review by our team"
   },
   "map": {
     "searchPlaceholder": "Search machines...",
@@ -145,6 +149,7 @@
     "unverified": "Unverified",
     "away": "{{distance}} away",
     "calculating": "Calculating...",
+    "verifiedAgo": "Verified {{time}}",
     "tapForDetails": "Tap for details",
     "getDirections": "Get Directions",
     "iVisited": "I Visited",
@@ -240,7 +245,8 @@
     "permissionNeeded": "Please grant camera/gallery access.",
     "imageError": "Failed to process image. Please try again.",
     "submitError": "Failed to add machine. Please try again.",
-    "success": "Machine added!"
+    "success": "Machine added!",
+    "successPending": "Machine submitted! It will be reviewed by our team before appearing on the map."
   },
   "badges": {
     "earned": "Badge Earned!",
@@ -377,5 +383,44 @@
       "section12Title": "12. Contact",
       "section12Text": "For questions about these terms, contact us at: jidou.navi@gmail.com"
     }
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "reviewSubmissions": "Review pending submissions",
+    "accessDenied": "Access denied. Admin privileges required.",
+    "pendingReview": "Pending Review",
+    "review": "Review Machine",
+    "queueEmpty": "All caught up!",
+    "queueEmptySubtext": "No pending machines to review",
+    "submittedBy": "Submitted By",
+    "location": "Location",
+    "nearbyCheck": "Duplicate Check",
+    "noDuplicates": "No nearby duplicates found",
+    "potentialDuplicates": "{{count}} potential duplicate(s) nearby",
+    "nearbyMachines": "{{count}} nearby machine(s)",
+    "away": "away",
+    "noDescription": "No description provided",
+    "approve": "Approve",
+    "reject": "Reject",
+    "confirmApprove": "Approve Machine?",
+    "confirmApproveMessage": "This will make the machine visible on the map for all users.",
+    "approveSuccess": "Machine approved and now visible on the map!",
+    "approveError": "Failed to approve machine. Please try again.",
+    "rejectSuccess": "Machine rejected. The contributor has been notified.",
+    "rejectError": "Failed to reject machine. Please try again.",
+    "rejectReason": "Rejection Reason",
+    "selectRejectReason": "Please select a reason for rejecting this submission:",
+    "customReasonPlaceholder": "Enter custom reason...",
+    "rejectReasons": {
+      "duplicate": "Duplicate machine already exists",
+      "inappropriate": "Inappropriate or offensive content",
+      "lowQuality": "Low quality photo or description",
+      "wrongLocation": "Incorrect location or coordinates",
+      "notVendingMachine": "Not a vending machine",
+      "other": "Other reason"
+    },
+    "daysAgo": "{{count}} day(s) ago",
+    "hoursAgo": "{{count}} hour(s) ago",
+    "justNow": "Just now"
   }
 }

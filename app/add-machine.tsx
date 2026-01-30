@@ -183,14 +183,14 @@ export default function AddMachineScreen() {
         .from('machine-photos')
         .getPublicUrl(fileName);
 
-      // Insert machine record
+      // Insert machine record (status = pending for admin review)
       const { data: machine, error: insertError } = await supabase.from('machines').insert({
         name: name,
         description: description,
         latitude: finalLat,
         longitude: finalLng,
         location: `POINT(${finalLng} ${finalLat})`,
-        status: 'active',
+        status: 'pending',
         contributor_id: user?.id,
       }).select('id').single();
 
@@ -239,16 +239,16 @@ export default function AddMachineScreen() {
       const newBadges = await checkAndAwardBadges(machine.id);
 
       if (newBadges.length > 0) {
-        // Show success alert, then badge popup, then navigate back
-        showSuccess(t('common.success'), t('addMachine.success'), () => {
+        // Show success alert (under review), then badge popup, then navigate back
+        showSuccess(t('common.success'), t('addMachine.successPending'), () => {
           showBadgePopup(newBadges, () => {
             tryRequestAppReview();
             router.back();
           });
         });
       } else {
-        // No badges - just show success and go back
-        showSuccess(t('common.success'), t('addMachine.success'), () => {
+        // No badges - just show success (under review) and go back
+        showSuccess(t('common.success'), t('addMachine.successPending'), () => {
           tryRequestAppReview();
           router.back();
         });

@@ -1,0 +1,133 @@
+// Card component for displaying a pending machine in the admin queue
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
+import type { PendingMachine } from '../../lib/admin';
+
+interface PendingMachineCardProps {
+  machine: PendingMachine;
+  onPress: () => void;
+}
+
+export default function PendingMachineCard({ machine, onPress }: PendingMachineCardProps) {
+  const { t } = useTranslation();
+
+  const timeSinceSubmission = () => {
+    const submitted = new Date(machine.created_at);
+    const now = new Date();
+    const diffMs = now.getTime() - submitted.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffDays > 0) {
+      return t('admin.daysAgo', { count: diffDays });
+    }
+    if (diffHours > 0) {
+      return t('admin.hoursAgo', { count: diffHours });
+    }
+    return t('admin.justNow');
+  };
+
+  return (
+    <Pressable style={styles.card} onPress={onPress}>
+      {machine.primary_photo_url ? (
+        <Image source={{ uri: machine.primary_photo_url }} style={styles.photo} />
+      ) : (
+        <View style={[styles.photo, styles.photoPlaceholder]}>
+          <Ionicons name="image-outline" size={32} color="#ccc" />
+        </View>
+      )}
+
+      <View style={styles.content}>
+        <Text style={styles.name} numberOfLines={1}>
+          {machine.name || t('machine.unnamed')}
+        </Text>
+
+        <View style={styles.metaRow}>
+          <Ionicons name="person-outline" size={14} color="#666" />
+          <Text style={styles.metaText} numberOfLines={1}>
+            {machine.contributor_display_name || machine.contributor_username || t('common.user')}
+          </Text>
+        </View>
+
+        <View style={styles.metaRow}>
+          <Ionicons name="time-outline" size={14} color="#666" />
+          <Text style={styles.metaText}>{timeSinceSubmission()}</Text>
+        </View>
+
+        {machine.nearby_count > 0 && (
+          <View style={styles.warningRow}>
+            <Ionicons name="warning-outline" size={14} color="#D97706" />
+            <Text style={styles.warningText}>
+              {t('admin.nearbyMachines', { count: machine.nearby_count })}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      <Ionicons name="chevron-forward" size={20} color="#ccc" />
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 2,
+    padding: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 0,
+    elevation: 2,
+  },
+  photo: {
+    width: 70,
+    height: 70,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#FF4B4B',
+  },
+  photoPlaceholder: {
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#ddd',
+  },
+  content: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  name: {
+    fontSize: 15,
+    fontFamily: 'Inter-SemiBold',
+    color: '#2B2B2B',
+    marginBottom: 4,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 2,
+  },
+  metaText: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#666',
+  },
+  warningRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
+  warningText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#D97706',
+  },
+});
