@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { Badge } from '../../lib/badges';
+import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
 interface LockedBadgeCardProps {
   badge: Badge;
@@ -10,6 +11,9 @@ interface LockedBadgeCardProps {
 }
 
 export default function LockedBadgeCard({ badge, progress, onPress }: LockedBadgeCardProps) {
+  const { getBadgeTranslation } = useBadgeTranslation();
+  const translation = getBadgeTranslation(badge.slug, badge.name, badge.description);
+
   return (
     <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.lockOverlay}>
@@ -25,7 +29,7 @@ export default function LockedBadgeCard({ badge, progress, onPress }: LockedBadg
       )}
 
       <Text style={styles.name} numberOfLines={1}>
-        {badge.name}
+        {translation.name}
       </Text>
 
       {/* Mini progress bar */}

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { Badge } from '../../lib/badges';
+import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
 interface StatProgressCardProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -36,7 +37,9 @@ export default function StatProgressCard({
   allBadges,
 }: StatProgressCardProps) {
   const { t } = useTranslation();
+  const { getBadgeTranslation } = useBadgeTranslation();
   const nextBadge = getNextMilestone(currentCount, triggerType, allBadges);
+  const nextBadgeTranslation = nextBadge ? getBadgeTranslation(nextBadge.slug, nextBadge.name) : null;
   const nextTarget = nextBadge?.trigger_value?.count || 0;
 
   // Calculate progress percentage
@@ -69,9 +72,9 @@ export default function StatProgressCard({
         </Text>
       </View>
 
-      {nextBadge && (
+      {nextBadge && nextBadgeTranslation && (
         <Text style={styles.nextMilestone}>
-          {t('profile.nextMilestone')}: "{nextBadge.name}"
+          {t('profile.nextMilestone')}: "{nextBadgeTranslation.name}"
         </Text>
       )}
     </View>

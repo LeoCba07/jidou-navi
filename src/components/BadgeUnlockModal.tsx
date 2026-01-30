@@ -12,11 +12,13 @@ import {
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '../store/uiStore';
+import { useBadgeTranslation } from '../hooks/useBadgeTranslation';
 
 const { width } = Dimensions.get('window');
 
 export default function BadgeUnlockModal() {
   const { t } = useTranslation();
+  const { getBadgeTranslation } = useBadgeTranslation();
   const { badgePopup, closeBadgePopup } = useUIStore();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -96,17 +98,20 @@ export default function BadgeUnlockModal() {
 
           {/* Badges list */}
           <View style={styles.badgesList}>
-            {badges.map((badge, index) => (
-              <View key={badge.id} style={styles.badgeItem}>
-                <View style={styles.badgeIconWrapper}>
-                  <Text style={styles.badgeEmoji}>🎖️</Text>
+            {badges.map((badge) => {
+              const translation = getBadgeTranslation(badge.slug, badge.name, badge.description);
+              return (
+                <View key={badge.id} style={styles.badgeItem}>
+                  <View style={styles.badgeIconWrapper}>
+                    <Text style={styles.badgeEmoji}>🎖️</Text>
+                  </View>
+                  <View style={styles.badgeInfo}>
+                    <Text style={styles.badgeName}>{translation.name}</Text>
+                    <Text style={styles.badgeDescription}>{translation.description}</Text>
+                  </View>
                 </View>
-                <View style={styles.badgeInfo}>
-                  <Text style={styles.badgeName}>{badge.name}</Text>
-                  <Text style={styles.badgeDescription}>{badge.description}</Text>
-                </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
 
           {/* Actions */}

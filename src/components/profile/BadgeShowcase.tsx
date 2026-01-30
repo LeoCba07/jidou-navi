@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { Badge } from '../../lib/badges';
 import LockedBadgeCard from './LockedBadgeCard';
+import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
 // Badge type from joined query (user's earned badges)
 type UserBadge = {
@@ -11,6 +12,7 @@ type UserBadge = {
   unlocked_at: string;
   badge: {
     id: string;
+    slug: string;
     name: string;
     description: string;
     icon_url: string | null;
@@ -66,6 +68,7 @@ export default function BadgeShowcase({
   onEarnedBadgePress,
 }: BadgeShowcaseProps) {
   const { t } = useTranslation();
+  const { getBadgeTranslation } = useBadgeTranslation();
 
   // Get IDs of earned badges
   const earnedBadgeIds = new Set(earnedBadges.map((ub) => ub.badge.id));
@@ -101,34 +104,41 @@ export default function BadgeShowcase({
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.badgesScroll}
           >
-            {earnedBadges.map((userBadge) => (
-              <Pressable
-                key={userBadge.id}
-                style={[
-                  styles.badgeItem,
-                  {
-                    borderColor:
-                      RARITY_COLORS[userBadge.badge.rarity || 'common'] ||
-                      RARITY_COLORS.common,
-                  },
-                ]}
-                onPress={() => onEarnedBadgePress(userBadge.badge)}
-              >
-                {userBadge.badge.icon_url ? (
-                  <Image
-                    source={{ uri: userBadge.badge.icon_url }}
-                    style={styles.badgeIcon}
-                  />
-                ) : (
-                  <View style={styles.badgeIconPlaceholder}>
-                    <Ionicons name="trophy" size={24} color="#FF4B4B" />
-                  </View>
-                )}
-                <Text style={styles.badgeName} numberOfLines={1}>
-                  {userBadge.badge.name}
-                </Text>
-              </Pressable>
-            ))}
+            {earnedBadges.map((userBadge) => {
+              const translation = getBadgeTranslation(
+                userBadge.badge.slug,
+                userBadge.badge.name,
+                userBadge.badge.description
+              );
+              return (
+                <Pressable
+                  key={userBadge.id}
+                  style={[
+                    styles.badgeItem,
+                    {
+                      borderColor:
+                        RARITY_COLORS[userBadge.badge.rarity || 'common'] ||
+                        RARITY_COLORS.common,
+                    },
+                  ]}
+                  onPress={() => onEarnedBadgePress({ ...userBadge.badge, name: translation.name, description: translation.description })}
+                >
+                  {userBadge.badge.icon_url ? (
+                    <Image
+                      source={{ uri: userBadge.badge.icon_url }}
+                      style={styles.badgeIcon}
+                    />
+                  ) : (
+                    <View style={styles.badgeIconPlaceholder}>
+                      <Ionicons name="trophy" size={24} color="#FF4B4B" />
+                    </View>
+                  )}
+                  <Text style={styles.badgeName} numberOfLines={1}>
+                    {translation.name}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </ScrollView>
         )}
       </View>

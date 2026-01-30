@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { SectionHeader } from '../SectionHeader';
 import { getUnlockableBadgesForMachine, type BadgeOpportunity } from '../../lib/badges';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../../theme/constants';
+import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
 type UnlockByVisitingProps = {
   machineCategories: string[];
@@ -13,7 +14,9 @@ type UnlockByVisitingProps = {
 
 function BadgeProgressCard({ opportunity }: { opportunity: BadgeOpportunity }) {
   const { t } = useTranslation();
+  const { getBadgeTranslation } = useBadgeTranslation();
   const { badge, currentProgress, requiredProgress, progressPercent, willUnlockWithVisit, remaining } = opportunity;
+  const translation = getBadgeTranslation(badge.slug, badge.name, badge.description);
 
   return (
     <View style={[styles.badgeCard, willUnlockWithVisit && styles.badgeCardHighlight]}>
@@ -22,7 +25,7 @@ function BadgeProgressCard({ opportunity }: { opportunity: BadgeOpportunity }) {
           {badge.icon_url || '🏆'}
         </Text>
         <View style={styles.badgeInfo}>
-          <Text style={styles.badgeName}>{badge.name}</Text>
+          <Text style={styles.badgeName}>{translation.name}</Text>
           <Text style={styles.badgeProgress}>
             {t('machine.progressCount', { current: currentProgress, required: requiredProgress })}
           </Text>

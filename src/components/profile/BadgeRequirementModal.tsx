@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Modal, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { Badge } from '../../lib/badges';
+import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
 interface BadgeRequirementModalProps {
   badge: Badge | null;
@@ -18,8 +19,11 @@ export default function BadgeRequirementModal({
   onClose,
 }: BadgeRequirementModalProps) {
   const { t } = useTranslation();
+  const { getBadgeTranslation } = useBadgeTranslation();
 
   if (!badge) return null;
+
+  const translation = getBadgeTranslation(badge.slug, badge.name, badge.description);
 
   const progressPercent = userProgress.required > 0
     ? Math.min((userProgress.current / userProgress.required) * 100, 100)
@@ -37,7 +41,7 @@ export default function BadgeRequirementModal({
           {/* Lock icon and badge name */}
           <View style={styles.header}>
             <Ionicons name="lock-closed" size={20} color="#999" />
-            <Text style={styles.badgeName}>{badge.name}</Text>
+            <Text style={styles.badgeName}>{translation.name}</Text>
           </View>
 
           {/* Badge icon */}
@@ -52,7 +56,7 @@ export default function BadgeRequirementModal({
           </View>
 
           {/* Description / Requirement */}
-          <Text style={styles.description}>{badge.description}</Text>
+          <Text style={styles.description}>{translation.description}</Text>
 
           {/* Progress section */}
           <View style={styles.progressSection}>

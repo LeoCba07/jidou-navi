@@ -33,6 +33,7 @@ type UserBadge = {
   unlocked_at: string;
   badge: {
     id: string;
+    slug: string;
     name: string;
     description: string;
     icon_url: string | null;
@@ -127,6 +128,7 @@ export default function ProfileScreen() {
         unlocked_at,
         badge:badges (
           id,
+          slug,
           name,
           description,
           icon_url,
