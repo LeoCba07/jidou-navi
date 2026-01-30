@@ -389,10 +389,14 @@ export default function MachineDetailScreen() {
       return;
     }
 
+    const needsVerification = shouldShowVerifyPrompt();
+
     // Ask if machine still exists
     showConfirm(
-      t('machine.checkIn.title'),
-      t('machine.checkIn.question'),
+      needsVerification ? t('machine.checkIn.verifyTitle') : t('machine.checkIn.title'),
+      needsVerification 
+        ? `${t('machine.checkIn.verifyQuestion')}\n\n${t('machine.checkIn.xpReward')}`
+        : t('machine.checkIn.question'),
       [
         {
           text: t('common.cancel'),
@@ -414,6 +418,7 @@ export default function MachineDetailScreen() {
 
   async function performCheckIn(stillExists: boolean) {
     setCheckingIn(true);
+    const wasVerification = shouldShowVerifyPrompt();
 
     try {
       // Get current location
@@ -479,11 +484,13 @@ export default function MachineDetailScreen() {
       };
 
       // Show success message, then badge popup if earned, then share card
+      const successMessage = stillExists
+        ? t('machine.checkIn.success.stillHere')
+        : t('machine.checkIn.success.gone');
+      
       showSuccess(
         t('machine.checkIn.success.title'),
-        stillExists
-          ? t('machine.checkIn.success.stillHere')
-          : t('machine.checkIn.success.gone'),
+        successMessage,
         () => {
           if (newBadges.length > 0) {
             // Show badge popup, then share card after dismissing
@@ -835,29 +842,31 @@ export default function MachineDetailScreen() {
                 </View>
               )}
             </Pressable>
-            <Pressable
-              style={[
-                styles.secondaryButton,
-                (checkingIn || hasCheckedIn) && styles.buttonDisabled,
-              ]}
-              onPress={handleCheckIn}
-              disabled={checkingIn || hasCheckedIn}
-            >
-              {checkingIn ? (
-                <ActivityIndicator size="small" color={COLORS.text} />
-              ) : (
-                <View style={styles.buttonContent}>
-                  <Ionicons
-                    name={hasCheckedIn ? 'checkmark-circle' : 'checkmark-circle-outline'}
-                    size={18}
-                    color={hasCheckedIn ? COLORS.success : COLORS.text}
-                  />
-                  <Text style={[styles.secondaryButtonText, hasCheckedIn && styles.visitedText]}>
-                    {hasCheckedIn ? t('machine.visited') : t('machine.iVisited')}
-                  </Text>
-                </View>
-              )}
-            </Pressable>
+            {!shouldShowVerifyPrompt() && (
+              <Pressable
+                style={[
+                  styles.secondaryButton,
+                  (checkingIn || hasCheckedIn) && styles.buttonDisabled,
+                ]}
+                onPress={handleCheckIn}
+                disabled={checkingIn || hasCheckedIn}
+              >
+                {checkingIn ? (
+                  <ActivityIndicator size="small" color={COLORS.text} />
+                ) : (
+                  <View style={styles.buttonContent}>
+                    <Ionicons
+                      name={hasCheckedIn ? 'checkmark-circle' : 'checkmark-circle-outline'}
+                      size={18}
+                      color={hasCheckedIn ? COLORS.success : COLORS.text}
+                    />
+                    <Text style={[styles.secondaryButtonText, hasCheckedIn && styles.visitedText]}>
+                      {hasCheckedIn ? t('machine.visited') : t('machine.iVisited')}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            )}
           </View>
 
           {/* Tertiary action - save/bookmark link */}

@@ -189,7 +189,10 @@
     },
     "checkIn": {
       "title": "Check In",
+      "verifyTitle": "Verify Machine",
       "question": "Is this vending machine still here?",
+      "verifyQuestion": "Can you confirm this machine is still in this location?",
+      "xpReward": "You'll earn +25 XP for verifying!",
       "yesHere": "Yes, it's here!",
       "noGone": "No, it's gone",
       "tooFar": {
@@ -202,8 +205,8 @@
       },
       "success": {
         "title": "Checked In!",
-        "stillHere": "Thanks for confirming this machine is still here!",
-        "gone": "Thanks for letting us know. We'll verify this machine."
+        "stillHere": "Thanks for confirming this machine is still here! +25 XP earned.",
+        "gone": "Thanks for letting us know. We'll verify this machine. +25 XP earned."
       },
       "locationRequired": "Please enable location to check in."
     }
