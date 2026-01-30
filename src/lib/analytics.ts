@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { Database } from './database.types';
+import { Sentry } from './sentry';
 
 type EventName = 
   | 'app_open'
@@ -38,6 +39,10 @@ export const Analytics = {
 
       if (error) {
         console.error('[Analytics] Error logging event:', error);
+        Sentry.captureException(error, {
+          tags: { context: 'analytics' },
+          extra: { event, properties }
+        });
       } else {
         if (__DEV__) {
           console.log('[Analytics] Tracked:', event, properties);
@@ -45,6 +50,10 @@ export const Analytics = {
       }
     } catch (err) {
       console.error('[Analytics] Unexpected error:', err);
+      Sentry.captureException(err, {
+        tags: { context: 'analytics' },
+        extra: { event, properties }
+      });
     }
   }
 };

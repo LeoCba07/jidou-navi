@@ -16,6 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../src/lib/supabase';
+import { Sentry } from '../src/lib/sentry';
 import { useAuthStore } from '../src/store/authStore';
 import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
@@ -102,6 +103,7 @@ export default function AddMachineScreen() {
       }
     } catch (error) {
       console.error('Image picker error:', error);
+      Sentry.captureException(error, { tags: { context: 'add_machine_picker' } });
       showError(t('common.error'), t('addMachine.imageError'));
     } finally {
       setCompressing(false);
@@ -253,6 +255,7 @@ export default function AddMachineScreen() {
       }
     } catch (error: any) {
       console.error('Submit error:', error);
+      Sentry.captureException(error, { tags: { context: 'add_machine_submit' } });
       showError(t('common.error'), error?.message || t('addMachine.submitError'));
     } finally {
       setSubmitting(false);
