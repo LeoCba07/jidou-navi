@@ -188,7 +188,10 @@
     },
     "checkIn": {
       "title": "Registrar Visita",
+      "verifyTitle": "Verificar Máquina",
       "question": "¿Esta máquina expendedora sigue aquí?",
+      "verifyQuestion": "¿Puedes confirmar que esta máquina sigue en esta ubicación?",
+      "xpReward": "¡Ganarás +25 XP por verificar!",
       "yesHere": "¡Sí, está aquí!",
       "noGone": "No, ya no está",
       "tooFar": {
@@ -201,8 +204,8 @@
       },
       "success": {
         "title": "¡Visita Registrada!",
-        "stillHere": "¡Gracias por confirmar que esta máquina sigue aquí!",
-        "gone": "Gracias por avisarnos. Verificaremos esta máquina."
+        "stillHere": "¡Gracias por confirmar que esta máquina sigue aquí! +25 XP ganados.",
+        "gone": "Gracias por avisarnos. Verificaremos esta máquina. +25 XP ganados."
       },
       "locationRequired": "Por favor habilita la ubicación para registrar tu visita."
     }
