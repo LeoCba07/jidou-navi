@@ -434,13 +434,9 @@ export default function MachineDetailScreen() {
         ? t('machine.checkIn.success.stillHere')
         : t('machine.checkIn.success.gone');
       
-      const finalMessage = wasVerification 
-        ? `${successMessage}\n\n${t('machine.checkIn.xpReward')}`
-        : successMessage;
-
       showSuccess(
         t('machine.checkIn.success.title'),
-        finalMessage,
+        successMessage,
         () => {
           if (newBadges.length > 0) {
             // Show badge popup, then share card after dismissing
