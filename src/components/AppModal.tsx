@@ -216,8 +216,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   button: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     borderRadius: 2,
     alignItems: 'center',
     justifyContent: 'center',
@@ -229,6 +229,7 @@ const styles = StyleSheet.create({
   },
   buttonHorizontal: {
     flex: 1,
+    paddingHorizontal: 8,
   },
   primaryButton: {
     backgroundColor: '#FF4B4B',
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Silkscreen',
     textAlign: 'center',
   },
