@@ -52,7 +52,7 @@ export default function AddMachineScreen() {
   const [manualLat, setManualLat] = useState('');
   const [manualLng, setManualLng] = useState('');
 
-  const isDev = profile?.role === 'developer' || profile?.role === 'admin';
+  const isDev = profile?.role === 'admin';
 
   // Get current location on mount
   useEffect(() => {

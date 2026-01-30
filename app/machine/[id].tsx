@@ -38,10 +38,6 @@ import { uploadPhoto } from '../../src/lib/storage';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
-import { StatsGrid } from '../../src/components/machine/StatsGrid';
-import { PopularityBadge } from '../../src/components/machine/PopularityBadge';
-import { UserActivityCard } from '../../src/components/machine/UserActivityCard';
-import { UnlockByVisiting } from '../../src/components/machine/UnlockByVisiting';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
@@ -68,7 +64,6 @@ export default function MachineDetailScreen() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [liveDistance, setLiveDistance] = useState<number | null>(null);
   const fullScreenScrollViewRef = useRef<ScrollView>(null);
-  const [userVisit, setUserVisit] = useState<{ visited_at: string; visitor_number: number } | null>(null);
   const [addressCopied, setAddressCopied] = useState(false);
 
   const params = useLocalSearchParams<{
@@ -185,7 +180,6 @@ export default function MachineDetailScreen() {
 
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
-  const verificationCount = Number(params.verification_count || 0);
 
   // Format relative date for last verified
   const formatRelativeDate = (dateString: string | undefined): string | null => {
@@ -233,50 +227,35 @@ export default function MachineDetailScreen() {
 
   // Parse categories from JSON string
   const categories = params.categories ? JSON.parse(params.categories) : [];
-  const isActive = params.status === 'active';
 
   // Check if machine is saved
   const isSaved = savedMachineIds.has(params.id);
 
-  // Check if user already visited this machine and get visit data
+  // Check if user already visited this machine recently
   useEffect(() => {
-    async function fetchUserVisitData() {
+    async function checkUserVisit() {
       if (!user) return;
 
-      // Get user's visit to this machine (if any)
+      // Get user's most recent visit to this machine
       const { data: visitData } = await supabase
         .from('visits')
-        .select('id, visited_at')
+        .select('visited_at')
         .eq('user_id', user.id)
         .eq('machine_id', params.id)
         .order('visited_at', { ascending: false })
         .limit(1);
 
       if (visitData && visitData.length > 0 && visitData[0].visited_at) {
-        const visitedAt = visitData[0].visited_at;
-
-        // Get visitor number (count of visits before this user's first visit)
-        const { count: visitorNumber } = await supabase
-          .from('visits')
-          .select('*', { count: 'exact', head: true })
-          .eq('machine_id', params.id)
-          .lte('visited_at', visitedAt);
-
-        setUserVisit({
-          visited_at: visitedAt,
-          visitor_number: visitorNumber || 1,
-        });
-
         // Check if visit was within 3 days
         const threeDaysAgo = new Date();
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        if (new Date(visitedAt) >= threeDaysAgo) {
+        if (new Date(visitData[0].visited_at) >= threeDaysAgo) {
           setHasCheckedIn(true);
         }
       }
     }
 
-    fetchUserVisitData();
+    checkUserVisit();
   }, [user, params.id]);
 
   // Scroll to the active photo when full-screen modal opens
@@ -518,7 +497,7 @@ export default function MachineDetailScreen() {
       return;
     }
 
-    const isDev = profile?.role === 'developer' || profile?.role === 'admin';
+    const isDev = profile?.role === 'admin';
 
     // 1. Check location (unless dev)
     if (!isDev) {
@@ -712,10 +691,7 @@ export default function MachineDetailScreen() {
 
         {/* Title Card */}
         <View style={styles.titleCard}>
-          <View style={styles.titleRow}>
-            <Text style={styles.name}>{params.name || t('machine.unnamed')}</Text>
-            <PopularityBadge visitCount={displayVisitCount} />
-          </View>
+          <Text style={styles.name}>{params.name || t('machine.unnamed')}</Text>
 
           {/* Categories */}
           {categories.length > 0 && (
@@ -736,33 +712,34 @@ export default function MachineDetailScreen() {
             <Ionicons name="location" size={14} color={COLORS.primary} />
             <Text style={styles.distanceText}>{t('machine.away', { distance })}</Text>
           </View>
+
+          {/* Description */}
+          {params.description && (
+            <Text style={styles.titleDescription}>{params.description}</Text>
+          )}
         </View>
 
-        {/* Stats Grid */}
+        {/* Status Row - Simplified */}
         <View style={styles.section}>
-          <StatsGrid
-            visitCount={displayVisitCount}
-            verificationCount={verificationCount}
-            isActive={isActive}
-            lastVerifiedText={lastVerifiedText}
-            freshnessColor={freshnessColor}
-          />
-        </View>
-
-        {/* User Activity Card */}
-        <View style={styles.section}>
-          <UserActivityCard
-            userVisit={userVisit}
-            isLoggedIn={!!user}
-          />
-        </View>
-
-        {/* Unlock By Visiting */}
-        <View style={styles.section}>
-          <UnlockByVisiting
-            machineCategories={categories.map((c: any) => c.slug)}
-            isLoggedIn={!!user}
-          />
+          <View style={styles.statusRow}>
+            <View style={styles.statusItem}>
+              <Ionicons name="eye-outline" size={16} color={COLORS.textMuted} />
+              <Text style={styles.statusText}>
+                {t(displayVisitCount === 1 ? 'machine.visit' : 'machine.visits', { count: displayVisitCount })}
+              </Text>
+            </View>
+            {lastVerifiedText && (
+              <>
+                <Text style={styles.statusDivider}>•</Text>
+                <View style={styles.statusItem}>
+                  <View style={[styles.freshnessDot, { backgroundColor: freshnessColor }]} />
+                  <Text style={styles.statusText}>
+                    {t('machine.verifiedAgo', { time: lastVerifiedText })}
+                  </Text>
+                </View>
+              </>
+            )}
+          </View>
         </View>
 
         {/* Location Card */}
@@ -784,15 +761,6 @@ export default function MachineDetailScreen() {
                   </Text>
                 </Pressable>
               )}
-            </View>
-          </View>
-        )}
-
-        {/* Description Card */}
-        {params.description && (
-          <View style={styles.section}>
-            <View style={styles.descriptionCard}>
-              <Text style={styles.description}>{params.description}</Text>
             </View>
           </View>
         )}
@@ -821,7 +789,7 @@ export default function MachineDetailScreen() {
             <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
           </Pressable>
 
-          {/* Secondary actions - two buttons */}
+          {/* Secondary actions - three buttons */}
           <View style={styles.secondaryActions}>
             <Pressable
               style={[
@@ -868,28 +836,6 @@ export default function MachineDetailScreen() {
               </Pressable>
             )}
           </View>
-
-          {/* Tertiary action - save/bookmark link */}
-          <Pressable
-            style={styles.tertiaryButton}
-            onPress={handleSaveToggle}
-            disabled={saving}
-          >
-            {saving ? (
-              <ActivityIndicator size="small" color={COLORS.primary} />
-            ) : (
-              <View style={styles.buttonContent}>
-                <Ionicons
-                  name={isSaved ? 'bookmark' : 'bookmark-outline'}
-                  size={18}
-                  color={isSaved ? COLORS.primary : COLORS.textMuted}
-                />
-                <Text style={[styles.tertiaryButtonText, isSaved && styles.savedText]}>
-                  {isSaved ? t('common.saved') : t('common.save')}
-                </Text>
-              </View>
-            )}
-          </Pressable>
         </View>
       </ScrollView>
 
@@ -1052,19 +998,12 @@ const styles = StyleSheet.create({
     borderColor: COLORS.backgroundDark,
     ...SHADOWS.pixel,
   },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: SPACING.sm,
-    marginBottom: SPACING.md,
-  },
   name: {
-    flex: 1,
     fontSize: 24,
     fontFamily: FONTS.title,
     color: COLORS.text,
     lineHeight: 32,
+    marginBottom: SPACING.md,
   },
   categoriesRow: {
     flexDirection: 'row',
@@ -1097,6 +1036,43 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.primary,
+  },
+  titleDescription: {
+    fontSize: 14,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
+    lineHeight: 22,
+    marginTop: SPACING.md,
+  },
+  // Status Row
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.sm,
+    padding: SPACING.md,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  statusItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  statusText: {
+    fontSize: 13,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
+  },
+  statusDivider: {
+    fontSize: 13,
+    color: COLORS.textLight,
+    marginHorizontal: SPACING.sm,
+  },
+  freshnessDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   // Sections
   section: {
@@ -1138,20 +1114,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: FONTS.button,
     color: COLORS.text,
-  },
-  // Description Card
-  descriptionCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
-    padding: SPACING.lg,
-    borderWidth: 1,
-    borderColor: '#eee',
-  },
-  description: {
-    fontSize: 15,
-    fontFamily: FONTS.body,
-    color: COLORS.text,
-    lineHeight: 24,
   },
   // Verify Prompt
   verifyPrompt: {
@@ -1226,15 +1188,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: FONTS.button,
   },
-  tertiaryButton: {
-    paddingVertical: SPACING.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tertiaryButtonText: {
-    color: COLORS.textMuted,
-    fontSize: 14,
-    fontFamily: FONTS.body,
+  savedButton: {
+    backgroundColor: '#FEF2F2',
+    borderColor: COLORS.primary,
   },
   buttonContent: {
     flexDirection: 'row',
