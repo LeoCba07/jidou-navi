@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, SymbolLayer, Images } from '@rnmapbox/maps';
+import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, SymbolLayer, Images, CircleLayer } from '@rnmapbox/maps';
 import { router } from 'expo-router';
 import { filterMachinesByCategories, NearbyMachine, SearchResult, calculateDistance, MapBounds } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
@@ -71,6 +71,31 @@ export default function MapScreen() {
       features,
     };
   }, [filteredMachines, selectedMachine]);
+
+  // Separate GeoJSON for selected marker glow effect
+  const selectedMarkerGeoJSON = useMemo(() => {
+    if (!selectedMachine) {
+      return {
+        type: 'FeatureCollection' as const,
+        features: [],
+      };
+    }
+
+    return {
+      type: 'FeatureCollection' as const,
+      features: [{
+        type: 'Feature' as const,
+        id: selectedMachine.id,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [selectedMachine.longitude, selectedMachine.latitude],
+        },
+        properties: {
+          id: selectedMachine.id,
+        },
+      }],
+    };
+  }, [selectedMachine]);
 
   // Clear selected machine if it's no longer visible after filtering
   useEffect(() => {
@@ -272,6 +297,32 @@ export default function MapScreen() {
         {/* Preload marker image */}
         <Images images={markerImages} />
 
+        {/* Gold glow ring behind selected marker */}
+        <ShapeSource
+          id="selected-marker-glow"
+          shape={selectedMarkerGeoJSON}
+        >
+          <CircleLayer
+            id="selected-glow-outer"
+            style={{
+              circleRadius: 24,
+              circleColor: 'rgba(255, 215, 0, 0.15)',
+              circleStrokeWidth: 0,
+              circleTranslate: [0, -20],
+            }}
+          />
+          <CircleLayer
+            id="selected-glow-inner"
+            style={{
+              circleRadius: 16,
+              circleColor: 'transparent',
+              circleStrokeWidth: 3,
+              circleStrokeColor: '#FFD700',
+              circleTranslate: [0, -20],
+            }}
+          />
+        </ShapeSource>
+
         {/* Machine pins using ShapeSource (more stable than MarkerView) */}
         <ShapeSource
           id="machines"
@@ -285,7 +336,7 @@ export default function MapScreen() {
               iconSize: [
                 'case',
                 ['==', ['get', 'isSelected'], true],
-                0.15,
+                0.115,
                 0.1,
               ],
               iconAllowOverlap: true,
