@@ -22,6 +22,8 @@ import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
 import { useAppModal } from '../src/hooks/useAppModal';
 import { tryRequestAppReview } from '../src/lib/review';
+import { extractGpsFromExif, GpsCoordinates } from '../src/lib/exif';
+import { LocationVerificationModal } from '../src/components/LocationVerificationModal';
 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
@@ -51,8 +53,15 @@ export default function AddMachineScreen() {
   const [isManualLocation, setIsManualLocation] = useState(false);
   const [manualLat, setManualLat] = useState('');
   const [manualLng, setManualLng] = useState('');
+  const [directionsHint, setDirectionsHint] = useState('');
+  const [exifLocation, setExifLocation] = useState<GpsCoordinates | null>(null);
+  const [showLocationVerification, setShowLocationVerification] = useState(false);
+  const [locationSource, setLocationSource] = useState<'gps' | 'exif'>('gps');
 
   const isDev = profile?.role === 'admin';
+
+  // Maximum length for directions hint
+  const DIRECTIONS_HINT_MAX_LENGTH = 200;
 
   // Get current location on mount
   useEffect(() => {
@@ -78,28 +87,71 @@ export default function AddMachineScreen() {
     setCompressing(true);
 
     try {
-      const result = useCamera
-        ? await ImagePicker.launchCameraAsync({
-            mediaTypes: ['images'],
-            quality: IMAGE_QUALITY,
-            allowsEditing: true,
-            aspect: [4, 3],
-          })
-        : await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            quality: IMAGE_QUALITY,
-            allowsEditing: true,
-            aspect: [4, 3],
-          });
+      // For gallery images, first select without editing to preserve EXIF
+      // Then we'll apply editing after checking EXIF
+      if (!useCamera) {
+        // Step 1: Select image without editing to read EXIF
+        const preEditResult = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ['images'],
+          quality: 1, // Full quality to preserve EXIF
+          allowsEditing: false,
+        });
 
-      if (!result.canceled && result.assets[0]) {
-        const asset = result.assets[0];
-        setPhoto(asset.uri);
+        if (preEditResult.canceled || !preEditResult.assets[0]) {
+          setCompressing(false);
+          return;
+        }
 
-        // Get file size (fetch blob to measure)
-        const response = await fetch(asset.uri);
-        const blob = await response.blob();
-        setPhotoSize(blob.size);
+        const originalUri = preEditResult.assets[0].uri;
+
+        // Step 2: Try to extract GPS from EXIF
+        const gpsData = await extractGpsFromExif(originalUri);
+
+        if (gpsData) {
+          // Store EXIF location and show verification modal
+          setExifLocation(gpsData);
+          setShowLocationVerification(true);
+        }
+
+        // Step 3: Now apply editing with compression
+        const editResult = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ['images'],
+          quality: IMAGE_QUALITY,
+          allowsEditing: true,
+          aspect: [4, 3],
+        });
+
+        if (!editResult.canceled && editResult.assets[0]) {
+          const asset = editResult.assets[0];
+          setPhoto(asset.uri);
+
+          // Get file size
+          const response = await fetch(asset.uri);
+          const blob = await response.blob();
+          setPhotoSize(blob.size);
+        } else {
+          // User cancelled editing, reset EXIF state
+          setExifLocation(null);
+          setShowLocationVerification(false);
+        }
+      } else {
+        // Camera: no EXIF GPS typically available on iOS
+        const result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ['images'],
+          quality: IMAGE_QUALITY,
+          allowsEditing: true,
+          aspect: [4, 3],
+        });
+
+        if (!result.canceled && result.assets[0]) {
+          const asset = result.assets[0];
+          setPhoto(asset.uri);
+
+          // Get file size
+          const response = await fetch(asset.uri);
+          const blob = await response.blob();
+          setPhotoSize(blob.size);
+        }
       }
     } catch (error) {
       console.error('Image picker error:', error);
@@ -108,6 +160,22 @@ export default function AddMachineScreen() {
     } finally {
       setCompressing(false);
     }
+  }
+
+  function handleLocationVerificationConfirm() {
+    // User confirmed EXIF location
+    if (exifLocation) {
+      setLocation(exifLocation);
+      setLocationSource('exif');
+    }
+    setShowLocationVerification(false);
+  }
+
+  function handleLocationVerificationReject() {
+    // User rejected EXIF location, keep current GPS location
+    setExifLocation(null);
+    setLocationSource('gps');
+    setShowLocationVerification(false);
   }
 
   function toggleCategory(id: string) {
@@ -192,6 +260,7 @@ export default function AddMachineScreen() {
         location: `POINT(${finalLng} ${finalLat})`,
         status: 'pending',
         contributor_id: user?.id,
+        directions_hint: directionsHint.trim() || null,
       }).select('id').single();
 
       if (insertError) throw insertError;
@@ -352,6 +421,22 @@ export default function AddMachineScreen() {
           />
         </View>
 
+        {/* Directions Hint */}
+        <View style={styles.field}>
+          <Text style={styles.label}>{t('addMachine.directionsHint')}</Text>
+          <TextInput
+            style={styles.input}
+            value={directionsHint}
+            onChangeText={(text) => setDirectionsHint(text.slice(0, DIRECTIONS_HINT_MAX_LENGTH))}
+            placeholder={t('addMachine.directionsHintPlaceholder')}
+            placeholderTextColor="#999"
+            maxLength={DIRECTIONS_HINT_MAX_LENGTH}
+          />
+          <Text style={styles.charCount}>
+            {directionsHint.length}/{DIRECTIONS_HINT_MAX_LENGTH}
+          </Text>
+        </View>
+
         {/* Location info */}
         <View style={styles.locationInfo}>
           <View style={styles.locationHeader}>
@@ -401,9 +486,14 @@ export default function AddMachineScreen() {
               </View>
             </View>
           ) : (
-            <Text style={styles.locationText}>
-              {location ? `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}` : t('addMachine.gettingLocation')}
-            </Text>
+            <View>
+              <Text style={styles.locationText}>
+                {location ? `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}` : t('addMachine.gettingLocation')}
+              </Text>
+              {location && locationSource === 'exif' && (
+                <Text style={styles.locationSourceText}>{t('addMachine.locationFromPhoto')}</Text>
+              )}
+            </View>
           )}
         </View>
 
@@ -420,6 +510,17 @@ export default function AddMachineScreen() {
           )}
         </Pressable>
       </ScrollView>
+
+      {/* Location Verification Modal */}
+      {exifLocation && (
+        <LocationVerificationModal
+          visible={showLocationVerification}
+          latitude={exifLocation.latitude}
+          longitude={exifLocation.longitude}
+          onConfirm={handleLocationVerificationConfirm}
+          onReject={handleLocationVerificationReject}
+        />
+      )}
     </View>
   );
 }
@@ -599,6 +700,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Inter',
     color: '#666',
+  },
+  locationSourceText: {
+    fontSize: 11,
+    fontFamily: 'Inter',
+    color: '#3C91E6',
+    marginTop: 4,
+  },
+  charCount: {
+    fontSize: 11,
+    fontFamily: 'Inter',
+    color: '#999',
+    textAlign: 'right',
+    marginTop: 4,
   },
   submitButton: {
     backgroundColor: '#FF4B4B',
