@@ -29,13 +29,15 @@ export function useAppModal() {
     title: string,
     message: string,
     onDismiss?: () => void,
-    buttonText: string = 'OK'
+    buttonText: string = 'OK',
+    xpAmount?: number
   ) => {
     showModal({
       type: 'success',
       title,
       message,
       buttons: [{ text: buttonText, style: 'primary', onPress: onDismiss }],
+      xpAmount,
     });
   }, [showModal]);
 
@@ -57,7 +59,8 @@ export function useAppModal() {
   const showInfo = useCallback((
     title: string,
     message: string,
-    onDismiss?: () => void
+    onDismiss?: () => void,
+    xpAmount?: number
   ) => {
     showModal({
       type: 'info',
@@ -65,6 +68,7 @@ export function useAppModal() {
       message,
       buttons: [{ text: 'OK', style: 'primary' }],
       onDismiss,
+      xpAmount,
     });
   }, [showModal]);
 

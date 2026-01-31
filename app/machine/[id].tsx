@@ -478,6 +478,8 @@ export default function MachineDetailScreen() {
         ? t('machine.checkIn.success.stillHere')
         : t('machine.checkIn.success.gone');
       
+      const earnedXP = stillExists ? XP_VALUES.VERIFY_MACHINE : XP_VALUES.CHECK_IN;
+
       showSuccess(
         t('machine.checkIn.success.title'),
         successMessage,
@@ -493,7 +495,9 @@ export default function MachineDetailScreen() {
           }
           // Try to request app review
           tryRequestAppReview();
-        }
+        },
+        'OK',
+        earnedXP
       );
     } catch (err) {
       showError(t('common.error'), t('common.error'));
@@ -602,7 +606,7 @@ export default function MachineDetailScreen() {
 
       showSuccess(t('common.success'), t('machine.photoAdded'), () => {
         tryRequestAppReview();
-      });
+      }, 'OK', XP_VALUES.PHOTO_UPLOAD);
 
     } catch (error) {
       console.error('Upload error:', error);
