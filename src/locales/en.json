@@ -30,6 +30,8 @@
     "confirmPasswordPlaceholder": "Re-enter password",
     "username": "Username",
     "usernamePlaceholder": "Choose a username",
+    "country": "Country",
+    "selectCountry": "Select Country",
     "createAccount": "Create Account",
     "dontHaveAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
@@ -48,7 +50,8 @@
       "enterUsername": "Please enter a username",
       "usernameMinLength": "Username must be at least 3 characters",
       "passwordMinLength": "Password must be at least 6 characters",
-      "passwordsNoMatch": "Passwords do not match"
+      "passwordsNoMatch": "Passwords do not match",
+      "selectCountry": "Please select your country"
     },
     "errors": {
       "loginFailed": "Login failed",
