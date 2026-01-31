@@ -28,6 +28,7 @@ export interface AppModalConfig {
   message: string;
   buttons?: ModalButton[];
   onDismiss?: () => void;
+  xpAmount?: number;
 }
 
 const MODAL_COLORS: Record<ModalType, string> = {
@@ -42,12 +43,14 @@ export default function AppModal() {
   const hideModal = useUIStore((state) => state.hideModal);
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
+  const xpAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (appModal) {
       // Reset animations
       scaleAnim.setValue(0);
       opacityAnim.setValue(0);
+      xpAnim.setValue(0);
 
       // Play entrance animation
       Animated.parallel([
@@ -62,6 +65,17 @@ export default function AppModal() {
           duration: 200,
           useNativeDriver: true,
         }),
+        ...(appModal.xpAmount ? [
+          Animated.sequence([
+            Animated.delay(300),
+            Animated.spring(xpAnim, {
+              toValue: 1,
+              tension: 100,
+              friction: 5,
+              useNativeDriver: true,
+            })
+          ])
+        ] : [])
       ]).start();
     }
   }, [appModal]);
@@ -117,7 +131,7 @@ export default function AppModal() {
 
   if (!appModal) return null;
 
-  const { type, title, message, buttons = [{ text: 'OK', style: 'primary' }] } = appModal;
+  const { type, title, message, xpAmount, buttons = [{ text: 'OK', style: 'primary' }] } = appModal;
   const borderColor = MODAL_COLORS[type];
 
   // Layout: 2 buttons side by side, otherwise stack
@@ -137,6 +151,27 @@ export default function AppModal() {
           ]}
         >
           <Pressable style={styles.content}>
+            {/* XP Badge */}
+            {xpAmount && (
+              <View style={styles.xpBadgeContainer}>
+                <Animated.View style={[
+                  styles.xpBadge,
+                  {
+                    transform: [
+                      { scale: xpAnim },
+                      { translateY: xpAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0]
+                      })}
+                    ],
+                    opacity: xpAnim
+                  }
+                ]}>
+                  <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
+                </Animated.View>
+              </View>
+            )}
+
             {/* Title */}
             <Text style={styles.title}>{title}</Text>
 
@@ -192,6 +227,28 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
+  },
+  xpBadgeContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  xpBadge: {
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: '#166534',
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 0,
+  },
+  xpBadgeText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Silkscreen-Bold',
   },
   title: {
     fontSize: 18,

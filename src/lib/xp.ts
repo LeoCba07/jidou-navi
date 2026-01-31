@@ -26,10 +26,11 @@ export async function addXP(amount: number, reason: string) {
 
     // Update local store if we got data back
     // The RPC returns an array of objects (even though it's single row)
+    const { profile, setProfile } = useAuthStore.getState();
+    
     if (data && Array.isArray(data) && data.length > 0) {
       const { new_xp, new_level } = data[0];
       
-      const { profile, setProfile } = useAuthStore.getState();
       if (profile) {
         setProfile({
           ...profile,
@@ -38,18 +39,16 @@ export async function addXP(amount: number, reason: string) {
         });
       }
     } else if (data && !Array.isArray(data)) {
-        // Handle case where it might return a single object (depends on supabase-js version/types)
-        // casting to any to avoid strict type checks on the RPC return structure which might be inferred as void
-        const result = data as any;
-        const { new_xp, new_level } = result;
-         const { profile, setProfile } = useAuthStore.getState();
-        if (profile) {
-            setProfile({
-            ...profile,
-            xp: new_xp,
-            level: new_level,
-            });
-        }
+      // Handle case where it might return a single object
+      const result = data as any;
+      const { new_xp, new_level } = result;
+      if (profile) {
+        setProfile({
+          ...profile,
+          xp: new_xp,
+          level: new_level,
+        });
+      }
     }
 
     // Track analytics for XP gain

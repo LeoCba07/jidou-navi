@@ -315,19 +315,19 @@ export default function AddMachineScreen() {
       const newBadges = await checkAndAwardBadges(machine.id);
 
       if (newBadges.length > 0) {
-        // Show success alert (under review), then badge popup, then navigate back
+        // Show success alert, then badge popup, then navigate back
         showSuccess(t('common.success'), t('addMachine.successPending'), () => {
           showBadgePopup(newBadges, () => {
             tryRequestAppReview();
             router.back();
           });
-        });
+        }, 'OK', XP_VALUES.ADD_MACHINE);
       } else {
-        // No badges - just show success (under review) and go back
+        // No badges - just show success and go back
         showSuccess(t('common.success'), t('addMachine.successPending'), () => {
           tryRequestAppReview();
           router.back();
-        });
+        }, 'OK', XP_VALUES.ADD_MACHINE);
       }
     } catch (error: any) {
       console.error('Submit error:', error);
