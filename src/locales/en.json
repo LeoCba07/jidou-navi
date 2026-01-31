@@ -228,6 +228,9 @@
     "categories": "Categories",
     "description": "Description",
     "descriptionPlaceholder": "What makes this machine special?",
+    "directionsHint": "Directions Hint (optional)",
+    "directionsHintPlaceholder": "Any tips on how to find this machine?",
+    "locationFromPhoto": "Location from photo",
     "location": "Location",
     "gettingLocation": "Getting location...",
     "addMachine": "Add Machine",
@@ -241,6 +244,12 @@
       "descriptionRequired": "Please add a description.",
       "locationRequired": "Please wait for GPS location or enable location services.",
       "invalidCoordinates": "Invalid coordinates"
+    },
+    "locationVerification": {
+      "title": "Photo Location Found",
+      "question": "We found GPS data in your photo. Is this the correct location for the vending machine?",
+      "usePhotoLocation": "Yes, use this",
+      "useCurrentLocation": "No, use my location"
     },
     "permissionNeeded": "Please grant camera/gallery access.",
     "imageError": "Failed to process image. Please try again.",

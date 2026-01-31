@@ -228,6 +228,9 @@
     "categories": "Categorías",
     "description": "Descripción",
     "descriptionPlaceholder": "¿Qué hace especial a esta máquina?",
+    "directionsHint": "Pista de Ubicación (opcional)",
+    "directionsHintPlaceholder": "¿Algún consejo para encontrar esta máquina?",
+    "locationFromPhoto": "Ubicación de la foto",
     "location": "Ubicación",
     "gettingLocation": "Obteniendo ubicación...",
     "addMachine": "Añadir Máquina",
@@ -241,6 +244,12 @@
       "descriptionRequired": "Por favor añade una descripción.",
       "locationRequired": "Por favor espera la ubicación GPS o habilita los servicios de ubicación.",
       "invalidCoordinates": "Coordenadas inválidas"
+    },
+    "locationVerification": {
+      "title": "Ubicación de Foto Encontrada",
+      "question": "Encontramos datos GPS en tu foto. ¿Es esta la ubicación correcta de la máquina expendedora?",
+      "usePhotoLocation": "Sí, usar esta",
+      "useCurrentLocation": "No, usar mi ubicación"
     },
     "permissionNeeded": "Por favor concede acceso a la cámara/galería.",
     "imageError": "Error al procesar la imagen. Por favor intenta de nuevo.",
