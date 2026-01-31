@@ -20,6 +20,7 @@ import { Sentry } from '../src/lib/sentry';
 import { useAuthStore } from '../src/store/authStore';
 import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
+import { addXP, XP_VALUES } from '../src/lib/xp';
 import { useAppModal } from '../src/hooks/useAppModal';
 import { tryRequestAppReview } from '../src/lib/review';
 import { extractGpsFromExif, GpsCoordinates } from '../src/lib/exif';
@@ -303,6 +304,12 @@ export default function AddMachineScreen() {
 
       // Small delay to allow DB triggers (profile contribution counts) to complete
       await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Add XP
+      const xpResult = await addXP(XP_VALUES.ADD_MACHINE, 'add_machine');
+      if (!xpResult.success) {
+        console.warn('Failed to award XP for add_machine:', xpResult.error);
+      }
 
       // Check for badge unlocks (contributor badges)
       const newBadges = await checkAndAwardBadges(machine.id);

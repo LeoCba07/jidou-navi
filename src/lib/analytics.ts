@@ -7,7 +7,8 @@ type EventName =
   | 'machine_view'
   | 'check_in'
   | 'photo_upload'
-  | 'share_machine';
+  | 'share_machine'
+  | 'xp_gain';
 
 type EventProperties = Record<string, any>;
 

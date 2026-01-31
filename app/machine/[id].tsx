@@ -33,6 +33,7 @@ import { Analytics } from '../../src/lib/analytics';
 import { Sentry } from '../../src/lib/sentry';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
+import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
 import { tryRequestAppReview } from '../../src/lib/review';
@@ -442,6 +443,16 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
 
+      // Add XP
+      const xpResult = await addXP(
+        stillExists ? XP_VALUES.VERIFY_MACHINE : XP_VALUES.CHECK_IN,
+        stillExists ? 'verify_machine' : 'check_in'
+      );
+
+      if (!xpResult.success) {
+        console.warn('Failed to award XP for check-in:', xpResult.error);
+      }
+
       Analytics.track('check_in', {
         machine_id: params.id,
         machine_name: params.name,
@@ -575,6 +586,12 @@ export default function MachineDetailScreen() {
       });
 
       if (insertError) throw insertError;
+
+      // Add XP
+      const xpResult = await addXP(XP_VALUES.PHOTO_UPLOAD, 'photo_upload');
+      if (!xpResult.success) {
+        console.warn('Failed to award XP for photo upload:', xpResult.error);
+      }
 
       // Update local photos state
       setPhotos(prev => [...prev, publicUrl]);
