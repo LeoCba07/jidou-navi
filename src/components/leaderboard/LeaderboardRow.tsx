@@ -1,0 +1,160 @@
+// Leaderboard row component
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import type { LeaderboardEntry } from '../../store/friendsStore';
+
+const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
+
+interface LeaderboardRowProps {
+  entry: LeaderboardEntry;
+  showWeeklyXp?: boolean;
+}
+
+function getRankIcon(rank: number): React.ReactNode {
+  if (rank === 1) return <Text style={styles.rankEmoji}>1</Text>;
+  if (rank === 2) return <Text style={styles.rankEmoji}>2</Text>;
+  if (rank === 3) return <Text style={styles.rankEmoji}>3</Text>;
+  return <Text style={styles.rankNumber}>{rank}</Text>;
+}
+
+function getRankColor(rank: number): string {
+  if (rank === 1) return '#FFD700'; // Gold
+  if (rank === 2) return '#C0C0C0'; // Silver
+  if (rank === 3) return '#CD7F32'; // Bronze
+  return 'transparent';
+}
+
+export default function LeaderboardRow({ entry, showWeeklyXp = false }: LeaderboardRowProps) {
+  const isTopThree = entry.rank <= 3;
+  const rankColor = getRankColor(entry.rank);
+
+  return (
+    <View
+      style={[
+        styles.container,
+        entry.is_current_user && styles.currentUser,
+        isTopThree && { borderLeftWidth: 4, borderLeftColor: rankColor },
+      ]}
+    >
+      <View style={[styles.rankContainer, isTopThree && { backgroundColor: rankColor + '20' }]}>
+        {getRankIcon(entry.rank)}
+      </View>
+      <Image
+        source={entry.avatar_url ? { uri: entry.avatar_url } : DEFAULT_AVATAR}
+        style={[styles.avatar, entry.is_current_user && styles.currentUserAvatar]}
+      />
+      <View style={styles.info}>
+        <Text style={[styles.name, entry.is_current_user && styles.currentUserName]} numberOfLines={1}>
+          {entry.display_name || entry.username}
+        </Text>
+        <View style={styles.statsRow}>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>Lv.{entry.level}</Text>
+          </View>
+          <Text style={styles.xpText}>{entry.xp.toLocaleString()} XP</Text>
+        </View>
+      </View>
+      {showWeeklyXp && entry.xp_this_week > 0 && (
+        <View style={styles.weeklyXp}>
+          <Ionicons name="trending-up" size={12} color="#22C55E" />
+          <Text style={styles.weeklyXpText}>+{entry.xp_this_week}</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  currentUser: {
+    backgroundColor: '#FFF5F5',
+    borderColor: '#FF4B4B',
+    borderWidth: 2,
+  },
+  rankContainer: {
+    width: 28,
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 14,
+    marginRight: 8,
+  },
+  rankEmoji: {
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
+    color: '#2B2B2B',
+  },
+  rankNumber: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#666',
+  },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginRight: 10,
+  },
+  currentUserAvatar: {
+    borderColor: '#FF4B4B',
+    borderWidth: 2,
+  },
+  info: {
+    flex: 1,
+  },
+  name: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: '#2B2B2B',
+    marginBottom: 2,
+  },
+  currentUserName: {
+    color: '#FF4B4B',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  levelBadge: {
+    backgroundColor: '#2B2B2B',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 2,
+  },
+  levelText: {
+    fontSize: 9,
+    fontFamily: 'Silkscreen',
+    color: '#fff',
+  },
+  xpText: {
+    fontSize: 11,
+    fontFamily: 'Inter',
+    color: '#666',
+  },
+  weeklyXp: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: '#DCFCE7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 2,
+  },
+  weeklyXpText: {
+    fontSize: 10,
+    fontFamily: 'Inter-SemiBold',
+    color: '#22C55E',
+  },
+});

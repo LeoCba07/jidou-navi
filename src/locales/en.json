@@ -397,6 +397,30 @@
       "section12Text": "For questions about these terms, contact us at: jidou.navi@gmail.com"
     }
   },
+  "friends": {
+    "title": "Friends",
+    "searchPlaceholder": "Search users...",
+    "pendingRequests": "Pending Requests",
+    "yourFriends": "Your Friends",
+    "noFriends": "No friends yet. Search for users to add!",
+    "noRequests": "No pending requests",
+    "addFriend": "Add",
+    "friend": "Friend",
+    "requestSent": "Pending",
+    "requestReceived": "Pending",
+    "accept": "Accept",
+    "decline": "Decline",
+    "remove": "Remove",
+    "removeFriendConfirm": "Remove {{name}} from friends?"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "global": "Global",
+    "friends": "Friends",
+    "thisWeek": "This Week",
+    "noFriendsYet": "Add friends to see their rankings!",
+    "noData": "No leaderboard data yet"
+  },
   "admin": {
     "dashboard": "Admin Dashboard",
     "reviewSubmissions": "Review pending submissions",

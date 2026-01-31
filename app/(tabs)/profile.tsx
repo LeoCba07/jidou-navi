@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
+import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
 import { fetchUserPendingMachines, UserPendingMachine } from '../../src/lib/admin';
@@ -27,6 +28,7 @@ import SettingsModal from '../../src/components/profile/SettingsModal';
 import StatProgressCard from '../../src/components/profile/StatProgressCard';
 import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
 import BadgeRequirementModal from '../../src/components/profile/BadgeRequirementModal';
+import { FriendsModal } from '../../src/components/friends';
 import type { Badge } from '../../src/lib/badges';
 
 // Badge type from joined query
@@ -50,6 +52,7 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile, setProfile } = useAuthStore();
   const { removeSaved } = useSavedMachinesStore();
+  const { pendingRequestCount, loadPendingRequestCount } = useFriendsStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
@@ -68,6 +71,7 @@ export default function ProfileScreen() {
     badge: Badge;
     progress: { current: number; required: number };
   } | null>(null);
+  const [friendsModalVisible, setFriendsModalVisible] = useState(false);
 
   async function handleEditAvatar() {
     if (!user) return;
@@ -238,11 +242,12 @@ export default function ProfileScreen() {
     fetchAllBadges();
     loadSavedMachines();
     loadPendingMachines();
+    loadPendingRequestCount();
   }, [user]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingMachines()]);
+    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingMachines(), loadPendingRequestCount()]);
     setRefreshing(false);
   }, [user]);
 
@@ -312,14 +317,31 @@ export default function ProfileScreen() {
         {/* Hero Card - Character Sheet */}
         <View style={styles.userSection}>
           <View style={styles.heroCard}>
-            <Pressable
-              style={styles.settingsGear}
-              onPress={() => setSettingsModalVisible(true)}
-              accessibilityRole="button"
-              accessibilityLabel={t('profile.accountSettings')}
-            >
-              <Ionicons name="settings-outline" size={20} color="#666" />
-            </Pressable>
+            <View style={styles.headerButtons}>
+              <Pressable
+                style={styles.friendsButton}
+                onPress={() => setFriendsModalVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t('friends.title')}
+              >
+                <Ionicons name="people-outline" size={20} color="#666" />
+                {pendingRequestCount > 0 && (
+                  <View style={styles.friendsBadge}>
+                    <Text style={styles.friendsBadgeText}>
+                      {pendingRequestCount > 9 ? '9+' : pendingRequestCount}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+              <Pressable
+                style={styles.settingsGear}
+                onPress={() => setSettingsModalVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t('profile.accountSettings')}
+              >
+                <Ionicons name="settings-outline" size={20} color="#666" />
+              </Pressable>
+            </View>
             <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
               <Image
                 key={avatarTimestamp}
@@ -585,6 +607,12 @@ export default function ProfileScreen() {
         visible={badgeRequirementModalVisible}
         onClose={() => setBadgeRequirementModalVisible(false)}
       />
+
+      {/* Friends Modal */}
+      <FriendsModal
+        visible={friendsModalVisible}
+        onClose={() => setFriendsModalVisible(false)}
+      />
     </View>
   );
 }
@@ -630,12 +658,38 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignItems: 'center',
   },
-  settingsGear: {
+  headerButtons: {
     position: 'absolute',
     top: 16,
     right: 16,
-    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     zIndex: 1,
+  },
+  friendsButton: {
+    padding: 8,
+    position: 'relative',
+  },
+  friendsBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    backgroundColor: '#FF4B4B',
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  friendsBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Inter-Bold',
+    color: '#fff',
+  },
+  settingsGear: {
+    padding: 8,
   },
   avatarContainer: {
     position: 'relative',
