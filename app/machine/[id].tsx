@@ -406,10 +406,14 @@ export default function MachineDetailScreen() {
       setHasCheckedIn(true);
 
       // Add XP
-      await addXP(
+      const xpResult = await addXP(
         stillExists ? XP_VALUES.VERIFY_MACHINE : XP_VALUES.CHECK_IN,
         stillExists ? 'verify_machine' : 'check_in'
       );
+
+      if (!xpResult.success) {
+        console.warn('Failed to award XP for check-in:', xpResult.error);
+      }
 
       Analytics.track('check_in', {
         machine_id: params.id,
@@ -543,7 +547,10 @@ export default function MachineDetailScreen() {
       if (insertError) throw insertError;
 
       // Add XP
-      await addXP(XP_VALUES.PHOTO_UPLOAD, 'photo_upload');
+      const xpResult = await addXP(XP_VALUES.PHOTO_UPLOAD, 'photo_upload');
+      if (!xpResult.success) {
+        console.warn('Failed to award XP for photo upload:', xpResult.error);
+      }
 
       // Update local photos state
       setPhotos(prev => [...prev, publicUrl]);

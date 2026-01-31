@@ -235,7 +235,10 @@ export default function AddMachineScreen() {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // Add XP
-      await addXP(XP_VALUES.ADD_MACHINE, 'add_machine');
+      const xpResult = await addXP(XP_VALUES.ADD_MACHINE, 'add_machine');
+      if (!xpResult.success) {
+        console.warn('Failed to award XP for add_machine:', xpResult.error);
+      }
 
       // Check for badge unlocks (contributor badges)
       const newBadges = await checkAndAwardBadges(machine.id);

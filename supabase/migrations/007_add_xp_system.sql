@@ -4,33 +4,32 @@ ADD COLUMN IF NOT EXISTS xp INTEGER DEFAULT 0,
 ADD COLUMN IF NOT EXISTS level INTEGER DEFAULT 1;
 
 -- Function to increment XP and update Level automatically
+-- Returns the new XP and Level
 CREATE OR REPLACE FUNCTION increment_xp(xp_to_add INT)
-RETURNS VOID AS $$
+RETURNS TABLE (new_xp INT, new_level INT) AS $$
 DECLARE
-  current_xp INT;
-  new_xp INT;
-  new_level INT;
+  current_user_id UUID;
 BEGIN
-  -- Get current XP
-  SELECT xp INTO current_xp FROM profiles WHERE id = auth.uid();
+  -- Get current user ID
+  current_user_id := auth.uid();
   
-  -- Handle nulls
-  IF current_xp IS NULL THEN current_xp := 0; END IF;
-  
-  -- Calculate new XP
-  new_xp := current_xp + xp_to_add;
-  
-  -- Calculate new Level based on formula: Level = floor(0.1 * sqrt(xp)) + 1
-  -- Level 1: 0-99 XP
-  -- Level 2: 100-399 XP
-  -- Level 3: 400-899 XP
-  -- Level 10: 8100 XP
-  new_level := FLOOR(0.1 * SQRT(new_xp)) + 1;
-  
-  -- Update profile
+  -- Validation
+  IF current_user_id IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+
+  IF xp_to_add <= 0 THEN
+    RAISE EXCEPTION 'XP amount must be positive';
+  END IF;
+
+  -- Atomic Update and Return
+  RETURN QUERY
   UPDATE profiles 
-  SET xp = new_xp, 
-      level = new_level 
-  WHERE id = auth.uid();
+  SET 
+    xp = COALESCE(xp, 0) + xp_to_add,
+    -- Level formula: Level = floor(0.1 * sqrt(xp)) + 1
+    level = FLOOR(0.1 * SQRT(COALESCE(xp, 0) + xp_to_add)) + 1
+  WHERE id = current_user_id
+  RETURNING xp, level;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
