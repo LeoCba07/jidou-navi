@@ -316,7 +316,7 @@ export default function AddMachineScreen() {
 
       if (newBadges.length > 0) {
         // Show success alert, then badge popup, then navigate back
-        showSuccess(t('common.success'), t('addMachine.success'), () => {
+        showSuccess(t('common.success'), t('addMachine.successPending'), () => {
           showBadgePopup(newBadges, () => {
             tryRequestAppReview();
             router.back();
@@ -324,7 +324,7 @@ export default function AddMachineScreen() {
         }, 'OK', XP_VALUES.ADD_MACHINE);
       } else {
         // No badges - just show success and go back
-        showSuccess(t('common.success'), t('addMachine.success'), () => {
+        showSuccess(t('common.success'), t('addMachine.successPending'), () => {
           tryRequestAppReview();
           router.back();
         }, 'OK', XP_VALUES.ADD_MACHINE);

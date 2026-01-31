@@ -153,21 +153,23 @@ export default function AppModal() {
           <Pressable style={styles.content}>
             {/* XP Badge */}
             {xpAmount && (
-              <Animated.View style={[
-                styles.xpBadge,
-                {
-                  transform: [
-                    { scale: xpAnim },
-                    { translateY: xpAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [20, 0]
-                    })}
-                  ],
-                  opacity: xpAnim
-                }
-              ]}>
-                <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
-              </Animated.View>
+              <View style={styles.xpBadgeContainer}>
+                <Animated.View style={[
+                  styles.xpBadge,
+                  {
+                    transform: [
+                      { scale: xpAnim },
+                      { translateY: xpAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0]
+                      })}
+                    ],
+                    opacity: xpAnim
+                  }
+                ]}>
+                  <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
+                </Animated.View>
+              </View>
             )}
 
             {/* Title */}
@@ -224,6 +226,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   content: {
+    width: '100%',
+  },
+  xpBadgeContainer: {
     width: '100%',
     alignItems: 'center',
   },

@@ -347,13 +347,18 @@ export default function ProfileScreen() {
             <View style={styles.xpSection}>
               {(() => {
                 const progress = getLevelProgress(profile?.xp || 0);
+                const rawPercentage = Number(progress?.percentage);
+                const safePercentage = Number.isFinite(rawPercentage)
+                  ? Math.min(100, Math.max(0, rawPercentage))
+                  : 0;
+                
                 return (
                   <>
                     <View style={styles.levelBadge}>
-                      <Text style={styles.levelText}>{t('profile.level', { defaultValue: 'LVL' })} {progress.currentLevel}</Text>
+                      <Text style={styles.levelText}>{t('profile.level')} {progress.currentLevel}</Text>
                     </View>
                     <View style={styles.xpBarContainer}>
-                      <View style={[styles.xpBarFill, { width: `${progress.percentage}%` }]} />
+                      <View style={[styles.xpBarFill, { width: `${safePercentage}%` }]} />
                       <Text style={styles.xpText}>
                         {Math.floor(progress.currentXP)} / {Math.floor(progress.xpForNextLevel)} XP
                       </Text>
@@ -710,7 +715,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Silkscreen',
     color: '#2B2B2B',
-    lineHeight: 16,
+    lineHeight: 20,
   },
   bio: {
     fontSize: 14,
