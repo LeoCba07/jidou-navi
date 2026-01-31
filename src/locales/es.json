@@ -62,6 +62,7 @@
   "profile": {
     "title": "Perfil",
     "accountSettings": "Configuración de Cuenta",
+    "level": "NIVEL",
     "machinesAdded": "Máquinas Añadidas",
     "machinesVisited": "Máquinas Visitadas",
     "nextMilestone": "Siguiente",

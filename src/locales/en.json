@@ -62,6 +62,7 @@
   "profile": {
     "title": "Profile",
     "accountSettings": "Account Settings",
+    "level": "LVL",
     "machinesAdded": "Machines Added",
     "machinesVisited": "Machines Visited",
     "nextMilestone": "Next",

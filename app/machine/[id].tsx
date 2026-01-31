@@ -32,6 +32,7 @@ import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
 import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
+import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
 import { tryRequestAppReview } from '../../src/lib/review';
@@ -404,6 +405,12 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
 
+      // Add XP
+      await addXP(
+        stillExists ? XP_VALUES.VERIFY_MACHINE : XP_VALUES.CHECK_IN,
+        stillExists ? 'verify_machine' : 'check_in'
+      );
+
       Analytics.track('check_in', {
         machine_id: params.id,
         machine_name: params.name,
@@ -534,6 +541,9 @@ export default function MachineDetailScreen() {
       });
 
       if (insertError) throw insertError;
+
+      // Add XP
+      await addXP(XP_VALUES.PHOTO_UPLOAD, 'photo_upload');
 
       // Update local photos state
       setPhotos(prev => [...prev, publicUrl]);
