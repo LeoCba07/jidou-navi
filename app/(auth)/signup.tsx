@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -18,6 +19,7 @@ import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import CountryPicker from '../../src/components/CountryPicker';
 import { Country, getCountryByCode } from '../../src/lib/countries';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
@@ -104,18 +106,36 @@ export default function SignupScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      {/* Decorative pixel corners */}
+      <View style={styles.cornerTopLeft} />
+      <View style={styles.cornerTopRight} />
+      <View style={styles.cornerBottomLeft} />
+      <View style={styles.cornerBottomRight} />
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <Ionicons name="storefront-outline" size={48} color="#FF4B4B" />
+              <Image
+                source={require('../../assets/icon.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.logo}>JidouNavi</Text>
             <Text style={styles.subtitle}>{t('auth.createYourAccount')}</Text>
+          </View>
+
+          {/* Decorative divider */}
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <View style={styles.dividerDot} />
+            <View style={styles.dividerLine} />
           </View>
 
           {/* Form */}
@@ -123,13 +143,13 @@ export default function SignupScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.username')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="person-outline" size={20} color="#999" style={styles.inputIcon} />
+                <Ionicons name="person-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={username}
                   onChangeText={setUsername}
                   placeholder={t('auth.usernamePlaceholder')}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={COLORS.textLight}
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
@@ -144,7 +164,7 @@ export default function SignupScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={t('auth.selectCountry')}
               >
-                <Ionicons name="flag-outline" size={20} color="#999" style={styles.inputIcon} />
+                <Ionicons name="flag-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
                 {country ? (
                   <View style={styles.selectedCountry}>
                     <Text style={styles.countryFlag}>{getCountryByCode(country)?.flag}</Text>
@@ -153,20 +173,20 @@ export default function SignupScreen() {
                 ) : (
                   <Text style={styles.placeholder}>{t('auth.selectCountry')}</Text>
                 )}
-                <Ionicons name="chevron-down" size={20} color="#999" />
+                <Ionicons name="chevron-down" size={20} color={COLORS.textLight} />
               </Pressable>
             </View>
 
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.email')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="mail-outline" size={20} color="#999" style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={email}
                   onChangeText={setEmail}
                   placeholder={t('auth.emailPlaceholder')}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={COLORS.textLight}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -177,13 +197,13 @@ export default function SignupScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.password')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={password}
                   onChangeText={setPassword}
                   placeholder={t('auth.passwordPlaceholder')}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={COLORS.textLight}
                   secureTextEntry={!showPassword}
                 />
                 <Pressable
@@ -195,7 +215,7 @@ export default function SignupScreen() {
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
-                    color="#999"
+                    color={COLORS.textLight}
                   />
                 </Pressable>
               </View>
@@ -204,13 +224,13 @@ export default function SignupScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                   placeholder={t('auth.confirmPasswordPlaceholder')}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={COLORS.textLight}
                   secureTextEntry={!showConfirmPassword}
                 />
                 <Pressable
@@ -222,7 +242,7 @@ export default function SignupScreen() {
                   <Ionicons
                     name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
                     size={20}
-                    color="#999"
+                    color={COLORS.textLight}
                   />
                 </Pressable>
               </View>
@@ -264,7 +284,52 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF3E7',
+    backgroundColor: COLORS.background,
+  },
+  // Decorative pixel corners
+  cornerTopLeft: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    width: 24,
+    height: 24,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
+  },
+  cornerTopRight: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: 24,
+    height: 24,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
+  },
+  cornerBottomLeft: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    width: 24,
+    height: 24,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
+  },
+  cornerBottomRight: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 24,
+    height: 24,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
   },
   scrollContent: {
     flexGrow: 1,
@@ -273,136 +338,150 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xxl,
     paddingVertical: 40,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: SPACING.xl,
   },
   logoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 4,
-    backgroundColor: '#fff',
+    width: 90,
+    height: 90,
+    borderRadius: BORDER_RADIUS.pixel,
+    backgroundColor: COLORS.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
-    borderWidth: 3,
-    borderColor: '#FF4B4B',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 0,
-    elevation: 4,
+    marginBottom: SPACING.md,
+    borderWidth: 4,
+    borderColor: COLORS.primary,
+    ...SHADOWS.pixelLarge,
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
   },
   logo: {
     fontSize: 18,
-    fontFamily: 'PressStart2P',
-    color: '#2B2B2B',
-    marginBottom: 8,
+    fontFamily: FONTS.heading,
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+    letterSpacing: 1,
   },
   subtitle: {
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontSize: 14,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
+  },
+  // Decorative divider
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.xl,
+    paddingHorizontal: SPACING.xxxl,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: COLORS.primaryDark,
+  },
+  dividerDot: {
+    width: 8,
+    height: 8,
+    backgroundColor: COLORS.primary,
+    marginHorizontal: SPACING.sm,
   },
   form: {
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   field: {
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   label: {
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2B2B2B',
-    marginBottom: 8,
+    fontSize: 12,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    backgroundColor: COLORS.surface,
+    borderWidth: 3,
+    borderColor: COLORS.backgroundDark,
+    borderRadius: BORDER_RADIUS.pixel,
+    paddingHorizontal: SPACING.md,
+    ...SHADOWS.soft,
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: SPACING.sm,
   },
   input: {
     flex: 1,
-    paddingVertical: 14,
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#2B2B2B',
+    paddingVertical: 12,
+    fontSize: 15,
+    fontFamily: FONTS.body,
+    color: COLORS.text,
   },
   selectedCountry: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
-    gap: 10,
+    paddingVertical: 12,
+    gap: SPACING.sm,
   },
   countryFlag: {
-    fontSize: 20,
+    fontSize: 18,
   },
   countryName: {
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#2B2B2B',
+    fontSize: 15,
+    fontFamily: FONTS.body,
+    color: COLORS.text,
   },
   placeholder: {
     flex: 1,
-    paddingVertical: 14,
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#999',
+    paddingVertical: 12,
+    fontSize: 15,
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
   },
   eyeButton: {
-    padding: 4,
+    padding: SPACING.xs,
   },
   button: {
-    backgroundColor: '#FF4B4B',
-    paddingVertical: 16,
-    borderRadius: 2,
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.lg,
+    borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: SPACING.sm,
     borderWidth: 3,
-    borderColor: '#CC3C3C',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 0,
-    elevation: 4,
+    borderColor: COLORS.primaryDark,
+    ...SHADOWS.pixelLarge,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: 14,
     color: 'white',
-    fontFamily: 'Silkscreen',
+    fontFamily: FONTS.button,
+    letterSpacing: 1,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 6,
+    gap: SPACING.sm,
   },
   footerText: {
     fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
   },
   linkText: {
     fontSize: 14,
-    color: '#FF4B4B',
-    fontFamily: 'Silkscreen',
+    color: COLORS.primary,
+    fontFamily: FONTS.button,
   },
 });

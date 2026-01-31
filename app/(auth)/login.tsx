@@ -9,12 +9,14 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -55,94 +57,111 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Decorative pixel corners */}
+      <View style={styles.cornerTopLeft} />
+      <View style={styles.cornerTopRight} />
+      <View style={styles.cornerBottomLeft} />
+      <View style={styles.cornerBottomRight} />
+
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.content}>
-        {/* Logo / Title */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Ionicons name="storefront-outline" size={48} color="#FF4B4B" />
-          </View>
-          <Text style={styles.logo}>JidouNavi</Text>
-          <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          <View style={styles.field}>
-            <Text style={styles.label}>{t('auth.email')}</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#999" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder={t('auth.emailPlaceholder')}
-                placeholderTextColor="#999"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
+          {/* Logo / Title */}
+          <View style={styles.header}>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../assets/icon.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
               />
             </View>
+            <Text style={styles.logo}>JidouNavi</Text>
+            <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
           </View>
 
-          <View style={styles.field}>
-            <Text style={styles.label}>{t('auth.password')}</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#999" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder={t('auth.passwordPlaceholder')}
-                placeholderTextColor="#999"
-                secureTextEntry={!showPassword}
-              />
-              <Pressable
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeButton}
-                accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
-                accessibilityRole="button"
-              >
-                <Ionicons
-                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                  size={20}
-                  color="#999"
+          {/* Decorative divider */}
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <View style={styles.dividerDot} />
+            <View style={styles.dividerLine} />
+          </View>
+
+          {/* Form */}
+          <View style={styles.form}>
+            <View style={styles.field}>
+              <Text style={styles.label}>{t('auth.email')}</Text>
+              <View style={styles.inputContainer}>
+                <Ionicons name="mail-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder={t('auth.emailPlaceholder')}
+                  placeholderTextColor={COLORS.textLight}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
                 />
-              </Pressable>
+              </View>
             </View>
+
+            <View style={styles.field}>
+              <Text style={styles.label}>{t('auth.password')}</Text>
+              <View style={styles.inputContainer}>
+                <Ionicons name="lock-closed-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  placeholderTextColor={COLORS.textLight}
+                  secureTextEntry={!showPassword}
+                />
+                <Pressable
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeButton}
+                  accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+                  accessibilityRole="button"
+                >
+                  <Ionicons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color={COLORS.textLight}
+                  />
+                </Pressable>
+              </View>
+            </View>
+
+            <Pressable
+              style={styles.forgotLink}
+              onPress={() => router.push('/(auth)/forgot-password')}
+            >
+              <Text style={styles.forgotText}>{t('auth.forgotPassword')}</Text>
+            </Pressable>
+
+            <Pressable
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.buttonText}>{t('auth.login')}</Text>
+              )}
+            </Pressable>
           </View>
 
-          <Pressable
-            style={styles.forgotLink}
-            onPress={() => router.push('/(auth)/forgot-password')}
-          >
-            <Text style={styles.forgotText}>{t('auth.forgotPassword')}</Text>
-          </Pressable>
-
-          <Pressable
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text style={styles.buttonText}>{t('auth.login')}</Text>
-            )}
-          </Pressable>
+          {/* Sign up link */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>{t('auth.dontHaveAccount')}</Text>
+            <Pressable onPress={() => router.push('/(auth)/signup')}>
+              <Text style={styles.linkText}>{t('auth.signup')}</Text>
+            </Pressable>
+          </View>
         </View>
-
-        {/* Sign up link */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>{t('auth.dontHaveAccount')}</Text>
-          <Pressable onPress={() => router.push('/(auth)/signup')}>
-            <Text style={styles.linkText}>{t('auth.signup')}</Text>
-          </Pressable>
-        </View>
-      </View>
       </KeyboardAvoidingView>
     </View>
   );
@@ -151,7 +170,48 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF3E7',
+    backgroundColor: COLORS.background,
+  },
+  // Decorative pixel corners
+  cornerTopLeft: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    width: 24,
+    height: 24,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: COLORS.primary,
+  },
+  cornerTopRight: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: 24,
+    height: 24,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderColor: COLORS.primary,
+  },
+  cornerBottomLeft: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    width: 24,
+    height: 24,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: COLORS.primary,
+  },
+  cornerBottomRight: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 24,
+    height: 24,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderColor: COLORS.primary,
   },
   keyboardView: {
     flex: 1,
@@ -159,100 +219,113 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xxl,
     paddingBottom: 40,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: SPACING.xxl,
   },
   logoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 4,
-    backgroundColor: '#fff',
+    width: 100,
+    height: 100,
+    borderRadius: BORDER_RADIUS.pixel,
+    backgroundColor: COLORS.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
-    borderWidth: 3,
-    borderColor: '#FF4B4B',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 0,
-    elevation: 4,
+    marginBottom: SPACING.lg,
+    borderWidth: 4,
+    borderColor: COLORS.primary,
+    ...SHADOWS.pixelLarge,
+  },
+  logoImage: {
+    width: 80,
+    height: 80,
   },
   logo: {
-    fontSize: 18,
-    fontFamily: 'PressStart2P',
-    color: '#2B2B2B',
-    marginBottom: 8,
+    fontSize: 20,
+    fontFamily: FONTS.heading,
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    letterSpacing: 1,
   },
   subtitle: {
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontSize: 15,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
+  },
+  // Decorative divider
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.xxl,
+    paddingHorizontal: SPACING.xxxl,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: COLORS.primaryDark,
+  },
+  dividerDot: {
+    width: 8,
+    height: 8,
+    backgroundColor: COLORS.primary,
+    marginHorizontal: SPACING.sm,
   },
   form: {
-    marginBottom: 24,
+    marginBottom: SPACING.xxl,
   },
   field: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   label: {
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2B2B2B',
-    marginBottom: 8,
+    fontSize: 13,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    backgroundColor: COLORS.surface,
+    borderWidth: 3,
+    borderColor: COLORS.backgroundDark,
+    borderRadius: BORDER_RADIUS.pixel,
+    paddingHorizontal: SPACING.md,
+    ...SHADOWS.soft,
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: SPACING.sm,
   },
   input: {
     flex: 1,
     paddingVertical: 14,
     fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#2B2B2B',
+    fontFamily: FONTS.body,
+    color: COLORS.text,
   },
   eyeButton: {
-    padding: 4,
+    padding: SPACING.xs,
   },
   forgotLink: {
     alignSelf: 'flex-end',
-    marginBottom: 24,
+    marginBottom: SPACING.xxl,
   },
   forgotText: {
-    fontSize: 14,
-    fontFamily: 'Silkscreen',
-    color: '#3C91E6',
+    fontSize: 13,
+    fontFamily: FONTS.button,
+    color: COLORS.secondary,
   },
   button: {
-    backgroundColor: '#FF4B4B',
-    paddingVertical: 16,
-    borderRadius: 2,
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.lg,
+    borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#CC3C3C',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 0,
-    elevation: 4,
+    borderColor: COLORS.primaryDark,
+    ...SHADOWS.pixelLarge,
   },
   buttonDisabled: {
     opacity: 0.6,
@@ -260,21 +333,22 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 15,
     color: 'white',
-    fontFamily: 'Silkscreen',
+    fontFamily: FONTS.button,
+    letterSpacing: 1,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 6,
+    gap: SPACING.sm,
   },
   footerText: {
     fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
   },
   linkText: {
     fontSize: 14,
-    color: '#FF4B4B',
-    fontFamily: 'Silkscreen',
+    color: COLORS.primary,
+    fontFamily: FONTS.button,
   },
 });
