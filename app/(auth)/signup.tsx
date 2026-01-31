@@ -16,6 +16,8 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import CountryPicker from '../../src/components/CountryPicker';
+import { Country, getCountryByCode } from '../../src/lib/countries';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
@@ -26,6 +28,8 @@ export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [country, setCountry] = useState<string | null>(null);
+  const [showCountryPicker, setShowCountryPicker] = useState(false);
   const { showError, showSuccess } = useAppModal();
 
   async function handleSignup() {
@@ -60,6 +64,10 @@ export default function SignupScreen() {
       showError(t('common.error'), t('auth.validation.passwordsNoMatch'));
       return;
     }
+    if (!country) {
+      showError(t('common.error'), t('auth.validation.selectCountry'));
+      return;
+    }
 
     setLoading(true);
 
@@ -70,6 +78,7 @@ export default function SignupScreen() {
       options: {
         data: {
           username: username.trim(),
+          country: country,
         },
       },
     });
@@ -125,6 +134,27 @@ export default function SignupScreen() {
                   autoCorrect={false}
                 />
               </View>
+            </View>
+
+            <View style={styles.field}>
+              <Text style={styles.label}>{t('auth.country')}</Text>
+              <Pressable
+                style={styles.inputContainer}
+                onPress={() => setShowCountryPicker(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t('auth.selectCountry')}
+              >
+                <Ionicons name="flag-outline" size={20} color="#999" style={styles.inputIcon} />
+                {country ? (
+                  <View style={styles.selectedCountry}>
+                    <Text style={styles.countryFlag}>{getCountryByCode(country)?.flag}</Text>
+                    <Text style={styles.countryName}>{getCountryByCode(country)?.name}</Text>
+                  </View>
+                ) : (
+                  <Text style={styles.placeholder}>{t('auth.selectCountry')}</Text>
+                )}
+                <Ionicons name="chevron-down" size={20} color="#999" />
+              </Pressable>
             </View>
 
             <View style={styles.field}>
@@ -220,6 +250,13 @@ export default function SignupScreen() {
           </View>
         </View>
       </ScrollView>
+
+      <CountryPicker
+        visible={showCountryPicker}
+        selectedCountry={country}
+        onSelect={(selectedCountry: Country) => setCountry(selectedCountry.code)}
+        onClose={() => setShowCountryPicker(false)}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -305,6 +342,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter',
     color: '#2B2B2B',
+  },
+  selectedCountry: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    gap: 10,
+  },
+  countryFlag: {
+    fontSize: 20,
+  },
+  countryName: {
+    fontSize: 16,
+    fontFamily: 'Inter',
+    color: '#2B2B2B',
+  },
+  placeholder: {
+    flex: 1,
+    paddingVertical: 14,
+    fontSize: 16,
+    fontFamily: 'Inter',
+    color: '#999',
   },
   eyeButton: {
     padding: 4,
