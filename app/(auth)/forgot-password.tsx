@@ -9,12 +9,14 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
 
 export default function ForgotPasswordScreen() {
   const { t } = useTranslation();
@@ -50,14 +52,28 @@ export default function ForgotPasswordScreen() {
   if (sent) {
     return (
       <View style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.successIcon}>
-            <Ionicons name="mail-outline" size={48} color="#FF4B4B" />
+        {/* Decorative pixel corners */}
+        <View style={styles.cornerTopLeft} />
+        <View style={styles.cornerTopRight} />
+        <View style={styles.cornerBottomLeft} />
+        <View style={styles.cornerBottomRight} />
+
+        <View style={styles.successContent}>
+          <View style={styles.successIconContainer}>
+            <Ionicons name="mail-outline" size={48} color={COLORS.primary} />
           </View>
           <Text style={styles.successTitle}>{t('auth.checkYourEmail')}</Text>
           <Text style={styles.successText}>
             {t('auth.resetEmailSent', { email })}
           </Text>
+
+          {/* Decorative divider */}
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <View style={styles.dividerDot} />
+            <View style={styles.dividerLine} />
+          </View>
+
           <Pressable
             style={styles.button}
             onPress={() => router.replace('/(auth)/login')}
@@ -74,34 +90,59 @@ export default function ForgotPasswordScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      {/* Decorative pixel corners */}
+      <View style={styles.cornerTopLeft} />
+      <View style={styles.cornerTopRight} />
+      <View style={styles.cornerBottomLeft} />
+      <View style={styles.cornerBottomRight} />
+
       <View style={styles.content}>
         {/* Back button */}
         <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#2B2B2B" />
+          <View style={styles.backButtonInner}>
+            <Ionicons name="arrow-back" size={20} color={COLORS.text} />
+          </View>
         </Pressable>
 
-        {/* Header */}
+        {/* Header with logo */}
         <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('../../assets/icon.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </View>
           <Text style={styles.title}>{t('auth.forgotPasswordTitle')}</Text>
           <Text style={styles.subtitle}>
             {t('auth.forgotPasswordSubtitle')}
           </Text>
         </View>
 
+        {/* Decorative divider */}
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <View style={styles.dividerDot} />
+          <View style={styles.dividerLine} />
+        </View>
+
         {/* Form */}
         <View style={styles.form}>
           <View style={styles.field}>
             <Text style={styles.label}>{t('auth.email')}</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder={t('auth.emailPlaceholder')}
-              placeholderTextColor="#999"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+            <View style={styles.inputContainer}>
+              <Ionicons name="mail-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder={t('auth.emailPlaceholder')}
+                placeholderTextColor={COLORS.textLight}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
           </View>
 
           <Pressable
@@ -124,94 +165,210 @@ export default function ForgotPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF3E7',
+    backgroundColor: COLORS.background,
+  },
+  // Decorative pixel corners
+  cornerTopLeft: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    width: 24,
+    height: 24,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
+  },
+  cornerTopRight: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: 24,
+    height: 24,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
+  },
+  cornerBottomLeft: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    width: 24,
+    height: 24,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
+  },
+  cornerBottomRight: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 24,
+    height: 24,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderColor: COLORS.primary,
+    zIndex: 10,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xxl,
     paddingTop: 60,
   },
   backButton: {
-    marginBottom: 24,
+    marginBottom: SPACING.xxl,
   },
-  header: {
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 20,
-    fontFamily: 'DotGothic16',
-    color: '#2B2B2B',
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#666',
-    lineHeight: 22,
-  },
-  form: {
-    marginBottom: 24,
-  },
-  field: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2B2B2B',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#2B2B2B',
-  },
-  button: {
-    backgroundColor: '#FF4B4B',
-    paddingVertical: 14,
-    borderRadius: 2,
+  backButtonInner: {
+    width: 40,
+    height: 40,
+    borderRadius: BORDER_RADIUS.pixel,
+    backgroundColor: COLORS.surface,
+    justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#CC3C3C',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 0,
-    elevation: 4,
+    borderColor: COLORS.backgroundDark,
+    ...SHADOWS.pixel,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: SPACING.xxl,
+  },
+  logoContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: BORDER_RADIUS.pixel,
+    backgroundColor: COLORS.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+    borderWidth: 4,
+    borderColor: COLORS.primary,
+    ...SHADOWS.pixelLarge,
+  },
+  logoImage: {
+    width: 60,
+    height: 60,
+  },
+  title: {
+    fontSize: 18,
+    fontFamily: FONTS.title,
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 14,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
+    lineHeight: 20,
+    textAlign: 'center',
+    paddingHorizontal: SPACING.lg,
+  },
+  // Decorative divider
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.xxl,
+    paddingHorizontal: SPACING.xxxl,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: COLORS.primaryDark,
+  },
+  dividerDot: {
+    width: 8,
+    height: 8,
+    backgroundColor: COLORS.primary,
+    marginHorizontal: SPACING.sm,
+  },
+  form: {
+    marginBottom: SPACING.xxl,
+  },
+  field: {
+    marginBottom: SPACING.xl,
+  },
+  label: {
+    fontSize: 13,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderWidth: 3,
+    borderColor: COLORS.backgroundDark,
+    borderRadius: BORDER_RADIUS.pixel,
+    paddingHorizontal: SPACING.md,
+    ...SHADOWS.soft,
+  },
+  inputIcon: {
+    marginRight: SPACING.sm,
+  },
+  input: {
+    flex: 1,
+    paddingVertical: 14,
+    fontSize: 16,
+    fontFamily: FONTS.body,
+    color: COLORS.text,
+  },
+  button: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.lg,
+    borderRadius: BORDER_RADIUS.pixel,
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: COLORS.primaryDark,
+    ...SHADOWS.pixelLarge,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: 14,
     color: 'white',
-    fontFamily: 'Silkscreen',
+    fontFamily: FONTS.button,
+    letterSpacing: 1,
   },
   // Success state
-  successIcon: {
+  successContent: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: SPACING.xxl,
+  },
+  successIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: BORDER_RADIUS.pixel,
+    backgroundColor: COLORS.surface,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
-    marginTop: 60,
+    alignSelf: 'center',
+    marginBottom: SPACING.xxl,
+    borderWidth: 4,
+    borderColor: COLORS.primary,
+    ...SHADOWS.pixelLarge,
   },
   successTitle: {
-    fontSize: 20,
-    fontFamily: 'DotGothic16',
-    color: '#2B2B2B',
+    fontSize: 18,
+    fontFamily: FONTS.title,
+    color: COLORS.text,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   successText: {
-    fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontSize: 14,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
     textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 22,
+    marginBottom: SPACING.xxl,
+    lineHeight: 20,
+    paddingHorizontal: SPACING.lg,
   },
 });
