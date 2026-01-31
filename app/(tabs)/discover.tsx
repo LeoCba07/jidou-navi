@@ -23,6 +23,7 @@ import {
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { LeaderboardScreen } from '../../src/components/leaderboard';
 
 export default function DiscoverScreen() {
   const { t } = useTranslation();
@@ -193,6 +194,13 @@ export default function DiscoverScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#FF4B4B" />
         }
       >
+        {/* Leaderboard Section */}
+        {user && (
+          <View style={styles.section}>
+            <LeaderboardScreen />
+          </View>
+        )}
+
         {/* Popular Machines Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

@@ -397,6 +397,30 @@
       "section12Text": "Para preguntas sobre estos términos, contáctanos en: jidou.navi@gmail.com"
     }
   },
+  "friends": {
+    "title": "Amigos",
+    "searchPlaceholder": "Buscar usuarios...",
+    "pendingRequests": "Solicitudes Pendientes",
+    "yourFriends": "Tus Amigos",
+    "noFriends": "Aun no tienes amigos. Busca usuarios para agregar!",
+    "noRequests": "Sin solicitudes pendientes",
+    "addFriend": "Agregar",
+    "friend": "Amigo",
+    "requestSent": "Pendiente",
+    "requestReceived": "Pendiente",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "remove": "Eliminar",
+    "removeFriendConfirm": "Eliminar a {{name}} de amigos?"
+  },
+  "leaderboard": {
+    "title": "Clasificacion",
+    "global": "Global",
+    "friends": "Amigos",
+    "thisWeek": "Esta Semana",
+    "noFriendsYet": "Agrega amigos para ver sus posiciones!",
+    "noData": "Aun no hay datos de clasificacion"
+  },
   "admin": {
     "dashboard": "Panel de Admin",
     "reviewSubmissions": "Revisar envíos pendientes",

@@ -1,0 +1,188 @@
+// User search result component
+import { useState } from 'react';
+import { View, Text, Pressable, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
+import type { UserSearchResult as UserSearchResultType } from '../../store/friendsStore';
+
+const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
+
+interface UserSearchResultProps {
+  user: UserSearchResultType;
+  onSendRequest: (userId: string) => Promise<{ success: boolean; autoAccepted?: boolean }>;
+}
+
+export default function UserSearchResult({ user, onSendRequest }: UserSearchResultProps) {
+  const { t } = useTranslation();
+  const [isSending, setIsSending] = useState(false);
+  const [localStatus, setLocalStatus] = useState(user.friendship_status);
+
+  async function handleSendRequest() {
+    if (localStatus !== 'none') return;
+    setIsSending(true);
+    const result = await onSendRequest(user.id);
+    if (result.success) {
+      setLocalStatus(result.autoAccepted ? 'accepted' : 'pending_sent');
+    }
+    setIsSending(false);
+  }
+
+  function renderActionButton() {
+    if (localStatus === 'accepted') {
+      return (
+        <View style={styles.friendBadge}>
+          <Ionicons name="checkmark-circle" size={16} color="#22C55E" />
+          <Text style={styles.friendText}>{t('friends.friend')}</Text>
+        </View>
+      );
+    }
+
+    if (localStatus === 'pending_sent') {
+      return (
+        <View style={styles.pendingBadge}>
+          <Ionicons name="time-outline" size={14} color="#D97706" />
+          <Text style={styles.pendingText}>{t('friends.requestSent')}</Text>
+        </View>
+      );
+    }
+
+    if (localStatus === 'pending_received') {
+      return (
+        <View style={styles.pendingBadge}>
+          <Text style={styles.pendingText}>{t('friends.requestReceived')}</Text>
+        </View>
+      );
+    }
+
+    return (
+      <Pressable
+        style={styles.addButton}
+        onPress={handleSendRequest}
+        disabled={isSending}
+        accessibilityRole="button"
+        accessibilityLabel={t('friends.addFriend')}
+      >
+        {isSending ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <>
+            <Ionicons name="person-add" size={14} color="#fff" />
+            <Text style={styles.addText}>{t('friends.addFriend')}</Text>
+          </>
+        )}
+      </Pressable>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <Image
+        source={user.avatar_url ? { uri: user.avatar_url } : DEFAULT_AVATAR}
+        style={styles.avatar}
+      />
+      <View style={styles.info}>
+        <View style={styles.nameRow}>
+          <Text style={styles.displayName} numberOfLines={1}>
+            {user.display_name || user.username}
+          </Text>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>Lv.{user.level}</Text>
+          </View>
+        </View>
+        <Text style={styles.username}>@{user.username}</Text>
+      </View>
+      {renderActionButton()}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 2,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  info: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+  },
+  displayName: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: '#2B2B2B',
+    flex: 1,
+  },
+  levelBadge: {
+    backgroundColor: '#2B2B2B',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 2,
+  },
+  levelText: {
+    fontSize: 9,
+    fontFamily: 'Silkscreen',
+    color: '#fff',
+  },
+  username: {
+    fontSize: 11,
+    fontFamily: 'Inter',
+    color: '#999',
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 2,
+    backgroundColor: '#3C91E6',
+  },
+  addText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#fff',
+  },
+  pendingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 2,
+    backgroundColor: '#FEF3C7',
+  },
+  pendingText: {
+    fontSize: 11,
+    fontFamily: 'Inter-SemiBold',
+    color: '#D97706',
+  },
+  friendBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  friendText: {
+    fontSize: 11,
+    fontFamily: 'Inter-SemiBold',
+    color: '#22C55E',
+  },
+});
