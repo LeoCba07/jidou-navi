@@ -30,6 +30,8 @@
     "confirmPasswordPlaceholder": "Vuelve a ingresar la contraseña",
     "username": "Nombre de usuario",
     "usernamePlaceholder": "Elige un nombre de usuario",
+    "country": "País",
+    "selectCountry": "Seleccionar País",
     "createAccount": "Crear Cuenta",
     "dontHaveAccount": "¿No tienes una cuenta?",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
@@ -48,7 +50,8 @@
       "enterUsername": "Por favor ingresa un nombre de usuario",
       "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
       "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
-      "passwordsNoMatch": "Las contraseñas no coinciden"
+      "passwordsNoMatch": "Las contraseñas no coinciden",
+      "selectCountry": "Por favor selecciona tu país"
     },
     "errors": {
       "loginFailed": "Error al iniciar sesión",
