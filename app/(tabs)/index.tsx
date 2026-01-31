@@ -35,6 +35,7 @@ export default function MapScreen() {
 
   // Category filter state from Zustand
   const selectedCategories = useUIStore((state) => state.selectedCategories);
+  const clearCategories = useUIStore((state) => state.clearCategories);
 
   // Machines from cache store
   const machines = useMachinesCacheStore((state) => state.visibleMachines);
@@ -189,6 +190,9 @@ export default function MapScreen() {
 
     // Clear any open preview card first
     setSelectedMachine(null);
+
+    // Reset category filter so the searched machine is always visible
+    clearCategories();
 
     // Center map on the selected result
     cameraRef.current.setCamera({
