@@ -80,7 +80,7 @@ export default function LoginScreen() {
               style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={styles.logo}>JidouNavi</Text>
+            <Text style={styles.logo}>Jidou Navi</Text>
             <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
           </View>
 
@@ -195,8 +195,8 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: FONTS.heading,
     color: COLORS.text,
-    marginBottom: SPACING.xs,
-    letterSpacing: 2,
+    marginBottom: SPACING.md,
+    letterSpacing: 1,
   },
   subtitle: {
     fontSize: 15,

@@ -19,8 +19,8 @@ export default function WelcomeScreen() {
             style={styles.logoImage}
             resizeMode="contain"
           />
-          <Text style={styles.title}>JidouNavi</Text>
-          <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
+          <Text style={styles.title}>Jidou Navi</Text>
+          <Text style={styles.subtitle}>{t('auth.welcomeMessage')}</Text>
         </View>
 
         {/* Buttons */}
@@ -31,6 +31,13 @@ export default function WelcomeScreen() {
           >
             <Text style={styles.loginButtonText}>{t('auth.login')}</Text>
           </Pressable>
+
+          {/* OR divider */}
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.dividerLine} />
+          </View>
 
           <Pressable
             style={styles.signupButton}
@@ -59,15 +66,15 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xxxl,
   },
   logoImage: {
-    width: 170,
-    height: 170,
+    width: 220,
+    height: 220,
   },
   title: {
     fontSize: 25,
     fontFamily: FONTS.heading,
     color: COLORS.text,
-    letterSpacing: 2,
-    marginBottom: SPACING.xs,
+    letterSpacing: 1,
+    marginBottom: SPACING.xl,
   },
   subtitle: {
     fontSize: 15,
@@ -77,6 +84,22 @@ const styles = StyleSheet.create({
   },
   buttons: {
     gap: SPACING.md,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: SPACING.xs,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: COLORS.textLight,
+  },
+  dividerText: {
+    marginHorizontal: SPACING.md,
+    fontSize: 13,
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
   },
   loginButton: {
     backgroundColor: COLORS.primary,
