@@ -74,6 +74,11 @@ export default function ProfileScreen() {
   const [friendsModalVisible, setFriendsModalVisible] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  // Reset image error whenever the profile avatar URL changes so new avatars are attempted
+  useEffect(() => {
+    setImageError(false);
+  }, [profile?.avatar_url]);
+
   async function handleEditAvatar() {
     if (!user) return;
 
