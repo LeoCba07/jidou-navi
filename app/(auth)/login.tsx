@@ -11,6 +11,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +21,7 @@ import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/
 
 export default function LoginScreen() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +59,15 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Back button */}
+      <Pressable
+        style={[styles.backButton, { top: insets.top + 12 }]}
+        onPress={() => router.canGoBack() ? router.back() : router.replace('/(auth)')}
+        hitSlop={12}
+      >
+        <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+      </Pressable>
+
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -142,7 +153,7 @@ export default function LoginScreen() {
           {/* Sign up link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>{t('auth.dontHaveAccount')}</Text>
-            <Pressable onPress={() => router.push('/(auth)/signup')}>
+            <Pressable onPress={() => router.replace('/(auth)/signup')}>
               <Text style={styles.linkText}>{t('auth.signup')}</Text>
             </Pressable>
           </View>
@@ -157,6 +168,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  backButton: {
+    position: 'absolute',
+    left: SPACING.lg,
+    zIndex: 10,
+    padding: SPACING.sm,
+  },
   keyboardView: {
     flex: 1,
   },
@@ -168,12 +185,11 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: SPACING.xxl,
+    marginBottom: SPACING.md,
   },
   logoImage: {
-    width: 100,
-    height: 100,
-    marginBottom: SPACING.lg,
+    width: 200,
+    height: 200,
   },
   logo: {
     fontSize: 20,
@@ -236,6 +252,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.primary,
     paddingVertical: SPACING.lg,
+    minHeight: 52,
+    justifyContent: 'center',
     borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     borderWidth: 3,

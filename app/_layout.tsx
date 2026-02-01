@@ -147,8 +147,8 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!user && !inAuthGroup) {
-      // Not logged in, redirect to login
-      router.replace('/(auth)/login');
+      // Not logged in, redirect to welcome
+      router.replace('/(auth)');
     } else if (user && inAuthGroup) {
       // Logged in, redirect to main app
       router.replace('/(tabs)');

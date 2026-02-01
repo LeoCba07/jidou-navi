@@ -12,6 +12,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,7 @@ import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/
 
 export default function SignupScreen() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -106,6 +108,15 @@ export default function SignupScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      {/* Back button */}
+      <Pressable
+        style={[styles.backButton, { top: insets.top + 12 }]}
+        onPress={() => router.canGoBack() ? router.back() : router.replace('/(auth)')}
+        hitSlop={12}
+      >
+        <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+      </Pressable>
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
@@ -249,7 +260,7 @@ export default function SignupScreen() {
           {/* Login link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>{t('auth.alreadyHaveAccount')}</Text>
-            <Pressable onPress={() => router.back()}>
+            <Pressable onPress={() => router.replace('/(auth)/login')}>
               <Text style={styles.linkText}>{t('auth.login')}</Text>
             </Pressable>
           </View>
@@ -270,35 +281,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+    paddingTop: SPACING.sm,
+  },
+  backButton: {
+    position: 'absolute',
+    left: SPACING.lg,
+    zIndex: 10,
+    padding: SPACING.sm,
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 60,
+    paddingTop: 60,
+    paddingBottom: 40,
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: SPACING.xxl,
-    paddingVertical: 40,
   },
   header: {
     alignItems: 'center',
-    marginBottom: SPACING.xl,
-  },
-  logoImage: {
-    width: 90,
-    height: 90,
     marginBottom: SPACING.md,
   },
+  logoImage: {
+    width: 170,
+    height: 170,
+  },
   logo: {
-    fontSize: 18,
+    fontSize: 25,
     fontFamily: FONTS.heading,
     color: COLORS.text,
     marginBottom: SPACING.xs,
-    letterSpacing: 1,
+    letterSpacing: 2,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
@@ -364,6 +380,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.primary,
     paddingVertical: SPACING.lg,
+    minHeight: 52,
+    justifyContent: 'center',
     borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     marginTop: SPACING.sm,
@@ -375,7 +393,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'white',
     fontFamily: FONTS.button,
     letterSpacing: 1,
@@ -386,12 +404,12 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   footerText: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
   linkText: {
-    fontSize: 14,
+    fontSize: 15,
     color: COLORS.primary,
     fontFamily: FONTS.button,
   },
