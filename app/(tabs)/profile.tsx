@@ -72,6 +72,12 @@ export default function ProfileScreen() {
     progress: { current: number; required: number };
   } | null>(null);
   const [friendsModalVisible, setFriendsModalVisible] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  // Reset image error whenever the profile avatar URL changes so new avatars are attempted
+  useEffect(() => {
+    setImageError(false);
+  }, [profile?.avatar_url]);
 
   async function handleEditAvatar() {
     if (!user) return;
@@ -92,6 +98,8 @@ export default function ProfileScreen() {
 
       if (!result.canceled && result.assets[0]) {
         setUploadingAvatar(true);
+        // Reset error state on new upload attempt
+        setImageError(false);
         const asset = result.assets[0];
         const fileName = `avatar_${Date.now()}.jpg`;
         
@@ -346,11 +354,12 @@ export default function ProfileScreen() {
               <Image
                 key={avatarTimestamp}
                 source={
-                  profile?.avatar_url
+                  !imageError && profile?.avatar_url
                     ? { uri: `${profile.avatar_url.split('?')[0]}?t=${avatarTimestamp}` }
                     : DEFAULT_AVATAR
                 }
                 style={styles.avatar}
+                onError={() => setImageError(true)}
               />
               <View style={styles.editAvatarButton}>
                 {uploadingAvatar ? (
