@@ -317,6 +317,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
+    paddingBottom: SPACING.sm,
   },
   form: {
     marginBottom: SPACING.xl,

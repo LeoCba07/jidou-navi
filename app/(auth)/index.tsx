@@ -59,15 +59,15 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xxxl,
   },
   logoImage: {
-    width: 200,
-    height: 200,
+    width: 170,
+    height: 170,
   },
   title: {
-    fontSize: 28,
+    fontSize: 25,
     fontFamily: FONTS.heading,
     color: COLORS.text,
     letterSpacing: 2,
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.xs,
   },
   subtitle: {
     fontSize: 15,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.pixelLarge,
   },
   loginButtonText: {
-    fontSize: 15,
+    fontSize: 16,
     color: 'white',
     fontFamily: FONTS.button,
     letterSpacing: 1,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.soft,
   },
   signupButtonText: {
-    fontSize: 15,
+    fontSize: 16,
     color: COLORS.text,
     fontFamily: FONTS.button,
     letterSpacing: 1,

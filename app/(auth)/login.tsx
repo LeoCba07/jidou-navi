@@ -188,20 +188,21 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   logoImage: {
-    width: 200,
-    height: 200,
+    width: 170,
+    height: 170,
   },
   logo: {
-    fontSize: 20,
+    fontSize: 25,
     fontFamily: FONTS.heading,
     color: COLORS.text,
-    marginBottom: SPACING.sm,
-    letterSpacing: 1,
+    marginBottom: SPACING.xs,
+    letterSpacing: 2,
   },
   subtitle: {
     fontSize: 15,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
+    paddingBottom: SPACING.lg,
   },
   form: {
     marginBottom: SPACING.xxl,
@@ -210,10 +211,10 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   label: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.xs,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: 16,
     color: 'white',
     fontFamily: FONTS.button,
     letterSpacing: 1,
@@ -275,12 +276,12 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   footerText: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
   linkText: {
-    fontSize: 14,
+    fontSize: 15,
     color: COLORS.primary,
     fontFamily: FONTS.button,
   },
