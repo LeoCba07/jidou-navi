@@ -106,12 +106,6 @@ export default function SignupScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      {/* Decorative pixel corners */}
-      <View style={styles.cornerTopLeft} />
-      <View style={styles.cornerTopRight} />
-      <View style={styles.cornerBottomLeft} />
-      <View style={styles.cornerBottomRight} />
-
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
@@ -120,22 +114,13 @@ export default function SignupScreen() {
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Image
-                source={require('../../assets/icon.png')}
-                style={styles.logoImage}
-                resizeMode="contain"
-              />
-            </View>
+            <Image
+              source={require('../../assets/icon.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
             <Text style={styles.logo}>JidouNavi</Text>
             <Text style={styles.subtitle}>{t('auth.createYourAccount')}</Text>
-          </View>
-
-          {/* Decorative divider */}
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <View style={styles.dividerDot} />
-            <View style={styles.dividerLine} />
           </View>
 
           {/* Form */}
@@ -286,51 +271,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Decorative pixel corners
-  cornerTopLeft: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    width: 24,
-    height: 24,
-    borderTopWidth: 4,
-    borderLeftWidth: 4,
-    borderColor: COLORS.primary,
-    zIndex: 10,
-  },
-  cornerTopRight: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    width: 24,
-    height: 24,
-    borderTopWidth: 4,
-    borderRightWidth: 4,
-    borderColor: COLORS.primary,
-    zIndex: 10,
-  },
-  cornerBottomLeft: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    width: 24,
-    height: 24,
-    borderBottomWidth: 4,
-    borderLeftWidth: 4,
-    borderColor: COLORS.primary,
-    zIndex: 10,
-  },
-  cornerBottomRight: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 24,
-    height: 24,
-    borderBottomWidth: 4,
-    borderRightWidth: 4,
-    borderColor: COLORS.primary,
-    zIndex: 10,
-  },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 60,
@@ -345,21 +285,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: SPACING.xl,
   },
-  logoContainer: {
+  logoImage: {
     width: 90,
     height: 90,
-    borderRadius: BORDER_RADIUS.pixel,
-    backgroundColor: COLORS.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginBottom: SPACING.md,
-    borderWidth: 4,
-    borderColor: COLORS.primary,
-    ...SHADOWS.pixelLarge,
-  },
-  logoImage: {
-    width: 70,
-    height: 70,
   },
   logo: {
     fontSize: 18,
@@ -372,24 +301,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
-  },
-  // Decorative divider
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: SPACING.xl,
-    paddingHorizontal: SPACING.xxxl,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 2,
-    backgroundColor: COLORS.primaryDark,
-  },
-  dividerDot: {
-    width: 8,
-    height: 8,
-    backgroundColor: COLORS.primary,
-    marginHorizontal: SPACING.sm,
   },
   form: {
     marginBottom: SPACING.xl,
