@@ -173,6 +173,7 @@ export default function SignupScreen() {
                   autoCorrect={false}
                 />
               </View>
+              <Text style={styles.helperText}>{t('auth.usernameHelper')}</Text>
             </View>
 
             <View style={styles.field}>
@@ -194,6 +195,7 @@ export default function SignupScreen() {
                 )}
                 <Ionicons name="chevron-down" size={20} color={COLORS.textLight} />
               </Pressable>
+              <Text style={styles.helperText}>{t('auth.countryHelper')}</Text>
             </View>
 
             <View style={styles.field}>
@@ -350,6 +352,13 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  helperText: {
+    fontSize: 12,
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
+    marginTop: SPACING.xs,
+    lineHeight: 16,
   },
   inputContainer: {
     flexDirection: 'row',
