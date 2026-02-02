@@ -1,15 +1,15 @@
 // Login screen
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   Pressable,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Image,
+  Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,6 +17,7 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import Button from '../../src/components/Button';
 import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
 
 export default function LoginScreen() {
@@ -27,6 +28,23 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showError } = useAppModal();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   async function handleLogin() {
     if (!email.trim()) {
@@ -72,7 +90,12 @@ export default function LoginScreen() {
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.content}>
+        <Animated.View
+          style={[
+            styles.content,
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+          ]}
+        >
           {/* Logo / Title */}
           <View style={styles.header}>
             <Image
@@ -137,17 +160,11 @@ export default function LoginScreen() {
               <Text style={styles.forgotText}>{t('auth.forgotPassword')}</Text>
             </Pressable>
 
-            <Pressable
-              style={[styles.button, loading && styles.buttonDisabled]}
+            <Button
+              title={t('auth.login')}
               onPress={handleLogin}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text style={styles.buttonText}>{t('auth.login')}</Text>
-              )}
-            </Pressable>
+              loading={loading}
+            />
           </View>
 
           {/* Sign up link */}
@@ -157,7 +174,7 @@ export default function LoginScreen() {
               <Text style={styles.linkText}>{t('auth.signup')}</Text>
             </Pressable>
           </View>
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </View>
   );
@@ -249,26 +266,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: FONTS.button,
     color: COLORS.secondary,
-  },
-  button: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.lg,
-    minHeight: 52,
-    justifyContent: 'center',
-    borderRadius: BORDER_RADIUS.pixel,
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: COLORS.primaryDark,
-    ...SHADOWS.pixelLarge,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: 'white',
-    fontFamily: FONTS.button,
-    letterSpacing: 1,
   },
   footer: {
     flexDirection: 'row',

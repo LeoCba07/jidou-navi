@@ -1,16 +1,16 @@
 // Sign up screen
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   Pressable,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Image,
+  Animated,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import CountryPicker from '../../src/components/CountryPicker';
+import Button from '../../src/components/Button';
 import { Country, getCountryByCode } from '../../src/lib/countries';
 import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
 
@@ -35,6 +36,23 @@ export default function SignupScreen() {
   const [country, setCountry] = useState<string | null>(null);
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const { showError, showSuccess } = useAppModal();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   async function handleSignup() {
     // Validation
@@ -122,7 +140,12 @@ export default function SignupScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
+        <Animated.View
+          style={[
+            styles.content,
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+          ]}
+        >
           {/* Header */}
           <View style={styles.header}>
             <Image
@@ -244,17 +267,12 @@ export default function SignupScreen() {
               </View>
             </View>
 
-            <Pressable
-              style={[styles.button, loading && styles.buttonDisabled]}
+            <Button
+              title={t('auth.createAccount')}
               onPress={handleSignup}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text style={styles.buttonText}>{t('auth.createAccount')}</Text>
-              )}
-            </Pressable>
+              loading={loading}
+              style={styles.submitButton}
+            />
           </View>
 
           {/* Login link */}
@@ -264,7 +282,7 @@ export default function SignupScreen() {
               <Text style={styles.linkText}>{t('auth.login')}</Text>
             </Pressable>
           </View>
-        </View>
+        </Animated.View>
       </ScrollView>
 
       <CountryPicker
@@ -378,26 +396,8 @@ const styles = StyleSheet.create({
   eyeButton: {
     padding: SPACING.xs,
   },
-  button: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.lg,
-    minHeight: 52,
-    justifyContent: 'center',
-    borderRadius: BORDER_RADIUS.pixel,
-    alignItems: 'center',
+  submitButton: {
     marginTop: SPACING.sm,
-    borderWidth: 3,
-    borderColor: COLORS.primaryDark,
-    ...SHADOWS.pixelLarge,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: 'white',
-    fontFamily: FONTS.button,
-    letterSpacing: 1,
   },
   footer: {
     flexDirection: 'row',

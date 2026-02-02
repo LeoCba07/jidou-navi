@@ -1,17 +1,41 @@
 // Welcome screen - entry point for unauthenticated users
-import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
+import Button from '../../src/components/Button';
+import { COLORS, FONTS, SPACING } from '../../src/theme/constants';
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <View style={styles.content}>
+      <Animated.View
+        style={[
+          styles.content,
+          { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+        ]}
+      >
         {/* Logo */}
         <View style={styles.header}>
           <Image
@@ -25,12 +49,11 @@ export default function WelcomeScreen() {
 
         {/* Buttons */}
         <View style={styles.buttons}>
-          <Pressable
-            style={styles.loginButton}
+          <Button
+            title={t('auth.login')}
             onPress={() => router.push('/(auth)/login')}
-          >
-            <Text style={styles.loginButtonText}>{t('auth.login')}</Text>
-          </Pressable>
+            variant="primary"
+          />
 
           {/* OR divider */}
           <View style={styles.divider}>
@@ -39,14 +62,13 @@ export default function WelcomeScreen() {
             <View style={styles.dividerLine} />
           </View>
 
-          <Pressable
-            style={styles.signupButton}
+          <Button
+            title={t('auth.createAccount')}
             onPress={() => router.push('/(auth)/signup')}
-          >
-            <Text style={styles.signupButtonText}>{t('auth.createAccount')}</Text>
-          </Pressable>
+            variant="secondary"
+          />
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -100,39 +122,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
-  },
-  loginButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.lg,
-    minHeight: 52,
-    justifyContent: 'center',
-    borderRadius: BORDER_RADIUS.pixel,
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: COLORS.primaryDark,
-    ...SHADOWS.pixelLarge,
-  },
-  loginButtonText: {
-    fontSize: 16,
-    color: 'white',
-    fontFamily: FONTS.button,
-    letterSpacing: 1,
-  },
-  signupButton: {
-    backgroundColor: COLORS.surface,
-    paddingVertical: SPACING.lg,
-    minHeight: 52,
-    justifyContent: 'center',
-    borderRadius: BORDER_RADIUS.pixel,
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: COLORS.backgroundDark,
-    ...SHADOWS.soft,
-  },
-  signupButtonText: {
-    fontSize: 16,
-    color: COLORS.text,
-    fontFamily: FONTS.button,
-    letterSpacing: 1,
   },
 });
