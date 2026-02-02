@@ -100,7 +100,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 65,
+    bottom: 78,
     left: 16,
     right: 16,
   },
