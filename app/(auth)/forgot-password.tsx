@@ -185,12 +185,12 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xxl,
   },
   logoImage: {
-    width: 120,
-    height: 120,
-    marginBottom: SPACING.lg,
+    width: 200,
+    height: 200,
+    marginBottom: SPACING.xs,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontFamily: FONTS.title,
     color: COLORS.text,
     marginBottom: SPACING.sm,

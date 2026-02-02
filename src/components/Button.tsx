@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   text: {
-    fontSize: 18,
+    fontSize: 17,
     fontFamily: FONTS.button,
     letterSpacing: 1,
   },
