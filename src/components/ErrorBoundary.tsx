@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Sentry } from '../lib/sentry';
+import Button from './Button';
 
 interface Props {
   children: ReactNode;
@@ -49,9 +50,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           <Text style={styles.message}>
             The app encountered an unexpected error. Please try again.
           </Text>
-          <Pressable style={styles.button} onPress={this.handleRetry}>
-            <Text style={styles.buttonText}>Try Again</Text>
-          </Pressable>
+          <Button title="Try Again" onPress={this.handleRetry} />
         </View>
       );
     }

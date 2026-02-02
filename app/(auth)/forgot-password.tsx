@@ -1,29 +1,49 @@
 // Forgot password screen
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   Pressable,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Image,
+  Animated,
 } from 'react-native';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import Button from '../../src/components/Button';
 import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
 
 export default function ForgotPasswordScreen() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const { showError } = useAppModal();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   async function handleReset() {
     if (!email.trim()) {
@@ -52,13 +72,12 @@ export default function ForgotPasswordScreen() {
   if (sent) {
     return (
       <View style={styles.container}>
-        {/* Decorative pixel corners */}
-        <View style={styles.cornerTopLeft} />
-        <View style={styles.cornerTopRight} />
-        <View style={styles.cornerBottomLeft} />
-        <View style={styles.cornerBottomRight} />
-
-        <View style={styles.successContent}>
+        <Animated.View
+          style={[
+            styles.successContent,
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+          ]}
+        >
           <View style={styles.successIconContainer}>
             <Ionicons name="mail-outline" size={48} color={COLORS.primary} />
           </View>
@@ -67,98 +86,77 @@ export default function ForgotPasswordScreen() {
             {t('auth.resetEmailSent', { email })}
           </Text>
 
-          {/* Decorative divider */}
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <View style={styles.dividerDot} />
-            <View style={styles.dividerLine} />
-          </View>
-
-          <Pressable
-            style={styles.button}
+          <Button
+            title={t('auth.backToLogin')}
             onPress={() => router.replace('/(auth)/login')}
-          >
-            <Text style={styles.buttonText}>{t('auth.backToLogin')}</Text>
-          </Pressable>
-        </View>
+          />
+        </Animated.View>
       </View>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      {/* Decorative pixel corners */}
-      <View style={styles.cornerTopLeft} />
-      <View style={styles.cornerTopRight} />
-      <View style={styles.cornerBottomLeft} />
-      <View style={styles.cornerBottomRight} />
+    <View style={styles.container}>
+      {/* Back button */}
+      <Pressable
+        style={[styles.backButton, { top: insets.top + 12 }]}
+        onPress={() => router.canGoBack() ? router.back() : router.replace('/(auth)/login')}
+        hitSlop={12}
+      >
+        <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+      </Pressable>
 
-      <View style={styles.content}>
-        {/* Back button */}
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <View style={styles.backButtonInner}>
-            <Ionicons name="arrow-back" size={20} color={COLORS.text} />
-          </View>
-        </Pressable>
-
-        {/* Header with logo */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <Animated.View
+          style={[
+            styles.content,
+            { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+          ]}
+        >
+          {/* Header with logo */}
+          <View style={styles.header}>
             <Image
               source={require('../../assets/icon.png')}
               style={styles.logoImage}
               resizeMode="contain"
             />
+            <Text style={styles.title}>{t('auth.forgotPasswordTitle')}</Text>
+            <Text style={styles.subtitle}>
+              {t('auth.forgotPasswordSubtitle')}
+            </Text>
           </View>
-          <Text style={styles.title}>{t('auth.forgotPasswordTitle')}</Text>
-          <Text style={styles.subtitle}>
-            {t('auth.forgotPasswordSubtitle')}
-          </Text>
-        </View>
 
-        {/* Decorative divider */}
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <View style={styles.dividerDot} />
-          <View style={styles.dividerLine} />
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          <View style={styles.field}>
-            <Text style={styles.label}>{t('auth.email')}</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder={t('auth.emailPlaceholder')}
-                placeholderTextColor={COLORS.textLight}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+          {/* Form */}
+          <View style={styles.form}>
+            <View style={styles.field}>
+              <Text style={styles.label}>{t('auth.email')}</Text>
+              <View style={styles.inputContainer}>
+                <Ionicons name="mail-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder={t('auth.emailPlaceholder')}
+                  placeholderTextColor={COLORS.textLight}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
             </View>
-          </View>
 
-          <Pressable
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleReset}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text style={styles.buttonText}>{t('auth.sendResetLink')}</Text>
-            )}
-          </Pressable>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+            <Button
+              title={t('auth.sendResetLink')}
+              onPress={handleReset}
+              loading={loading}
+            />
+          </View>
+        </Animated.View>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -167,92 +165,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Decorative pixel corners
-  cornerTopLeft: {
+  backButton: {
     position: 'absolute',
-    top: 20,
-    left: 20,
-    width: 24,
-    height: 24,
-    borderTopWidth: 4,
-    borderLeftWidth: 4,
-    borderColor: COLORS.primary,
+    left: SPACING.lg,
     zIndex: 10,
+    padding: SPACING.sm,
   },
-  cornerTopRight: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    width: 24,
-    height: 24,
-    borderTopWidth: 4,
-    borderRightWidth: 4,
-    borderColor: COLORS.primary,
-    zIndex: 10,
-  },
-  cornerBottomLeft: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    width: 24,
-    height: 24,
-    borderBottomWidth: 4,
-    borderLeftWidth: 4,
-    borderColor: COLORS.primary,
-    zIndex: 10,
-  },
-  cornerBottomRight: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 24,
-    height: 24,
-    borderBottomWidth: 4,
-    borderRightWidth: 4,
-    borderColor: COLORS.primary,
-    zIndex: 10,
+  keyboardView: {
+    flex: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: SPACING.xxl,
-    paddingTop: 60,
-  },
-  backButton: {
-    marginBottom: SPACING.xxl,
-  },
-  backButtonInner: {
-    width: 40,
-    height: 40,
-    borderRadius: BORDER_RADIUS.pixel,
-    backgroundColor: COLORS.surface,
     justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: COLORS.backgroundDark,
-    ...SHADOWS.pixel,
+    paddingHorizontal: SPACING.xxl,
+    paddingBottom: 40,
   },
   header: {
     alignItems: 'center',
     marginBottom: SPACING.xxl,
   },
-  logoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: BORDER_RADIUS.pixel,
-    backgroundColor: COLORS.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: SPACING.lg,
-    borderWidth: 4,
-    borderColor: COLORS.primary,
-    ...SHADOWS.pixelLarge,
-  },
   logoImage: {
-    width: 60,
-    height: 60,
+    width: 120,
+    height: 120,
+    marginBottom: SPACING.lg,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: FONTS.title,
     color: COLORS.text,
     marginBottom: SPACING.sm,
@@ -266,24 +204,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: SPACING.lg,
   },
-  // Decorative divider
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: SPACING.xxl,
-    paddingHorizontal: SPACING.xxxl,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 2,
-    backgroundColor: COLORS.primaryDark,
-  },
-  dividerDot: {
-    width: 8,
-    height: 8,
-    backgroundColor: COLORS.primary,
-    marginHorizontal: SPACING.sm,
-  },
   form: {
     marginBottom: SPACING.xxl,
   },
@@ -291,10 +211,10 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   label: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.xs,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -318,24 +238,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.body,
     color: COLORS.text,
   },
-  button: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.lg,
-    borderRadius: BORDER_RADIUS.pixel,
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: COLORS.primaryDark,
-    ...SHADOWS.pixelLarge,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontSize: 14,
-    color: 'white',
-    fontFamily: FONTS.button,
-    letterSpacing: 1,
-  },
   // Success state
   successContent: {
     flex: 1,
@@ -356,7 +258,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.pixelLarge,
   },
   successTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: FONTS.title,
     color: COLORS.text,
     textAlign: 'center',

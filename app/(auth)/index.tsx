@@ -88,24 +88,24 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xxxl,
   },
   logoImage: {
-    width: 220,
-    height: 220,
+    width: 240,
+    height: 240,
   },
   title: {
-    fontSize: 25,
+    fontSize: 30,
     fontFamily: FONTS.heading,
     color: COLORS.text,
     letterSpacing: 1,
     marginBottom: SPACING.xl,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 18,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
     textAlign: 'center',
   },
   buttons: {
-    gap: SPACING.md,
+    gap: SPACING.lg,
   },
   divider: {
     flexDirection: 'row',
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     marginHorizontal: SPACING.md,
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
   },
