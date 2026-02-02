@@ -1,6 +1,6 @@
 // User search result component
-import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, Pressable, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { UserSearchResult as UserSearchResultType } from '../../store/friendsStore';
@@ -9,7 +9,7 @@ const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
 
 interface UserSearchResultProps {
   user: UserSearchResultType;
-  onSendRequest: (userId: string) => Promise<{ success: boolean; autoAccepted?: boolean }>;
+  onSendRequest: (userId: string) => Promise<{ success: boolean; autoAccepted?: boolean; error?: string }>;
 }
 
 export default function UserSearchResult({ user, onSendRequest }: UserSearchResultProps) {
@@ -17,14 +17,28 @@ export default function UserSearchResult({ user, onSendRequest }: UserSearchResu
   const [isSending, setIsSending] = useState(false);
   const [localStatus, setLocalStatus] = useState(user.friendship_status);
 
+  // Sync local status with prop changes
+  useEffect(() => {
+    setLocalStatus(user.friendship_status);
+  }, [user.friendship_status]);
+
   async function handleSendRequest() {
-    if (localStatus !== 'none') return;
+    if (localStatus !== 'none' || isSending) return;
+
     setIsSending(true);
-    const result = await onSendRequest(user.id);
-    if (result.success) {
-      setLocalStatus(result.autoAccepted ? 'accepted' : 'pending_sent');
+    try {
+      const result = await onSendRequest(user.id);
+      if (result.success) {
+        setLocalStatus(result.autoAccepted ? 'accepted' : 'pending_sent');
+      } else if (result.error) {
+        Alert.alert('Error', result.error);
+      }
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+      Alert.alert('Error', 'Failed to send friend request');
+    } finally {
+      setIsSending(false);
     }
-    setIsSending(false);
   }
 
   function renderActionButton() {
@@ -134,6 +148,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: 2,
+    marginRight: 10,
   },
   levelText: {
     fontSize: 9,

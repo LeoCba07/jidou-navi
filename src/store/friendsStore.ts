@@ -135,7 +135,13 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
         search_term: term.trim(),
         limit_count: 10,
       });
-      if (error) throw error;
+
+      if (error) {
+        console.error('Error searching users:', error.message);
+        set({ searchResults: [] });
+        return;
+      }
+
       set({ searchResults: (data as unknown as UserSearchResult[]) || [] });
     } catch (error) {
       console.error('Error searching users:', error);
@@ -153,7 +159,11 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
       const { data, error } = await supabase.rpc('send_friend_request', {
         target_user_id: userId,
       });
-      if (error) throw error;
+
+      if (error) {
+        console.error('Supabase RPC error:', error);
+        return { success: false, error: error.message || 'Failed to send request' };
+      }
 
       const result = data as unknown as { success: boolean; auto_accepted?: boolean; error?: string };
 
@@ -185,7 +195,8 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
       };
     } catch (error) {
       console.error('Error sending friend request:', error);
-      return { success: false, error: 'Failed to send request' };
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send request';
+      return { success: false, error: errorMessage };
     }
   },
 

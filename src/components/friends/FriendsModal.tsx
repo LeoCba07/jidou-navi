@@ -1,5 +1,5 @@
-// Friends modal - search, requests, and friends list
-import { useState, useEffect, useCallback } from 'react';
+// Add Friends modal - search users and manage pending requests
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,10 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useFriendsStore } from '../../store/friendsStore';
-import FriendCard from './FriendCard';
 import FriendRequestCard from './FriendRequestCard';
 import UserSearchResult from './UserSearchResult';
 
@@ -29,28 +27,22 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
   const [searchDebounce, setSearchDebounce] = useState<NodeJS.Timeout | null>(null);
 
   const {
-    friends,
     pendingRequests,
-    isLoading,
     searchResults,
     isSearching,
-    loadFriends,
     loadPendingRequests,
     searchUsers,
     clearSearchResults,
     sendRequest,
     acceptRequest,
     declineRequest,
-    removeFriend,
   } = useFriendsStore();
 
-  // Load data when modal opens
+  // Load pending requests when modal opens
   useEffect(() => {
     if (visible) {
-      loadFriends();
       loadPendingRequests();
     } else {
-      // Clear search when closing
       setSearchQuery('');
       clearSearchResults();
     }
@@ -78,32 +70,13 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
     };
   }, [searchQuery]);
 
-  const handleRemoveFriend = useCallback(
-    (friendId: string) => {
-      const friend = friends.find((f) => f.id === friendId);
-      Alert.alert(
-        t('friends.remove'),
-        t('friends.removeFriendConfirm', { name: friend?.display_name || friend?.username }),
-        [
-          { text: t('common.cancel'), style: 'cancel' },
-          {
-            text: t('common.remove'),
-            style: 'destructive',
-            onPress: () => removeFriend(friendId),
-          },
-        ]
-      );
-    },
-    [friends, t, removeFriend]
-  );
-
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>{t('friends.title')}</Text>
+            <Text style={styles.title}>{t('friends.addFriend')}</Text>
             <Pressable onPress={onClose} style={styles.closeButton}>
               <Ionicons name="close" size={24} color="#666" />
             </Pressable>
@@ -143,13 +116,30 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
             showsVerticalScrollIndicator={false}
           >
             {/* Search Results */}
-            {searchResults.length > 0 && (
+            {searchQuery.trim().length > 0 && (
               <View style={styles.section}>
-                <View style={styles.searchResults}>
-                  {searchResults.map((user) => (
-                    <UserSearchResult key={user.id} user={user} onSendRequest={sendRequest} />
-                  ))}
-                </View>
+                <Text style={styles.sectionTitle}>
+                  {t('friends.searchResults')} ({searchResults.length})
+                </Text>
+                {isSearching ? (
+                  <View style={styles.searchingState}>
+                    <ActivityIndicator size="small" color="#FF4B4B" />
+                    <Text style={styles.searchingText}>{t('friends.searching')}</Text>
+                  </View>
+                ) : searchResults.length > 0 ? (
+                  <View style={styles.searchResults}>
+                    {searchResults.map((user) => (
+                      <UserSearchResult key={user.id} user={user} onSendRequest={sendRequest} />
+                    ))}
+                  </View>
+                ) : (
+                  <View style={styles.noResultsState}>
+                    <Ionicons name="search-outline" size={32} color="#ccc" />
+                    <Text style={styles.noResultsText}>
+                      {t('friends.noUsersFound', { query: searchQuery })}
+                    </Text>
+                  </View>
+                )}
               </View>
             )}
 
@@ -172,26 +162,13 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
               </View>
             )}
 
-            {/* Friends List */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {t('friends.yourFriends')} ({friends.length})
-              </Text>
-              {isLoading ? (
-                <ActivityIndicator color="#FF4B4B" style={styles.loader} />
-              ) : friends.length === 0 ? (
-                <View style={styles.emptyState}>
-                  <Ionicons name="people-outline" size={48} color="#ccc" />
-                  <Text style={styles.emptyText}>{t('friends.noFriends')}</Text>
-                </View>
-              ) : (
-                <View style={styles.list}>
-                  {friends.map((friend) => (
-                    <FriendCard key={friend.id} friend={friend} onRemove={handleRemoveFriend} />
-                  ))}
-                </View>
-              )}
-            </View>
+            {/* Empty state when no search and no pending */}
+            {!searchQuery.trim() && pendingRequests.length === 0 && (
+              <View style={styles.emptyState}>
+                <Ionicons name="person-add-outline" size={48} color="#ccc" />
+                <Text style={styles.emptyText}>{t('friends.searchToAdd')}</Text>
+              </View>
+            )}
           </ScrollView>
         </View>
       </View>
@@ -210,7 +187,8 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 400,
-    maxHeight: '85%',
+    maxHeight: '70%',
+    minHeight: 300,
     backgroundColor: '#FDF3E7',
     borderRadius: 4,
     borderWidth: 4,
@@ -221,6 +199,7 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 10,
     overflow: 'hidden',
+    flexDirection: 'column',
   },
   header: {
     flexDirection: 'row',
@@ -288,9 +267,6 @@ const styles = StyleSheet.create({
   searchResults: {
     gap: 8,
   },
-  loader: {
-    marginTop: 20,
-  },
   emptyState: {
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -302,6 +278,31 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 12,
+    textAlign: 'center',
+  },
+  searchingState: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: 20,
+  },
+  searchingText: {
+    fontSize: 14,
+    fontFamily: 'Inter',
+    color: '#666',
+  },
+  noResultsState: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 24,
+    alignItems: 'center',
+  },
+  noResultsText: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    color: '#999',
+    marginTop: 8,
     textAlign: 'center',
   },
 });

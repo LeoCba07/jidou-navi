@@ -323,7 +323,21 @@
     "recentlyAdded": "Recently Added",
     "visits": "visits",
     "noPopular": "No popular machines yet",
-    "noRecent": "No recent machines yet"
+    "noRecent": "No recent machines yet",
+    "topNearby": "Top Machines Nearby",
+    "popularThisWeek": "Popular This Week",
+    "noNearbyMachines": "No machines nearby",
+    "enableLocation": "Enable location to see nearby machines",
+    "noPopularThisWeek": "No trending machines this week yet",
+    "recentVisitors": "Recent visitors",
+    "showOnMap": "Show on Map",
+    "votesRemaining": "{{count}} votes left this week",
+    "votesRemaining_one": "{{count}} vote left this week",
+    "noVotesLeft": "No votes left this week",
+    "upvoteSuccess": "Upvoted! +{{xp}} XP",
+    "upvoteRemoved": "Upvote removed",
+    "weeklyLimitReached": "You've used all 3 weekly upvotes",
+    "loginToUpvote": "Log in to upvote machines"
   },
   "legal": {
     "back": "← Back",
@@ -405,16 +419,22 @@
     "searchPlaceholder": "Search users...",
     "pendingRequests": "Pending Requests",
     "yourFriends": "Your Friends",
-    "noFriends": "No friends yet. Search for users to add!",
+    "noFriends": "No friends yet",
+    "noFriendsHint": "Search for friends to add!",
     "noRequests": "No pending requests",
-    "addFriend": "Add",
+    "addFriend": "Add Friend",
     "friend": "Friend",
     "requestSent": "Pending",
     "requestReceived": "Pending",
     "accept": "Accept",
     "decline": "Decline",
     "remove": "Remove",
-    "removeFriendConfirm": "Remove {{name}} from friends?"
+    "removeFriendConfirm": "Remove {{name}} from friends?",
+    "andMore": "And {{count}} more...",
+    "searchToAdd": "Search for users to add as friends",
+    "searchResults": "Search Results",
+    "searching": "Searching...",
+    "noUsersFound": "No users found for \"{{query}}\""
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -422,7 +442,11 @@
     "friends": "Friends",
     "thisWeek": "This Week",
     "noFriendsYet": "Add friends to see their rankings!",
-    "noData": "No leaderboard data yet"
+    "noData": "No leaderboard data yet",
+    "weeklyChampion": "Weekly Champion",
+    "weeklyChampion1": "1st Place",
+    "weeklyChampion2": "2nd Place",
+    "weeklyChampion3": "3rd Place"
   },
   "admin": {
     "dashboard": "Admin Dashboard",

@@ -84,12 +84,13 @@ const styles = StyleSheet.create({
   },
   levelBadge: {
     backgroundColor: '#2B2B2B',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
     borderRadius: 2,
+    marginRight: 8,
   },
   levelText: {
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },

@@ -12,35 +12,41 @@ export default function LeaderboardScreen() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const [activeType, setActiveType] = useState<LeaderboardType>('global');
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     globalLeaderboard,
     friendsLeaderboard,
-    isLoadingLeaderboard,
     loadGlobalLeaderboard,
     loadFriendsLeaderboard,
   } = useFriendsStore();
 
-  // Load leaderboard data
+  // Load both leaderboards on mount
   useEffect(() => {
     if (user) {
-      loadGlobalLeaderboard();
-      loadFriendsLeaderboard();
+      setIsLoading(true);
+      Promise.all([loadGlobalLeaderboard(), loadFriendsLeaderboard()])
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
   }, [user]);
 
-  // Reload when switching tabs
-  useEffect(() => {
-    if (user && activeType === 'global') {
+  // Handle tab switch
+  function handleToggle(type: LeaderboardType) {
+    setActiveType(type);
+
+    // Refresh the selected tab's data
+    if (type === 'global') {
       loadGlobalLeaderboard();
-    } else if (user && activeType === 'friends') {
+    } else {
       loadFriendsLeaderboard();
     }
-  }, [activeType, user]);
+  }
 
   const currentLeaderboard = activeType === 'global' ? globalLeaderboard : friendsLeaderboard;
 
-  // Show empty state for friends leaderboard if only user
+  // Show empty state for friends leaderboard if only user or empty
   const showNoFriendsState = activeType === 'friends' && currentLeaderboard.length <= 1;
 
   return (
@@ -51,12 +57,12 @@ export default function LeaderboardScreen() {
           <Ionicons name="trophy" size={20} color="#D97706" />
           <Text style={styles.title}>{t('leaderboard.title')}</Text>
         </View>
-        <LeaderboardToggle activeType={activeType} onToggle={setActiveType} />
+        <LeaderboardToggle activeType={activeType} onToggle={handleToggle} />
       </View>
 
       {/* Content */}
       <View style={styles.content}>
-        {isLoadingLeaderboard ? (
+        {isLoading ? (
           <View style={styles.loader}>
             <ActivityIndicator color="#FF4B4B" />
           </View>

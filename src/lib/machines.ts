@@ -284,6 +284,32 @@ export type DiscoverMachine = {
   categories: MachineCategory[] | null;
 };
 
+// Type for machine with engagement data (upvotes, visitors)
+export type EngagedMachine = {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  distance_meters?: number;
+  primary_photo_url: string | null;
+  status: string;
+  visit_count: number;
+  upvote_count: number;
+  weekly_activity?: number;
+  categories: MachineCategory[] | null;
+};
+
+// Type for machine visitor
+export type MachineVisitor = {
+  user_id: string;
+  username: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  visited_at: string;
+};
+
 // Fetch popular machines (sorted by visit count)
 export async function fetchPopularMachines(limit: number = 20): Promise<DiscoverMachine[]> {
   const { data, error } = await supabase
@@ -405,4 +431,98 @@ export async function fetchSavedMachines(): Promise<SavedMachine[]> {
   }));
 
   return machinesWithPhotos as SavedMachine[];
+}
+
+// Fetch nearby machines with engagement data (upvotes)
+export async function fetchNearbyMachinesWithEngagement(
+  lat: number,
+  lng: number,
+  radiusMeters: number = 5000,
+  limit: number = 20
+): Promise<EngagedMachine[]> {
+  try {
+    const { data, error } = await supabase.rpc('nearby_machines_with_engagement', {
+      lat,
+      lng,
+      radius_meters: radiusMeters,
+      limit_count: limit,
+    });
+
+    if (error) {
+      console.error('Error fetching nearby machines with engagement:', error);
+      return [];
+    }
+
+    return (data || []).map((m: { categories: unknown }) => ({
+      ...m,
+      categories: m.categories as MachineCategory[] | null,
+    })) as EngagedMachine[];
+  } catch (e) {
+    console.error('Network error fetching nearby machines with engagement:', e);
+    return [];
+  }
+}
+
+// Fetch popular machines this week (by combined visits + upvotes)
+export async function fetchPopularThisWeek(limit: number = 10): Promise<EngagedMachine[]> {
+  try {
+    const { data, error } = await supabase.rpc('popular_machines_this_week', {
+      limit_count: limit,
+    });
+
+    if (error) {
+      console.error('Error fetching popular machines this week:', error);
+      return [];
+    }
+
+    return (data || []).map((m: { categories: unknown }) => ({
+      ...m,
+      categories: m.categories as MachineCategory[] | null,
+    })) as EngagedMachine[];
+  } catch (e) {
+    console.error('Network error fetching popular machines this week:', e);
+    return [];
+  }
+}
+
+// Fetch recent visitors for a machine
+export async function fetchMachineVisitors(
+  machineId: string,
+  limit: number = 5
+): Promise<MachineVisitor[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_machine_visitors', {
+      p_machine_id: machineId,
+      limit_count: limit,
+    });
+
+    if (error) {
+      console.error('Error fetching machine visitors:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (e) {
+    console.error('Network error fetching machine visitors:', e);
+    return [];
+  }
+}
+
+// Fetch visitor count for a machine
+export async function fetchMachineVisitorCount(machineId: string): Promise<number> {
+  try {
+    const { data, error } = await supabase.rpc('get_machine_visitor_count', {
+      p_machine_id: machineId,
+    });
+
+    if (error) {
+      console.error('Error fetching machine visitor count:', error);
+      return 0;
+    }
+
+    return data || 0;
+  } catch (e) {
+    console.error('Network error fetching machine visitor count:', e);
+    return 0;
+  }
 }

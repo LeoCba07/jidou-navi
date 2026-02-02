@@ -28,7 +28,8 @@ import SettingsModal from '../../src/components/profile/SettingsModal';
 import StatProgressCard from '../../src/components/profile/StatProgressCard';
 import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
 import BadgeRequirementModal from '../../src/components/profile/BadgeRequirementModal';
-import { FriendsModal } from '../../src/components/friends';
+import { FriendsModal, FriendCard } from '../../src/components/friends';
+import type { Friend } from '../../src/store/friendsStore';
 import type { Badge } from '../../src/lib/badges';
 
 // Badge type from joined query
@@ -52,7 +53,7 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile, setProfile } = useAuthStore();
   const { removeSaved } = useSavedMachinesStore();
-  const { pendingRequestCount, loadPendingRequestCount } = useFriendsStore();
+  const { friends, pendingRequestCount, loadFriends, loadPendingRequestCount, removeFriend } = useFriendsStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
@@ -251,11 +252,12 @@ export default function ProfileScreen() {
     loadSavedMachines();
     loadPendingMachines();
     loadPendingRequestCount();
+    loadFriends();
   }, [user]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingMachines(), loadPendingRequestCount()]);
+    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingMachines(), loadPendingRequestCount(), loadFriends()]);
     setRefreshing(false);
   }, [user]);
 
@@ -270,6 +272,22 @@ export default function ProfileScreen() {
         },
       },
     ]);
+  }
+
+  function handleRemoveFriend(friendId: string) {
+    const friend = friends.find((f) => f.id === friendId);
+    showConfirm(
+      t('friends.remove'),
+      t('friends.removeFriendConfirm', { name: friend?.display_name || friend?.username }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.remove'),
+          style: 'destructive',
+          onPress: () => removeFriend(friendId),
+        },
+      ]
+    );
   }
 
   function handleDeleteAccount() {
@@ -325,31 +343,14 @@ export default function ProfileScreen() {
         {/* Hero Card - Character Sheet */}
         <View style={styles.userSection}>
           <View style={styles.heroCard}>
-            <View style={styles.headerButtons}>
-              <Pressable
-                style={styles.friendsButton}
-                onPress={() => setFriendsModalVisible(true)}
-                accessibilityRole="button"
-                accessibilityLabel={t('friends.title')}
-              >
-                <Ionicons name="people-outline" size={20} color="#666" />
-                {pendingRequestCount > 0 && (
-                  <View style={styles.friendsBadge}>
-                    <Text style={styles.friendsBadgeText}>
-                      {pendingRequestCount > 9 ? '9+' : pendingRequestCount}
-                    </Text>
-                  </View>
-                )}
-              </Pressable>
-              <Pressable
-                style={styles.settingsGear}
-                onPress={() => setSettingsModalVisible(true)}
-                accessibilityRole="button"
-                accessibilityLabel={t('profile.accountSettings')}
-              >
-                <Ionicons name="settings-outline" size={20} color="#666" />
-              </Pressable>
-            </View>
+            <Pressable
+              style={styles.settingsGear}
+              onPress={() => setSettingsModalVisible(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('profile.accountSettings')}
+            >
+              <Ionicons name="settings-outline" size={20} color="#666" />
+            </Pressable>
             <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
               <Image
                 key={avatarTimestamp}
@@ -576,6 +577,47 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Friends Section */}
+        <View style={styles.section}>
+          <View style={styles.friendsSectionHeader}>
+            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('friends.yourFriends')}</Text>
+            <Pressable
+              style={styles.addFriendButton}
+              onPress={() => setFriendsModalVisible(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t('friends.addFriend')}
+            >
+              <Ionicons name="person-add" size={14} color="#fff" />
+              <Text style={styles.addFriendButtonText}>{t('friends.addFriend')}</Text>
+              {pendingRequestCount > 0 && (
+                <View style={styles.requestCountBadge}>
+                  <Text style={styles.requestCountText}>
+                    {pendingRequestCount > 9 ? '9+' : pendingRequestCount}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+          </View>
+          {friends.length === 0 ? (
+            <View style={styles.emptyBadges}>
+              <Ionicons name="people-outline" size={48} color="#ccc" />
+              <Text style={styles.emptyText}>{t('friends.noFriends')}</Text>
+              <Text style={styles.emptySubtext}>{t('friends.noFriendsHint')}</Text>
+            </View>
+          ) : (
+            <View style={styles.friendsList}>
+              {friends.slice(0, 3).map((friend) => (
+                <FriendCard key={friend.id} friend={friend} onRemove={handleRemoveFriend} />
+              ))}
+              {friends.length > 3 && (
+                <Text style={styles.moreFriendsText}>
+                  {t('friends.andMore', { count: friends.length - 3 })}
+                </Text>
+              )}
+            </View>
+          )}
+        </View>
+
         {/* Support Us Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('profile.supportUs')}</Text>
@@ -667,38 +709,12 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignItems: 'center',
   },
-  headerButtons: {
+  settingsGear: {
     position: 'absolute',
     top: 16,
     right: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    padding: 8,
     zIndex: 1,
-  },
-  friendsButton: {
-    padding: 8,
-    position: 'relative',
-  },
-  friendsBadge: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
-    backgroundColor: '#FF4B4B',
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 4,
-  },
-  friendsBadgeText: {
-    fontSize: 9,
-    fontFamily: 'Inter-Bold',
-    color: '#fff',
-  },
-  settingsGear: {
-    padding: 8,
   },
   avatarContainer: {
     position: 'relative',
@@ -972,6 +988,50 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter',
     color: '#999',
+    marginTop: 4,
+  },
+  friendsSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  addFriendButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#3C91E6',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 2,
+  },
+  addFriendButtonText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#fff',
+  },
+  requestCountBadge: {
+    backgroundColor: '#FF4B4B',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 4,
+  },
+  requestCountText: {
+    fontSize: 10,
+    fontFamily: 'Inter-Bold',
+    color: '#fff',
+  },
+  friendsList: {
+    gap: 10,
+  },
+  moreFriendsText: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#999',
+    textAlign: 'center',
     marginTop: 4,
   },
   supportContainer: {

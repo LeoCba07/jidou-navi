@@ -507,6 +507,49 @@ export type Database = {
         }
         Relationships: []
       }
+      machine_upvotes: {
+        Row: {
+          id: string
+          user_id: string
+          machine_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          machine_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          machine_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "machine_upvotes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "machine_upvotes_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "machine_upvotes_machine_id_fkey"
+            columns: ["machine_id"]
+            isOneToOne: false
+            referencedRelation: "machines_with_details"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_machines: {
         Row: {
           id: string
@@ -1123,6 +1166,78 @@ export type Database = {
         }[]
       }
       get_unread_notification_count: { Args: never; Returns: number }
+      get_user_weekly_upvote_count: { Args: never; Returns: number }
+      has_upvoted_machine: { Args: { p_machine_id: string }; Returns: boolean }
+      upvote_machine: { Args: { p_machine_id: string }; Returns: Json }
+      remove_upvote: { Args: { p_machine_id: string }; Returns: Json }
+      get_machine_upvote_count: { Args: { p_machine_id: string }; Returns: number }
+      get_user_upvoted_machine_ids: { Args: never; Returns: string[] }
+      popular_machines_this_week: {
+        Args: { limit_count?: number }
+        Returns: {
+          id: string
+          name: string
+          description: string
+          address: string
+          latitude: number
+          longitude: number
+          primary_photo_url: string
+          status: string
+          visit_count: number
+          upvote_count: number
+          weekly_activity: number
+          categories: Json
+        }[]
+      }
+      nearby_machines_with_engagement: {
+        Args: {
+          lat: number
+          lng: number
+          radius_meters?: number
+          limit_count?: number
+        }
+        Returns: {
+          id: string
+          name: string
+          description: string
+          address: string
+          latitude: number
+          longitude: number
+          distance_meters: number
+          primary_photo_url: string
+          status: string
+          visit_count: number
+          upvote_count: number
+          categories: Json
+        }[]
+      }
+      get_machine_visitors: {
+        Args: { p_machine_id: string; limit_count?: number }
+        Returns: {
+          user_id: string
+          username: string
+          display_name: string
+          avatar_url: string
+          visited_at: string
+        }[]
+      }
+      get_machine_visitor_count: { Args: { p_machine_id: string }; Returns: number }
+      weekly_leaderboard_with_rewards: {
+        Args: { limit_count?: number }
+        Returns: {
+          rank: number
+          user_id: string
+          username: string
+          display_name: string
+          avatar_url: string
+          level: number
+          xp: number
+          xp_this_week: number
+          is_current_user: boolean
+          is_weekly_champion: boolean
+          champion_rank: number | null
+        }[]
+      }
       get_user_notifications: {
         Args: { limit_count?: number; offset_count?: number }
         Returns: {

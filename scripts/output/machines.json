@@ -4011,6 +4011,33 @@
           "local_path": "images/5026/1.jpg"
         }
       ]
+    },
+    {
+      "source_id": "5027",
+      "source_url": null,
+      "name": "Kakimo Beika Rice Crackers",
+      "name_en": "Kakimo Beika Rice Crackers",
+      "location": {
+        "address": "In front of Doutor, 36-6, Udagawacho, Shibuya, Tokyo",
+        "latitude": 35.3942,
+        "longitude": 139.4151
+      },
+      "merchandise": [
+        "おかき"
+      ],
+      "categories": [
+        "食べ物",
+        "珍しい"
+      ],
+      "features": [
+        "Fresh Kakimo Beika rice crackers from a local shop. Available 24/7."
+      ],
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/5027/1.jpg"
+        }
+      ]
     }
   ],
   "errors": [],

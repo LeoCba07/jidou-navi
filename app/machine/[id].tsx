@@ -815,6 +815,32 @@ export default function MachineDetailScreen() {
             <Pressable
               style={[
                 styles.secondaryButton,
+                isSaved && styles.savedButton,
+                saving && styles.buttonDisabled,
+              ]}
+              onPress={handleSaveToggle}
+              disabled={saving}
+              accessibilityLabel={isSaved ? t('common.unsave') : t('common.save')}
+              accessibilityRole="button"
+            >
+              {saving ? (
+                <ActivityIndicator size="small" color={COLORS.primary} />
+              ) : (
+                <View style={styles.buttonContent}>
+                  <Ionicons
+                    name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                    size={18}
+                    color={isSaved ? COLORS.primary : COLORS.text}
+                  />
+                  <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]}>
+                    {isSaved ? t('common.saved') : t('common.save')}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+            <Pressable
+              style={[
+                styles.secondaryButton,
                 uploading && styles.buttonDisabled,
               ]}
               onPress={handleAddPhoto}
