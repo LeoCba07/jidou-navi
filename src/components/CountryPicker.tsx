@@ -8,13 +8,15 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
-  ScrollView,
+  FlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { countries, Country } from '../lib/countries';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/constants';
 
-const { width, height } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const MODAL_HEIGHT = SCREEN_HEIGHT * 0.6;
 
 interface CountryPickerProps {
   visible: boolean;
@@ -36,7 +38,7 @@ export default function CountryPicker({
 
   useEffect(() => {
     if (visible) {
-      scaleAnim.setValue(0);
+      scaleAnim.setValue(0.9);
       opacityAnim.setValue(0);
 
       Animated.parallel([
@@ -58,7 +60,7 @@ export default function CountryPicker({
   function handleClose() {
     Animated.parallel([
       Animated.timing(scaleAnim, {
-        toValue: 0.8,
+        toValue: 0.9,
         duration: 150,
         useNativeDriver: true,
       }),
@@ -77,11 +79,34 @@ export default function CountryPicker({
     handleClose();
   }
 
+  const renderCountryItem = ({ item: country }: { item: Country }) => {
+    const isSelected = selectedCountry === country.code;
+    return (
+      <Pressable
+        style={[styles.countryItem, isSelected && styles.countryItemSelected]}
+        onPress={() => handleSelect(country)}
+        accessibilityRole="button"
+        accessibilityState={{ selected: isSelected }}
+      >
+        <View style={styles.countryInfo}>
+          <Text style={styles.countryFlag}>{country.flag}</Text>
+          <Text style={[styles.countryName, isSelected && styles.countryNameSelected]}>
+            {country.name}
+          </Text>
+        </View>
+        {isSelected && (
+          <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} />
+        )}
+      </Pressable>
+    );
+  };
+
   if (!visible) return null;
 
   return (
     <Modal transparent visible animationType="none" onRequestClose={handleClose}>
-      <Pressable style={styles.overlay} onPress={handleClose}>
+      <View style={styles.overlay}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
         <Animated.View
           style={[
             styles.container,
@@ -91,44 +116,24 @@ export default function CountryPicker({
             },
           ]}
         >
-          <Pressable style={styles.content}>
-            <Text style={styles.title}>{t('auth.selectCountry')}</Text>
+          <Text style={styles.title}>{t('auth.selectCountry')}</Text>
 
-            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-              <View style={styles.countryList}>
-                {countries.map((country) => {
-                  const isSelected = selectedCountry === country.code;
-                  return (
-                    <Pressable
-                      key={country.code}
-                      style={[styles.countryItem, isSelected && styles.countryItemSelected]}
-                      onPress={() => handleSelect(country)}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: isSelected }}
-                    >
-                      <View style={styles.countryInfo}>
-                        <Text style={styles.countryFlag}>{country.flag}</Text>
-                        <Text
-                          style={[styles.countryName, isSelected && styles.countryNameSelected]}
-                        >
-                          {country.name}
-                        </Text>
-                      </View>
-                      {isSelected && (
-                        <Ionicons name="checkmark-circle" size={24} color="#FF4B4B" />
-                      )}
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </ScrollView>
+          <FlatList
+            data={countries}
+            keyExtractor={(item) => item.code}
+            renderItem={renderCountryItem}
+            style={styles.list}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={true}
+            initialNumToRender={15}
+            maxToRenderPerBatch={20}
+          />
 
-            <Pressable style={styles.cancelButton} onPress={handleClose}>
-              <Text style={styles.cancelText}>{t('common.cancel')}</Text>
-            </Pressable>
+          <Pressable style={styles.cancelButton} onPress={handleClose}>
+            <Text style={styles.cancelText}>{t('common.cancel')}</Text>
           </Pressable>
         </Animated.View>
-      </Pressable>
+      </View>
     </Modal>
   );
 }
@@ -139,85 +144,76 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: SPACING.xl,
   },
   container: {
-    width: width - 48,
-    maxWidth: 340,
-    maxHeight: height * 0.7,
-    backgroundColor: '#fff',
-    borderRadius: 4,
-    padding: 24,
+    width: SCREEN_WIDTH - 48,
+    maxWidth: 360,
+    height: MODAL_HEIGHT,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.pixel,
+    padding: SPACING.lg,
     borderWidth: 4,
-    borderColor: '#FF4B4B',
-    shadowColor: '#000',
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 0,
-    elevation: 10,
-  },
-  content: {
-    width: '100%',
-    flex: 1,
+    borderColor: COLORS.primary,
+    ...SHADOWS.pixelLarge,
   },
   title: {
     fontSize: 18,
-    fontFamily: 'DotGothic16',
-    color: '#333',
-    marginBottom: 16,
+    fontFamily: FONTS.title,
+    color: COLORS.text,
+    marginBottom: SPACING.md,
     textAlign: 'center',
   },
-  scrollView: {
+  list: {
     flex: 1,
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
-  countryList: {
-    width: '100%',
-    gap: 8,
+  listContent: {
+    gap: SPACING.sm,
   },
   countryItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 14,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 2,
+    padding: SPACING.md,
+    backgroundColor: COLORS.background,
+    borderRadius: BORDER_RADIUS.pixel,
     borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: COLORS.backgroundDark,
   },
   countryItemSelected: {
-    borderColor: '#FF4B4B',
+    borderColor: COLORS.primary,
     backgroundColor: '#FFF5F5',
   },
   countryInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    gap: 12,
+    gap: SPACING.md,
   },
   countryFlag: {
     fontSize: 24,
   },
   countryName: {
     fontSize: 15,
-    fontFamily: 'Inter',
-    color: '#333',
+    fontFamily: FONTS.body,
+    color: COLORS.text,
   },
   countryNameSelected: {
-    color: '#FF4B4B',
-    fontFamily: 'Inter-SemiBold',
+    color: COLORS.primary,
+    fontFamily: FONTS.bodySemiBold,
   },
   cancelButton: {
-    paddingVertical: 14,
-    borderRadius: 2,
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: COLORS.backgroundDark,
     borderWidth: 2,
     borderColor: 'rgba(0, 0, 0, 0.15)',
   },
   cancelText: {
     fontSize: 15,
-    fontFamily: 'Silkscreen',
-    color: '#666',
+    fontFamily: FONTS.button,
+    color: COLORS.textMuted,
   },
 });
