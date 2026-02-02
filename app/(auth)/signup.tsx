@@ -320,24 +320,24 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.sm,
   },
   logoImage: {
-    width: 170,
-    height: 170,
+    width: 150,
+    height: 150,
   },
   logo: {
-    fontSize: 25,
+    fontSize: 23,
     fontFamily: FONTS.heading,
     color: COLORS.text,
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.sm,
     letterSpacing: 1,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
-    paddingBottom: SPACING.sm,
+    paddingBottom: SPACING.xs,
   },
   form: {
     marginBottom: SPACING.xl,
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   helperText: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
     marginTop: SPACING.xs,
