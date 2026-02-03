@@ -39,7 +39,13 @@ export function isValidCoordinate(lat: number, lng: number): boolean {
  */
 export async function extractGpsFromExif(uri: string): Promise<GpsCoordinates | null> {
   try {
-    const exifData = await readAsync(uri);
+    // Add a timeout to prevent hanging indefinitely
+    const exifPromise = readAsync(uri);
+    const timeoutPromise = new Promise<null>((resolve) => 
+      setTimeout(() => resolve(null), 2000)
+    );
+
+    const exifData = await Promise.race([exifPromise, timeoutPromise]);
 
     if (!exifData) {
       return null;
