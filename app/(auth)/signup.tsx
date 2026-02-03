@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.xs,
   },
   logoImage: {
     width: 150,
@@ -412,6 +412,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: SPACING.sm,
+    marginBottom: SPACING.xxl,
   },
   footerText: {
     fontSize: 16,
