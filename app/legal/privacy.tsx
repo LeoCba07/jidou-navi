@@ -23,6 +23,7 @@ export default function PrivacyPolicyScreen() {
       <BulletPoint>{t('legal.privacy.section2Bullet2')}</BulletPoint>
       <BulletPoint>{t('legal.privacy.section2Bullet3')}</BulletPoint>
       <BulletPoint>{t('legal.privacy.section2Bullet4')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section2Bullet5')}</BulletPoint>
 
       <SectionTitle>{t('legal.privacy.section3Title')}</SectionTitle>
       <Paragraph>{t('legal.privacy.section3Intro')}</Paragraph>
@@ -30,6 +31,7 @@ export default function PrivacyPolicyScreen() {
       <BulletPoint>{t('legal.privacy.section3Bullet2')}</BulletPoint>
       <BulletPoint>{t('legal.privacy.section3Bullet3')}</BulletPoint>
       <BulletPoint>{t('legal.privacy.section3Bullet4')}</BulletPoint>
+      <BulletPoint>{t('legal.privacy.section3Bullet5')}</BulletPoint>
 
       <SectionTitle>{t('legal.privacy.section4Title')}</SectionTitle>
       <Paragraph>{t('legal.privacy.section4Text')}</Paragraph>
