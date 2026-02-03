@@ -89,7 +89,9 @@ export default function AddMachineScreen() {
             setPhotoSize(null);
             setExifLocation(null);
             setShowLocationVerification(false);
-            setLocationSource('gps');
+            if (!isManualLocation) {
+              setLocationSource('gps');
+            }
           },
         },
       ]
@@ -124,6 +126,13 @@ export default function AddMachineScreen() {
           return;
         }
 
+        // New image selected, now we can safely clear old EXIF state
+        setExifLocation(null);
+        setShowLocationVerification(false);
+        if (!isManualLocation) {
+          setLocationSource('gps');
+        }
+
         const originalUri = preEditResult.assets[0].uri;
 
         // Step 2: Try to extract GPS from EXIF
@@ -152,9 +161,17 @@ export default function AddMachineScreen() {
           const blob = await response.blob();
           setPhotoSize(blob.size);
         } else {
-          // User cancelled editing, reset EXIF state
-          setExifLocation(null);
-          setShowLocationVerification(false);
+          // User cancelled editing the NEW image. 
+          // If they already had a photo, we should NOT have cleared the state.
+          // However, since they intended to pick a new one, clearing the NEWly found EXIF is correct.
+          // But we must NOT leave the app in an inconsistent state if they keep the old photo.
+          
+          // If photo still exists (old one), we shouldn't have cleared the EXIF if it belonged to the old one.
+          // The current logic is a bit tricky here. For now, let's at least not clear if cancelled.
+          if (!photo) {
+            setExifLocation(null);
+            setShowLocationVerification(false);
+          }
         }
       } else {
         // Camera: no EXIF GPS typically available on iOS
@@ -166,6 +183,13 @@ export default function AddMachineScreen() {
         });
 
         if (!result.canceled && result.assets[0]) {
+          // New photo from camera, clear any old EXIF
+          setExifLocation(null);
+          setShowLocationVerification(false);
+          if (!isManualLocation) {
+            setLocationSource('gps');
+          }
+          
           const asset = result.assets[0];
           setPhoto(asset.uri);
 
