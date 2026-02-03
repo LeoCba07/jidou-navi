@@ -6,6 +6,9 @@ export interface GpsCoordinates {
   longitude: number;
 }
 
+// Timeout for reading EXIF data to prevent infinite hangs
+const EXIF_READ_TIMEOUT_MS = 2000;
+
 /**
  * Check if coordinates are valid (not null island, within bounds, finite numbers)
  */
@@ -38,8 +41,18 @@ export function isValidCoordinate(lat: number, lng: number): boolean {
  * Returns null if no GPS data found or if coordinates are invalid
  */
 export async function extractGpsFromExif(uri: string): Promise<GpsCoordinates | null> {
+  let timeoutId: any;
+
   try {
-    const exifData = await readAsync(uri);
+    // Add a timeout to prevent hanging indefinitely
+    const exifPromise = readAsync(uri);
+    const timeoutPromise = new Promise<null>((resolve) => {
+      timeoutId = setTimeout(() => {
+        resolve(null);
+      }, EXIF_READ_TIMEOUT_MS);
+    });
+
+    const exifData = await Promise.race([exifPromise, timeoutPromise]);
 
     if (!exifData) {
       return null;
@@ -70,5 +83,9 @@ export async function extractGpsFromExif(uri: string): Promise<GpsCoordinates | 
   } catch (error) {
     console.warn('Failed to extract EXIF GPS data:', error);
     return null;
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
   }
 }
