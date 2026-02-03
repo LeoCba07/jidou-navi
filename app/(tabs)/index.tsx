@@ -59,14 +59,16 @@ export default function MapScreen() {
         // Clear categories so the machine is visible
         clearCategories();
 
-        // Center map
-        if (cameraRef.current) {
-          cameraRef.current.setCamera({
-            centerCoordinate: [lng, lat],
-            zoomLevel: 16,
-            animationDuration: 1000,
-          });
-        }
+        // Small delay to ensure map/camera ref is ready when switching tabs
+        setTimeout(() => {
+          if (cameraRef.current) {
+            cameraRef.current.setCamera({
+              centerCoordinate: [lng, lat],
+              zoomLevel: 16,
+              animationDuration: 1000,
+            });
+          }
+        }, 100);
 
         // Force fetch area
         const delta = 0.01; // ~1km
@@ -78,20 +80,24 @@ export default function MapScreen() {
         };
         forceFetch(bounds);
 
-        // Try to select the machine
-        setTimeout(() => {
+        // Try to select the machine with retry logic
+        // We retry a few times to allow the fetch to complete
+        let attempts = 0;
+        const maxAttempts = 5;
+        
+        const trySelect = setInterval(() => {
+          attempts++;
           const currentMachines = useMachinesCacheStore.getState().visibleMachines;
           const found = currentMachines.find((m) => m.id === id);
+          
           if (found) {
             setSelectedMachine(found);
-          } else {
-            // Optimistic selection if fetch hasn't finished or failed
-            // We create a temporary object with available data
-            // Note: We don't have all details here, but enough for the preview
-            // Ideally, we should fetch single machine details if not found
-            // For now, we wait for the map fetch to populate the store
+            clearInterval(trySelect);
+          } else if (attempts >= maxAttempts) {
+            clearInterval(trySelect);
+            // If still not found, we could fetch individual machine details here as fallback
           }
-        }, 1000);
+        }, 500);
       }
     }
   }, [params.focusLat, params.focusLng, params.focusMachineId]);
