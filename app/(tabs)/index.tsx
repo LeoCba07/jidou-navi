@@ -4,7 +4,7 @@ import { View, StyleSheet, ActivityIndicator, Pressable, Text } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import Mapbox, { Camera, LocationPuck, MapView, ShapeSource, SymbolLayer, Images, CircleLayer } from '@rnmapbox/maps';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { filterMachinesByCategories, NearbyMachine, SearchResult, calculateDistance, MapBounds } from '../../src/lib/machines';
 import { MachinePreviewCard } from '../../src/components/MachinePreviewCard';
 import { SearchBar } from '../../src/components/SearchBar';
@@ -26,6 +26,7 @@ const markerImages = {
 
 export default function MapScreen() {
   const { t } = useTranslation();
+  const params = useLocalSearchParams<{ focusLat: string; focusLng: string; focusMachineId: string }>();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedMachine, setSelectedMachine] = useState<NearbyMachine | null>(null);
@@ -44,6 +45,62 @@ export default function MapScreen() {
 
   // Map fetching hook
   const { handleRegionChange, forceFetch, cleanup } = useMapFetch();
+
+  // Handle focus parameters from other screens (e.g., Discover)
+  useEffect(() => {
+    if (params.focusLat && params.focusLng && params.focusMachineId) {
+      const lat = parseFloat(params.focusLat);
+      const lng = parseFloat(params.focusLng);
+      const id = params.focusMachineId;
+
+      if (!isNaN(lat) && !isNaN(lng)) {
+        // Reset selected machine first
+        setSelectedMachine(null);
+        // Clear categories so the machine is visible
+        clearCategories();
+
+        // Small delay to ensure map/camera ref is ready when switching tabs
+        setTimeout(() => {
+          if (cameraRef.current) {
+            cameraRef.current.setCamera({
+              centerCoordinate: [lng, lat],
+              zoomLevel: 16,
+              animationDuration: 1000,
+            });
+          }
+        }, 100);
+
+        // Force fetch area
+        const delta = 0.01; // ~1km
+        const bounds: MapBounds = {
+          minLat: lat - delta,
+          maxLat: lat + delta,
+          minLng: lng - delta,
+          maxLng: lng + delta,
+        };
+        forceFetch(bounds);
+
+        // Try to select the machine with retry logic
+        // We retry a few times to allow the fetch to complete
+        let attempts = 0;
+        const maxAttempts = 5;
+        
+        const trySelect = setInterval(() => {
+          attempts++;
+          const currentMachines = useMachinesCacheStore.getState().visibleMachines;
+          const found = currentMachines.find((m) => m.id === id);
+          
+          if (found) {
+            setSelectedMachine(found);
+            clearInterval(trySelect);
+          } else if (attempts >= maxAttempts) {
+            clearInterval(trySelect);
+            // If still not found, we could fetch individual machine details here as fallback
+          }
+        }, 500);
+      }
+    }
+  }, [params.focusLat, params.focusLng, params.focusMachineId]);
 
   // Filter machines by selected categories
   const filteredMachines = useMemo(() => {
