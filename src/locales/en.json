@@ -258,6 +258,10 @@
       "usePhotoLocation": "Yes, use this",
       "useCurrentLocation": "No, use my location"
     },
+    "removePhotoConfirm": {
+      "title": "Remove Photo?",
+      "message": "Are you sure you want to remove this photo?"
+    },
     "permissionNeeded": "Please grant camera/gallery access.",
     "imageError": "Failed to process image. Please try again.",
     "submitError": "Failed to add machine. Please try again.",

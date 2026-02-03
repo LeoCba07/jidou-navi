@@ -42,7 +42,7 @@ export default function AddMachineScreen() {
   const { t } = useTranslation();
   const { user, profile } = useAuthStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
-  const { showError, showSuccess } = useAppModal();
+  const { showError, showSuccess, showConfirm } = useAppModal();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoSize, setPhotoSize] = useState<number | null>(null);
@@ -74,6 +74,24 @@ export default function AddMachineScreen() {
       }
     })();
   }, []);
+
+  function handleRemovePhoto() {
+    showConfirm(
+      t('addMachine.removePhotoConfirm.title'),
+      t('addMachine.removePhotoConfirm.message'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.remove'),
+          style: 'destructive',
+          onPress: () => {
+            setPhoto(null);
+            setPhotoSize(null);
+          },
+        },
+      ]
+    );
+  }
 
   async function pickImage(useCamera: boolean) {
     const permission = useCamera
@@ -358,7 +376,7 @@ export default function AddMachineScreen() {
               <Text style={styles.compressingText}>{t('addMachine.processingImage')}</Text>
             </View>
           ) : photo ? (
-            <Pressable onPress={() => { setPhoto(null); setPhotoSize(null); }}>
+            <Pressable onPress={handleRemovePhoto}>
               <Image source={{ uri: photo }} style={styles.photo} />
               <Text style={styles.photoHint}>
                 {t('addMachine.tapToRemove')}{photoSize ? ` • ${(photoSize / 1024).toFixed(0)}KB` : ''}
