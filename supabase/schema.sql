@@ -553,7 +553,7 @@ BEGIN
                 AND m.id > cursor_id
             )
         )
-    GROUP BY m.id, m.name, m.description, m.address, m.latitude, m.longitude, m.location, m.status, m.visit_count, mp.photo_url
+    GROUP BY m.id, m.name, m.description, m.address, m.latitude, m.longitude, m.location, m.status, m.visit_count, mp.photo_url, m.directions_hint
     ORDER BY ST_Distance(m.location, ST_MakePoint(lng, lat)::geography), m.id
     LIMIT limit_count;
 END;
