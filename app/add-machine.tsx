@@ -87,6 +87,9 @@ export default function AddMachineScreen() {
           onPress: () => {
             setPhoto(null);
             setPhotoSize(null);
+            setExifLocation(null);
+            setShowLocationVerification(false);
+            setLocationSource('gps');
           },
         },
       ]
