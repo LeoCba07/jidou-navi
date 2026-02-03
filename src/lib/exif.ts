@@ -41,10 +41,12 @@ export function isValidCoordinate(lat: number, lng: number): boolean {
  * Returns null if no GPS data found or if coordinates are invalid
  */
 export async function extractGpsFromExif(uri: string): Promise<GpsCoordinates | null> {
-  let timeoutId: any;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   try {
-    // Add a timeout to prevent hanging indefinitely
+    // Add a timeout to prevent hanging indefinitely.
+    // Note: readAsync doesn't support AbortSignal, so if it times out, 
+    // the native operation might still continue in the background.
     const exifPromise = readAsync(uri);
     const timeoutPromise = new Promise<null>((resolve) => {
       timeoutId = setTimeout(() => {

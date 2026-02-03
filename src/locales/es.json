@@ -258,6 +258,10 @@
       "usePhotoLocation": "Sí, usar esta",
       "useCurrentLocation": "No, usar mi ubicación"
     },
+    "removePhotoConfirm": {
+      "title": "¿Eliminar Foto?",
+      "message": "¿Estás seguro de que deseas eliminar esta foto?"
+    },
     "permissionNeeded": "Por favor concede acceso a la cámara/galería.",
     "imageError": "Error al procesar la imagen. Por favor intenta de nuevo.",
     "submitError": "Error al añadir la máquina. Por favor intenta de nuevo.",
