@@ -1,1 +1,0 @@
-The Zustand store setup looks clean and well-structured. Test plan and usage examples are detailed.
