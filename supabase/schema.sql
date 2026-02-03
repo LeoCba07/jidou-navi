@@ -513,7 +513,8 @@ RETURNS TABLE (
     status machine_status,
     visit_count INTEGER,
     primary_photo_url TEXT,
-    categories JSON
+    categories JSON,
+    directions_hint TEXT
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -534,7 +535,8 @@ BEGIN
             JOIN categories c ON c.id = mc.category_id
             WHERE mc.machine_id = m.id),
             '[]'::json
-        ) as categories
+        ) as categories,
+        m.directions_hint
     FROM machines m
     LEFT JOIN machine_photos mp ON mp.machine_id = m.id AND mp.is_primary = TRUE AND mp.status = 'active'
     LEFT JOIN machine_categories mc ON mc.machine_id = m.id
@@ -699,7 +701,8 @@ RETURNS TABLE (
     status machine_status,
     visit_count INTEGER,
     primary_photo_url TEXT,
-    categories JSON
+    categories JSON,
+    directions_hint TEXT
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -720,7 +723,8 @@ BEGIN
             JOIN categories c ON c.id = mc.category_id
             WHERE mc.machine_id = m.id),
             '[]'::json
-        ) as categories
+        ) as categories,
+        m.directions_hint
     FROM machines m
     LEFT JOIN machine_photos mp ON mp.machine_id = m.id AND mp.is_primary = TRUE AND mp.status = 'active'
     WHERE m.status = 'active'
