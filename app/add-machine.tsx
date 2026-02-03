@@ -107,6 +107,12 @@ export default function AddMachineScreen() {
     }
 
     setCompressing(true);
+    // Reset EXIF state for new selection
+    setExifLocation(null);
+    setShowLocationVerification(false);
+    if (!isManualLocation) {
+      setLocationSource('gps');
+    }
 
     try {
       // For gallery images, first select without editing to preserve EXIF
