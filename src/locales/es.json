@@ -450,6 +450,11 @@
     "noFriendsYet": "Agrega amigos para ver sus posiciones!",
     "noData": "Aun no hay datos de clasificacion"
   },
+  "userProfile": {
+    "title": "Perfil",
+    "notFound": "Usuario no encontrado",
+    "moreBadges": "insignias más"
+  },
   "admin": {
     "dashboard": "Panel de Admin",
     "reviewSubmissions": "Revisar envíos pendientes",

@@ -1,6 +1,7 @@
 // Leaderboard row component
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import type { LeaderboardEntry } from '../../store/friendsStore';
 
 const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
@@ -28,8 +29,13 @@ export default function LeaderboardRow({ entry, showWeeklyXp = false }: Leaderbo
   const isTopThree = entry.rank <= 3;
   const rankColor = getRankColor(entry.rank);
 
+  function handlePress() {
+    router.push(`/profile/${entry.user_id}`);
+  }
+
   return (
-    <View
+    <Pressable
+      onPress={handlePress}
       style={[
         styles.container,
         entry.is_current_user && styles.currentUser,
@@ -60,7 +66,7 @@ export default function LeaderboardRow({ entry, showWeeklyXp = false }: Leaderbo
           <Text style={styles.weeklyXpText}>+{entry.xp_this_week}</Text>
         </View>
       )}
-    </View>
+    </Pressable>
   );
 }
 

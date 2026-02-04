@@ -454,6 +454,11 @@
     "weeklyChampion2": "2nd Place",
     "weeklyChampion3": "3rd Place"
   },
+  "userProfile": {
+    "title": "Profile",
+    "notFound": "User not found",
+    "moreBadges": "more badges"
+  },
   "admin": {
     "dashboard": "Admin Dashboard",
     "reviewSubmissions": "Review pending submissions",

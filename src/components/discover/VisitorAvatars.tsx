@@ -28,10 +28,7 @@ export default function VisitorAvatars({
     if (onAvatarPress) {
       onAvatarPress(userId);
     } else {
-      router.push({
-        pathname: '/profile/[id]',
-        params: { id: userId },
-      });
+      router.push(`/profile/${userId}`);
     }
   };
 
