@@ -55,6 +55,7 @@ export type NearbyMachine = {
   visit_count: number;
   verification_count?: number;
   last_verified_at?: string;
+  directions_hint?: string | null;
 };
 
 // Fetch machines within radius of a location
