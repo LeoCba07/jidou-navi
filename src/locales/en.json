@@ -264,6 +264,8 @@
     },
     "permissionNeeded": "Please grant camera/gallery access.",
     "imageError": "Failed to process image. Please try again.",
+    "noExifDataFallback": "No location data found in this photo. Using your current location instead.",
+    "noExifDataNoLocation": "No location data found in this photo. Please ensure you are at the location.",
     "submitError": "Failed to add machine. Please try again.",
     "success": "Machine added!",
     "successPending": "Machine submitted! It will be reviewed by our team before appearing on the map."
@@ -453,6 +455,11 @@
     "weeklyChampion1": "1st Place",
     "weeklyChampion2": "2nd Place",
     "weeklyChampion3": "3rd Place"
+  },
+  "userProfile": {
+    "title": "Profile",
+    "notFound": "User not found",
+    "moreBadges": "more badges"
   },
   "admin": {
     "dashboard": "Admin Dashboard",

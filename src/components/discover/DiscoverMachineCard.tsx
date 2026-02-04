@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import type { EngagedMachine, MachineVisitor } from '../../lib/machines';
 import { fetchMachineVisitors, fetchMachineVisitorCount } from '../../lib/machines';
+import { useVisitedMachinesStore } from '../../store/visitedMachinesStore';
 import UpvoteButton from './UpvoteButton';
 import VisitorAvatars from './VisitorAvatars';
 
@@ -33,6 +34,7 @@ export default function DiscoverMachineCard({
   onShowOnMap,
 }: DiscoverMachineCardProps) {
   const { t } = useTranslation();
+  const isVisited = useVisitedMachinesStore((state) => state.isVisited(machine.id));
   const [visitors, setVisitors] = useState<MachineVisitor[]>([]);
   const [visitorCount, setVisitorCount] = useState(0);
 
@@ -93,6 +95,11 @@ export default function DiscoverMachineCard({
           <View style={styles.distanceBadge}>
             <Ionicons name="location" size={12} color="#fff" />
             <Text style={styles.distanceText}>{formattedDistance}</Text>
+          </View>
+        )}
+        {isVisited && (
+          <View style={styles.visitedBadge}>
+            <Ionicons name="checkmark-circle" size={22} color="#fff" />
           </View>
         )}
       </View>
@@ -214,6 +221,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+  },
+  visitedBadge: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    backgroundColor: '#22C55E',
+    borderRadius: 14,
+    padding: 3,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   distanceText: {
     fontSize: 11,

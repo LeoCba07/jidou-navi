@@ -3,6 +3,7 @@ import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { NearbyMachine } from '../lib/machines';
+import { useVisitedMachinesStore } from '../store/visitedMachinesStore';
 
 type Props = {
   machine: NearbyMachine;
@@ -13,6 +14,7 @@ type Props = {
 
 export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }: Props) {
   const { t } = useTranslation();
+  const isVisited = useVisitedMachinesStore((state) => state.isVisited(machine.id));
 
   // Use override distance if provided, otherwise fall back to machine's distance
   const actualDistance = distanceMeters ?? machine.distance_meters;
@@ -29,13 +31,20 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
     <View style={styles.container}>
       <Pressable style={styles.card} onPress={onPress}>
         {/* Photo */}
-        {machine.primary_photo_url ? (
-          <Image source={{ uri: machine.primary_photo_url }} style={styles.photo} />
-        ) : (
-          <View style={[styles.photo, styles.noPhoto]}>
-            <Ionicons name="image-outline" size={40} color="#ccc" />
-          </View>
-        )}
+        <View style={styles.photoContainer}>
+          {machine.primary_photo_url ? (
+            <Image source={{ uri: machine.primary_photo_url }} style={styles.photo} />
+          ) : (
+            <View style={[styles.photo, styles.noPhoto]}>
+              <Ionicons name="image-outline" size={40} color="#ccc" />
+            </View>
+          )}
+          {isVisited && (
+            <View style={styles.visitedBadge}>
+              <Ionicons name="checkmark-circle" size={20} color="#fff" />
+            </View>
+          )}
+        </View>
 
         {/* Info */}
         <View style={styles.info}>
@@ -117,12 +126,25 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: 'rgba(0, 0, 0, 0.15)',
   },
+  photoContainer: {
+    position: 'relative',
+  },
   photo: {
     width: 100,
     height: 100,
     borderRadius: 2,
     borderWidth: 2,
     borderColor: '#FF4B4B',
+  },
+  visitedBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    backgroundColor: '#22C55E',
+    borderRadius: 12,
+    padding: 2,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   noPhoto: {
     backgroundColor: '#f5f5f5',

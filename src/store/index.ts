@@ -5,4 +5,5 @@ export { useMachinesStore } from './machinesStore';
 export { useMachinesCacheStore } from './machinesCacheStore';
 export { useUIStore } from './uiStore';
 export { useSavedMachinesStore } from './savedMachinesStore';
+export { useVisitedMachinesStore } from './visitedMachinesStore';
 export { useFriendsStore } from './friendsStore';

@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
 import { Sentry } from '../../src/lib/sentry';
-import { useAuthStore, useSavedMachinesStore, useUIStore } from '../../src/store';
+import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance } from '../../src/lib/machines';
@@ -51,6 +51,7 @@ export default function MachineDetailScreen() {
   const { t } = useTranslation();
   const { user, profile } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
+  const { addVisited } = useVisitedMachinesStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const showShareCard = useUIStore((state) => state.showShareCard);
   const { showError, showSuccess, showConfirm } = useAppModal();
@@ -442,6 +443,7 @@ export default function MachineDetailScreen() {
       // Success! Update the visit count and disable button
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
+      addVisited(params.id as string); // Add to visited machines store
 
       // Add XP
       const xpResult = await addXP(

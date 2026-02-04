@@ -29,20 +29,23 @@ import { LocationVerificationModal } from '../src/components/LocationVerificatio
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
 
-// Category definitions with translation keys
+// Category definitions with translation keys and colors (matching CategoryFilterBar)
 const CATEGORIES = [
-  { id: 'drinks', translationKey: 'categories.drinks' },
-  { id: 'food', translationKey: 'categories.food' },
-  { id: 'gachapon', translationKey: 'categories.gachapon' },
-  { id: 'weird', translationKey: 'categories.weird' },
-  { id: 'retro', translationKey: 'categories.retro' },
+  { id: 'drinks', translationKey: 'categories.drinks', color: '#3C91E6' },
+  { id: 'food', translationKey: 'categories.food', color: '#FF4B4B' },
+  { id: 'gachapon', translationKey: 'categories.gachapon', color: '#FFB7CE' },
+  { id: 'weird', translationKey: 'categories.weird', color: '#9B59B6' },
+  { id: 'retro', translationKey: 'categories.retro', color: '#FFD966' },
+  { id: 'ice-cream', translationKey: 'categories.iceCream', color: '#E74C3C' },
+  { id: 'coffee', translationKey: 'categories.coffee', color: '#8B4513' },
+  { id: 'alcohol', translationKey: 'categories.alcohol', color: '#F39C12' },
 ];
 
 export default function AddMachineScreen() {
   const { t } = useTranslation();
   const { user, profile } = useAuthStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
-  const { showError, showSuccess, showConfirm } = useAppModal();
+  const { showError, showSuccess, showConfirm, showInfo } = useAppModal();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoSize, setPhotoSize] = useState<number | null>(null);
@@ -160,6 +163,15 @@ export default function AddMachineScreen() {
           const response = await fetch(asset.uri);
           const blob = await response.blob();
           setPhotoSize(blob.size);
+
+          // If no EXIF data was found, notify the user now (after they've finished editing)
+          if (!gpsData) {
+            if (location) {
+              showInfo(t('modal.info'), t('addMachine.noExifDataFallback'));
+            } else {
+              showInfo(t('modal.info'), t('addMachine.noExifDataNoLocation'));
+            }
+          }
         } else {
           // User cancelled editing the NEW image. 
           // If they already had a photo, we should NOT have cleared the state.
@@ -437,25 +449,28 @@ export default function AddMachineScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>{t('addMachine.categories')}</Text>
           <View style={styles.categories}>
-            {CATEGORIES.map((cat) => (
-              <Pressable
-                key={cat.id}
-                style={[
-                  styles.categoryChip,
-                  selectedCategories.includes(cat.id) && styles.categoryChipSelected,
-                ]}
-                onPress={() => toggleCategory(cat.id)}
-              >
-                <Text
+            {CATEGORIES.map((cat) => {
+              const isSelected = selectedCategories.includes(cat.id);
+              return (
+                <Pressable
+                  key={cat.id}
                   style={[
-                    styles.categoryText,
-                    selectedCategories.includes(cat.id) && styles.categoryTextSelected,
+                    styles.categoryChip,
+                    isSelected && { backgroundColor: cat.color, borderColor: cat.color },
                   ]}
+                  onPress={() => toggleCategory(cat.id)}
                 >
-                  {t(cat.translationKey)}
-                </Text>
-              </Pressable>
-            ))}
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      isSelected && styles.categoryTextSelected,
+                    ]}
+                  >
+                    {t(cat.translationKey)}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
         </View>
 
@@ -694,10 +709,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderWidth: 2,
     borderColor: 'rgba(0, 0, 0, 0.15)',
-  },
-  categoryChipSelected: {
-    backgroundColor: '#FF4B4B',
-    borderColor: '#CC3C3C',
   },
   categoryText: {
     fontSize: 14,
