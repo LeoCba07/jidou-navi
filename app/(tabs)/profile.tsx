@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
+import { useVisitedMachinesStore } from '../../src/store/visitedMachinesStore';
 import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
@@ -53,13 +54,13 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile, setProfile } = useAuthStore();
   const { removeSaved } = useSavedMachinesStore();
+  const { visitedMachineIds } = useVisitedMachinesStore();
   const { friends, pendingRequestCount, loadFriends, loadPendingRequestCount, removeFriend } = useFriendsStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
   const [pendingMachines, setPendingMachines] = useState<UserPendingMachine[]>([]);
-  const [visitedMachineIds, setVisitedMachineIds] = useState<Set<string>>(new Set());
   const [loadingBadges, setLoadingBadges] = useState(true);
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [loadingPending, setLoadingPending] = useState(true);
@@ -173,23 +174,11 @@ export default function ProfileScreen() {
     }
   }
 
-  // Fetch user's saved machines with visited status
+  // Fetch user's saved machines
   async function loadSavedMachines() {
     if (!user) return;
     const machines = await fetchSavedMachines();
     setSavedMachines(machines);
-
-    // Get which saved machines have been visited
-    if (machines.length > 0) {
-      const machineIds = machines.map((sm) => sm.machine_id);
-      const { data: visits } = await supabase
-        .from('visits')
-        .select('machine_id')
-        .eq('user_id', user.id)
-        .in('machine_id', machineIds);
-
-      setVisitedMachineIds(new Set(visits?.map((v) => v.machine_id) || []));
-    }
     setLoadingSaved(false);
   }
 
@@ -517,24 +506,28 @@ export default function ProfileScreen() {
                   style={styles.savedCard}
                   onPress={() => goToMachine(saved)}
                 >
-                  {saved.machine.primary_photo_url ? (
-                    <Image
-                      source={{ uri: saved.machine.primary_photo_url }}
-                      style={[styles.savedPhoto, styles.savedPhotoWithImage]}
-                    />
-                  ) : (
-                    <View style={[styles.savedPhoto, styles.savedPhotoPlaceholder]}>
-                      <Ionicons name="image-outline" size={24} color="#ccc" />
-                    </View>
-                  )}
+                  <View style={styles.savedPhotoContainer}>
+                    {saved.machine.primary_photo_url ? (
+                      <Image
+                        source={{ uri: saved.machine.primary_photo_url }}
+                        style={[styles.savedPhoto, styles.savedPhotoWithImage]}
+                      />
+                    ) : (
+                      <View style={[styles.savedPhoto, styles.savedPhotoPlaceholder]}>
+                        <Ionicons name="image-outline" size={24} color="#ccc" />
+                      </View>
+                    )}
+                    {visitedMachineIds.has(saved.machine_id) && (
+                      <View style={styles.visitedBadge}>
+                        <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                      </View>
+                    )}
+                  </View>
                   <View style={styles.savedInfo}>
                     <View style={styles.savedNameRow}>
                       <Text style={styles.savedName} numberOfLines={1}>
                         {saved.machine.name || t('machine.unnamed')}
                       </Text>
-                      {visitedMachineIds.has(saved.machine_id) && (
-                        <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
-                      )}
                     </View>
                     <View style={styles.savedAddressRow}>
                       <Ionicons name="location-outline" size={14} color="#999" />
@@ -892,10 +885,23 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 2,
   },
+  savedPhotoContainer: {
+    position: 'relative',
+  },
   savedPhoto: {
     width: 70,
     height: 70,
     borderRadius: 8,
+  },
+  visitedBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    backgroundColor: '#22C55E',
+    borderRadius: 12,
+    padding: 2,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   savedPhotoWithImage: {
     borderWidth: 2,

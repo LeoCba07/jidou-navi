@@ -270,6 +270,29 @@ export async function fetchSavedMachineIds(): Promise<string[]> {
   return data?.map((item) => item.machine_id) || [];
 }
 
+// Fetch all machine IDs that the current user has visited
+export async function fetchVisitedMachineIds(): Promise<string[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('visits')
+    .select('machine_id')
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error fetching visited machine IDs:', error);
+    return [];
+  }
+
+  // Return unique machine IDs
+  const uniqueIds = [...new Set(data?.map((item) => item.machine_id) || [])];
+  return uniqueIds;
+}
+
 // Type for discover/trending machine
 export type DiscoverMachine = {
   id: string;

@@ -23,8 +23,9 @@ import { supabase } from '../src/lib/supabase';
 import { Analytics } from '../src/lib/analytics';
 import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
+import { useVisitedMachinesStore } from '../src/store/visitedMachinesStore';
 import { useLanguageStore } from '../src/store/languageStore';
-import { fetchSavedMachineIds } from '../src/lib/machines';
+import { fetchSavedMachineIds, fetchVisitedMachineIds } from '../src/lib/machines';
 import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
 import AppModal from '../src/components/AppModal';
 import LanguageSelector from '../src/components/LanguageSelector';
@@ -36,6 +37,7 @@ export default function RootLayout() {
   const segments = useSegments();
   const { user, setUser, setSession, setProfile, isLoading, setLoading } = useAuthStore();
   const { setSavedMachineIds } = useSavedMachinesStore();
+  const { setVisitedMachineIds } = useVisitedMachinesStore();
   const { initializeLanguage } = useLanguageStore();
   const [isReady, setIsReady] = useState(false);
   const [i18nReady, setI18nReady] = useState(false);
@@ -69,6 +71,7 @@ export default function RootLayout() {
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
         loadSavedMachines();
+        loadVisitedMachines();
         // Track app_open for authenticated user
         Analytics.track('app_open');
       }
@@ -84,6 +87,7 @@ export default function RootLayout() {
         if (session?.user) {
           fetchProfile(session.user.id, session.user.email);
           loadSavedMachines();
+          loadVisitedMachines();
           // Track app_open when user logs in if they weren't before
           if (event === 'SIGNED_IN') {
             Analytics.track('app_open');
@@ -91,6 +95,7 @@ export default function RootLayout() {
         } else {
           setProfile(null);
           setSavedMachineIds([]); // Clear saved machines on logout
+          setVisitedMachineIds([]); // Clear visited machines on logout
         }
       }
     );
@@ -102,6 +107,12 @@ export default function RootLayout() {
   async function loadSavedMachines() {
     const ids = await fetchSavedMachineIds();
     setSavedMachineIds(ids);
+  }
+
+  // Load visited machines for the current user
+  async function loadVisitedMachines() {
+    const ids = await fetchVisitedMachineIds();
+    setVisitedMachineIds(ids);
   }
 
   // Fetch user profile from database (creates one if missing)
