@@ -264,6 +264,7 @@
     },
     "permissionNeeded": "Please grant camera/gallery access.",
     "imageError": "Failed to process image. Please try again.",
+    "noExifData": "No location data found in this photo. Using your current location instead.",
     "submitError": "Failed to add machine. Please try again.",
     "success": "Machine added!",
     "successPending": "Machine submitted! It will be reviewed by our team before appearing on the map."

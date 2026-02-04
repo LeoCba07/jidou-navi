@@ -264,6 +264,7 @@
     },
     "permissionNeeded": "Por favor concede acceso a la cámara/galería.",
     "imageError": "Error al procesar la imagen. Por favor intenta de nuevo.",
+    "noExifData": "No se encontraron datos de ubicación en esta foto. Usando tu ubicación actual en su lugar.",
     "submitError": "Error al añadir la máquina. Por favor intenta de nuevo.",
     "success": "¡Máquina añadida!",
     "successPending": "¡Máquina enviada! Será revisada por nuestro equipo antes de aparecer en el mapa."

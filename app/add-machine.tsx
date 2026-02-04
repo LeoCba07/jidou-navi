@@ -142,6 +142,9 @@ export default function AddMachineScreen() {
           // Store EXIF location and show verification modal
           setExifLocation(gpsData);
           setShowLocationVerification(true);
+        } else {
+          // No EXIF data found, notify the user
+          showError(t('common.error'), t('addMachine.noExifData'));
         }
 
         // Step 3: Now apply editing with compression
