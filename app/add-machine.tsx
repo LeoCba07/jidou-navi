@@ -42,7 +42,7 @@ export default function AddMachineScreen() {
   const { t } = useTranslation();
   const { user, profile } = useAuthStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
-  const { showError, showSuccess, showConfirm } = useAppModal();
+  const { showError, showSuccess, showConfirm, showInfo } = useAppModal();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoSize, setPhotoSize] = useState<number | null>(null);
@@ -142,9 +142,6 @@ export default function AddMachineScreen() {
           // Store EXIF location and show verification modal
           setExifLocation(gpsData);
           setShowLocationVerification(true);
-        } else {
-          // No EXIF data found, notify the user
-          showError(t('common.error'), t('addMachine.noExifData'));
         }
 
         // Step 3: Now apply editing with compression
@@ -163,6 +160,15 @@ export default function AddMachineScreen() {
           const response = await fetch(asset.uri);
           const blob = await response.blob();
           setPhotoSize(blob.size);
+
+          // If no EXIF data was found, notify the user now (after they've finished editing)
+          if (!gpsData) {
+            if (location) {
+              showInfo(t('modal.info'), t('addMachine.noExifDataFallback'));
+            } else {
+              showInfo(t('modal.info'), t('addMachine.noExifDataNoLocation'));
+            }
+          }
         } else {
           // User cancelled editing the NEW image. 
           // If they already had a photo, we should NOT have cleared the state.
