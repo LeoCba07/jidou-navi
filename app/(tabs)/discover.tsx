@@ -30,7 +30,9 @@ import {
   upvoteMachine,
   removeUpvote,
   MAX_WEEKLY_UPVOTES,
+  XP_PER_UPVOTE,
 } from '../../src/lib/upvotes';
+import { updateLocalXP } from '../../src/lib/xp';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -190,16 +192,20 @@ export default function DiscoverScreen() {
 
       // Update machine's upvote count optimistically
       updateMachineUpvoteCount(machineId, -1);
+      
+      // Update XP optimistically
+      updateLocalXP(-XP_PER_UPVOTE);
 
       const result = await removeUpvote(machineId);
 
       if (result.success) {
         setRemainingVotes(result.remaining_votes ?? remainingVotes + 1);
-        showSuccess(t('common.success'), t('discover.upvoteRemoved'));
+        // Don't show modal for removing upvote (UI update is enough)
       } else {
         // Revert on failure
         setUpvotedIds((prev) => new Set(prev).add(machineId));
         updateMachineUpvoteCount(machineId, 1);
+        updateLocalXP(XP_PER_UPVOTE);
         showError(t('common.error'), t('common.error'));
       }
     } else {
@@ -216,12 +222,24 @@ export default function DiscoverScreen() {
 
       setUpvotedIds((prev) => new Set(prev).add(machineId));
       updateMachineUpvoteCount(machineId, 1);
+      
+      // Update XP optimistically
+      updateLocalXP(XP_PER_UPVOTE);
 
       const result = await upvoteMachine(machineId);
 
       if (result.success) {
         setRemainingVotes(result.remaining_votes ?? remainingVotes - 1);
-        showSuccess(t('common.success'), t('discover.upvoteSuccess', { xp: result.xp_awarded }));
+        // Only show modal if XP was awarded
+        if (result.xp_awarded && result.xp_awarded > 0) {
+          showSuccess(
+            t('common.success'),
+            t('discover.upvoteSuccess', { xp: result.xp_awarded }),
+            undefined,
+            'OK',
+            result.xp_awarded
+          );
+        }
       } else {
         // Revert on failure
         setUpvotedIds((prev) => {
@@ -230,6 +248,7 @@ export default function DiscoverScreen() {
           return next;
         });
         updateMachineUpvoteCount(machineId, -1);
+        updateLocalXP(-XP_PER_UPVOTE);
 
         if (result.error === 'weekly_limit_reached') {
           showError(t('common.error'), t('discover.weeklyLimitReached'));

@@ -65,6 +65,26 @@ export async function addXP(amount: number, reason: string) {
 }
 
 /**
+ * Optimistically updates the local profile XP and level.
+ * Use this when the backend XP update happens via a separate RPC (like upvotes).
+ * @param amount XP amount to add (can be negative)
+ */
+export function updateLocalXP(amount: number) {
+  const { profile, setProfile } = useAuthStore.getState();
+  if (!profile) return;
+  
+  const newXP = Math.max(0, (profile.xp || 0) + amount);
+  // Recalculate level locally
+  const newLevel = Math.floor(0.1 * Math.sqrt(newXP)) + 1;
+  
+  setProfile({
+    ...profile,
+    xp: newXP,
+    level: newLevel
+  });
+}
+
+/**
  * Calculates the XP required for a specific level.
  * Formula: XP = ((Level - 1) / 0.1)^2
  */
