@@ -31,6 +31,10 @@ type PublicProfile = {
   visit_count: number;
   contribution_count: number;
   badge_count: number;
+  country: string | null;
+  level: number | null;
+  role: string | null;
+  created_at: string | null;
 };
 
 // Badge type from joined query
@@ -82,8 +86,8 @@ export default function UserProfileScreen() {
     if (!id) return;
 
     const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
+      .from('public_profiles')
+      .select('id, username, display_name, avatar_url, bio, contribution_count, visit_count, badge_count, country, xp, level, role, created_at')
       .eq('id', id)
       .single();
 
