@@ -551,17 +551,21 @@ export default function ProfileScreen() {
                   <View style={styles.cardActions}>
                     <Pressable
                       style={styles.cardActionButton}
-                      onPress={() => handleShowOnMap(saved.machine)}
-                      accessibilityLabel={t('discover.showOnMap')}
-                    >
-                      <Ionicons name="map-outline" size={20} color="#3C91E6" />
-                    </Pressable>
-                    <Pressable
-                      style={styles.cardActionButton}
                       onPress={() => handleUnsave(saved.machine_id)}
+                      hitSlop={8}
+                      accessibilityRole="button"
                       accessibilityLabel={t('common.remove')}
                     >
                       <Ionicons name="bookmark" size={20} color="#FF4B4B" />
+                    </Pressable>
+                    <Pressable
+                      style={styles.cardActionButton}
+                      onPress={() => handleShowOnMap(saved.machine)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('discover.showOnMap')}
+                    >
+                      <Ionicons name="map-outline" size={20} color="#3C91E6" />
                     </Pressable>
                   </View>
                 </Pressable>
