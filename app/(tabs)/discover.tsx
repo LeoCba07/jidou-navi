@@ -31,6 +31,7 @@ import {
   removeUpvote,
   MAX_WEEKLY_UPVOTES,
 } from '../../src/lib/upvotes';
+import { updateLocalXP } from '../../src/lib/xp';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -195,6 +196,7 @@ export default function DiscoverScreen() {
 
       if (result.success) {
         setRemainingVotes(result.remaining_votes ?? remainingVotes + 1);
+        updateLocalXP(-5); // Optimistically deduct XP
         showSuccess(t('common.success'), t('discover.upvoteRemoved'));
       } else {
         // Revert on failure
@@ -221,6 +223,9 @@ export default function DiscoverScreen() {
 
       if (result.success) {
         setRemainingVotes(result.remaining_votes ?? remainingVotes - 1);
+        if (result.xp_awarded) {
+          updateLocalXP(result.xp_awarded);
+        }
         showSuccess(t('common.success'), t('discover.upvoteSuccess', { xp: result.xp_awarded }));
       } else {
         // Revert on failure
