@@ -235,6 +235,18 @@ export default function ProfileScreen() {
     });
   }
 
+  // Navigate to map focused on machine
+  function handleShowOnMap(machine: SavedMachine['machine']) {
+    router.push({
+      pathname: '/(tabs)',
+      params: {
+        focusLat: String(machine.latitude),
+        focusLng: String(machine.longitude),
+        focusMachineId: machine.id,
+      },
+    });
+  }
+
   useEffect(() => {
     fetchBadges();
     fetchAllBadges();
@@ -536,12 +548,22 @@ export default function ProfileScreen() {
                       </Text>
                     </View>
                   </View>
-                  <Pressable
-                    style={styles.unsaveButton}
-                    onPress={() => handleUnsave(saved.machine_id)}
-                  >
-                    <Ionicons name="bookmark" size={20} color="#FF4B4B" />
-                  </Pressable>
+                  <View style={styles.cardActions}>
+                    <Pressable
+                      style={styles.cardActionButton}
+                      onPress={() => handleShowOnMap(saved.machine)}
+                      accessibilityLabel={t('discover.showOnMap')}
+                    >
+                      <Ionicons name="map-outline" size={20} color="#3C91E6" />
+                    </Pressable>
+                    <Pressable
+                      style={styles.cardActionButton}
+                      onPress={() => handleUnsave(saved.machine_id)}
+                      accessibilityLabel={t('common.remove')}
+                    >
+                      <Ionicons name="bookmark" size={20} color="#FF4B4B" />
+                    </Pressable>
+                  </View>
                 </Pressable>
               ))}
             </View>
@@ -939,8 +961,18 @@ const styles = StyleSheet.create({
     color: '#999',
     flex: 1,
   },
-  unsaveButton: {
+  cardActions: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    gap: 8,
+    marginLeft: 8,
+  },
+  cardActionButton: {
     padding: 8,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pendingCard: {
     flexDirection: 'row',
