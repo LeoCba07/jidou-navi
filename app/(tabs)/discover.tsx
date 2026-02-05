@@ -195,7 +195,7 @@ export default function DiscoverScreen() {
 
       if (result.success) {
         setRemainingVotes(result.remaining_votes ?? remainingVotes + 1);
-        showSuccess(t('common.success'), t('discover.upvoteRemoved'));
+        // Don't show modal for removing upvote (UI update is enough)
       } else {
         // Revert on failure
         setUpvotedIds((prev) => new Set(prev).add(machineId));
@@ -221,7 +221,16 @@ export default function DiscoverScreen() {
 
       if (result.success) {
         setRemainingVotes(result.remaining_votes ?? remainingVotes - 1);
-        showSuccess(t('common.success'), t('discover.upvoteSuccess', { xp: result.xp_awarded }));
+        // Only show modal if XP was awarded
+        if (result.xp_awarded && result.xp_awarded > 0) {
+          showSuccess(
+            t('common.success'),
+            t('discover.upvoteSuccess', { xp: result.xp_awarded }),
+            undefined,
+            'OK',
+            result.xp_awarded
+          );
+        }
       } else {
         // Revert on failure
         setUpvotedIds((prev) => {
