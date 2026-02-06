@@ -512,6 +512,7 @@ RETURNS TABLE (
     distance_meters DOUBLE PRECISION,
     status machine_status,
     visit_count INTEGER,
+    verification_count INTEGER,
     primary_photo_url TEXT,
     categories JSON,
     directions_hint TEXT
@@ -528,6 +529,7 @@ BEGIN
         ST_Distance(m.location, ST_MakePoint(lng, lat)::geography) as distance_meters,
         m.status,
         m.visit_count,
+        m.verification_count,
         mp.photo_url as primary_photo_url,
         COALESCE(
             (SELECT json_agg(json_build_object('id', c.id, 'slug', c.slug, 'name', c.name, 'color', c.color))
@@ -700,6 +702,7 @@ RETURNS TABLE (
     distance_meters DOUBLE PRECISION,
     status machine_status,
     visit_count INTEGER,
+    verification_count INTEGER,
     primary_photo_url TEXT,
     categories JSON,
     directions_hint TEXT
@@ -716,6 +719,7 @@ BEGIN
         0::DOUBLE PRECISION as distance_meters,
         m.status,
         m.visit_count,
+        m.verification_count,
         mp.photo_url as primary_photo_url,
         COALESCE(
             (SELECT json_agg(json_build_object('id', c.id, 'slug', c.slug, 'name', c.name, 'color', c.color))

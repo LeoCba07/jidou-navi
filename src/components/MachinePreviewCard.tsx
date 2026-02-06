@@ -26,6 +26,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
 
   const categories = machine.categories || [];
   const isActive = machine.status === 'active';
+  const isVerified = (machine.verification_count || 0) >= 5;
 
   return (
     <View style={styles.container}>
@@ -80,12 +81,12 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
             </View>
             <View style={styles.statItem}>
               <Ionicons
-                name={isActive ? 'checkmark-circle' : 'help-circle'}
+                name={isVerified ? 'shield-checkmark' : isActive ? 'checkmark-circle' : 'help-circle'}
                 size={14}
-                color={isActive ? '#22C55E' : '#F59E0B'}
+                color={isVerified ? '#3C91E6' : isActive ? '#22C55E' : '#F59E0B'}
               />
-              <Text style={[styles.statTextMuted, isActive ? styles.activeText : styles.unknownText]}>
-                {isActive ? t('machine.active') : t('machine.unverified')}
+              <Text style={[styles.statTextMuted, isVerified ? styles.verifiedText : isActive ? styles.activeText : styles.unknownText]}>
+                {isVerified ? t('machine.verifications', { count: machine.verification_count }) : isActive ? t('machine.active') : t('machine.unverified')}
               </Text>
             </View>
           </View>
@@ -202,6 +203,9 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: '#22C55E',
+  },
+  verifiedText: {
+    color: '#3C91E6',
   },
   unknownText: {
     color: '#F59E0B',

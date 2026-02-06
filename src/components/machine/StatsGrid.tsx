@@ -21,6 +21,8 @@ export function StatsGrid({
 }: StatsGridProps) {
   const { t } = useTranslation();
 
+  const isVerified = verificationCount >= 5;
+
   return (
     <View style={styles.container}>
       {/* Row 1 */}
@@ -31,8 +33,8 @@ export function StatsGrid({
           <Text style={styles.label}>{t('machine.stats.visits')}</Text>
         </View>
         <View style={styles.cell}>
-          <Ionicons name="shield-checkmark-outline" size={18} color={COLORS.success} />
-          <Text style={styles.value}>{verificationCount}</Text>
+          <Ionicons name={isVerified ? 'shield-checkmark' : 'shield-checkmark-outline'} size={18} color={isVerified ? '#3C91E6' : COLORS.success} />
+          <Text style={[styles.value, isVerified && { color: '#3C91E6' }]}>{verificationCount}</Text>
           <Text style={styles.label}>{t('machine.stats.verified')}</Text>
         </View>
       </View>
@@ -40,12 +42,12 @@ export function StatsGrid({
       <View style={styles.row}>
         <View style={styles.cell}>
           <Ionicons
-            name={isActive ? 'checkmark-circle' : 'help-circle'}
+            name={isVerified ? 'shield-checkmark' : isActive ? 'checkmark-circle' : 'help-circle'}
             size={18}
-            color={isActive ? COLORS.success : COLORS.warning}
+            color={isVerified ? '#3C91E6' : isActive ? COLORS.success : COLORS.warning}
           />
-          <Text style={[styles.value, { color: isActive ? COLORS.success : COLORS.warning }]}>
-            {isActive ? t('machine.active') : t('machine.unverified')}
+          <Text style={[styles.value, { color: isVerified ? '#3C91E6' : isActive ? COLORS.success : COLORS.warning }]}>
+            {isVerified ? t('machine.active') : isActive ? t('machine.active') : t('machine.unverified')}
           </Text>
           <Text style={styles.label}>{t('machine.stats.status')}</Text>
         </View>
