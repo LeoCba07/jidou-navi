@@ -355,7 +355,7 @@ BEGIN
         GROUP BY v.user_id
     )
     SELECT
-        ROW_NUMBER() OVER (ORDER BY COALESCE(p.xp, 0) DESC) as rank,
+        ROW_NUMBER() OVER (ORDER BY COALESCE(p.xp, 0) DESC, p.created_at ASC) as rank,
         p.id as user_id,
         p.username::TEXT,
         p.display_name::TEXT,
@@ -410,7 +410,7 @@ BEGIN
         GROUP BY v.user_id
     )
     SELECT
-        ROW_NUMBER() OVER (ORDER BY COALESCE(p.xp, 0) DESC) as rank,
+        ROW_NUMBER() OVER (ORDER BY COALESCE(p.xp, 0) DESC, p.created_at ASC) as rank,
         p.id as user_id,
         p.username::TEXT,
         p.display_name::TEXT,
