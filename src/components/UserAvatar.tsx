@@ -13,6 +13,12 @@ interface UserAvatarProps {
   showFallbackIcon?: boolean;
 }
 
+/**
+ * A reusable Avatar component that handles:
+ * 1. Remote image loading
+ * 2. Fallback to default local image if URL is missing or broken
+ * 3. Error handling with state
+ */
 export default function UserAvatar({
   url,
   size = 40,
@@ -23,6 +29,7 @@ export default function UserAvatar({
 }: UserAvatarProps) {
   const [error, setError] = useState(false);
 
+  // Reset error when URL changes
   useEffect(() => {
     setError(false);
   }, [url]);
@@ -38,6 +45,7 @@ export default function UserAvatar({
     style,
   ];
 
+  // If no URL or there was an error loading the remote image
   if (!url || error) {
     if (showFallbackIcon) {
       return (
@@ -58,7 +66,10 @@ export default function UserAvatar({
     <Image
       source={{ uri: url }}
       style={[styles.container, containerStyle]}
-      onError={() => setError(true)}
+      onError={() => {
+        console.warn(`[UserAvatar] Failed to load image: ${url}`);
+        setError(true);
+      }}
     />
   );
 }

@@ -48,9 +48,6 @@ type UserBadge = {
   };
 };
 
-// Default avatar image used when user has no custom avatar
-const DEFAULT_AVATAR = require('../../assets/default-avatar.jpg');
-
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile, setProfile } = useAuthStore();
