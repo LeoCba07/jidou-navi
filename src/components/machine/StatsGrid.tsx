@@ -2,7 +2,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../../theme/constants';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, VERIFICATION_THRESHOLD } from '../../theme/constants';
 
 type StatsGridProps = {
   visitCount: number;
@@ -21,7 +21,7 @@ export function StatsGrid({
 }: StatsGridProps) {
   const { t } = useTranslation();
 
-  const isVerified = verificationCount >= 5;
+  const isVerified = verificationCount >= VERIFICATION_THRESHOLD;
 
   return (
     <View style={styles.container}>
@@ -33,8 +33,8 @@ export function StatsGrid({
           <Text style={styles.label}>{t('machine.stats.visits')}</Text>
         </View>
         <View style={styles.cell}>
-          <Ionicons name={isVerified ? 'shield-checkmark' : 'shield-checkmark-outline'} size={18} color={isVerified ? '#3C91E6' : COLORS.success} />
-          <Text style={[styles.value, isVerified && { color: '#3C91E6' }]}>{verificationCount}</Text>
+          <Ionicons name={isVerified ? 'shield-checkmark' : 'shield-checkmark-outline'} size={18} color={isVerified ? COLORS.secondary : COLORS.success} />
+          <Text style={[styles.value, isVerified && { color: COLORS.secondary }]}>{verificationCount}</Text>
           <Text style={styles.label}>{t('machine.stats.verified')}</Text>
         </View>
       </View>
@@ -44,10 +44,10 @@ export function StatsGrid({
           <Ionicons
             name={isVerified ? 'shield-checkmark' : isActive ? 'checkmark-circle' : 'help-circle'}
             size={18}
-            color={isVerified ? '#3C91E6' : isActive ? COLORS.success : COLORS.warning}
+            color={isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning}
           />
-          <Text style={[styles.value, { color: isVerified ? '#3C91E6' : isActive ? COLORS.success : COLORS.warning }]}>
-            {isVerified ? t('machine.active') : isActive ? t('machine.active') : t('machine.unverified')}
+          <Text style={[styles.value, { color: isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning }]}>
+            {isVerified ? t('machine.verified') : isActive ? t('machine.active') : t('machine.unverified')}
           </Text>
           <Text style={styles.label}>{t('machine.stats.status')}</Text>
         </View>
