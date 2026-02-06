@@ -130,12 +130,13 @@ export default function RootLayout() {
 
     // Profile doesn't exist - create one (safety net for edge cases)
     if (error?.code === 'PGRST116') { // "Row not found" error
-      const username = userEmail?.split('@')[0] || 'user';
+      const defaultName = userEmail?.split('@')[0] || 'user';
       const { data: newProfile, error: createError } = await supabase
         .from('profiles')
         .insert({
           id: userId,
-          username: username,
+          username: defaultName,
+          display_name: defaultName,
           contribution_count: 0,
           visit_count: 0,
           badge_count: 0,

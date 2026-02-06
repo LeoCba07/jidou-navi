@@ -663,8 +663,10 @@ export default function ProfileScreen() {
         profile={profile}
         onLogout={handleLogout}
         onDeleteAccount={handleDeleteAccount}
+        onProfileUpdate={(newProfile) => {
+          setProfile(newProfile);
+        }}
       />
-
       {/* Badge Requirement Modal */}
       <BadgeRequirementModal
         badge={selectedLockedBadge?.badge || null}

@@ -1,5 +1,5 @@
 // Settings modal - account settings, language, support, legal, logout
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Pressable,
   StyleSheet,
   ScrollView,
+  TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -15,8 +17,11 @@ import { useTranslation } from 'react-i18next';
 import { useLanguageStore } from '../../store/languageStore';
 import { supportedLanguages, LanguageCode } from '../../lib/i18n';
 import { Tables } from '../../lib/database.types';
+import { supabase } from '../../lib/supabase';
+import { useAppModal } from '../../hooks/useAppModal';
 
 type Profile = Tables<'profiles'>;
+type UpdateProfileResult = { success: boolean; error?: string };
 
 interface SettingsModalProps {
   visible: boolean;
@@ -25,6 +30,7 @@ interface SettingsModalProps {
   profile: Profile | null;
   onLogout: () => void;
   onDeleteAccount: () => void;
+  onProfileUpdate: (newProfile: Profile) => void;
 }
 
 export default function SettingsModal({
@@ -34,10 +40,25 @@ export default function SettingsModal({
   profile,
   onLogout,
   onDeleteAccount,
+  onProfileUpdate,
 }: SettingsModalProps) {
   const { t } = useTranslation();
+  const { showError, showSuccess } = useAppModal();
   const { currentLanguage, setCurrentLanguage } = useLanguageStore();
-  const [currentScreen, setCurrentScreen] = useState<'main' | 'language'>('main');
+  const [currentScreen, setCurrentScreen] = useState<'main' | 'language' | 'edit_profile'>('main');
+  
+  // Profile edit state
+  const [displayName, setDisplayName] = useState(profile?.display_name || '');
+  const [bio, setBio] = useState(profile?.bio || '');
+  const [saving, setSaving] = useState(false);
+
+  // Sync state when profile or visibility changes
+  useEffect(() => {
+    if (visible && profile) {
+      setDisplayName(profile.display_name || '');
+      setBio(profile.bio || '');
+    }
+  }, [visible, profile]);
 
   // Get current language display name
   const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
@@ -47,8 +68,51 @@ export default function SettingsModal({
 
   // Reset to main screen when modal closes
   function handleClose() {
+    if (saving) return;
     setCurrentScreen('main');
     onClose();
+  }
+
+  // Handle profile save
+  async function handleSaveProfile() {
+    if (!user) return;
+    
+    const trimmedName = displayName.trim();
+    if (!trimmedName) {
+      showError(t('common.error'), t('auth.validation.enterUsername'));
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.rpc('update_profile', {
+        p_display_name: trimmedName,
+        p_bio: bio.trim(),
+      });
+
+      if (error) throw error;
+
+      const result = data as UpdateProfileResult;
+      if (result.success) {
+        // Update local state in parent
+        if (profile) {
+          onProfileUpdate({
+            ...profile,
+            display_name: trimmedName,
+            bio: bio.trim(),
+          });
+        }
+        showSuccess(t('common.success'), t('profile.updateSuccess'));
+        handleClose(); // Close modal and reset to main screen
+      } else {
+        showError(t('common.error'), result.error || t('profile.updateError'));
+      }
+    } catch (err) {
+      console.error('[Settings] Error updating profile:', err);
+      showError(t('common.error'), t('profile.updateError'));
+    } finally {
+      setSaving(false);
+    }
   }
 
   // Handle language selection
@@ -68,15 +132,19 @@ export default function SettingsModal({
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
-            {currentScreen === 'language' && (
-              <Pressable onPress={() => setCurrentScreen('main')} style={styles.backButton}>
+            {currentScreen !== 'main' && (
+              <Pressable onPress={() => setCurrentScreen('main')} style={styles.backButton} disabled={saving}>
                 <Ionicons name="arrow-back" size={24} color="#666" />
               </Pressable>
             )}
             <Text style={styles.title}>
-              {currentScreen === 'language' ? t('profile.language') : t('profile.accountSettings')}
+              {currentScreen === 'language' 
+                ? t('profile.language') 
+                : currentScreen === 'edit_profile'
+                ? t('profile.editProfile')
+                : t('profile.accountSettings')}
             </Text>
-            <Pressable onPress={handleClose} style={styles.closeButton}>
+            <Pressable onPress={handleClose} style={styles.closeButton} disabled={saving}>
               <Ionicons name="close" size={24} color="#666" />
             </Pressable>
           </View>
@@ -89,6 +157,27 @@ export default function SettingsModal({
           >
             {currentScreen === 'main' ? (
               <>
+            {/* Edit Profile */}
+            <View style={styles.section}>
+              <Pressable
+                style={styles.itemRow}
+                onPress={() => setCurrentScreen('edit_profile')}
+                accessibilityRole="button"
+                accessibilityLabel={t('profile.editProfile')}
+              >
+                <Ionicons name="person-outline" size={20} color="#666" />
+                <View style={styles.itemContent}>
+                  <Text style={styles.itemLabel}>{t('profile.editProfile')}</Text>
+                  <Text style={styles.itemValue}>
+                    {profile?.display_name || profile?.username || t('common.user')}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </Pressable>
+            </View>
+
+            <View style={styles.divider} />
+
             {/* Admin Dashboard Link (only for admins) */}
             {isAdmin && (
               <>
@@ -218,7 +307,7 @@ export default function SettingsModal({
               </Pressable>
             </View>
               </>
-            ) : (
+            ) : currentScreen === 'language' ? (
               /* Language Selection Screen */
               <View style={styles.languageScreen}>
                 <View style={styles.languageList}>
@@ -245,6 +334,47 @@ export default function SettingsModal({
                     );
                   })}
                 </View>
+              </View>
+            ) : (
+              /* Edit Profile Screen */
+              <View style={styles.editProfileScreen}>
+                <View style={styles.field}>
+                  <Text style={styles.label}>{t('profile.displayName')}</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={displayName}
+                    onChangeText={setDisplayName}
+                    placeholder={t('auth.usernamePlaceholder')}
+                    maxLength={100}
+                    autoCorrect={false}
+                  />
+                </View>
+
+                <View style={styles.field}>
+                  <Text style={styles.label}>{t('profile.bio')}</Text>
+                  <TextInput
+                    style={[styles.input, styles.bioInput]}
+                    value={bio}
+                    onChangeText={setBio}
+                    placeholder={t('profile.bioPlaceholder')}
+                    multiline
+                    numberOfLines={4}
+                    maxLength={500}
+                    textAlignVertical="top"
+                  />
+                </View>
+
+                <Pressable
+                  style={[styles.saveButton, saving && styles.saveButtonDisabled]}
+                  onPress={handleSaveProfile}
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.saveButtonText}>{t('profile.updateProfile')}</Text>
+                  )}
+                </Pressable>
               </View>
             )}
           </ScrollView>
@@ -401,5 +531,53 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Inter',
     color: '#666',
+  },
+  editProfileScreen: {
+    padding: 20,
+    gap: 16,
+  },
+  field: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 12,
+    fontFamily: 'Inter-Bold',
+    color: '#666',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  input: {
+    backgroundColor: '#f9f9f9',
+    borderWidth: 2,
+    borderColor: '#eee',
+    borderRadius: 4,
+    padding: 12,
+    fontSize: 15,
+    fontFamily: 'Inter',
+    color: '#2B2B2B',
+  },
+  bioInput: {
+    height: 100,
+    paddingTop: 12,
+  },
+  saveButton: {
+    backgroundColor: '#FF4B4B',
+    paddingVertical: 14,
+    borderRadius: 2,
+    alignItems: 'center',
+    marginTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 0,
+    elevation: 3,
+  },
+  saveButtonDisabled: {
+    opacity: 0.7,
+  },
+  saveButtonText: {
+    fontSize: 15,
+    fontFamily: 'Silkscreen',
+    color: '#fff',
   },
 });
