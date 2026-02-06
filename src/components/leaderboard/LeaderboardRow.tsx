@@ -47,7 +47,9 @@ export default function LeaderboardRow({ entry, showWeeklyXp = false }: Leaderbo
       <UserAvatar
         url={entry.avatar_url}
         size={36}
-        style={[styles.avatar, entry.is_current_user && styles.currentUserAvatar]}
+        borderWidth={entry.is_current_user ? 2 : 1}
+        borderColor={entry.is_current_user ? '#FF4B4B' : '#ddd'}
+        style={styles.avatar}
       />
       <View style={styles.info}>
         <Text style={[styles.name, entry.is_current_user && styles.currentUserName]} numberOfLines={1}>
@@ -108,13 +110,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#ddd',
     marginRight: 10,
-  },
-  currentUserAvatar: {
-    borderColor: '#FF4B4B',
-    borderWidth: 2,
   },
   info: {
     flex: 1,

@@ -167,6 +167,8 @@ export default function UserProfileScreen() {
             <UserAvatar
               url={profile.avatar_url}
               size={100}
+              borderWidth={4}
+              borderColor="#FF4B4B"
               style={styles.avatar}
             />
           </View>
@@ -348,8 +350,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    borderWidth: 4,
-    borderColor: '#FF4B4B',
   },
   displayName: {
     fontSize: 22,

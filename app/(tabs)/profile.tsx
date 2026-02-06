@@ -353,7 +353,9 @@ export default function ProfileScreen() {
             <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
               <UserAvatar
                 url={profile?.avatar_url ? `${profile.avatar_url.split('?')[0]}?t=${avatarTimestamp}` : null}
-                size={100}
+                size={120}
+                borderWidth={4}
+                borderColor="#FF4B4B"
                 style={styles.avatar}
               />
               <View style={styles.editAvatarButton}>
@@ -736,8 +738,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    borderWidth: 4,
-    borderColor: '#FF4B4B',
   },
   editAvatarButton: {
     position: 'absolute',
