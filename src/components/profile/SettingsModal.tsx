@@ -59,7 +59,8 @@ export default function SettingsModal({
     }
   }, [visible, profile]);
 
-  // Get current language display name  const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
+  // Get current language display name
+  const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
 
   // Check if user is admin
   const isAdmin = profile?.role === 'admin';
