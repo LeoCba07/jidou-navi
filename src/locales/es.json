@@ -120,7 +120,14 @@
     "mySubmissions": "Mis Envíos",
     "pendingReview": "Pendiente",
     "rejected": "No Aprobado",
-    "pendingHint": "En revisión por nuestro equipo"
+    "pendingHint": "En revisión por nuestro equipo",
+    "editProfile": "Editar Perfil",
+    "displayName": "Nombre a mostrar",
+    "bio": "Biografía",
+    "bioPlaceholder": "Cuéntanos sobre tus aventuras...",
+    "updateProfile": "Actualizar Perfil",
+    "updateSuccess": "¡Perfil actualizado con éxito!",
+    "updateError": "Error al actualizar el perfil."
   },
   "map": {
     "searchPlaceholder": "Buscar máquinas...",

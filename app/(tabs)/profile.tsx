@@ -661,15 +661,17 @@ export default function ProfileScreen() {
       </ScrollView>
 
       {/* Settings Modal */}
-      <SettingsModal
-        visible={settingsModalVisible}
-        onClose={() => setSettingsModalVisible(false)}
-        user={user}
-        profile={profile}
-        onLogout={handleLogout}
-        onDeleteAccount={handleDeleteAccount}
-      />
-
+              <SettingsModal
+                visible={settingsModalVisible}
+                onClose={() => setSettingsModalVisible(false)}
+                user={user}
+                profile={profile}
+                onLogout={handleLogout}
+                onDeleteAccount={handleDeleteAccount}
+                onProfileUpdate={(newProfile) => {
+                  setProfile(newProfile);
+                }}
+              />
       {/* Badge Requirement Modal */}
       <BadgeRequirementModal
         badge={selectedLockedBadge?.badge || null}

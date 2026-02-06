@@ -120,7 +120,14 @@
     "mySubmissions": "My Submissions",
     "pendingReview": "Pending",
     "rejected": "Not Approved",
-    "pendingHint": "Under review by our team"
+    "pendingHint": "Under review by our team",
+    "editProfile": "Edit Profile",
+    "displayName": "Display Name",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us about your vending adventures...",
+    "updateProfile": "Update Profile",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile."
   },
   "map": {
     "searchPlaceholder": "Search machines...",
