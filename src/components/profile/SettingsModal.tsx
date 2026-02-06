@@ -21,6 +21,7 @@ import { supabase } from '../../lib/supabase';
 import { useAppModal } from '../../hooks/useAppModal';
 
 type Profile = Tables<'profiles'>;
+type UpdateProfileResult = { success: boolean; error?: string };
 
 interface SettingsModalProps {
   visible: boolean;
@@ -76,27 +77,33 @@ export default function SettingsModal({
   async function handleSaveProfile() {
     if (!user) return;
     
+    const trimmedName = displayName.trim();
+    if (!trimmedName) {
+      showError(t('common.error'), t('auth.validation.enterUsername'));
+      return;
+    }
+
     setSaving(true);
     try {
       const { data, error } = await supabase.rpc('update_profile', {
-        p_display_name: displayName.trim(),
+        p_display_name: trimmedName,
         p_bio: bio.trim(),
       });
 
       if (error) throw error;
 
-      const result = data as any;
+      const result = data as UpdateProfileResult;
       if (result.success) {
         // Update local state in parent
         if (profile) {
           onProfileUpdate({
             ...profile,
-            display_name: displayName.trim(),
+            display_name: trimmedName,
             bio: bio.trim(),
           });
         }
         showSuccess(t('common.success'), t('profile.updateSuccess'));
-        setCurrentScreen('main');
+        handleClose(); // Close modal and reset to main screen
       } else {
         showError(t('common.error'), result.error || t('profile.updateError'));
       }
@@ -161,7 +168,9 @@ export default function SettingsModal({
                 <Ionicons name="person-outline" size={20} color="#666" />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.editProfile')}</Text>
-                  <Text style={styles.itemValue}>{profile?.display_name || t('profile.editProfile')}</Text>
+                  <Text style={styles.itemValue}>
+                    {profile?.display_name || profile?.username || t('common.user')}
+                  </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />
               </Pressable>
