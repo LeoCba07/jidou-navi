@@ -30,6 +30,7 @@ import StatProgressCard from '../../src/components/profile/StatProgressCard';
 import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
 import BadgeRequirementModal from '../../src/components/profile/BadgeRequirementModal';
 import { FriendsModal, FriendCard } from '../../src/components/friends';
+import UserAvatar from '../../src/components/UserAvatar';
 import type { Friend } from '../../src/store/friendsStore';
 import type { Badge } from '../../src/lib/badges';
 
@@ -46,9 +47,6 @@ type UserBadge = {
     rarity: string | null;
   };
 };
-
-// Default avatar image used when user has no custom avatar
-const DEFAULT_AVATAR = require('../../assets/default-avatar.jpg');
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -353,15 +351,10 @@ export default function ProfileScreen() {
               <Ionicons name="settings-outline" size={20} color="#666" />
             </Pressable>
             <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
-              <Image
-                key={avatarTimestamp}
-                source={
-                  !imageError && profile?.avatar_url
-                    ? { uri: `${profile.avatar_url.split('?')[0]}?t=${avatarTimestamp}` }
-                    : DEFAULT_AVATAR
-                }
+              <UserAvatar
+                url={profile?.avatar_url ? `${profile.avatar_url.split('?')[0]}?t=${avatarTimestamp}` : null}
+                size={100}
                 style={styles.avatar}
-                onError={() => setImageError(true)}
               />
               <View style={styles.editAvatarButton}>
                 {uploadingAvatar ? (

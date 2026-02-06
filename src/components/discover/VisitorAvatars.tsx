@@ -1,9 +1,8 @@
 // Overlapping circular avatars for machine visitors
-import { View, Image, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import type { MachineVisitor } from '../../lib/machines';
-
-const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
+import UserAvatar from '../UserAvatar';
 
 type VisitorAvatarsProps = {
   visitors: MachineVisitor[];
@@ -56,16 +55,10 @@ export default function VisitorAvatars({
             accessibilityRole="button"
             accessibilityLabel={visitor.display_name || visitor.username || 'User profile'}
           >
-            <Image
-              source={visitor.avatar_url ? { uri: visitor.avatar_url } : DEFAULT_AVATAR}
-              style={[
-                styles.avatar,
-                {
-                  width: size - 4,
-                  height: size - 4,
-                  borderRadius: (size - 4) / 2,
-                },
-              ]}
+            <UserAvatar
+              url={visitor.avatar_url}
+              size={size - 4}
+              style={styles.avatar}
             />
           </Pressable>
         ))}

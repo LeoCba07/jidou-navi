@@ -16,9 +16,7 @@ import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
 import { getLevelProgress } from '../../src/lib/xp';
 import { useBadgeTranslation } from '../../src/hooks/useBadgeTranslation';
-
-// Default avatar image used when user has no custom avatar
-const DEFAULT_AVATAR = require('../../assets/default-avatar.jpg');
+import UserAvatar from '../../src/components/UserAvatar';
 
 // Public profile data we fetch for other users
 type PublicProfile = {
@@ -67,7 +65,6 @@ export default function UserProfileScreen() {
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingBadges, setLoadingBadges] = useState(true);
-  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     // If viewing own profile, redirect to the profile tab
@@ -167,14 +164,10 @@ export default function UserProfileScreen() {
         {/* Hero Card */}
         <View style={styles.heroCard}>
           <View style={styles.avatarContainer}>
-            <Image
-              source={
-                !imageError && profile.avatar_url
-                  ? { uri: profile.avatar_url }
-                  : DEFAULT_AVATAR
-              }
+            <UserAvatar
+              url={profile.avatar_url}
+              size={100}
               style={styles.avatar}
-              onError={() => setImageError(true)}
             />
           </View>
           <Text style={styles.displayName}>

@@ -1,10 +1,9 @@
 // Leaderboard row component
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { LeaderboardEntry } from '../../store/friendsStore';
-
-const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
+import UserAvatar from '../UserAvatar';
 
 interface LeaderboardRowProps {
   entry: LeaderboardEntry;
@@ -45,8 +44,9 @@ export default function LeaderboardRow({ entry, showWeeklyXp = false }: Leaderbo
       <View style={[styles.rankContainer, isTopThree && { backgroundColor: rankColor + '20' }]}>
         {getRankIcon(entry.rank)}
       </View>
-      <Image
-        source={entry.avatar_url ? { uri: entry.avatar_url } : DEFAULT_AVATAR}
+      <UserAvatar
+        url={entry.avatar_url}
+        size={36}
         style={[styles.avatar, entry.is_current_user && styles.currentUserAvatar]}
       />
       <View style={styles.info}>
