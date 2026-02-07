@@ -25,10 +25,19 @@ BEGIN
     DELETE FROM machine_upvotes
     WHERE user_id = auth.uid() AND machine_id = p_machine_id;
 
-    -- Deduct XP from user (ensure XP doesn't go below 0)
-    UPDATE profiles
-    SET xp = GREATEST(COALESCE(xp, 0) - xp_per_upvote, 0)
-    WHERE id = auth.uid();
+    -- Deduct XP from user (ensure XP doesn't go below 0) and update level
+    UPDATE profiles AS p
+    SET
+        xp = sub.new_xp,
+        level = GREATEST(1, FLOOR(SQRT(sub.new_xp / 10)))::INT
+    FROM (
+        SELECT
+            id,
+            GREATEST(COALESCE(xp, 0) - xp_per_upvote, 0) AS new_xp
+        FROM profiles
+        WHERE id = auth.uid()
+    ) AS sub
+    WHERE p.id = sub.id;
 
     -- Get remaining daily count
     SELECT COUNT(*)::INT INTO daily_count

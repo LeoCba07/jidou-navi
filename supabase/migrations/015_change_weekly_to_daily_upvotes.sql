@@ -62,10 +62,19 @@ BEGIN
     INSERT INTO machine_upvotes (user_id, machine_id)
     VALUES (auth.uid(), p_machine_id);
 
-    -- Award XP to the user who upvoted
-    UPDATE profiles
-    SET xp = COALESCE(xp, 0) + xp_per_upvote
-    WHERE id = auth.uid();
+    -- Award XP to the user who upvoted and update level
+    UPDATE profiles AS p
+    SET
+        xp = sub.new_xp,
+        level = GREATEST(1, FLOOR(SQRT(sub.new_xp / 10)))::INT
+    FROM (
+        SELECT
+            id,
+            COALESCE(xp, 0) + xp_per_upvote AS new_xp
+        FROM profiles
+        WHERE id = auth.uid()
+    ) AS sub
+    WHERE p.id = sub.id;
 
     RETURN json_build_object(
         'success', true,
@@ -122,9 +131,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- This keeps the "trending this week" feature intact while limiting daily upvotes
 
 -- ============================================
--- 5. UPDATE weekly_leaderboard_with_rewards - use daily XP for upvotes
+-- 5. UPDATE weekly_leaderboard_with_rewards - keep weekly XP for upvotes
 -- ============================================
--- Note: Keeping leaderboard as weekly but upvote XP calculation uses daily data
+-- Note: Leaderboard and upvote XP calculation both use weekly data
 -- The leaderboard itself remains weekly (accumulates XP over the week)
 
 CREATE OR REPLACE FUNCTION weekly_leaderboard_with_rewards(limit_count INT DEFAULT 10)
