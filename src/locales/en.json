@@ -212,7 +212,8 @@
       "verifyTitle": "Verify Machine",
       "question": "Is this vending machine still here?",
       "verifyQuestion": "Can you confirm this machine is still in this location?",
-      "xpReward": "You'll earn +25 XP for verifying!",
+      "xpReward": "You'll earn +25 XP either way — just be honest!",
+      "trustMessage": "Help us keep the map accurate.",
       "yesHere": "Yes, it's here!",
       "noGone": "No, it's gone",
       "tooFar": {

@@ -212,7 +212,8 @@
       "verifyTitle": "Verificar Máquina",
       "question": "¿Esta máquina expendedora sigue aquí?",
       "verifyQuestion": "¿Puedes confirmar que esta máquina sigue en esta ubicación?",
-      "xpReward": "¡Ganarás +25 XP por verificar!",
+      "xpReward": "¡Ganarás +25 XP de cualquier manera — solo sé honesto!",
+      "trustMessage": "Ayúdanos a mantener el mapa actualizado.",
       "yesHere": "¡Sí, está aquí!",
       "noGone": "No, ya no está",
       "tooFar": {
