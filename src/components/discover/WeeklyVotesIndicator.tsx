@@ -26,6 +26,12 @@ const WeeklyVotesIndicator = forwardRef<WeeklyVotesIndicatorRef, WeeklyVotesIndi
 
   useImperativeHandle(ref, () => ({
     shake: () => {
+      // Stop and reset to ensure deterministic start
+      shakeAnim.stopAnimation();
+      scaleAnim.stopAnimation();
+      shakeAnim.setValue(0);
+      scaleAnim.setValue(1);
+
       // Parallel animation: scale up/down and shake side-to-side
       Animated.parallel([
         Animated.sequence([

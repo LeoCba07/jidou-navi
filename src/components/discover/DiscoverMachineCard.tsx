@@ -1,5 +1,5 @@
 // Machine card for discover screen with engagement features
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { View, Text, Image, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -7,9 +7,8 @@ import { useTranslation } from 'react-i18next';
 import type { EngagedMachine, MachineVisitor } from '../../lib/machines';
 import { fetchMachineVisitors, fetchMachineVisitorCount } from '../../lib/machines';
 import { useVisitedMachinesStore } from '../../store/visitedMachinesStore';
-import UpvoteButton, { UpvoteButtonRef } from './UpvoteButton';
+import UpvoteButton, { type UpvoteButtonRef } from './UpvoteButton';
 import VisitorAvatars from './VisitorAvatars';
-import { useRef } from 'react';
 
 type DiscoverMachineCardProps = {
   machine: EngagedMachine;

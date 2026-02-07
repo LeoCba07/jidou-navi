@@ -1,5 +1,5 @@
 import { useRef, useImperativeHandle, forwardRef } from 'react';
-import { Pressable, Text, ActivityIndicator, StyleSheet, View, Animated } from 'react-native';
+import { Pressable, Text, ActivityIndicator, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type UpvoteButtonProps = {
@@ -60,7 +60,7 @@ const UpvoteButton = forwardRef<UpvoteButtonRef, UpvoteButtonProps>(({
         e.stopPropagation();
         onPress();
       }}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={isUpvoted ? 'Remove upvote' : 'Upvote machine'}

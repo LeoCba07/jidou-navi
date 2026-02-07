@@ -1,5 +1,5 @@
 // Discover screen - trending and popular vending machines with engagement
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -38,7 +38,7 @@ import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { LeaderboardScreen } from '../../src/components/leaderboard';
 import { DiscoverMachineCard } from '../../src/components/discover';
-import WeeklyVotesIndicator, { WeeklyVotesIndicatorRef } from '../../src/components/discover/WeeklyVotesIndicator';
+import WeeklyVotesIndicator, { type WeeklyVotesIndicatorRef } from '../../src/components/discover/WeeklyVotesIndicator';
 
 export default function DiscoverScreen() {
   const { t } = useTranslation();
@@ -253,7 +253,9 @@ export default function DiscoverScreen() {
         updateLocalXP(-XP_PER_UPVOTE);
 
         if (result.error === 'weekly_limit_reached') {
-          showError(t('common.error'), t('discover.weeklyLimitReached'));
+          // Feedback via shake animation on both indicators
+          headerIndicatorRef.current?.shake();
+          contentIndicatorRef.current?.shake();
         } else {
           showError(t('common.error'), t('common.error'));
         }
