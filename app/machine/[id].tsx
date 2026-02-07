@@ -286,8 +286,8 @@ export default function MachineDetailScreen() {
     (Number.isFinite(parsedDistance) ? parsedDistance : null);
     
   const distance =
-    displayDistance == null || displayDistance === 0
-      ? t('machine.calculating') // Or a placeholder like "-"
+    displayDistance == null
+      ? t('machine.calculating')
       : displayDistance < 1000
         ? `${Math.round(displayDistance)}m`
         : `${(displayDistance / 1000).toFixed(1)}km`;
