@@ -1,5 +1,5 @@
-// Upvote button with heart icon and count
-import { Pressable, Text, ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useRef, useImperativeHandle, forwardRef } from 'react';
+import { Pressable, Text, ActivityIndicator, StyleSheet, View, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type UpvoteButtonProps = {
@@ -11,16 +11,41 @@ type UpvoteButtonProps = {
   size?: 'small' | 'medium';
 };
 
-export default function UpvoteButton({
+export interface UpvoteButtonRef {
+  shake: () => void;
+}
+
+const UpvoteButton = forwardRef<UpvoteButtonRef, UpvoteButtonProps>(({
   upvoteCount,
   isUpvoted,
   isLoading = false,
   disabled = false,
   onPress,
   size = 'medium',
-}: UpvoteButtonProps) {
+}, ref) => {
   const iconSize = size === 'small' ? 18 : 22;
   const fontSize = size === 'small' ? 12 : 14;
+
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useImperativeHandle(ref, () => ({
+    shake: () => {
+      // Scale and shake sequence
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(scaleAnim, { toValue: 1.2, duration: 100, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
+        ]),
+        Animated.sequence([
+          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
+        ])
+      ]).start();
+    }
+  }));
 
   return (
     <Pressable
@@ -30,8 +55,12 @@ export default function UpvoteButton({
         isUpvoted && styles.containerActive,
         disabled && styles.containerDisabled,
       ]}
-      onPress={onPress}
-      disabled={isLoading || disabled}
+      onPress={(e) => {
+        // Stop propagation to prevent card from handling the press
+        e.stopPropagation();
+        onPress();
+      }}
+      disabled={isLoading}
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={isUpvoted ? 'Remove upvote' : 'Upvote machine'}
@@ -40,7 +69,17 @@ export default function UpvoteButton({
       {isLoading ? (
         <ActivityIndicator size="small" color={isUpvoted ? '#FF4B4B' : '#999'} />
       ) : (
-        <View style={styles.content}>
+        <Animated.View 
+          style={[
+            styles.content,
+            { 
+              transform: [
+                { translateX: shakeAnim },
+                { scale: scaleAnim }
+              ] 
+            }
+          ]}
+        >
           <Ionicons
             name={isUpvoted ? 'heart' : 'heart-outline'}
             size={iconSize}
@@ -55,11 +94,13 @@ export default function UpvoteButton({
           >
             {upvoteCount}
           </Text>
-        </View>
+        </Animated.View>
       )}
     </Pressable>
   );
-}
+});
+
+export default UpvoteButton;
 
 const styles = StyleSheet.create({
   container: {

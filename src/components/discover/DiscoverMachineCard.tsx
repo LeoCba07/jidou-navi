@@ -7,8 +7,9 @@ import { useTranslation } from 'react-i18next';
 import type { EngagedMachine, MachineVisitor } from '../../lib/machines';
 import { fetchMachineVisitors, fetchMachineVisitorCount } from '../../lib/machines';
 import { useVisitedMachinesStore } from '../../store/visitedMachinesStore';
-import UpvoteButton from './UpvoteButton';
+import UpvoteButton, { UpvoteButtonRef } from './UpvoteButton';
 import VisitorAvatars from './VisitorAvatars';
+import { useRef } from 'react';
 
 type DiscoverMachineCardProps = {
   machine: EngagedMachine;
@@ -37,6 +38,7 @@ export default function DiscoverMachineCard({
   const isVisited = useVisitedMachinesStore((state) => state.isVisited(machine.id));
   const [visitors, setVisitors] = useState<MachineVisitor[]>([]);
   const [visitorCount, setVisitorCount] = useState(0);
+  const upvoteButtonRef = useRef<UpvoteButtonRef>(null);
 
   useEffect(() => {
     loadVisitors();
@@ -49,6 +51,13 @@ export default function DiscoverMachineCard({
     ]);
     setVisitors(visitorData);
     setVisitorCount(count);
+  }
+
+  function handleUpvotePress() {
+    if (!canUpvote && !isUpvoted) {
+      upvoteButtonRef.current?.shake();
+    }
+    onUpvotePress(machine.id);
   }
 
   function goToMachine() {
@@ -144,11 +153,12 @@ export default function DiscoverMachineCard({
       {/* Actions */}
       <View style={styles.actions}>
         <UpvoteButton
+          ref={upvoteButtonRef}
           upvoteCount={machine.upvote_count || 0}
           isUpvoted={isUpvoted}
           isLoading={isUpvoting}
-          disabled={!canUpvote && !isUpvoted}
-          onPress={() => onUpvotePress(machine.id)}
+          disabled={false} // Never disable, handle logic in handleUpvotePress
+          onPress={handleUpvotePress}
           size="small"
         />
         <View style={styles.actionButtons}>
