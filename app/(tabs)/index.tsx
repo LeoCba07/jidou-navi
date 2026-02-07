@@ -362,20 +362,22 @@ export default function MapScreen() {
           <CircleLayer
             id="selected-glow-outer"
             style={{
-              circleRadius: 24,
-              circleColor: 'rgba(255, 215, 0, 0.15)',
+              circleRadius: 26,
+              circleColor: 'rgba(255, 215, 0, 0.3)',
               circleStrokeWidth: 0,
-              circleTranslate: [0, -20],
+              circleTranslate: [0, -34],
+              circleTranslateAnchor: 'viewport',
             }}
           />
           <CircleLayer
             id="selected-glow-inner"
             style={{
-              circleRadius: 16,
+              circleRadius: 18,
               circleColor: 'transparent',
-              circleStrokeWidth: 3,
+              circleStrokeWidth: 2.5,
               circleStrokeColor: '#FFD700',
-              circleTranslate: [0, -20],
+              circleTranslate: [0, -34],
+              circleTranslateAnchor: 'viewport',
             }}
           />
         </ShapeSource>
@@ -385,6 +387,7 @@ export default function MapScreen() {
           id="machines"
           shape={machinesGeoJSON}
           onPress={handleShapePress}
+          hitbox={{ width: 30, height: 40 }}
         >
           <SymbolLayer
             id="machine-markers"
