@@ -1,7 +1,7 @@
 // Upvote system functions for machines
 import { supabase } from './supabase';
 
-export const MAX_WEEKLY_UPVOTES = 3;
+export const MAX_DAILY_UPVOTES = 3;
 export const XP_PER_UPVOTE = 5;
 
 export type UpvoteResult = {
@@ -17,12 +17,12 @@ export type RemoveUpvoteResult = {
   remaining_votes?: number;
 };
 
-// Get user's weekly upvote count
-export async function getWeeklyUpvoteCount(): Promise<number> {
-  const { data, error } = await supabase.rpc('get_user_weekly_upvote_count');
+// Get user's daily upvote count
+export async function getDailyUpvoteCount(): Promise<number> {
+  const { data, error } = await supabase.rpc('get_user_daily_upvote_count');
 
   if (error) {
-    console.error('Error fetching weekly upvote count:', error);
+    console.error('Error fetching daily upvote count:', error);
     return 0;
   }
 
@@ -99,8 +99,8 @@ export async function getUserUpvotedMachineIds(): Promise<string[]> {
   return data || [];
 }
 
-// Get remaining upvotes for the week
+// Get remaining upvotes for the day
 export async function getRemainingUpvotes(): Promise<number> {
-  const used = await getWeeklyUpvoteCount();
-  return Math.max(0, MAX_WEEKLY_UPVOTES - used);
+  const used = await getDailyUpvoteCount();
+  return Math.max(0, MAX_DAILY_UPVOTES - used);
 }

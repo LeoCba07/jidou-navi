@@ -345,12 +345,12 @@
     "noPopularThisWeek": "No trending machines this week yet",
     "recentVisitors": "Recent visitors",
     "showOnMap": "Show on Map",
-    "votesRemaining": "{{count}} votes left this week",
-    "votesRemaining_one": "{{count}} vote left this week",
-    "noVotesLeft": "No votes left this week",
+    "votesRemaining": "{{count}} votes left today",
+    "votesRemaining_one": "{{count}} vote left today",
+    "noVotesLeft": "No votes left today",
     "upvoteSuccess": "Upvoted! +{{xp}} XP",
     "upvoteRemoved": "Upvote removed",
-    "weeklyLimitReached": "You've used all 3 weekly upvotes",
+    "dailyLimitReached": "You've used all 3 daily upvotes",
     "loginToUpvote": "Log in to upvote machines"
   },
   "legal": {

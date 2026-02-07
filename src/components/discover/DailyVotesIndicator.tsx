@@ -2,23 +2,23 @@ import { useRef, useImperativeHandle, forwardRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { MAX_WEEKLY_UPVOTES } from '../../lib/upvotes';
+import { MAX_DAILY_UPVOTES } from '../../lib/upvotes';
 
-type WeeklyVotesIndicatorProps = {
+type DailyVotesIndicatorProps = {
   remainingVotes: number;
   compact?: boolean;
 };
 
-export interface WeeklyVotesIndicatorRef {
+export interface DailyVotesIndicatorRef {
   shake: () => void;
 }
 
-const WeeklyVotesIndicator = forwardRef<WeeklyVotesIndicatorRef, WeeklyVotesIndicatorProps>(({
+const DailyVotesIndicator = forwardRef<DailyVotesIndicatorRef, DailyVotesIndicatorProps>(({
   remainingVotes,
   compact = false,
 }, ref) => {
   const { t } = useTranslation();
-  const usedVotes = MAX_WEEKLY_UPVOTES - remainingVotes;
+  const usedVotes = MAX_DAILY_UPVOTES - remainingVotes;
   const hasVotesLeft = remainingVotes > 0;
 
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -65,7 +65,7 @@ const WeeklyVotesIndicator = forwardRef<WeeklyVotesIndicatorRef, WeeklyVotesIndi
           color={hasVotesLeft ? '#FF4B4B' : '#999'}
         />
         <Text style={[styles.compactText, !hasVotesLeft && styles.compactTextEmpty]}>
-          {remainingVotes}/{MAX_WEEKLY_UPVOTES}
+          {remainingVotes}/{MAX_DAILY_UPVOTES}
         </Text>
       </Animated.View>
     );
@@ -74,7 +74,7 @@ const WeeklyVotesIndicator = forwardRef<WeeklyVotesIndicatorRef, WeeklyVotesIndi
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
       <View style={styles.iconRow}>
-        {Array.from({ length: MAX_WEEKLY_UPVOTES }).map((_, index) => (
+        {Array.from({ length: MAX_DAILY_UPVOTES }).map((_, index) => (
           <Ionicons
             key={index}
             name={index < usedVotes ? 'heart' : 'heart-outline'}
@@ -92,7 +92,7 @@ const WeeklyVotesIndicator = forwardRef<WeeklyVotesIndicatorRef, WeeklyVotesIndi
   );
 });
 
-export default WeeklyVotesIndicator;
+export default DailyVotesIndicator;
 
 const styles = StyleSheet.create({
   container: {

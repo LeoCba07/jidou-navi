@@ -345,12 +345,12 @@
     "noPopularThisWeek": "Aún no hay máquinas populares esta semana",
     "recentVisitors": "Visitantes recientes",
     "showOnMap": "Ver en Mapa",
-    "votesRemaining": "{{count}} votos esta semana",
-    "votesRemaining_one": "{{count}} voto esta semana",
-    "noVotesLeft": "Sin votos esta semana",
+    "votesRemaining": "{{count}} votos hoy",
+    "votesRemaining_one": "{{count}} voto hoy",
+    "noVotesLeft": "Sin votos hoy",
     "upvoteSuccess": "¡Votado! +{{xp}} XP",
     "upvoteRemoved": "Voto removido",
-    "weeklyLimitReached": "Has usado los 3 votos semanales",
+    "dailyLimitReached": "Has usado los 3 votos diarios",
     "loginToUpvote": "Inicia sesión para votar"
   },
   "legal": {
