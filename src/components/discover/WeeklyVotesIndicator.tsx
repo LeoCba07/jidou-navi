@@ -1,5 +1,5 @@
-// Weekly votes remaining indicator
-import { View, Text, StyleSheet } from 'react-native';
+import { useRef, useImperativeHandle, forwardRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { MAX_WEEKLY_UPVOTES } from '../../lib/upvotes';
@@ -9,17 +9,56 @@ type WeeklyVotesIndicatorProps = {
   compact?: boolean;
 };
 
-export default function WeeklyVotesIndicator({
+export interface WeeklyVotesIndicatorRef {
+  shake: () => void;
+}
+
+const WeeklyVotesIndicator = forwardRef<WeeklyVotesIndicatorRef, WeeklyVotesIndicatorProps>(({
   remainingVotes,
   compact = false,
-}: WeeklyVotesIndicatorProps) {
+}, ref) => {
   const { t } = useTranslation();
   const usedVotes = MAX_WEEKLY_UPVOTES - remainingVotes;
   const hasVotesLeft = remainingVotes > 0;
 
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useImperativeHandle(ref, () => ({
+    shake: () => {
+      // Stop and reset to ensure deterministic start
+      shakeAnim.stopAnimation();
+      scaleAnim.stopAnimation();
+      shakeAnim.setValue(0);
+      scaleAnim.setValue(1);
+
+      // Parallel animation: scale up/down and shake side-to-side
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(scaleAnim, { toValue: 1.2, duration: 100, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
+        ]),
+        Animated.sequence([
+          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
+          Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
+        ])
+      ]).start();
+    }
+  }));
+
+  const animatedStyle = {
+    transform: [
+      { translateX: shakeAnim },
+      { scale: scaleAnim }
+    ]
+  };
+
   if (compact) {
     return (
-      <View style={[styles.compactContainer, !hasVotesLeft && styles.compactContainerEmpty]}>
+      <Animated.View style={[styles.compactContainer, !hasVotesLeft && styles.compactContainerEmpty, animatedStyle]}>
         <Ionicons
           name="heart"
           size={12}
@@ -28,12 +67,12 @@ export default function WeeklyVotesIndicator({
         <Text style={[styles.compactText, !hasVotesLeft && styles.compactTextEmpty]}>
           {remainingVotes}/{MAX_WEEKLY_UPVOTES}
         </Text>
-      </View>
+      </Animated.View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, animatedStyle]}>
       <View style={styles.iconRow}>
         {Array.from({ length: MAX_WEEKLY_UPVOTES }).map((_, index) => (
           <Ionicons
@@ -49,9 +88,11 @@ export default function WeeklyVotesIndicator({
           ? t('discover.votesRemaining', { count: remainingVotes })
           : t('discover.noVotesLeft')}
       </Text>
-    </View>
+    </Animated.View>
   );
-}
+});
+
+export default WeeklyVotesIndicator;
 
 const styles = StyleSheet.create({
   container: {
