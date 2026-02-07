@@ -104,4 +104,4 @@ export const CATEGORY_COLORS = {
   alcohol: '#F39C12',
 } as const;
 
-export const VERIFICATION_THRESHOLD = 5;
+export const VERIFICATION_THRESHOLD = 2;
