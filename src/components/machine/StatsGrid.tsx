@@ -47,7 +47,7 @@ export function StatsGrid({
             color={isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning}
           />
           <Text style={[styles.value, { color: isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning }]}>
-            {isVerified ? t('machine.verified') : isActive ? t('machine.active') : t('machine.unverified')}
+            {isVerified ? t('machine.stats.verified') : isActive ? t('machine.active') : t('machine.unverified')}
           </Text>
           <Text style={styles.label}>{t('machine.stats.status')}</Text>
         </View>

@@ -42,10 +42,16 @@ BEGIN
         IF TG_OP = 'INSERT' THEN
             UPDATE machines SET
                 flag_count = flag_count + 1,
-                status = CASE WHEN flag_count >= 3 THEN 'flagged'::machine_status ELSE status END
+                -- Fix: Use flag_count + 1 to account for the increment in the same statement
+                status = CASE WHEN flag_count + 1 >= 3 THEN 'flagged'::machine_status ELSE status END
             WHERE id = NEW.machine_id;
         END IF;
     END IF;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
+
+-- 3. Backfill existing machines that already meet the threshold
+UPDATE machines
+SET status = 'active', auto_activated = TRUE
+WHERE status = 'pending' AND verification_count >= 2;

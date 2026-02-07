@@ -88,7 +88,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
               />
               <Text style={[styles.statTextMuted, isVerified ? styles.verifiedText : isActive ? styles.activeText : styles.unknownText]}>
                 {isVerified 
-                  ? t('machine.verifications', { count: machine.verification_count }) 
+                  ? t('machine.stats.verified') 
                   : isActive ? t('machine.active') : t('machine.unverified')}
               </Text>
             </View>

@@ -259,7 +259,7 @@ BEGIN
         IF TG_OP = 'INSERT' THEN
             UPDATE machines SET
                 flag_count = flag_count + 1,
-                status = CASE WHEN flag_count >= 3 THEN 'flagged'::machine_status ELSE status END
+                status = CASE WHEN flag_count + 1 >= 3 THEN 'flagged'::machine_status ELSE status END
             WHERE id = NEW.machine_id;
         END IF;
     END IF;
