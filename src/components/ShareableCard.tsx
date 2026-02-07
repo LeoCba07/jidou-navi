@@ -19,6 +19,7 @@ import * as FileSystem from 'expo-file-system';
 import { Analytics } from '../lib/analytics';
 import { useUIStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
+import UserAvatar from './UserAvatar';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
@@ -166,9 +167,12 @@ export default function ShareableCard() {
               <View style={styles.footer}>
                 {/* User */}
                 <View style={styles.userInfo}>
-                  <View style={styles.userAvatar}>
-                    <Ionicons name="person" size={14} color="#fff" />
-                  </View>
+                  <UserAvatar
+                    url={profile?.avatar_url}
+                    size={24}
+                    borderWidth={2}
+                    borderColor="#3C91E6"
+                  />
                   <Text style={styles.username}>@{username}</Text>
                 </View>
 
@@ -348,14 +352,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  userAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#3C91E6',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   username: {
     fontSize: 13,
