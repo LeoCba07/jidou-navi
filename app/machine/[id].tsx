@@ -496,16 +496,17 @@ export default function MachineDetailScreen() {
         t('machine.checkIn.success.title'),
         successMessage,
         () => {
-          if (newBadges.length > 0) {
-            // Show badge popup, then share card after dismissing
-            showBadgePopup(newBadges, () => {
+          if (stillExists) {
+            if (newBadges.length > 0) {
+              showBadgePopup(newBadges, () => {
+                showShareCard(shareData);
+              });
+            } else {
               showShareCard(shareData);
-            });
-          } else {
-            // No badges - show share card directly
-            showShareCard(shareData);
+            }
+          } else if (newBadges.length > 0) {
+            showBadgePopup(newBadges);
           }
-          // Try to request app review
           tryRequestAppReview();
         },
         'OK',
