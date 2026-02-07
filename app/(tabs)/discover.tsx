@@ -29,7 +29,7 @@ import {
   getUserUpvotedMachineIds,
   upvoteMachine,
   removeUpvote,
-  MAX_WEEKLY_UPVOTES,
+  MAX_DAILY_UPVOTES,
   XP_PER_UPVOTE,
 } from '../../src/lib/upvotes';
 import { updateLocalXP } from '../../src/lib/xp';
@@ -38,15 +38,15 @@ import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { LeaderboardScreen } from '../../src/components/leaderboard';
 import { DiscoverMachineCard } from '../../src/components/discover';
-import WeeklyVotesIndicator, { type WeeklyVotesIndicatorRef } from '../../src/components/discover/WeeklyVotesIndicator';
+import DailyVotesIndicator, { type DailyVotesIndicatorRef } from '../../src/components/discover/DailyVotesIndicator';
 
 export default function DiscoverScreen() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const { showError, showSuccess } = useAppModal();
-  const headerIndicatorRef = React.useRef<WeeklyVotesIndicatorRef>(null);
-  const contentIndicatorRef = React.useRef<WeeklyVotesIndicatorRef>(null);
+  const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
+  const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
 
   // Data state
   const [popularMachines, setPopularMachines] = React.useState<EngagedMachine[]>([]);
@@ -67,7 +67,7 @@ export default function DiscoverScreen() {
   // Upvote state
   const [upvotedIds, setUpvotedIds] = React.useState<Set<string>>(new Set());
   const [upvotingIds, setUpvotingIds] = React.useState<Set<string>>(new Set());
-  const [remainingVotes, setRemainingVotes] = React.useState(MAX_WEEKLY_UPVOTES);
+  const [remainingVotes, setRemainingVotes] = React.useState(MAX_DAILY_UPVOTES);
 
   // Get user location
   async function getUserLocation() {
@@ -101,7 +101,7 @@ export default function DiscoverScreen() {
     const [popular, upvoted, remaining] = await Promise.all([
       fetchPopularThisWeek(10),
       user ? getUserUpvotedMachineIds() : Promise.resolve([]),
-      user ? getRemainingUpvotes() : Promise.resolve(MAX_WEEKLY_UPVOTES),
+      user ? getRemainingUpvotes() : Promise.resolve(MAX_DAILY_UPVOTES),
     ]);
 
     // Check if we got data from the new functions
@@ -252,7 +252,7 @@ export default function DiscoverScreen() {
         updateMachineUpvoteCount(machineId, -1);
         updateLocalXP(-XP_PER_UPVOTE);
 
-        if (result.error === 'weekly_limit_reached') {
+        if (result.error === 'daily_limit_reached') {
           // Feedback via shake animation on both indicators
           headerIndicatorRef.current?.shake();
           contentIndicatorRef.current?.shake();
@@ -476,7 +476,7 @@ export default function DiscoverScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>{t('discover.title')}</Text>
         {user && (
-          <WeeklyVotesIndicator ref={headerIndicatorRef} remainingVotes={remainingVotes} compact />
+          <DailyVotesIndicator ref={headerIndicatorRef} remainingVotes={remainingVotes} compact />
         )}
       </View>
 
@@ -495,7 +495,7 @@ export default function DiscoverScreen() {
 
         {user && (
           <View style={styles.votesSection}>
-            <WeeklyVotesIndicator ref={contentIndicatorRef} remainingVotes={remainingVotes} />
+            <DailyVotesIndicator ref={contentIndicatorRef} remainingVotes={remainingVotes} />
           </View>
         )}
 
