@@ -496,25 +496,27 @@ export default function MachineDetailScreen() {
         t('machine.checkIn.success.title'),
         successMessage,
         async () => {
-          // Small delay after success modal closes before showing next one
           await sleep(MODAL_SEQUENCE_DELAY_MS);
 
-          if (newBadges.length > 0) {
-            // Show badge popup, then share card after dismissing
-            showBadgePopup(newBadges, async () => {
-              // Delay between badge popup and share card
-              await sleep(MODAL_SEQUENCE_DELAY_MS);
+          if (stillExists) {
+            if (newBadges.length > 0) {
+              showBadgePopup(newBadges, async () => {
+                await sleep(MODAL_SEQUENCE_DELAY_MS);
+                showShareCard({
+                  ...shareData,
+                  onDismiss: () => tryRequestAppReview(),
+                });
+              });
+            } else {
               showShareCard({
                 ...shareData,
                 onDismiss: () => tryRequestAppReview(),
               });
-            });
+            }
+          } else if (newBadges.length > 0) {
+            showBadgePopup(newBadges, () => tryRequestAppReview());
           } else {
-            // No badges - show share card directly
-            showShareCard({
-              ...shareData,
-              onDismiss: () => tryRequestAppReview(),
-            });
+            tryRequestAppReview();
           }
         },
         'OK',
