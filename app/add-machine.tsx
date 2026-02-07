@@ -1,5 +1,5 @@
 // Add Machine screen
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -61,6 +61,7 @@ export default function AddMachineScreen() {
   const [exifLocation, setExifLocation] = useState<GpsCoordinates | null>(null);
   const [showLocationVerification, setShowLocationVerification] = useState(false);
   const [locationSource, setLocationSource] = useState<'gps' | 'exif'>('gps');
+  const exifDecisionRef = useRef<((accepted: boolean) => void) | null>(null);
 
   const isDev = profile?.role === 'admin';
 
@@ -99,6 +100,12 @@ export default function AddMachineScreen() {
         },
       ]
     );
+  }
+
+  function waitForExifDecision(): Promise<boolean> {
+    return new Promise((resolve) => {
+      exifDecisionRef.current = resolve;
+    });
   }
 
   async function pickImage(useCamera: boolean) {
@@ -145,6 +152,7 @@ export default function AddMachineScreen() {
           // Store EXIF location and show verification modal
           setExifLocation(gpsData);
           setShowLocationVerification(true);
+          await waitForExifDecision();
         }
 
         // Step 3: Now apply editing with compression
@@ -227,6 +235,8 @@ export default function AddMachineScreen() {
       setLocationSource('exif');
     }
     setShowLocationVerification(false);
+    exifDecisionRef.current?.(true);
+    exifDecisionRef.current = null;
   }
 
   function handleLocationVerificationReject() {
@@ -234,6 +244,8 @@ export default function AddMachineScreen() {
     setExifLocation(null);
     setLocationSource('gps');
     setShowLocationVerification(false);
+    exifDecisionRef.current?.(false);
+    exifDecisionRef.current = null;
   }
 
   function toggleCategory(id: string) {
