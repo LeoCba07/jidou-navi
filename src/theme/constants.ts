@@ -103,3 +103,5 @@ export const CATEGORY_COLORS = {
   coffee: '#8B4513',
   alcohol: '#F39C12',
 } as const;
+
+export const VERIFICATION_THRESHOLD = 5;

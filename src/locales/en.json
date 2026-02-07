@@ -160,6 +160,7 @@
     "lastVerified": "Last verified {{date}}",
     "neverVerified": "Not yet verified",
     "active": "Active",
+    "verified": "Verified",
     "unverified": "Unverified",
     "away": "{{distance}} away",
     "calculating": "Calculating...",

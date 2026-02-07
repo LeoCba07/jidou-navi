@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { NearbyMachine } from '../lib/machines';
 import { useVisitedMachinesStore } from '../store/visitedMachinesStore';
+import { COLORS, VERIFICATION_THRESHOLD } from '../theme/constants';
 
 type Props = {
   machine: NearbyMachine;
@@ -26,6 +27,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
 
   const categories = machine.categories || [];
   const isActive = machine.status === 'active';
+  const isVerified = (machine.verification_count || 0) >= VERIFICATION_THRESHOLD;
 
   return (
     <View style={styles.container}>
@@ -69,23 +71,25 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
           {/* Stats row */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Ionicons name="location" size={14} color="#FF4B4B" />
+              <Ionicons name="location" size={14} color={COLORS.primary} />
               <Text style={styles.statText}>{distance}</Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons name="eye-outline" size={14} color="#666" />
+              <Ionicons name="eye-outline" size={14} color={COLORS.textMuted} />
               <Text style={styles.statTextMuted}>
                 {t('machine.visits', { count: machine.visit_count })}
               </Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons
-                name={isActive ? 'checkmark-circle' : 'help-circle'}
+                name={isVerified ? 'shield-checkmark' : isActive ? 'checkmark-circle' : 'help-circle'}
                 size={14}
-                color={isActive ? '#22C55E' : '#F59E0B'}
+                color={isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning}
               />
-              <Text style={[styles.statTextMuted, isActive ? styles.activeText : styles.unknownText]}>
-                {isActive ? t('machine.active') : t('machine.unverified')}
+              <Text style={[styles.statTextMuted, isVerified ? styles.verifiedText : isActive ? styles.activeText : styles.unknownText]}>
+                {isVerified 
+                  ? t('machine.verifications', { count: machine.verification_count }) 
+                  : isActive ? t('machine.active') : t('machine.unverified')}
               </Text>
             </View>
           </View>
@@ -193,18 +197,21 @@ const styles = StyleSheet.create({
   statText: {
     fontSize: 13,
     fontFamily: 'Inter-SemiBold',
-    color: '#FF4B4B',
+    color: COLORS.primary,
   },
   statTextMuted: {
     fontSize: 12,
     fontFamily: 'Inter',
-    color: '#666',
+    color: COLORS.textMuted,
   },
   activeText: {
-    color: '#22C55E',
+    color: COLORS.success,
+  },
+  verifiedText: {
+    color: COLORS.secondary,
   },
   unknownText: {
-    color: '#F59E0B',
+    color: COLORS.warning,
   },
   tapIndicator: {
     flexDirection: 'row',

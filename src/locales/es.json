@@ -160,6 +160,7 @@
     "lastVerified": "Verificada {{date}}",
     "neverVerified": "Aún no verificada",
     "active": "Activa",
+    "verified": "Verificada",
     "unverified": "Sin verificar",
     "away": "a {{distance}}",
     "calculating": "Calculando...",
