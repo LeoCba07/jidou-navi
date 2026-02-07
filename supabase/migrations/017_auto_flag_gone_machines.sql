@@ -70,7 +70,7 @@ BEGIN
             AND status = 'pending'
         ) THEN
             -- Create flag for admin review
-            INSERT INTO flags (machine_id, reported_by, reason, notes, status)
+            INSERT INTO flags (machine_id, reported_by, reason, details, status)
             VALUES (
                 p_machine_id, 
                 auth.uid(), 
