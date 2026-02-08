@@ -564,27 +564,63 @@ export default function MachineDetailScreen() {
       }
     }
 
-    // 2. Pick Image
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) {
-      showError(t('common.error'), t('addMachine.permissionNeeded'));
-      return;
+    // 2. Ask user for source
+    showConfirm(
+      t('machine.addPhoto'),
+      '',
+      [
+        {
+          text: t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('addMachine.chooseFromGallery'),
+          style: 'default',
+          onPress: () => pickImage('gallery'),
+        },
+        {
+          text: t('addMachine.takePhoto'),
+          style: 'primary',
+          onPress: () => pickImage('camera'),
+        },
+      ]
+    );
+  }
+
+  async function pickImage(source: 'camera' | 'gallery') {
+    // Check permissions
+    if (source === 'camera') {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission.granted) {
+        showError(t('common.error'), t('addMachine.permissionNeeded'));
+        return;
+      }
+    } else {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        showError(t('common.error'), t('addMachine.permissionNeeded'));
+        return;
+      }
     }
 
     try {
-      const result = await ImagePicker.launchCameraAsync({
+      const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ['images'],
         quality: 0.5,
         allowsEditing: true,
         aspect: [4, 3],
-      });
+      };
+
+      const result = source === 'camera'
+        ? await ImagePicker.launchCameraAsync(options)
+        : await ImagePicker.launchImageLibraryAsync(options);
 
       if (!result.canceled && result.assets[0]) {
         await uploadPhotoAction(result.assets[0].uri);
       }
     } catch (error) {
       console.error('Image picker error:', error);
-      Sentry.captureException(error, { tags: { context: 'image_picker' } });
+      Sentry.captureException(error, { tags: { context: 'image_picker', source } });
       showError(t('common.error'), t('machine.uploadError'));
     }
   }

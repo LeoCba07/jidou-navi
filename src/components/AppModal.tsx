@@ -113,8 +113,10 @@ export default function AppModal() {
       case 'cancel':
         return styles.cancelButton;
       case 'primary':
-      default:
         return styles.primaryButton;
+      case 'default':
+      default:
+        return styles.defaultButton;
     }
   }
 
@@ -124,8 +126,10 @@ export default function AppModal() {
         return styles.cancelButtonText;
       case 'destructive':
       case 'primary':
-      default:
         return styles.primaryButtonText;
+      case 'default':
+      default:
+        return styles.defaultButtonText;
     }
   }
 
@@ -293,6 +297,11 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#CC3C3C',
   },
+  defaultButton: {
+    backgroundColor: '#f5f5f5',
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
   destructiveButton: {
     backgroundColor: '#FF4B4B',
     borderWidth: 3,
@@ -311,6 +320,9 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#fff',
+  },
+  defaultButtonText: {
+    color: '#333',
   },
   cancelButtonText: {
     color: '#666',
