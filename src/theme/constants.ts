@@ -103,3 +103,5 @@ export const CATEGORY_COLORS = {
   coffee: '#8B4513',
   alcohol: '#F39C12',
 } as const;
+
+export const MODAL_SEQUENCE_DELAY_MS = 500;

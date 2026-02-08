@@ -39,13 +39,13 @@ import { uploadPhoto } from '../../src/lib/storage';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/theme/constants';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// Constants for full-screen modal behavior
-const MODAL_SCROLL_DELAY_MS = 100;
+// Helper for modal sequences
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function MachineDetailScreen() {
   const { t } = useTranslation();
@@ -487,21 +487,25 @@ export default function MachineDetailScreen() {
         successMessage,
         async () => {
           // Small delay after success modal closes before showing next one
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await sleep(MODAL_SEQUENCE_DELAY_MS);
 
           if (newBadges.length > 0) {
             // Show badge popup, then share card after dismissing
             showBadgePopup(newBadges, async () => {
               // Delay between badge popup and share card
-              await new Promise(resolve => setTimeout(resolve, 500));
-              showShareCard(shareData);
+              await sleep(MODAL_SEQUENCE_DELAY_MS);
+              showShareCard({
+                ...shareData,
+                onDismiss: () => tryRequestAppReview(),
+              });
             });
           } else {
             // No badges - show share card directly
-            showShareCard(shareData);
+            showShareCard({
+              ...shareData,
+              onDismiss: () => tryRequestAppReview(),
+            });
           }
-          // Try to request app review
-          tryRequestAppReview();
         },
         'OK',
         earnedXP
