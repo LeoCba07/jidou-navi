@@ -223,9 +223,24 @@ export default function ReviewMachineScreen() {
                     </View>
                   )}
                   <View style={styles.nearbyInfo}>
-                    <Text style={styles.nearbyName} numberOfLines={1}>
-                      {nearby.name || t('machine.unnamed')}
-                    </Text>
+                    <View style={styles.nearbyNameRow}>
+                      <Text style={styles.nearbyName} numberOfLines={1}>
+                        {nearby.name || t('machine.unnamed')}
+                      </Text>
+                      {nearby.name_similarity > 0.3 && (
+                        <View style={[
+                          styles.similarityBadge,
+                          { backgroundColor: nearby.name_similarity > 0.7 ? '#FEE2E2' : '#FEF3C7' }
+                        ]}>
+                          <Text style={[
+                            styles.similarityText,
+                            { color: nearby.name_similarity > 0.7 ? '#EF4444' : '#D97706' }
+                          ]}>
+                            {t('admin.nameMatch', { percent: Math.round(nearby.name_similarity * 100) })}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                     <Text style={styles.nearbyDistance}>
                       {nearby.distance_meters.toFixed(0)}m {t('admin.away')}
                     </Text>
@@ -450,10 +465,26 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
   },
+  nearbyNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
   nearbyName: {
     fontSize: 14,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
+    flex: 1,
+  },
+  similarityBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  similarityText: {
+    fontSize: 10,
+    fontFamily: 'Inter-Bold',
   },
   nearbyDistance: {
     fontSize: 12,

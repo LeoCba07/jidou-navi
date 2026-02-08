@@ -479,6 +479,7 @@
     "nearbyCheck": "Verificación de Duplicados",
     "noDuplicates": "No se encontraron duplicados cercanos",
     "potentialDuplicates": "{{count}} posible(s) duplicado(s) cercano(s)",
+    "nameMatch": "{{percent}}% de coincidencia",
     "nearbyMachines": "{{count}} máquina(s) cercana(s)",
     "away": "de distancia",
     "noDescription": "Sin descripción",
