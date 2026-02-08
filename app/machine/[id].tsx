@@ -485,10 +485,15 @@ export default function MachineDetailScreen() {
       showSuccess(
         t('machine.checkIn.success.title'),
         successMessage,
-        () => {
+        async () => {
+          // Small delay after success modal closes before showing next one
+          await new Promise(resolve => setTimeout(resolve, 500));
+
           if (newBadges.length > 0) {
             // Show badge popup, then share card after dismissing
-            showBadgePopup(newBadges, () => {
+            showBadgePopup(newBadges, async () => {
+              // Delay between badge popup and share card
+              await new Promise(resolve => setTimeout(resolve, 500));
               showShareCard(shareData);
             });
           } else {
