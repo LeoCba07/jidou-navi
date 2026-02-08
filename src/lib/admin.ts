@@ -26,6 +26,7 @@ export type NearbyMachine = {
   address: string | null;
   status: string;
   distance_meters: number;
+  name_similarity: number;
   primary_photo_url: string | null;
 };
 
