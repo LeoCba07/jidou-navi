@@ -483,6 +483,7 @@
     "nearbyCheck": "Duplicate Check",
     "noDuplicates": "No nearby duplicates found",
     "potentialDuplicates": "{{count}} potential duplicate(s) nearby",
+    "nameMatch": "{{percent}}% match",
     "nearbyMachines": "{{count}} nearby machine(s)",
     "away": "away",
     "noDescription": "No description provided",

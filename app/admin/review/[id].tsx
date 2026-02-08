@@ -236,7 +236,7 @@ export default function ReviewMachineScreen() {
                             styles.similarityText,
                             { color: nearby.name_similarity > 0.7 ? '#EF4444' : '#D97706' }
                           ]}>
-                            {Math.round(nearby.name_similarity * 100)}% match
+                            {t('admin.nameMatch', { percent: Math.round(nearby.name_similarity * 100) })}
                           </Text>
                         </View>
                       )}

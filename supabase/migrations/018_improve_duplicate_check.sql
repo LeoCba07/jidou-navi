@@ -1,6 +1,9 @@
 -- Migration: Improve duplicate check logic
 -- Purpose: Add name similarity scoring and refine radius to reduce false positives
 
+-- 0. Ensure extension is available
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- 1. Drop existing function to allow changing return columns
 DROP FUNCTION IF EXISTS check_duplicate_machines(UUID, INT);
 

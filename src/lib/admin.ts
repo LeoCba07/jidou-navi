@@ -67,8 +67,8 @@ export async function checkDuplicateMachines(
   radiusMeters: number = 50
 ): Promise<NearbyMachine[]> {
   const { data, error } = await supabase.rpc('check_duplicate_machines', {
-    machine_id: machineId,
-    radius_meters: radiusMeters,
+    p_machine_id: machineId,
+    p_radius_meters: radiusMeters,
   });
 
   if (error) {
