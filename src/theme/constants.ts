@@ -105,3 +105,4 @@ export const CATEGORY_COLORS = {
 } as const;
 
 export const VERIFICATION_THRESHOLD = 2;
+export const MODAL_SEQUENCE_DELAY_MS = 500;

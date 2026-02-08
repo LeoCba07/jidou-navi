@@ -30,6 +30,7 @@ export interface ShareCardData {
   machineAddress: string;
   machinePhotoUrl: string;
   categories?: { name: string; color: string }[];
+  onDismiss?: () => void;
 }
 
 export default function ShareableCard() {
@@ -38,6 +39,11 @@ export default function ShareableCard() {
   const [sharing, setSharing] = useState(false);
   const { shareCard, closeShareCard } = useUIStore();
   const { profile } = useAuthStore();
+
+  function handleClose() {
+    closeShareCard();
+    shareCard?.onDismiss?.();
+  }
 
   if (!shareCard) return null;
 
@@ -82,6 +88,9 @@ export default function ShareableCard() {
       } catch {
         // Ignore cleanup errors
       }
+      
+      // Close after sharing
+      handleClose();
     } catch (error) {
       console.error('Share error:', error);
     } finally {
@@ -94,12 +103,12 @@ export default function ShareableCard() {
       transparent
       visible
       animationType="fade"
-      onRequestClose={closeShareCard}
+      onRequestClose={handleClose}
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
           {/* Close button */}
-          <Pressable style={styles.closeButton} onPress={closeShareCard}>
+          <Pressable style={styles.closeButton} onPress={handleClose}>
             <Ionicons name="close" size={24} color="#666" />
           </Pressable>
 
@@ -211,7 +220,7 @@ export default function ShareableCard() {
           </Pressable>
 
           {/* Skip button */}
-          <Pressable style={styles.skipButton} onPress={closeShareCard}>
+          <Pressable style={styles.skipButton} onPress={handleClose}>
             <Text style={styles.skipText}>{t('share.maybeLater')}</Text>
           </Pressable>
         </View>
