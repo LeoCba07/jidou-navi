@@ -286,8 +286,8 @@ export default function MachineDetailScreen() {
     (Number.isFinite(parsedDistance) ? parsedDistance : null);
     
   const distance =
-    displayDistance == null || displayDistance === 0
-      ? t('machine.calculating') // Or a placeholder like "-"
+    displayDistance == null
+      ? t('machine.calculating')
       : displayDistance < 1000
         ? `${Math.round(displayDistance)}m`
         : `${(displayDistance / 1000).toFixed(1)}km`;
@@ -372,12 +372,15 @@ export default function MachineDetailScreen() {
 
     const needsVerification = shouldShowVerifyPrompt();
 
+    // Build the message with trust messaging
+    const title = needsVerification ? t('machine.checkIn.verifyTitle') : t('machine.checkIn.title');
+    const question = needsVerification ? t('machine.checkIn.verifyQuestion') : t('machine.checkIn.question');
+    const message = `${question}\n\n${t('machine.checkIn.xpReward')}\n${t('machine.checkIn.trustMessage')}`;
+
     // Ask if machine still exists
     showConfirm(
-      needsVerification ? t('machine.checkIn.verifyTitle') : t('machine.checkIn.title'),
-      needsVerification 
-        ? `${t('machine.checkIn.verifyQuestion')}\n\n${t('machine.checkIn.xpReward')}`
-        : t('machine.checkIn.question'),
+      title,
+      message,
       [
         {
           text: t('common.cancel'),
@@ -444,6 +447,13 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
       addVisited(params.id as string); // Add to visited machines store
+
+      // If user reported machine as gone, record it for auto-flagging
+      if (!stillExists) {
+        await supabase.rpc('record_machine_gone_report', {
+          p_machine_id: params.id,
+        });
+      }
 
       // Add XP
       const xpResult = await addXP(

@@ -104,4 +104,5 @@ export const CATEGORY_COLORS = {
   alcohol: '#F39C12',
 } as const;
 
+export const VERIFICATION_THRESHOLD = 2;
 export const MODAL_SEQUENCE_DELAY_MS = 500;

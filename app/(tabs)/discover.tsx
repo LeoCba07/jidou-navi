@@ -1,5 +1,5 @@
 // Discover screen - trending and popular vending machines with engagement
-import { useEffect, useState, useCallback } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -29,7 +29,7 @@ import {
   getUserUpvotedMachineIds,
   upvoteMachine,
   removeUpvote,
-  MAX_WEEKLY_UPVOTES,
+  MAX_DAILY_UPVOTES,
   XP_PER_UPVOTE,
 } from '../../src/lib/upvotes';
 import { updateLocalXP } from '../../src/lib/xp';
@@ -37,37 +37,37 @@ import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { LeaderboardScreen } from '../../src/components/leaderboard';
-import {
-  DiscoverMachineCard,
-  WeeklyVotesIndicator,
-} from '../../src/components/discover';
+import { DiscoverMachineCard } from '../../src/components/discover';
+import DailyVotesIndicator, { type DailyVotesIndicatorRef } from '../../src/components/discover/DailyVotesIndicator';
 
 export default function DiscoverScreen() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const { showError, showSuccess } = useAppModal();
+  const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
+  const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
 
   // Data state
-  const [popularMachines, setPopularMachines] = useState<EngagedMachine[]>([]);
-  const [nearbyMachines, setNearbyMachines] = useState<EngagedMachine[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [popularMachines, setPopularMachines] = React.useState<EngagedMachine[]>([]);
+  const [nearbyMachines, setNearbyMachines] = React.useState<EngagedMachine[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   // Fallback state (when upvote system not available)
-  const [useFallback, setUseFallback] = useState(false);
-  const [fallbackPopular, setFallbackPopular] = useState<DiscoverMachine[]>([]);
-  const [fallbackRecent, setFallbackRecent] = useState<DiscoverMachine[]>([]);
-  const [savingIds, setSavingIds] = useState<Set<string>>(new Set());
+  const [useFallback, setUseFallback] = React.useState(false);
+  const [fallbackPopular, setFallbackPopular] = React.useState<DiscoverMachine[]>([]);
+  const [fallbackRecent, setFallbackRecent] = React.useState<DiscoverMachine[]>([]);
+  const [savingIds, setSavingIds] = React.useState<Set<string>>(new Set());
 
   // Location state
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [locationError, setLocationError] = useState(false);
+  const [userLocation, setUserLocation] = React.useState<{ lat: number; lng: number } | null>(null);
+  const [locationError, setLocationError] = React.useState(false);
 
   // Upvote state
-  const [upvotedIds, setUpvotedIds] = useState<Set<string>>(new Set());
-  const [upvotingIds, setUpvotingIds] = useState<Set<string>>(new Set());
-  const [remainingVotes, setRemainingVotes] = useState(MAX_WEEKLY_UPVOTES);
+  const [upvotedIds, setUpvotedIds] = React.useState<Set<string>>(new Set());
+  const [upvotingIds, setUpvotingIds] = React.useState<Set<string>>(new Set());
+  const [remainingVotes, setRemainingVotes] = React.useState(MAX_DAILY_UPVOTES);
 
   // Get user location
   async function getUserLocation() {
@@ -101,7 +101,7 @@ export default function DiscoverScreen() {
     const [popular, upvoted, remaining] = await Promise.all([
       fetchPopularThisWeek(10),
       user ? getUserUpvotedMachineIds() : Promise.resolve([]),
-      user ? getRemainingUpvotes() : Promise.resolve(MAX_WEEKLY_UPVOTES),
+      user ? getRemainingUpvotes() : Promise.resolve(MAX_DAILY_UPVOTES),
     ]);
 
     // Check if we got data from the new functions
@@ -140,7 +140,7 @@ export default function DiscoverScreen() {
     setLoading(false);
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function init() {
       const coords = await getUserLocation();
       await loadData(coords);
@@ -148,7 +148,7 @@ export default function DiscoverScreen() {
     init();
   }, [user]);
 
-  const onRefresh = useCallback(async () => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const coords = await getUserLocation();
     await loadData(coords);
@@ -216,7 +216,9 @@ export default function DiscoverScreen() {
           next.delete(machineId);
           return next;
         });
-        showError(t('common.error'), t('discover.weeklyLimitReached'));
+        // Feedback via shake animation on both indicators
+        headerIndicatorRef.current?.shake();
+        contentIndicatorRef.current?.shake();
         return;
       }
 
@@ -250,8 +252,10 @@ export default function DiscoverScreen() {
         updateMachineUpvoteCount(machineId, -1);
         updateLocalXP(-XP_PER_UPVOTE);
 
-        if (result.error === 'weekly_limit_reached') {
-          showError(t('common.error'), t('discover.weeklyLimitReached'));
+        if (result.error === 'daily_limit_reached') {
+          // Feedback via shake animation on both indicators
+          headerIndicatorRef.current?.shake();
+          contentIndicatorRef.current?.shake();
         } else {
           showError(t('common.error'), t('common.error'));
         }
@@ -472,7 +476,7 @@ export default function DiscoverScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>{t('discover.title')}</Text>
         {user && (
-          <WeeklyVotesIndicator remainingVotes={remainingVotes} compact />
+          <DailyVotesIndicator ref={headerIndicatorRef} remainingVotes={remainingVotes} compact />
         )}
       </View>
 
@@ -491,7 +495,7 @@ export default function DiscoverScreen() {
 
         {user && (
           <View style={styles.votesSection}>
-            <WeeklyVotesIndicator remainingVotes={remainingVotes} />
+            <DailyVotesIndicator ref={contentIndicatorRef} remainingVotes={remainingVotes} />
           </View>
         )}
 

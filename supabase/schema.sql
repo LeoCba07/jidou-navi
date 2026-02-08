@@ -72,6 +72,7 @@ CREATE TABLE machines (
     reviewed_at TIMESTAMPTZ,
     reviewed_by UUID REFERENCES profiles(id),
     contributor_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+    auto_activated BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -233,7 +234,17 @@ BEGIN
                 visit_count = visit_count + 1,
                 verification_count = CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END,
                 last_verified_at = CASE WHEN NEW.still_exists IS NOT NULL THEN NOW() ELSE last_verified_at END,
-                last_verified_by = CASE WHEN NEW.still_exists IS NOT NULL THEN NEW.user_id ELSE last_verified_by END
+                last_verified_by = CASE WHEN NEW.still_exists IS NOT NULL THEN NEW.user_id ELSE last_verified_by END,
+                status = CASE 
+                    WHEN status = 'pending' AND (CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END) >= 2 
+                    THEN 'active'::machine_status 
+                    ELSE status 
+                END,
+                auto_activated = CASE 
+                    WHEN status = 'pending' AND (CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END) >= 2 
+                    THEN TRUE 
+                    ELSE auto_activated 
+                END
             WHERE id = NEW.machine_id;
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE machines SET visit_count = visit_count - 1 WHERE id = OLD.machine_id;
@@ -248,7 +259,7 @@ BEGIN
         IF TG_OP = 'INSERT' THEN
             UPDATE machines SET
                 flag_count = flag_count + 1,
-                status = CASE WHEN flag_count >= 3 THEN 'flagged'::machine_status ELSE status END
+                status = CASE WHEN flag_count + 1 >= 3 THEN 'flagged'::machine_status ELSE status END
             WHERE id = NEW.machine_id;
         END IF;
     END IF;
@@ -512,6 +523,7 @@ RETURNS TABLE (
     distance_meters DOUBLE PRECISION,
     status machine_status,
     visit_count INTEGER,
+    verification_count INTEGER,
     primary_photo_url TEXT,
     categories JSON,
     directions_hint TEXT
@@ -528,6 +540,7 @@ BEGIN
         ST_Distance(m.location, ST_MakePoint(lng, lat)::geography) as distance_meters,
         m.status,
         m.visit_count,
+        m.verification_count,
         mp.photo_url as primary_photo_url,
         COALESCE(
             (SELECT json_agg(json_build_object('id', c.id, 'slug', c.slug, 'name', c.name, 'color', c.color))
@@ -700,6 +713,7 @@ RETURNS TABLE (
     distance_meters DOUBLE PRECISION,
     status machine_status,
     visit_count INTEGER,
+    verification_count INTEGER,
     primary_photo_url TEXT,
     categories JSON,
     directions_hint TEXT
@@ -716,6 +730,7 @@ BEGIN
         0::DOUBLE PRECISION as distance_meters,
         m.status,
         m.visit_count,
+        m.verification_count,
         mp.photo_url as primary_photo_url,
         COALESCE(
             (SELECT json_agg(json_build_object('id', c.id, 'slug', c.slug, 'name', c.name, 'color', c.color))
