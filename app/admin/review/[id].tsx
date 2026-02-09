@@ -8,6 +8,7 @@ import {
   Pressable,
   Image,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +17,12 @@ import { useAuthStore } from '../../../src/store/authStore';
 import { useAdminStore } from '../../../src/store/adminStore';
 import { useAppModal } from '../../../src/hooks/useAppModal';
 import RejectReasonModal from '../../../src/components/admin/RejectReasonModal';
+
+// Open location in Google Maps
+const openInMaps = (lat: number, lng: number) => {
+  const url = `https://www.google.com/maps?q=${lat},${lng}`;
+  Linking.openURL(url);
+};
 
 export default function ReviewMachineScreen() {
   const { t } = useTranslation();
@@ -154,21 +161,61 @@ export default function ReviewMachineScreen() {
           <Text style={styles.description}>
             {selectedMachine.description || t('admin.noDescription')}
           </Text>
+
+          {/* Categories */}
+          {selectedMachine.categories && selectedMachine.categories.length > 0 && (
+            <View style={styles.categoriesRow}>
+              {selectedMachine.categories.map((cat) => (
+                <View
+                  key={cat.id}
+                  style={[styles.categoryChip, { backgroundColor: cat.color }]}
+                >
+                  <Text style={styles.categoryText}>{cat.name}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+          {(!selectedMachine.categories || selectedMachine.categories.length === 0) && (
+            <Text style={styles.noCategoriesText}>{t('admin.noCategories')}</Text>
+          )}
         </View>
 
         {/* Contributor Info */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('admin.submittedBy')}</Text>
-          <View style={styles.contributorRow}>
-            <Ionicons name="person-circle-outline" size={24} color="#666" />
-            <Text style={styles.contributorName}>
-              {selectedMachine.contributor_display_name ||
-                selectedMachine.contributor_username ||
-                t('common.user')}
-            </Text>
-          </View>
+          <Pressable
+            style={styles.contributorRow}
+            onPress={() => {
+              if (selectedMachine.contributor_id) {
+                router.push(`/profile/${selectedMachine.contributor_id}`);
+              }
+            }}
+            disabled={!selectedMachine.contributor_id}
+          >
+            {selectedMachine.contributor_avatar_url ? (
+              <Image
+                source={{ uri: selectedMachine.contributor_avatar_url }}
+                style={styles.contributorAvatar}
+              />
+            ) : (
+              <Ionicons name="person-circle-outline" size={36} color="#666" />
+            )}
+            <View style={styles.contributorInfo}>
+              <Text style={styles.contributorName}>
+                {selectedMachine.contributor_display_name ||
+                  selectedMachine.contributor_username ||
+                  t('common.user')}
+              </Text>
+              {selectedMachine.contributor_id && (
+                <Text style={styles.viewProfileText}>{t('admin.viewProfile')}</Text>
+              )}
+            </View>
+            {selectedMachine.contributor_id && (
+              <Ionicons name="chevron-forward" size={20} color="#999" />
+            )}
+          </Pressable>
           <Text style={styles.submittedAt}>
-            {new Date(selectedMachine.created_at).toLocaleDateString(undefined, {
+            {new Date(selectedMachine.created_at).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
@@ -190,11 +237,31 @@ export default function ReviewMachineScreen() {
           <Text style={styles.coordinates}>
             {selectedMachine.latitude?.toFixed(6)}, {selectedMachine.longitude?.toFixed(6)}
           </Text>
+          
+          {/* Open in Maps button */}
+          {selectedMachine.latitude && selectedMachine.longitude && (
+            <Pressable
+              style={styles.openMapsButton}
+              onPress={() => openInMaps(selectedMachine.latitude!, selectedMachine.longitude!)}
+            >
+              <Ionicons name="map-outline" size={16} color="#3C91E6" />
+              <Text style={styles.openMapsText}>{t('admin.openInMaps')}</Text>
+            </Pressable>
+          )}
+
+          {/* Directions Hint */}
+          {selectedMachine.directions_hint && (
+            <View style={styles.directionsHint}>
+              <Ionicons name="navigate-outline" size={16} color="#666" />
+              <Text style={styles.directionsHintText}>{selectedMachine.directions_hint}</Text>
+            </View>
+          )}
         </View>
 
         {/* Nearby Machines (Duplicate Check) */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('admin.nearbyCheck')}</Text>
+          <Text style={styles.duplicateExplanation}>{t('admin.duplicateExplanation')}</Text>
           {isLoadingNearby ? (
             <ActivityIndicator color="#FF4B4B" style={{ marginVertical: 16 }} />
           ) : nearbyMachines.length === 0 ? (
@@ -334,7 +401,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 140,
   },
   photo: {
     width: '100%',
@@ -498,7 +565,7 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     padding: 16,
-    paddingBottom: 32,
+    paddingBottom: 48,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#eee',
@@ -540,5 +607,83 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     opacity: 0.5,
+  },
+  categoriesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 12,
+  },
+  categoryChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 2,
+  },
+  categoryText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#fff',
+  },
+  noCategoriesText: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    color: '#999',
+    fontStyle: 'italic',
+    marginTop: 12,
+  },
+  contributorAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  contributorInfo: {
+    flex: 1,
+    marginLeft: 8,
+  },
+  viewProfileText: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#3C91E6',
+    marginTop: 2,
+  },
+  openMapsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 12,
+    padding: 10,
+    backgroundColor: '#EFF6FF',
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+  },
+  openMapsText: {
+    fontSize: 13,
+    fontFamily: 'Inter-SemiBold',
+    color: '#3C91E6',
+  },
+  directionsHint: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginTop: 12,
+    padding: 10,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 6,
+    borderLeftWidth: 3,
+    borderLeftColor: '#D1D5DB',
+  },
+  directionsHintText: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    color: '#4B5563',
+    flex: 1,
+    lineHeight: 18,
+  },
+  duplicateExplanation: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#666',
+    marginBottom: 12,
+    lineHeight: 18,
   },
 });
