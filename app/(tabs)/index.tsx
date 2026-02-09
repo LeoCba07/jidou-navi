@@ -387,7 +387,7 @@ export default function MapScreen() {
           id="machines"
           shape={machinesGeoJSON}
           onPress={handleShapePress}
-          hitbox={{ width: 30, height: 40 }}
+          hitbox={{ width: 44, height: 44 }}
         >
           <SymbolLayer
             id="machine-markers"
