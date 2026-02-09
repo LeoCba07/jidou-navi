@@ -36,6 +36,7 @@ import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
+import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
@@ -68,6 +69,7 @@ export default function MachineDetailScreen() {
   const [liveDistance, setLiveDistance] = useState<number | null>(null);
   const fullScreenScrollViewRef = useRef<ScrollView>(null);
   const [addressCopied, setAddressCopied] = useState(false);
+  const [geocodedAddress, setGeocodedAddress] = useState<string | null>(null);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -139,6 +141,45 @@ export default function MachineDetailScreen() {
       isMounted = false;
     };
   }, [params.distance_meters, params.latitude, params.longitude]);
+
+  // Reverse geocode when address is missing but coordinates exist
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchAddress() {
+      // Only reverse geocode if no address and we have coordinates
+      if (!params.address && params.latitude && params.longitude) {
+        try {
+          const result = await reverseGeocode(
+            Number(params.latitude),
+            Number(params.longitude)
+          );
+          if (isMounted && result.address) {
+            setGeocodedAddress(result.address);
+          } else if (isMounted) {
+            // Fallback to formatted coordinates
+            setGeocodedAddress(
+              formatCoordinatesAsLocation(Number(params.latitude), Number(params.longitude))
+            );
+          }
+        } catch (error) {
+          console.log('Error reverse geocoding:', error);
+          // Fallback to formatted coordinates
+          if (isMounted) {
+            setGeocodedAddress(
+              formatCoordinatesAsLocation(Number(params.latitude), Number(params.longitude))
+            );
+          }
+        }
+      }
+    }
+
+    fetchAddress();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [params.address, params.latitude, params.longitude]);
 
   // Initialize and fetch photos in a single effect to avoid race conditions
   useEffect(() => {
@@ -309,9 +350,10 @@ export default function MachineDetailScreen() {
   }
 
   async function handleCopyAddress() {
-    if (params.address && Clipboard?.setStringAsync) {
+    const addressToCopy = params.address || geocodedAddress;
+    if (addressToCopy && Clipboard?.setStringAsync) {
       try {
-        await Clipboard.setStringAsync(params.address);
+        await Clipboard.setStringAsync(addressToCopy);
         setAddressCopied(true);
         setTimeout(() => setAddressCopied(false), 2000);
       } catch (error) {
@@ -829,14 +871,19 @@ export default function MachineDetailScreen() {
         </View>
 
         {/* Location Card */}
-        {params.address && (
+        {(params.address || geocodedAddress) && (
           <View style={styles.section}>
             <View style={styles.locationCard}>
               <View style={styles.addressContent}>
                 <Ionicons name="location-outline" size={18} color={COLORS.textMuted} />
-                <Text style={styles.address}>{params.address}</Text>
+                <View style={styles.addressTextContainer}>
+                  <Text style={styles.address}>{params.address || geocodedAddress}</Text>
+                  {!params.address && geocodedAddress && (
+                    <Text style={styles.estimatedLabel}>{t('machine.estimatedAddress')}</Text>
+                  )}
+                </View>
               </View>
-              {Clipboard?.setStringAsync && (
+              {Clipboard?.setStringAsync && (params.address || geocodedAddress) && (
                 <Pressable
                   style={styles.copyButton}
                   onPress={handleCopyAddress}
@@ -1209,12 +1256,21 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: SPACING.sm,
   },
-  address: {
+  addressTextContainer: {
     flex: 1,
+  },
+  address: {
     fontSize: 14,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
     lineHeight: 20,
+  },
+  estimatedLabel: {
+    fontSize: 11,
+    fontFamily: FONTS.body,
+    color: COLORS.primary,
+    marginTop: 4,
+    fontStyle: 'italic',
   },
   copyButton: {
     backgroundColor: '#f5f5f5',

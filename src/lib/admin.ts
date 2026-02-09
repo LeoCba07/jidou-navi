@@ -1,6 +1,13 @@
 // Admin API functions for machine approval workflow
 import { supabase } from './supabase';
 
+export type CategoryInfo = {
+  id: string;
+  slug: string;
+  name: string;
+  color: string;
+};
+
 export type PendingMachine = {
   id: string;
   name: string | null;
@@ -12,9 +19,12 @@ export type PendingMachine = {
   contributor_id: string | null;
   contributor_username: string | null;
   contributor_display_name: string | null;
+  contributor_avatar_url: string | null;
   primary_photo_url: string | null;
   created_at: string;
   nearby_count: number;
+  directions_hint: string | null;
+  categories: CategoryInfo[];
 };
 
 export type NearbyMachine = {
@@ -66,6 +76,7 @@ export async function checkDuplicateMachines(
   machineId: string,
   radiusMeters: number = 50
 ): Promise<NearbyMachine[]> {
+  // @ts-expect-error - DB function uses p_ prefix, generated types are out of sync
   const { data, error } = await supabase.rpc('check_duplicate_machines', {
     p_machine_id: machineId,
     p_radius_meters: radiusMeters,
@@ -122,7 +133,7 @@ export async function fetchUserPendingMachines(
   userId?: string
 ): Promise<UserPendingMachine[]> {
   const { data, error } = await supabase.rpc('get_user_pending_machines', {
-    target_user_id: userId || null,
+    target_user_id: userId,
   });
 
   if (error) {

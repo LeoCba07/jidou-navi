@@ -43,6 +43,23 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
           {machine.name || t('machine.unnamed')}
         </Text>
 
+        {/* Categories preview */}
+        {machine.categories && machine.categories.length > 0 && (
+          <View style={styles.categoriesRow}>
+            {machine.categories.slice(0, 2).map((cat) => (
+              <View
+                key={cat.id}
+                style={[styles.categoryChip, { backgroundColor: cat.color }]}
+              >
+                <Text style={styles.categoryText}>{cat.name}</Text>
+              </View>
+            ))}
+            {machine.categories.length > 2 && (
+              <Text style={styles.moreCategories}>+{machine.categories.length - 2}</Text>
+            )}
+          </View>
+        )}
+
         <View style={styles.metaRow}>
           <Ionicons name="person-outline" size={14} color="#666" />
           <Text style={styles.metaText} numberOfLines={1}>
@@ -107,6 +124,28 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
+  },
+  categoriesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 6,
+  },
+  categoryChip: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 2,
+  },
+  categoryText: {
+    fontSize: 10,
+    fontFamily: 'Inter-SemiBold',
+    color: '#fff',
+  },
+  moreCategories: {
+    fontSize: 10,
+    fontFamily: 'Inter',
+    color: '#999',
   },
   metaRow: {
     flexDirection: 'row',
