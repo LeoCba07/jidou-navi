@@ -292,10 +292,10 @@ export default function MachineDetailScreen() {
         .limit(1);
 
       if (visitData && visitData.length > 0 && visitData[0].visited_at) {
-        // Check if visit was within 3 days
-        const threeDaysAgo = new Date();
-        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        if (new Date(visitData[0].visited_at) >= threeDaysAgo) {
+        // Check if visit was within 24 hours
+        const twentyFourHoursAgo = new Date();
+        twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+        if (new Date(visitData[0].visited_at) >= twentyFourHoursAgo) {
           setHasCheckedIn(true);
         }
       }
@@ -500,10 +500,11 @@ export default function MachineDetailScreen() {
         });
       }
 
-      // Add XP
+      // Add XP - both YES and NO are considered verifications (+25 XP)
+      const earnedXP = XP_VALUES.VERIFY_MACHINE;
       const xpResult = await addXP(
-        stillExists ? XP_VALUES.VERIFY_MACHINE : XP_VALUES.CHECK_IN,
-        stillExists ? 'verify_machine' : 'check_in'
+        earnedXP,
+        stillExists ? 'verify_machine' : 'verify_machine_gone'
       );
 
       if (!xpResult.success) {
@@ -513,6 +514,7 @@ export default function MachineDetailScreen() {
       Analytics.track('check_in', {
         machine_id: params.id,
         machine_name: params.name,
+        still_exists: stillExists,
       });
 
       // Small delay to allow profile counts to update via DB trigger
@@ -534,8 +536,6 @@ export default function MachineDetailScreen() {
       const successMessage = stillExists
         ? t('machine.checkIn.success.stillHere')
         : t('machine.checkIn.success.gone');
-      
-      const earnedXP = stillExists ? XP_VALUES.VERIFY_MACHINE : XP_VALUES.CHECK_IN;
 
       showSuccess(
         t('machine.checkIn.success.title'),
@@ -559,6 +559,7 @@ export default function MachineDetailScreen() {
               });
             }
           } else if (newBadges.length > 0) {
+            // Machine reported gone - no share card, but show badge popup if earned
             showBadgePopup(newBadges, () => tryRequestAppReview());
           } else {
             tryRequestAppReview();

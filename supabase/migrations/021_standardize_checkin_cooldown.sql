@@ -1,11 +1,10 @@
-ORDER BY m.created_at DESC
-    LIMIT limit_count;
-END;
-$$ LANGUAGE plpgsql;
+-- Migration: Standardize check-in cooldown to 24 hours
+-- Purpose: Replace calendar-day based restriction with a rolling 24-hour cooldown
 
--- ================================================
--- VISIT COOLDOWN ENFORCEMENT
--- ================================================
+-- 1. Remove the old UTC calendar-day based unique index
+DROP INDEX IF EXISTS idx_visits_unique_daily;
+
+-- 2. Create a function to enforce the 24-hour cooldown
 CREATE OR REPLACE FUNCTION enforce_visit_cooldown()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -21,11 +20,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- 3. Create the trigger
+DROP TRIGGER IF EXISTS trigger_enforce_visit_cooldown ON visits;
 CREATE TRIGGER trigger_enforce_visit_cooldown
     BEFORE INSERT ON visits
     FOR EACH ROW EXECUTE FUNCTION enforce_visit_cooldown();
-
--- 11. GRANTS
--- ================================
-GRANT EXECUTE ON FUNCTION record_machine_gone_report(UUID) TO authenticated;
-GRANT EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) TO authenticated;
