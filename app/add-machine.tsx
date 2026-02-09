@@ -41,6 +41,11 @@ const CATEGORIES = [
   { id: 'alcohol', translationKey: 'categories.alcohol', color: '#F39C12' },
 ];
 
+// Maximum lengths for form fields
+const NAME_MAX_LENGTH = 70;
+const DESCRIPTION_MAX_LENGTH = 250;
+const DIRECTIONS_HINT_MAX_LENGTH = 200;
+
 export default function AddMachineScreen() {
   const { t } = useTranslation();
   const { user, profile } = useAuthStore();
@@ -64,9 +69,6 @@ export default function AddMachineScreen() {
   const exifDecisionRef = useRef<((accepted: boolean) => void) | null>(null);
 
   const isDev = profile?.role === 'admin';
-
-  // Maximum length for directions hint
-  const DIRECTIONS_HINT_MAX_LENGTH = 200;
 
   // Get current location on mount
   useEffect(() => {
@@ -452,7 +454,11 @@ export default function AddMachineScreen() {
             onChangeText={setName}
             placeholder={t('addMachine.namePlaceholder')}
             placeholderTextColor="#999"
+            maxLength={NAME_MAX_LENGTH}
           />
+          <Text style={styles.charCount}>
+            {name.length}/{NAME_MAX_LENGTH}
+          </Text>
         </View>
 
         {/* Categories */}
@@ -495,7 +501,11 @@ export default function AddMachineScreen() {
             placeholderTextColor="#999"
             multiline
             numberOfLines={3}
+            maxLength={DESCRIPTION_MAX_LENGTH}
           />
+          <Text style={styles.charCount}>
+            {description.length}/{DESCRIPTION_MAX_LENGTH}
+          </Text>
         </View>
 
         {/* Directions Hint */}
