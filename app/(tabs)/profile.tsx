@@ -1,5 +1,6 @@
 // Profile screen - user info, stats, badges, and logout
 import { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -79,6 +80,20 @@ export default function ProfileScreen() {
   useEffect(() => {
     setImageError(false);
   }, [profile?.avatar_url]);
+
+  // Refresh data when tab is focused (e.g., after saving a machine)
+  useFocusEffect(
+    useCallback(() => {
+      if (user) {
+        fetchBadges();
+        fetchAllBadges();
+        loadSavedMachines();
+        loadPendingMachines();
+        loadPendingRequestCount();
+        loadFriends();
+      }
+    }, [user])
+  );
 
   async function handleEditAvatar() {
     if (!user) return;
@@ -245,15 +260,6 @@ export default function ProfileScreen() {
       },
     });
   }
-
-  useEffect(() => {
-    fetchBadges();
-    fetchAllBadges();
-    loadSavedMachines();
-    loadPendingMachines();
-    loadPendingRequestCount();
-    loadFriends();
-  }, [user]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
