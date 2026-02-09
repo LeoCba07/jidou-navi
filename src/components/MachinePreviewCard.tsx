@@ -127,10 +127,10 @@ const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 3,
     borderColor: 'rgba(0, 0, 0, 0.15)',
-    overflow: 'hidden',
   },
   photoContainer: {
     position: 'relative',
+    overflow: 'hidden',
   },
   photo: {
     width: 100,

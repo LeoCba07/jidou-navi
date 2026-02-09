@@ -1,20 +1,22 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   size?: 'small' | 'default';
 };
 
 export default function VisitedStamp({ size = 'default' }: Props) {
+  const { t } = useTranslation();
   const isSmall = size === 'small';
 
   return (
     <View style={[styles.container, isSmall && styles.containerSmall]}>
       <View style={[styles.stamp, isSmall && styles.stampSmall]}>
         <Image
-          source={require('../../../assets/icon.png')}
+          source={require('../../../assets/favicon-48.png')}
           style={[styles.icon, isSmall && styles.iconSmall]}
         />
-        <Text style={[styles.text, isSmall && styles.textSmall]}>VISITED</Text>
+        <Text style={[styles.text, isSmall && styles.textSmall]} numberOfLines={1}>{t('share.visited')}</Text>
       </View>
     </View>
   );
@@ -23,57 +25,61 @@ export default function VisitedStamp({ size = 'default' }: Props) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 10,
-    left: 4,
+    top: 0,
+    left: 0,
     zIndex: 10,
+    width: 90,
+    height: 90,
+    overflow: 'hidden',
   },
   containerSmall: {
-    top: 6,
-    left: 2,
+    width: 70,
+    height: 70,
   },
   stamp: {
+    position: 'absolute',
+    top: 20,
+    left: -45,
+    width: 170,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 75, 75, 0.88)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 2,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 75, 75, 0.94)',
+    paddingVertical: 4,
     gap: 5,
-    borderWidth: 2,
-    borderColor: '#fff',
-    borderStyle: 'dashed',
-    transform: [{ rotate: '-15deg' }],
+    transform: [{ rotate: '-45deg' }],
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.25,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.3,
     shadowRadius: 0,
     elevation: 5,
   },
   stampSmall: {
-    paddingHorizontal: 6,
+    top: 16,
+    left: -36,
+    width: 135,
     paddingVertical: 3,
-    gap: 3,
-    borderWidth: 1.5,
+    gap: 4,
   },
   icon: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
   },
   iconSmall: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
   },
   text: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 13,
     fontFamily: 'Silkscreen',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 0,
   },
   textSmall: {
-    fontSize: 8,
+    fontSize: 10,
   },
 });

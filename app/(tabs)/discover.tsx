@@ -360,16 +360,18 @@ export default function DiscoverScreen() {
         style={styles.machineCard}
         onPress={() => goToMachine(machine)}
       >
-        {machine.primary_photo_url ? (
-          <Image
-            source={{ uri: machine.primary_photo_url }}
-            style={styles.machinePhoto}
-          />
-        ) : (
-          <View style={[styles.machinePhoto, styles.machinePhotoPlaceholder]}>
-            <Ionicons name="image-outline" size={32} color="#ccc" />
-          </View>
-        )}
+        <View style={styles.machinePhotoWrapper}>
+          {machine.primary_photo_url ? (
+            <Image
+              source={{ uri: machine.primary_photo_url }}
+              style={styles.machinePhoto}
+            />
+          ) : (
+            <View style={[styles.machinePhoto, styles.machinePhotoPlaceholder]}>
+              <Ionicons name="image-outline" size={32} color="#ccc" />
+            </View>
+          )}
+        </View>
         {visitedMachineIds.has(machine.id) && <VisitedStamp size="small" />}
         <View style={styles.machineInfo}>
           <Text style={styles.machineName} numberOfLines={1}>
@@ -658,7 +660,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 0,
     elevation: 2,
+  },
+  machinePhotoWrapper: {
     overflow: 'hidden',
+    borderRadius: 8,
   },
   machinePhoto: {
     width: 70,
