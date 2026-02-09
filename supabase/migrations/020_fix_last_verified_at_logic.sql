@@ -1,13 +1,6 @@
--- Migration: Auto-verify machines by community
--- Purpose: Automatically set machine status to 'active' when it reaches 2 community verifications
+-- Migration: Fix last_verified_at logic
+-- Purpose: Only update last_verified_at and last_verified_by when still_exists is TRUE
 
--- 1. Add auto_activated column to track machines activated by community instead of admin
-ALTER TABLE machines
-ADD COLUMN IF NOT EXISTS auto_activated BOOLEAN DEFAULT FALSE;
-
-COMMENT ON COLUMN machines.auto_activated IS 'True if the machine was automatically activated by community verifications';
-
--- 2. Update the update_machine_counts trigger function to handle auto-activation
 CREATE OR REPLACE FUNCTION update_machine_counts()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -16,6 +9,7 @@ BEGIN
             UPDATE machines SET
                 visit_count = visit_count + 1,
                 verification_count = CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END,
+                -- Fix: Only set last_verified if the machine is confirmed to be there
                 last_verified_at = CASE WHEN NEW.still_exists = TRUE THEN NOW() ELSE last_verified_at END,
                 last_verified_by = CASE WHEN NEW.still_exists = TRUE THEN NEW.user_id ELSE last_verified_by END,
                 status = CASE 
@@ -42,7 +36,6 @@ BEGIN
         IF TG_OP = 'INSERT' THEN
             UPDATE machines SET
                 flag_count = flag_count + 1,
-                -- Fix: Use flag_count + 1 to account for the increment in the same statement
                 status = CASE WHEN flag_count + 1 >= 3 THEN 'flagged'::machine_status ELSE status END
             WHERE id = NEW.machine_id;
         END IF;
@@ -50,8 +43,3 @@ BEGIN
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
-
--- 3. Backfill existing machines that already meet the threshold
-UPDATE machines
-SET status = 'active', auto_activated = TRUE
-WHERE status = 'pending' AND verification_count >= 2;
