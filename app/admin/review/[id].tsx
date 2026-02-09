@@ -9,6 +9,7 @@ import {
   Image,
   ActivityIndicator,
   Linking,
+  Alert,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,10 +19,20 @@ import { useAdminStore } from '../../../src/store/adminStore';
 import { useAppModal } from '../../../src/hooks/useAppModal';
 import RejectReasonModal from '../../../src/components/admin/RejectReasonModal';
 
-// Open location in Google Maps
-const openInMaps = (lat: number, lng: number) => {
+// Open location in Google Maps with error handling
+const openInMaps = async (lat: number, lng: number) => {
   const url = `https://www.google.com/maps?q=${lat},${lng}`;
-  Linking.openURL(url);
+  try {
+    const canOpen = await Linking.canOpenURL(url);
+    if (canOpen) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert('Error', 'Unable to open maps application');
+    }
+  } catch (error) {
+    console.error('Error opening maps:', error);
+    Alert.alert('Error', 'Failed to open maps');
+  }
 };
 
 export default function ReviewMachineScreen() {
@@ -239,7 +250,7 @@ export default function ReviewMachineScreen() {
           </Text>
           
           {/* Open in Maps button */}
-          {selectedMachine.latitude && selectedMachine.longitude && (
+          {selectedMachine.latitude != null && selectedMachine.longitude != null && (
             <Pressable
               style={styles.openMapsButton}
               onPress={() => openInMaps(selectedMachine.latitude!, selectedMachine.longitude!)}
