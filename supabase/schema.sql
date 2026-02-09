@@ -170,7 +170,6 @@ CREATE INDEX idx_machine_photos_primary ON machine_photos (machine_id) WHERE is_
 CREATE INDEX idx_visits_user ON visits (user_id);
 CREATE INDEX idx_visits_machine ON visits (machine_id);
 CREATE INDEX idx_visits_visited_at ON visits (visited_at DESC);
-CREATE UNIQUE INDEX idx_visits_unique_daily ON visits (user_id, machine_id, (timezone('UTC', visited_at)::date));
 CREATE INDEX idx_saved_machines_user ON saved_machines (user_id);
 CREATE INDEX idx_user_badges_user ON user_badges (user_id);
 CREATE INDEX idx_flags_machine ON flags (machine_id) WHERE status = 'pending';
@@ -751,3 +750,25 @@ BEGIN
     LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql;
+
+-- ================================================
+-- VISIT COOLDOWN ENFORCEMENT
+-- ================================================
+CREATE OR REPLACE FUNCTION enforce_visit_cooldown()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM visits
+        WHERE user_id = NEW.user_id
+          AND machine_id = NEW.machine_id
+          AND visited_at >= NOW() - INTERVAL '24 hours'
+    ) THEN
+        RAISE EXCEPTION 'already visited';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_enforce_visit_cooldown
+    BEFORE INSERT ON visits
+    FOR EACH ROW EXECUTE FUNCTION enforce_visit_cooldown();

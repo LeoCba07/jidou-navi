@@ -292,10 +292,10 @@ export default function MachineDetailScreen() {
         .limit(1);
 
       if (visitData && visitData.length > 0 && visitData[0].visited_at) {
-        // Check if visit was within 3 days
-        const threeDaysAgo = new Date();
-        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        if (new Date(visitData[0].visited_at) >= threeDaysAgo) {
+        // Check if visit was within 24 hours
+        const twentyFourHoursAgo = new Date();
+        twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+        if (new Date(visitData[0].visited_at) >= twentyFourHoursAgo) {
           setHasCheckedIn(true);
         }
       }
