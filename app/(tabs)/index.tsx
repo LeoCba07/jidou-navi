@@ -170,12 +170,18 @@ export default function MapScreen() {
   // Get user location on mount
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === 'granted') {
-        const loc = await Location.getCurrentPositionAsync({});
-        setLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({});
+          setLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
+        }
+      } catch (error) {
+        console.warn('Error getting user location:', error);
+        // Fallback to default (Tokyo) is already handled by default state or Mapbox settings if location is null
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     })();
   }, []);
 
