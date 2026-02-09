@@ -178,7 +178,7 @@ export default function MapScreen() {
         }
       } catch (error) {
         console.warn('Error getting user location:', error);
-        // Fallback to default (Tokyo) is already handled by default state or Mapbox settings if location is null
+        // Fallback to Tokyo coordinates is handled by the component's default center when location is null
       } finally {
         setLoading(false);
       }
