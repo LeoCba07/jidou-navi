@@ -65,7 +65,9 @@ export default function AddMachineScreen() {
 
   const isDev = profile?.role === 'admin';
 
-  // Maximum length for directions hint
+  // Maximum lengths for form fields
+  const NAME_MAX_LENGTH = 70;
+  const DESCRIPTION_MAX_LENGTH = 250;
   const DIRECTIONS_HINT_MAX_LENGTH = 200;
 
   // Get current location on mount
@@ -449,10 +451,14 @@ export default function AddMachineScreen() {
           <TextInput
             style={styles.input}
             value={name}
-            onChangeText={setName}
+            onChangeText={(text) => setName(text.slice(0, NAME_MAX_LENGTH))}
             placeholder={t('addMachine.namePlaceholder')}
             placeholderTextColor="#999"
+            maxLength={NAME_MAX_LENGTH}
           />
+          <Text style={styles.charCount}>
+            {name.length}/{NAME_MAX_LENGTH}
+          </Text>
         </View>
 
         {/* Categories */}
@@ -490,12 +496,16 @@ export default function AddMachineScreen() {
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
-            onChangeText={setDescription}
+            onChangeText={(text) => setDescription(text.slice(0, DESCRIPTION_MAX_LENGTH))}
             placeholder={t('addMachine.descriptionPlaceholder')}
             placeholderTextColor="#999"
             multiline
             numberOfLines={3}
+            maxLength={DESCRIPTION_MAX_LENGTH}
           />
+          <Text style={styles.charCount}>
+            {description.length}/{DESCRIPTION_MAX_LENGTH}
+          </Text>
         </View>
 
         {/* Directions Hint */}
