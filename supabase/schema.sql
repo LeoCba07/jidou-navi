@@ -158,6 +158,15 @@ CREATE TABLE flags (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Machine Gone Reports
+CREATE TABLE machine_gone_reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    machine_id UUID NOT NULL REFERENCES machines(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    reported_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT unique_user_machine_gone_report UNIQUE (machine_id, user_id)
+);
+
 -- 4. INDEXES
 -- ================================
 
@@ -174,6 +183,8 @@ CREATE UNIQUE INDEX idx_visits_unique_daily ON visits (user_id, machine_id, (tim
 CREATE INDEX idx_saved_machines_user ON saved_machines (user_id);
 CREATE INDEX idx_user_badges_user ON user_badges (user_id);
 CREATE INDEX idx_flags_machine ON flags (machine_id) WHERE status = 'pending';
+CREATE INDEX idx_gone_reports_machine_id ON machine_gone_reports(machine_id);
+CREATE INDEX idx_gone_reports_user_id ON machine_gone_reports(user_id);
 
 -- 5. FUNCTIONS
 -- ================================
@@ -435,6 +446,11 @@ CREATE POLICY "Users can earn badges" ON user_badges FOR INSERT WITH CHECK (auth
 CREATE POLICY "Users can view own flags" ON flags FOR SELECT USING (auth.uid() = reported_by);
 CREATE POLICY "Users can create flags" ON flags FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+-- Machine Gone Reports
+ALTER TABLE machine_gone_reports ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can view gone reports" ON machine_gone_reports FOR SELECT USING (true);
+CREATE POLICY "Users can create own gone reports" ON machine_gone_reports FOR INSERT WITH CHECK (auth.uid() = user_id);
+
 -- 8. SEED DATA
 -- ================================
 
@@ -576,6 +592,60 @@ BEGIN
     LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Record machine gone report
+CREATE OR REPLACE FUNCTION record_machine_gone_report(p_machine_id UUID)
+RETURNS JSON AS $$
+DECLARE
+    gone_count INT;
+    flag_threshold INT := 2;
+BEGIN
+    IF auth.uid() IS NULL THEN
+        RETURN json_build_object('success', false, 'error', 'not_authenticated');
+    END IF;
+
+    INSERT INTO machine_gone_reports (machine_id, user_id)
+    VALUES (p_machine_id, auth.uid())
+    ON CONFLICT (machine_id, user_id) DO NOTHING;
+
+    SELECT COUNT(*) INTO gone_count
+    FROM machine_gone_reports
+    WHERE machine_id = p_machine_id;
+
+    IF gone_count >= flag_threshold THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM flags 
+            WHERE machine_id = p_machine_id 
+            AND reason = 'not_exists' 
+            AND status = 'pending'
+        ) THEN
+            INSERT INTO flags (machine_id, reported_by, reason, details, status)
+            VALUES (
+                p_machine_id, 
+                auth.uid(), 
+                'not_exists', 
+                'Auto-flagged: ' || gone_count || ' users reported this machine as gone',
+                'pending'
+            );
+        END IF;
+    END IF;
+
+    RETURN json_build_object(
+        'success', true,
+        'gone_reports', gone_count,
+        'flagged', gone_count >= flag_threshold
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Clear gone reports
+CREATE OR REPLACE FUNCTION clear_machine_gone_reports(p_machine_id UUID)
+RETURNS VOID AS $$
+BEGIN
+    DELETE FROM machine_gone_reports
+    WHERE machine_id = p_machine_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Search machines by text
 CREATE OR REPLACE FUNCTION search_machines(
@@ -756,3 +826,8 @@ BEGIN
     LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql;
+
+-- 11. GRANTS
+-- ================================
+GRANT EXECUTE ON FUNCTION record_machine_gone_report(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) TO authenticated;
