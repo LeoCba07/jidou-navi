@@ -41,6 +41,7 @@ import { useAppModal } from '../../src/hooks/useAppModal';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
+import VisitedStamp from '../../src/components/machine/VisitedStamp';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -83,6 +84,8 @@ export default function MachineDetailScreen() {
     status: string;
     categories: string;
   }>();
+
+  const isVisited = useVisitedMachinesStore((state) => state.isVisited(params.id));
 
   useEffect(() => {
     if (params.id) {
@@ -767,6 +770,9 @@ export default function MachineDetailScreen() {
               </Text>
             </View>
           )}
+
+          {/* Visited stamp */}
+          {(isVisited || hasCheckedIn) && <VisitedStamp />}
         </View>
 
         {/* Title Card */}

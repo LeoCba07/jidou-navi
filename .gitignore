@@ -58,6 +58,7 @@ backups/*.sql
 CLAUDE.md
 claude.md
 GEMINI.md
+copilot-instructions.md
 
 # Asset generation notes
 badge-generation.md

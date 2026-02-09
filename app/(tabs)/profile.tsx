@@ -33,6 +33,7 @@ import { FriendsModal, FriendCard } from '../../src/components/friends';
 import UserAvatar from '../../src/components/UserAvatar';
 import type { Friend } from '../../src/store/friendsStore';
 import type { Badge } from '../../src/lib/badges';
+import VisitedStamp from '../../src/components/machine/VisitedStamp';
 
 // Badge type from joined query
 type UserBadge = {
@@ -524,12 +525,10 @@ export default function ProfileScreen() {
                         <Ionicons name="image-outline" size={24} color="#ccc" />
                       </View>
                     )}
-                    {visitedMachineIds.has(saved.machine_id) && (
-                      <View style={styles.visitedBadge}>
-                        <Ionicons name="checkmark-circle" size={20} color="#fff" />
-                      </View>
-                    )}
                   </View>
+                  {visitedMachineIds.has(saved.machine_id) && (
+                    <VisitedStamp size="small" />
+                  )}
                   <View style={styles.savedInfo}>
                     <View style={styles.savedNameRow}>
                       <Text style={styles.savedName} numberOfLines={1}>
@@ -913,16 +912,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 8,
-  },
-  visitedBadge: {
-    position: 'absolute',
-    bottom: -4,
-    right: -4,
-    backgroundColor: '#22C55E',
-    borderRadius: 12,
-    padding: 2,
-    borderWidth: 2,
-    borderColor: '#fff',
   },
   savedPhotoWithImage: {
     borderWidth: 2,

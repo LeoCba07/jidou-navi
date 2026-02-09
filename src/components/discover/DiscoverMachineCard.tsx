@@ -9,6 +9,7 @@ import { fetchMachineVisitors, fetchMachineVisitorCount } from '../../lib/machin
 import { useVisitedMachinesStore } from '../../store/visitedMachinesStore';
 import UpvoteButton, { type UpvoteButtonRef } from './UpvoteButton';
 import VisitorAvatars from './VisitorAvatars';
+import VisitedStamp from '../machine/VisitedStamp';
 
 type DiscoverMachineCardProps = {
   machine: EngagedMachine;
@@ -105,12 +106,9 @@ export default function DiscoverMachineCard({
             <Text style={styles.distanceText}>{formattedDistance}</Text>
           </View>
         )}
-        {isVisited && (
-          <View style={styles.visitedBadge}>
-            <Ionicons name="checkmark-circle" size={22} color="#fff" />
-          </View>
-        )}
       </View>
+
+      {isVisited && <VisitedStamp />}
 
       {/* Info Section */}
       <View style={styles.infoSection}>
@@ -230,16 +228,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-  },
-  visitedBadge: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    backgroundColor: '#22C55E',
-    borderRadius: 14,
-    padding: 3,
-    borderWidth: 2,
-    borderColor: '#fff',
   },
   distanceText: {
     fontSize: 11,

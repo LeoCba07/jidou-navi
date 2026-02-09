@@ -20,6 +20,7 @@ import { Analytics } from '../lib/analytics';
 import { useUIStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
 import UserAvatar from './UserAvatar';
+import VisitedStamp from './machine/VisitedStamp';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
@@ -130,13 +131,10 @@ export default function ShareableCard() {
 
               {/* Gradient overlay for text readability */}
               <View style={styles.photoOverlay} />
-
-              {/* Check-in badge */}
-              <View style={styles.checkinBadge}>
-                <Ionicons name="checkmark-circle" size={16} color="#fff" />
-                <Text style={styles.checkinText}>{t('share.visited')}</Text>
-              </View>
             </View>
+
+            {/* Visited stamp */}
+            <VisitedStamp />
 
             {/* Card content */}
             <View style={styles.content}>
@@ -288,25 +286,6 @@ const styles = StyleSheet.create({
     right: 0,
     height: 60,
     backgroundColor: 'transparent',
-  },
-  checkinBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#22C55E',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 2,
-    gap: 4,
-    borderWidth: 2,
-    borderColor: '#16A34A',
-  },
-  checkinText: {
-    color: '#fff',
-    fontSize: 12,
-    fontFamily: 'Silkscreen',
   },
   content: {
     padding: 16,
