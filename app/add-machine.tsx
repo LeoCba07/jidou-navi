@@ -41,6 +41,11 @@ const CATEGORIES = [
   { id: 'alcohol', translationKey: 'categories.alcohol', color: '#F39C12' },
 ];
 
+// Maximum lengths for form fields
+const NAME_MAX_LENGTH = 70;
+const DESCRIPTION_MAX_LENGTH = 250;
+const DIRECTIONS_HINT_MAX_LENGTH = 200;
+
 export default function AddMachineScreen() {
   const { t } = useTranslation();
   const { user, profile } = useAuthStore();
@@ -64,11 +69,6 @@ export default function AddMachineScreen() {
   const exifDecisionRef = useRef<((accepted: boolean) => void) | null>(null);
 
   const isDev = profile?.role === 'admin';
-
-  // Maximum lengths for form fields
-  const NAME_MAX_LENGTH = 70;
-  const DESCRIPTION_MAX_LENGTH = 250;
-  const DIRECTIONS_HINT_MAX_LENGTH = 200;
 
   // Get current location on mount
   useEffect(() => {
@@ -451,7 +451,7 @@ export default function AddMachineScreen() {
           <TextInput
             style={styles.input}
             value={name}
-            onChangeText={(text) => setName(text.slice(0, NAME_MAX_LENGTH))}
+            onChangeText={setName}
             placeholder={t('addMachine.namePlaceholder')}
             placeholderTextColor="#999"
             maxLength={NAME_MAX_LENGTH}
@@ -496,7 +496,7 @@ export default function AddMachineScreen() {
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
-            onChangeText={(text) => setDescription(text.slice(0, DESCRIPTION_MAX_LENGTH))}
+            onChangeText={setDescription}
             placeholder={t('addMachine.descriptionPlaceholder')}
             placeholderTextColor="#999"
             multiline
