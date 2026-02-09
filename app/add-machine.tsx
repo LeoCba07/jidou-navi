@@ -148,6 +148,10 @@ export default function AddMachineScreen() {
         // Step 2: Try to extract GPS from EXIF
         const gpsData = await extractGpsFromExif(originalUri);
 
+        // Snapshot location before EXIF decision so we can restore on cancel
+        const prevLocation = location;
+        const prevLocationSource = locationSource;
+
         if (gpsData) {
           // Store EXIF location and show verification modal
           setExifLocation(gpsData);
@@ -181,17 +185,11 @@ export default function AddMachineScreen() {
             }
           }
         } else {
-          // User cancelled editing the NEW image. 
-          // If they already had a photo, we should NOT have cleared the state.
-          // However, since they intended to pick a new one, clearing the NEWly found EXIF is correct.
-          // But we must NOT leave the app in an inconsistent state if they keep the old photo.
-          
-          // If photo still exists (old one), we shouldn't have cleared the EXIF if it belonged to the old one.
-          // The current logic is a bit tricky here. For now, let's at least not clear if cancelled.
-          if (!photo) {
-            setExifLocation(null);
-            setShowLocationVerification(false);
-          }
+          // User cancelled editing — restore location to pre-EXIF state
+          setLocation(prevLocation);
+          setLocationSource(prevLocationSource);
+          setExifLocation(null);
+          setShowLocationVerification(false);
         }
       } else {
         // Camera: no EXIF GPS typically available on iOS
