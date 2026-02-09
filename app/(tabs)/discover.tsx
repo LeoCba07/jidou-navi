@@ -35,15 +35,18 @@ import {
 import { updateLocalXP } from '../../src/lib/xp';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
+import { useVisitedMachinesStore } from '../../src/store/visitedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { LeaderboardScreen } from '../../src/components/leaderboard';
 import { DiscoverMachineCard } from '../../src/components/discover';
 import DailyVotesIndicator, { type DailyVotesIndicatorRef } from '../../src/components/discover/DailyVotesIndicator';
+import VisitedStamp from '../../src/components/machine/VisitedStamp';
 
 export default function DiscoverScreen() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
+  const { visitedMachineIds } = useVisitedMachinesStore();
   const { showError, showSuccess } = useAppModal();
   const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
@@ -367,6 +370,7 @@ export default function DiscoverScreen() {
             <Ionicons name="image-outline" size={32} color="#ccc" />
           </View>
         )}
+        {visitedMachineIds.has(machine.id) && <VisitedStamp size="small" />}
         <View style={styles.machineInfo}>
           <Text style={styles.machineName} numberOfLines={1}>
             {machine.name || t('machine.unnamed')}
@@ -654,6 +658,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 0,
     elevation: 2,
+    overflow: 'hidden',
   },
   machinePhoto: {
     width: 70,

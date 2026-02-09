@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { NearbyMachine } from '../lib/machines';
 import { useVisitedMachinesStore } from '../store/visitedMachinesStore';
 import { COLORS, VERIFICATION_THRESHOLD } from '../theme/constants';
+import VisitedStamp from './machine/VisitedStamp';
 
 type Props = {
   machine: NearbyMachine;
@@ -41,12 +42,9 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
               <Ionicons name="image-outline" size={40} color="#ccc" />
             </View>
           )}
-          {isVisited && (
-            <View style={styles.visitedBadge}>
-              <Ionicons name="checkmark-circle" size={20} color="#fff" />
-            </View>
-          )}
         </View>
+
+        {isVisited && <VisitedStamp size="small" />}
 
         {/* Info */}
         <View style={styles.info}>
@@ -129,6 +127,7 @@ const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 3,
     borderColor: 'rgba(0, 0, 0, 0.15)',
+    overflow: 'hidden',
   },
   photoContainer: {
     position: 'relative',
@@ -139,16 +138,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 2,
     borderColor: '#FF4B4B',
-  },
-  visitedBadge: {
-    position: 'absolute',
-    bottom: -4,
-    right: -4,
-    backgroundColor: '#22C55E',
-    borderRadius: 12,
-    padding: 2,
-    borderWidth: 2,
-    borderColor: '#fff',
   },
   noPhoto: {
     backgroundColor: '#f5f5f5',
