@@ -246,6 +246,11 @@ BEGIN
                     ELSE auto_activated 
                 END
             WHERE id = NEW.machine_id;
+
+            -- Clear gone reports if verified as still existing
+            IF NEW.still_exists = TRUE THEN
+                PERFORM clear_machine_gone_reports(NEW.machine_id);
+            END IF;
         ELSIF TG_OP = 'DELETE' THEN
             UPDATE machines SET visit_count = visit_count - 1 WHERE id = OLD.machine_id;
         END IF;
