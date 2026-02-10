@@ -148,8 +148,7 @@ export async function fetchUserPendingMachines(
 export async function dismissRejectedMachine(
   machineId: string
 ): Promise<boolean> {
-  // @ts-expect-error - RPC function added in migration 024, generated types are out of sync
-  const { data, error } = await supabase.rpc('dismiss_rejected_machine', {
+  const { data, error } = await (supabase as any).rpc('dismiss_rejected_machine', {
     p_machine_id: machineId,
   });
 

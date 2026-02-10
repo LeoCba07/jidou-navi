@@ -31,11 +31,16 @@ AS $$
 DECLARE
     v_user_id UUID;
 BEGIN
+    -- Check authentication
+    IF auth.uid() IS NULL THEN
+        RAISE EXCEPTION 'Authentication required';
+    END IF;
+
     -- Use provided user_id or current user
     v_user_id := COALESCE(target_user_id, auth.uid());
 
     -- Users can only see their own pending machines (unless admin)
-    IF v_user_id != auth.uid() AND NOT EXISTS (
+    IF v_user_id IS DISTINCT FROM auth.uid() AND NOT EXISTS (
         SELECT 1 FROM profiles
         WHERE profiles.id = auth.uid()
         AND profiles.role = 'admin'
@@ -82,6 +87,11 @@ DECLARE
     v_machine_status machine_status;
     v_contributor_id UUID;
 BEGIN
+    -- Check authentication
+    IF auth.uid() IS NULL THEN
+        RAISE EXCEPTION 'Authentication required';
+    END IF;
+
     -- Get machine info
     SELECT m.status, m.contributor_id INTO v_machine_status, v_contributor_id
     FROM machines m
@@ -93,7 +103,7 @@ BEGIN
     END IF;
 
     -- Check user owns this submission
-    IF v_contributor_id != auth.uid() THEN
+    IF v_contributor_id IS DISTINCT FROM auth.uid() THEN
         RAISE EXCEPTION 'Access denied: You can only dismiss your own submissions';
     END IF;
 

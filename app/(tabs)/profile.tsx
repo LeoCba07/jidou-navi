@@ -507,6 +507,9 @@ export default function ProfileScreen() {
                         <Pressable
                           style={styles.dismissButton}
                           onPress={() => handleDismissRejected(machine.id)}
+                          accessibilityRole="button"
+                          accessibilityLabel={t('common.ok')}
+                          hitSlop={8}
                         >
                           <Text style={styles.dismissButtonText}>{t('common.ok')}</Text>
                         </Pressable>
