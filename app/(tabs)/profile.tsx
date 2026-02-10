@@ -22,7 +22,7 @@ import { useVisitedMachinesStore } from '../../src/store/visitedMachinesStore';
 import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
-import { fetchUserPendingMachines, UserPendingMachine } from '../../src/lib/admin';
+import { fetchUserPendingMachines, dismissRejectedMachine, UserPendingMachine } from '../../src/lib/admin';
 import { uploadAvatar } from '../../src/lib/storage';
 import { getLevelProgress } from '../../src/lib/xp';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -228,6 +228,18 @@ export default function ProfileScreen() {
         },
       ]
     );
+  }
+
+  // Handle dismiss rejected submission
+  async function handleDismissRejected(machineId: string) {
+    // Optimistic update
+    setPendingMachines((prev) => prev.filter((m) => m.id !== machineId));
+    const success = await dismissRejectedMachine(machineId);
+    if (!success) {
+      // Revert on failure - reload the list
+      loadPendingMachines();
+      showError(t('common.error'), t('profile.dismissError'));
+    }
   }
 
   // Navigate to machine detail
@@ -490,6 +502,17 @@ export default function ProfileScreen() {
                       )}
                       {machine.status === 'pending' && (
                         <Text style={styles.pendingHint}>{t('profile.pendingHint')}</Text>
+                      )}
+                      {machine.status === 'rejected' && (
+                        <Pressable
+                          style={styles.dismissButton}
+                          onPress={() => handleDismissRejected(machine.id)}
+                          accessibilityRole="button"
+                          accessibilityLabel={t('common.ok')}
+                          hitSlop={8}
+                        >
+                          <Text style={styles.dismissButtonText}>{t('common.ok')}</Text>
+                        </Pressable>
                       )}
                     </View>
                   </View>
@@ -1021,6 +1044,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 4,
+  },
+  dismissButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 4,
+    marginTop: 8,
+  },
+  dismissButtonText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#6B7280',
   },
   friendsSectionHeader: {
     flexDirection: 'row',

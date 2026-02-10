@@ -111,6 +111,7 @@
       "message": "¿Estás seguro de que deseas eliminar esta máquina de tu lista de guardados?"
     },
     "removeError": "Error al eliminar la máquina de la lista de guardados.",
+    "dismissError": "Error al descartar el envío.",
     "settings": "Configuración",
     "language": "Idioma",
     "supportUs": "Apóyanos",

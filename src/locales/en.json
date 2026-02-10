@@ -111,6 +111,7 @@
       "message": "Are you sure you want to remove this machine from your saved list?"
     },
     "removeError": "Failed to remove machine from saved list.",
+    "dismissError": "Failed to dismiss submission.",
     "settings": "Settings",
     "language": "Language",
     "supportUs": "Support Us",

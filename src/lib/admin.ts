@@ -143,3 +143,19 @@ export async function fetchUserPendingMachines(
 
   return (data || []) as UserPendingMachine[];
 }
+
+// Dismiss a rejected machine submission from user's profile view
+export async function dismissRejectedMachine(
+  machineId: string
+): Promise<boolean> {
+  const { data, error } = await (supabase as any).rpc('dismiss_rejected_machine', {
+    p_machine_id: machineId,
+  });
+
+  if (error) {
+    console.error('Error dismissing rejected machine:', error);
+    return false;
+  }
+
+  return data === true;
+}
