@@ -141,7 +141,7 @@ export default function DiscoverMachineCard({
               totalCount={visitorCount}
               maxDisplay={5}
               size={24}
-              onPress={() => onVisitorPress?.(machine.id, visitors, visitorCount)}
+              onPress={onVisitorPress ? () => onVisitorPress(machine.id, visitors, visitorCount) : undefined}
             />
             <Text style={styles.visitorsLabel}>
               {t('discover.recentVisitors')}

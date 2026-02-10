@@ -24,30 +24,41 @@ export default function RecentVisitorsModal({ visitors, onClose }: RecentVisitor
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{t('discover.recentVisitors')}</Text>
-        <Pressable onPress={onClose} style={styles.closeButton} hitSlop={10}>
+        <Pressable 
+          onPress={onClose} 
+          style={styles.closeButton} 
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.close')}
+        >
           <Ionicons name="close" size={24} color={COLORS.text} />
         </Pressable>
       </View>
       
       <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-        {visitors.map((visitor) => (
-          <Pressable
-            key={visitor.user_id}
-            style={styles.visitorItem}
-            onPress={() => handleUserPress(visitor.user_id)}
-          >
-            <UserAvatar url={visitor.avatar_url} size={40} />
-            <View style={styles.visitorInfo}>
-              <Text style={styles.displayName}>
-                {visitor.display_name || visitor.username || 'User'}
-              </Text>
-              {visitor.username && visitor.display_name && (
-                <Text style={styles.username}>@{visitor.username}</Text>
-              )}
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={COLORS.textLight} />
-          </Pressable>
-        ))}
+        {visitors.map((visitor) => {
+          const displayName = visitor.display_name || visitor.username || t('common.user');
+          return (
+            <Pressable
+              key={visitor.user_id}
+              style={styles.visitorItem}
+              onPress={() => handleUserPress(visitor.user_id)}
+              accessibilityRole="button"
+              accessibilityLabel={t('profile.viewProfile', { name: displayName })}
+            >
+              <UserAvatar url={visitor.avatar_url} size={40} />
+              <View style={styles.visitorInfo}>
+                <Text style={styles.displayName}>
+                  {displayName}
+                </Text>
+                {visitor.username && visitor.display_name && (
+                  <Text style={styles.username}>@{visitor.username}</Text>
+                )}
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={COLORS.textLight} />
+            </Pressable>
+          );
+        })}
       </ScrollView>
     </View>
   );

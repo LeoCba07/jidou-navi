@@ -48,7 +48,7 @@ export default function DiscoverScreen() {
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const { visitedMachineIds } = useVisitedMachinesStore();
-  const { show, showError, showSuccess, hideModal } = useAppModal();
+  const { show, showError, showSuccess, hide } = useAppModal();
   const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
 
@@ -171,7 +171,7 @@ export default function DiscoverScreen() {
     });
   }
 
-  async function handleVisitorPress(machineId: string, initialVisitors: any[], totalCount: number) {
+  async function handleVisitorPress(machineId: string, initialVisitors: MachineVisitor[], totalCount: number) {
     // If we only have the preview (5), fetch all of them (or a larger page)
     // For now, if totalCount > initialVisitors.length, we fetch up to 20
     let allVisitors = initialVisitors;
@@ -187,7 +187,7 @@ export default function DiscoverScreen() {
       children: (
         <RecentVisitorsModal 
           visitors={allVisitors} 
-          onClose={hideModal} 
+          onClose={hide} 
         />
       )
     });
