@@ -411,7 +411,7 @@ CREATE POLICY "Authenticated users can upload photos" ON machine_photos FOR INSE
 CREATE POLICY "Uploaders can update own photos" ON machine_photos FOR UPDATE USING (auth.uid() = uploaded_by);
 
 -- Visits
-CREATE POLICY "Visits are viewable by everyone" ON visits FOR SELECT USING (true);
+CREATE POLICY "Visits are viewable by authenticated users" ON visits FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Users can create own visits" ON visits FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- Saved Machines
@@ -674,9 +674,14 @@ BEGIN
     UPDATE machine_photos
     SET status = 'removed'
     WHERE id = p_photo_id
-        AND (uploaded_by = auth.uid() OR EXISTS (
-            SELECT 1 FROM profiles WHERE id = auth.uid() -- Add admin check here later
-        ));
+        AND (
+            uploaded_by = auth.uid()
+            OR EXISTS (
+                SELECT 1 FROM profiles
+                WHERE profiles.id = auth.uid()
+                AND profiles.role = 'admin'
+            )
+        );
 
     -- Update machine photo count
     IF FOUND THEN
