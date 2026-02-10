@@ -181,14 +181,11 @@ CREATE POLICY "Users can create flags" ON flags FOR INSERT WITH CHECK (auth.role
 -- ================================
 
 INSERT INTO categories (slug, name, description, icon_name, color, display_order) VALUES
-    ('drinks', 'Drinks', 'Beverages and soft drinks', 'cup-soda', '#3C91E6', 1),
-    ('food', 'Food', 'Snacks, meals, and edibles', 'utensils', '#FF4B4B', 2),
-    ('gachapon', 'Gachapon', 'Capsule toy machines', 'dice', '#FFB7CE', 3),
-    ('weird', 'Weird', 'Unusual and bizarre finds', 'ghost', '#9B59B6', 4),
-    ('retro', 'Retro', 'Vintage and nostalgic machines', 'gamepad', '#FFD966', 5),
-    ('ice-cream', 'Ice Cream', 'Frozen treats', 'ice-cream', '#E74C3C', 6),
-    ('coffee', 'Coffee', 'Hot and cold coffee', 'coffee', '#8B4513', 7),
-    ('alcohol', 'Alcohol', 'Beer, sake, and spirits', 'beer', '#F39C12', 8);
+    ('eats', 'Eats', 'Food, drinks, snacks, treats, and alcohol', 'utensils', '#FF4B4B', 1),
+    ('gachapon', 'Gachapon', 'Capsule toy machines', 'dice', '#FFB7CE', 2),
+    ('weird', 'Weird', 'Unusual and bizarre finds', 'ghost', '#9B59B6', 3),
+    ('retro', 'Retro', 'Vintage and nostalgic machines', 'gamepad', '#FFD966', 4),
+    ('local-gems', 'Local Gems', 'Local specialties and craft products', 'sparkles', '#2ECC71', 5);
 
 INSERT INTO badges (slug, name, description, trigger_type, trigger_value, rarity, display_order) VALUES
     -- Visit milestones

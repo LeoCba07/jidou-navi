@@ -31,14 +31,11 @@ const IMAGE_QUALITY = 0.5;
 
 // Category definitions with translation keys and colors (matching CategoryFilterBar)
 const CATEGORIES = [
-  { id: 'drinks', translationKey: 'categories.drinks', color: '#3C91E6' },
-  { id: 'food', translationKey: 'categories.food', color: '#FF4B4B' },
+  { id: 'eats', translationKey: 'categories.eats', color: '#FF4B4B' },
   { id: 'gachapon', translationKey: 'categories.gachapon', color: '#FFB7CE' },
   { id: 'weird', translationKey: 'categories.weird', color: '#9B59B6' },
   { id: 'retro', translationKey: 'categories.retro', color: '#FFD966' },
-  { id: 'ice-cream', translationKey: 'categories.iceCream', color: '#E74C3C' },
-  { id: 'coffee', translationKey: 'categories.coffee', color: '#8B4513' },
-  { id: 'alcohol', translationKey: 'categories.alcohol', color: '#F39C12' },
+  { id: 'local-gems', translationKey: 'categories.localGems', color: '#2ECC71' },
 ];
 
 // Maximum lengths for form fields

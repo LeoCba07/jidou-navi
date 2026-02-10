@@ -6,14 +6,11 @@ import { useUIStore } from "../store";
 
 // Category definitions with translation keys
 const CATEGORIES = [
-  { slug: "drinks", translationKey: "categories.drinks", color: "#3C91E6" },
-  { slug: "food", translationKey: "categories.food", color: "#FF4B4B" },
+  { slug: "eats", translationKey: "categories.eats", color: "#FF4B4B" },
   { slug: "gachapon", translationKey: "categories.gachapon", color: "#FFB7CE" },
   { slug: "weird", translationKey: "categories.weird", color: "#9B59B6" },
   { slug: "retro", translationKey: "categories.retro", color: "#FFD966" },
-  { slug: "ice-cream", translationKey: "categories.iceCream", color: "#E74C3C" },
-  { slug: "coffee", translationKey: "categories.coffee", color: "#8B4513" },
-  { slug: "alcohol", translationKey: "categories.alcohol", color: "#F39C12" },
+  { slug: "local-gems", translationKey: "categories.localGems", color: "#2ECC71" },
 ];
 
 export function CategoryFilterBar() {

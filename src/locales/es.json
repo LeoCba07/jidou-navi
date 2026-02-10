@@ -141,14 +141,11 @@
   },
   "categories": {
     "all": "Todas",
-    "drinks": "Bebidas",
-    "food": "Comida",
+    "eats": "Comida",
     "gachapon": "Gachapon",
     "weird": "Raras",
     "retro": "Retro",
-    "iceCream": "Helado",
-    "coffee": "Café",
-    "alcohol": "Alcohol"
+    "localGems": "Gemas Locales"
   },
   "machine": {
     "unnamed": "Máquina sin nombre",
