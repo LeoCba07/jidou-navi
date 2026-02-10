@@ -88,7 +88,10 @@ export default function ProfileScreen() {
   async function getUserLocation() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') return;
+      if (status !== 'granted') {
+        setUserLocation(null);
+        return;
+      }
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
@@ -96,7 +99,10 @@ export default function ProfileScreen() {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       });
-    } catch {}
+    } catch (error) {
+      console.warn('Failed to get user location:', error);
+      setUserLocation(null);
+    }
   }
 
   // Refresh data when tab is focused (e.g., after saving a machine)
@@ -680,7 +686,7 @@ export default function ProfileScreen() {
                           <View style={styles.savedStat}>
                             <Ionicons name="navigate" size={12} color="#3C91E6" />
                             <Text style={styles.savedStatText}>
-                              {t('profile.distanceAway', { distance: formatDistance(distance) })}
+                              {t('machine.away', { distance: formatDistance(distance) })}
                             </Text>
                           </View>
                         </>

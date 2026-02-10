@@ -134,11 +134,9 @@
     "updateProfile": "Update Profile",
     "updateSuccess": "Profile updated successfully!",
     "updateError": "Failed to update profile.",
-    "sortBy": "Sort by",
     "sortDistance": "Distance",
     "sortXP": "XP",
-    "xpEstimate": "~{{xp}} XP",
-    "distanceAway": "{{distance}} away"
+    "xpEstimate": "~{{xp}} XP"
   },
   "map": {
     "searchPlaceholder": "Search machines...",

@@ -134,11 +134,9 @@
     "updateProfile": "Actualizar Perfil",
     "updateSuccess": "¡Perfil actualizado con éxito!",
     "updateError": "Error al actualizar el perfil.",
-    "sortBy": "Ordenar por",
     "sortDistance": "Distancia",
     "sortXP": "XP",
-    "xpEstimate": "~{{xp}} XP",
-    "distanceAway": "a {{distance}}"
+    "xpEstimate": "~{{xp}} XP"
   },
   "map": {
     "searchPlaceholder": "Buscar máquinas...",
