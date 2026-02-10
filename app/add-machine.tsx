@@ -25,17 +25,18 @@ import { useAppModal } from '../src/hooks/useAppModal';
 import { tryRequestAppReview } from '../src/lib/review';
 import { extractGpsFromExif, GpsCoordinates } from '../src/lib/exif';
 import { LocationVerificationModal } from '../src/components/LocationVerificationModal';
+import { COLORS, SHADOWS, FONTS, SPACING, BORDER_RADIUS, CATEGORY_COLORS } from '../src/theme/constants';
 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
 
 // Category definitions with translation keys and colors (matching CategoryFilterBar)
 const CATEGORIES = [
-  { id: 'eats', translationKey: 'categories.eats', color: '#FF4B4B' },
-  { id: 'gachapon', translationKey: 'categories.gachapon', color: '#FFB7CE' },
-  { id: 'weird', translationKey: 'categories.weird', color: '#9B59B6' },
-  { id: 'retro', translationKey: 'categories.retro', color: '#FFD966' },
-  { id: 'local-gems', translationKey: 'categories.localGems', color: '#2ECC71' },
+  { id: 'eats', translationKey: 'categories.eats', color: CATEGORY_COLORS.eats },
+  { id: 'gachapon', translationKey: 'categories.gachapon', color: CATEGORY_COLORS.gachapon },
+  { id: 'weird', translationKey: 'categories.weird', color: CATEGORY_COLORS.weird },
+  { id: 'retro', translationKey: 'categories.retro', color: CATEGORY_COLORS.retro },
+  { id: 'local-gems', translationKey: 'categories.localGems', color: CATEGORY_COLORS['local-gems'] },
 ];
 
 // Maximum lengths for form fields
@@ -424,7 +425,7 @@ export default function AddMachineScreen() {
         <View style={styles.photoSection}>
           {compressing ? (
             <View style={styles.compressingContainer}>
-              <ActivityIndicator size="large" color="#FF4B4B" />
+              <ActivityIndicator size="large" color={COLORS.primary} />
               <Text style={styles.compressingText}>{t('addMachine.processingImage')}</Text>
             </View>
           ) : photo ? (
@@ -454,7 +455,7 @@ export default function AddMachineScreen() {
             value={name}
             onChangeText={(text) => setName(text.slice(0, NAME_MAX_LENGTH))}
             placeholder={t('addMachine.namePlaceholder')}
-            placeholderTextColor="#999"
+            placeholderTextColor={COLORS.textLight}
             maxLength={NAME_MAX_LENGTH}
           />
           <Text style={styles.charCount}>{name.length}/{NAME_MAX_LENGTH}</Text>
@@ -497,7 +498,7 @@ export default function AddMachineScreen() {
             value={description}
             onChangeText={(text) => setDescription(text.slice(0, DESCRIPTION_MAX_LENGTH))}
             placeholder={t('addMachine.descriptionPlaceholder')}
-            placeholderTextColor="#999"
+            placeholderTextColor={COLORS.textLight}
             multiline
             numberOfLines={3}
             maxLength={DESCRIPTION_MAX_LENGTH}
@@ -513,7 +514,7 @@ export default function AddMachineScreen() {
             value={directionsHint}
             onChangeText={(text) => setDirectionsHint(text.slice(0, DIRECTIONS_HINT_MAX_LENGTH))}
             placeholder={t('addMachine.directionsHintPlaceholder')}
-            placeholderTextColor="#999"
+            placeholderTextColor={COLORS.textLight}
             maxLength={DIRECTIONS_HINT_MAX_LENGTH}
           />
           <Text style={styles.charCount}>
@@ -537,7 +538,7 @@ export default function AddMachineScreen() {
                       setManualLng(location.longitude.toString());
                     }
                   }}
-                  trackColor={{ false: '#767577', true: '#FF4B4B' }}
+                  trackColor={{ false: COLORS.textMuted, true: COLORS.primary }}
                   accessibilityLabel={t('addMachine.toggleDevMode')}
                 />
               </View>
@@ -612,103 +613,101 @@ export default function AddMachineScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF3E7',
+    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 60,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: '#FDF3E7',
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.md,
+    backgroundColor: COLORS.background,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8DDD1',
+    borderBottomColor: COLORS.backgroundDark,
   },
   backButton: {
     width: 100,
   },
   backText: {
     fontSize: 12,
-    fontFamily: 'Silkscreen',
-    color: '#FF4B4B',
+    fontFamily: FONTS.button,
+    color: COLORS.primary,
   },
   title: {
     fontSize: 18,
-    fontFamily: 'DotGothic16',
-    color: '#333',
+    fontFamily: FONTS.title,
+    color: COLORS.text,
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: SPACING.lg,
   },
   photoSection: {
-    marginBottom: 24,
+    marginBottom: SPACING.xxl,
   },
   photo: {
     width: '100%',
     height: 200,
-    borderRadius: 12,
+    borderRadius: BORDER_RADIUS.lg,
   },
   photoHint: {
     textAlign: 'center',
-    fontFamily: 'Inter',
-    color: '#999',
-    marginTop: 8,
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
+    marginTop: SPACING.sm,
     fontSize: 13,
   },
   photoButtons: {
-    gap: 12,
+    gap: SPACING.md,
   },
   compressingContainer: {
     height: 200,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 12,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.lg,
   },
   compressingText: {
-    marginTop: 12,
+    marginTop: SPACING.md,
     fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
   },
   photoButton: {
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 16,
-    borderRadius: 2,
+    backgroundColor: COLORS.surface,
+    paddingVertical: SPACING.lg,
+    borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
-    shadowColor: '#000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 0,
-    elevation: 2,
+    borderColor: COLORS.borderLight,
+    ...SHADOWS.pixel,
   },
   photoButtonText: {
     fontSize: 15,
-    fontFamily: 'Silkscreen',
-    color: '#333',
+    fontFamily: FONTS.button,
+    color: COLORS.text,
   },
   field: {
-    marginBottom: 20,
+    marginBottom: SPACING.xl,
   },
   label: {
     fontSize: 14,
-    fontFamily: 'Inter-SemiBold',
-    color: '#333',
-    marginBottom: 8,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
+    borderColor: COLORS.backgroundDark,
+    borderRadius: BORDER_RADIUS.md,
+    paddingHorizontal: SPACING.md,
     paddingVertical: 10,
     fontSize: 16,
-    fontFamily: 'Inter',
-    color: '#333',
+    fontFamily: FONTS.body,
+    color: COLORS.text,
+    backgroundColor: COLORS.surface,
+    ...SHADOWS.soft,
   },
   textArea: {
     height: 80,
@@ -717,96 +716,92 @@ const styles = StyleSheet.create({
   categories: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: SPACING.sm,
   },
   categoryChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 2,
-    backgroundColor: '#f0f0f0',
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
+    borderRadius: BORDER_RADIUS.pixel,
+    backgroundColor: COLORS.surface,
     borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
+    borderColor: COLORS.borderLight,
   },
   categoryText: {
     fontSize: 14,
-    fontFamily: 'Silkscreen',
-    color: '#333',
+    fontFamily: FONTS.button,
+    color: COLORS.text,
   },
   categoryTextSelected: {
     color: 'white',
   },
   locationInfo: {
-    backgroundColor: '#f9f9f9',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 24,
+    backgroundColor: COLORS.surface,
+    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.md,
+    marginBottom: SPACING.xxl,
   },
   locationHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   manualToggle: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: SPACING.sm,
   },
   manualLabel: {
     fontSize: 12,
-    fontFamily: 'Silkscreen',
-    color: '#FF4B4B',
+    fontFamily: FONTS.button,
+    color: COLORS.primary,
   },
   manualInputs: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
+    gap: SPACING.md,
+    marginTop: SPACING.sm,
   },
   halfInput: {
     flex: 1,
   },
   inputLabel: {
     fontSize: 10,
-    fontFamily: 'Inter',
-    color: '#666',
-    marginBottom: 4,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
+    marginBottom: SPACING.xs,
   },
   locationLabel: {
     fontSize: 12,
-    fontFamily: 'Inter',
-    color: '#999',
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
   },
   locationText: {
     fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#666',
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
   },
   locationSourceText: {
     fontSize: 11,
-    fontFamily: 'Inter',
-    color: '#3C91E6',
-    marginTop: 4,
+    fontFamily: FONTS.body,
+    color: COLORS.secondary,
+    marginTop: SPACING.xs,
   },
   charCount: {
     fontSize: 11,
-    fontFamily: 'Inter',
-    color: '#999',
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
     textAlign: 'right',
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   submitButton: {
-    backgroundColor: '#FF4B4B',
-    paddingVertical: 16,
-    borderRadius: 2,
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.lg,
+    borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     marginBottom: 70,
     borderWidth: 3,
-    borderColor: '#CC3C3C',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 0,
-    elevation: 4,
+    borderColor: COLORS.primaryDark,
+    ...SHADOWS.pixelLarge,
   },
   submitButtonDisabled: {
     opacity: 0.6,
@@ -814,6 +809,6 @@ const styles = StyleSheet.create({
   submitText: {
     fontSize: 15,
     color: 'white',
-    fontFamily: 'Silkscreen',
+    fontFamily: FONTS.button,
   },
 });
