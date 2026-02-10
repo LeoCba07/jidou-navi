@@ -1,4 +1,5 @@
 // Preview card shown when user taps a machine pin
+import { useMemo } from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -28,40 +29,40 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
 
   const categories = machine.categories || [];
 
-  // Format last seen time
-  const getLastSeenText = () => {
+  // Compute last seen text and color once (memoized)
+  const lastSeenInfo = useMemo(() => {
     if (!machine.last_verified_at) {
-      return t('machine.neverVerified');
+      return { text: t('machine.neverVerified'), color: COLORS.warning };
     }
+    
     const lastSeen = new Date(machine.last_verified_at);
+    // Validate parsed date - treat invalid dates as never verified
+    if (isNaN(lastSeen.getTime())) {
+      return { text: t('machine.neverVerified'), color: COLORS.warning };
+    }
+    
     const now = new Date();
     const diffMs = now.getTime() - lastSeen.getTime();
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffDays > 0) {
-      return t('machine.lastSeenDays', { count: diffDays });
-    }
-    if (diffHours > 0) {
-      return t('machine.lastSeenHours', { count: diffHours });
-    }
-    return t('machine.lastSeenNow');
-  };
+    // Determine color based on freshness
+    let color: string = COLORS.warning; // Stale (>90 days) - orange
+    if (diffDays <= 30) color = COLORS.success; // Fresh - green
+    else if (diffDays <= 90) color = COLORS.secondary; // Moderate - blue
 
-  // Determine color based on freshness
-  const getLastSeenColor = () => {
-    if (!machine.last_verified_at) {
-      return COLORS.warning; // Never verified - orange
+    // Determine text
+    let text: string;
+    if (diffDays > 0) {
+      text = t('machine.lastSeenDays', { count: diffDays });
+    } else if (diffHours > 0) {
+      text = t('machine.lastSeenHours', { count: diffHours });
+    } else {
+      text = t('machine.lastSeenNow');
     }
-    const lastSeen = new Date(machine.last_verified_at);
-    const now = new Date();
-    const diffMs = now.getTime() - lastSeen.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    if (diffDays <= 30) return COLORS.success; // Fresh - green
-    if (diffDays <= 90) return COLORS.secondary; // Moderate - blue
-    return COLORS.warning; // Stale - orange
-  };
+
+    return { text, color };
+  }, [machine.last_verified_at, t]);
 
   return (
     <View style={styles.container}>
@@ -115,10 +116,10 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
               <Ionicons
                 name="time-outline"
                 size={14}
-                color={getLastSeenColor()}
+                color={lastSeenInfo.color}
               />
-              <Text style={[styles.statTextMuted, { color: getLastSeenColor() }]}>
-                {getLastSeenText()}
+              <Text style={[styles.statTextMuted, { color: lastSeenInfo.color }]}>
+                {lastSeenInfo.text}
               </Text>
             </View>
           </View>
