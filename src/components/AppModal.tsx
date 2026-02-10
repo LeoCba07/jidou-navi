@@ -29,6 +29,7 @@ export interface AppModalConfig {
   buttons?: ModalButton[];
   onDismiss?: () => void;
   xpAmount?: number;
+  children?: React.ReactNode;
 }
 
 const MODAL_COLORS: Record<ModalType, string> = {
@@ -135,7 +136,7 @@ export default function AppModal() {
 
   if (!appModal) return null;
 
-  const { type, title, message, xpAmount, buttons = [{ text: 'OK', style: 'primary' }] } = appModal;
+  const { type, title, message, xpAmount, children, buttons = [{ text: 'OK', style: 'primary' }] } = appModal;
   const borderColor = MODAL_COLORS[type];
 
   // Layout: 2 buttons side by side, otherwise stack
@@ -155,52 +156,58 @@ export default function AppModal() {
           ]}
         >
           <Pressable style={styles.content}>
-            {/* XP Badge */}
-            {xpAmount && (
-              <View style={styles.xpBadgeContainer}>
-                <Animated.View style={[
-                  styles.xpBadge,
-                  {
-                    transform: [
-                      { scale: xpAnim },
-                      { translateY: xpAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0]
-                      })}
-                    ],
-                    opacity: xpAnim
-                  }
-                ]}>
-                  <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
-                </Animated.View>
-              </View>
+            {children ? (
+              children
+            ) : (
+              <>
+                {/* XP Badge */}
+                {xpAmount && (
+                  <View style={styles.xpBadgeContainer}>
+                    <Animated.View style={[
+                      styles.xpBadge,
+                      {
+                        transform: [
+                          { scale: xpAnim },
+                          { translateY: xpAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [20, 0]
+                          })}
+                        ],
+                        opacity: xpAnim
+                      }
+                    ]}>
+                      <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
+                    </Animated.View>
+                  </View>
+                )}
+
+                {/* Title */}
+                <Text style={styles.title}>{title}</Text>
+
+                {/* Message */}
+                <Text style={styles.message}>{message}</Text>
+
+                {/* Buttons */}
+                <View style={[styles.buttonContainer, isHorizontal && styles.buttonContainerHorizontal]}>
+                  {buttons.map((button, index) => (
+                    <Pressable
+                      key={index}
+                      style={[
+                        styles.button,
+                        getButtonStyle(button.style),
+                        isHorizontal && styles.buttonHorizontal,
+                      ]}
+                      onPress={() => handleButtonPress(button)}
+                      accessibilityRole="button"
+                    >
+                      <Text style={[styles.buttonText, getButtonTextStyle(button.style)]}>
+                        {button.text}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </>
             )}
-
-            {/* Title */}
-            <Text style={styles.title}>{title}</Text>
-
-            {/* Message */}
-            <Text style={styles.message}>{message}</Text>
-
-            {/* Buttons */}
-            <View style={[styles.buttonContainer, isHorizontal && styles.buttonContainerHorizontal]}>
-              {buttons.map((button, index) => (
-                <Pressable
-                  key={index}
-                  style={[
-                    styles.button,
-                    getButtonStyle(button.style),
-                    isHorizontal && styles.buttonHorizontal,
-                  ]}
-                  onPress={() => handleButtonPress(button)}
-                  accessibilityRole="button"
-                >
-                  <Text style={[styles.buttonText, getButtonTextStyle(button.style)]}>
-                    {button.text}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
           </Pressable>
         </Animated.View>
       </Pressable>

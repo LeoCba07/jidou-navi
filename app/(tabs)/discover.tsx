@@ -48,7 +48,7 @@ export default function DiscoverScreen() {
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const { visitedMachineIds } = useVisitedMachinesStore();
-  const { showError, showSuccess, showInfo, hideModal } = useAppModal();
+  const { show, showError, showSuccess, hideModal } = useAppModal();
   const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
 
@@ -180,17 +180,17 @@ export default function DiscoverScreen() {
       allVisitors = await fetchMachineVisitors(machineId, 50);
     }
 
-    showInfo(
-      '',
-      '',
-      () => {},
-      'OK',
-      undefined,
-      <RecentVisitorsModal 
-        visitors={allVisitors} 
-        onClose={hideModal} 
-      />
-    );
+    show({
+      type: 'info',
+      title: '',
+      message: '',
+      children: (
+        <RecentVisitorsModal 
+          visitors={allVisitors} 
+          onClose={hideModal} 
+        />
+      )
+    });
   }
 
   // Handle upvote/remove upvote
