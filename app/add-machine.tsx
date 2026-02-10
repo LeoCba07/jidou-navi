@@ -73,10 +73,14 @@ export default function AddMachineScreen() {
   // Get current location on mount
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === 'granted') {
-        const loc = await Location.getCurrentPositionAsync({});
-        setLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({});
+          setLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
+        }
+      } catch (error) {
+        console.warn('Error getting initial location:', error);
       }
     })();
   }, []);

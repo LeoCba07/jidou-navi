@@ -1,288 +1,35 @@
--- JidouNavi Database Schema v2.1
--- Run in Supabase SQL Editor
--- ================================
--- Changes from v2:
--- - Fixed IMMUTABLE error: lat/lng now set via trigger instead of GENERATED columns
--- - Fixed IMMUTABLE error: visits unique index now uses explicit UTC timezone
---
--- Changes from v1:
--- - Flag threshold changed from 2 to 3
--- - Added photo_status enum for soft deletes
--- - Added create_visit() for server-side distance calculation
--- - Added cursor-based pagination to nearby_machines()
--- ================================
-
--- 1. EXTENSIONS
--- ================================
-CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-
--- 2. ENUMS
--- ================================
-CREATE TYPE machine_status AS ENUM ('pending', 'active', 'flagged', 'removed');
-CREATE TYPE photo_status AS ENUM ('active', 'flagged', 'removed');
-CREATE TYPE flag_reason AS ENUM ('not_exists', 'duplicate', 'inappropriate', 'wrong_location', 'other');
-CREATE TYPE flag_status AS ENUM ('pending', 'resolved', 'dismissed');
-
--- 3. TABLES
--- ================================
-
--- Categories
-CREATE TABLE categories (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    slug VARCHAR(50) UNIQUE NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    icon_name VARCHAR(50),
-    color VARCHAR(7),
-    display_order INTEGER DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Profiles (extends auth.users)
-CREATE TABLE profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    username VARCHAR(50) UNIQUE,
-    display_name VARCHAR(100),
-    avatar_url TEXT,
-    bio TEXT,
-    contribution_count INTEGER DEFAULT 0,
-    visit_count INTEGER DEFAULT 0,
-    badge_count INTEGER DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Machines
-CREATE TABLE machines (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    location GEOGRAPHY(Point, 4326) NOT NULL,
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
-    name VARCHAR(200),
-    description TEXT,
-    address TEXT,
-    status machine_status DEFAULT 'pending',
-    visit_count INTEGER DEFAULT 0,
-    photo_count INTEGER DEFAULT 0,
-    verification_count INTEGER DEFAULT 0,
-    flag_count INTEGER DEFAULT 0,
-    last_verified_at TIMESTAMPTZ,
-    last_verified_by UUID REFERENCES profiles(id),
-    reviewed_at TIMESTAMPTZ,
-    reviewed_by UUID REFERENCES profiles(id),
-    contributor_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
-    auto_activated BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Machine Categories (junction table)
-CREATE TABLE machine_categories (
-    machine_id UUID REFERENCES machines(id) ON DELETE CASCADE,
-    category_id UUID REFERENCES categories(id) ON DELETE CASCADE,
-    PRIMARY KEY (machine_id, category_id)
-);
-
--- Machine Photos (with soft delete status)
-CREATE TABLE machine_photos (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    machine_id UUID REFERENCES machines(id) ON DELETE CASCADE NOT NULL,
-    photo_url TEXT NOT NULL,
-    thumbnail_url TEXT,
-    width INTEGER,
-    height INTEGER,
-    size_bytes INTEGER,
-    uploaded_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
-    is_primary BOOLEAN DEFAULT FALSE,
-    status photo_status DEFAULT 'active',
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Visits
-CREATE TABLE visits (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-    machine_id UUID REFERENCES machines(id) ON DELETE CASCADE NOT NULL,
-    still_exists BOOLEAN,
-    checkin_location GEOGRAPHY(Point, 4326),
-    distance_meters DOUBLE PRECISION,
-    visited_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Saved Machines
-CREATE TABLE saved_machines (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-    machine_id UUID REFERENCES machines(id) ON DELETE CASCADE NOT NULL,
-    saved_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (user_id, machine_id)
-);
-
--- Badges
-CREATE TABLE badges (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    slug VARCHAR(50) UNIQUE NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
-    icon_url TEXT,
-    trigger_type VARCHAR(50) NOT NULL,
-    trigger_value JSONB,
-    points INTEGER DEFAULT 0,
-    rarity VARCHAR(20) DEFAULT 'common',
-    display_order INTEGER DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- User Badges
-CREATE TABLE user_badges (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-    badge_id UUID REFERENCES badges(id) ON DELETE CASCADE NOT NULL,
-    unlocked_at TIMESTAMPTZ DEFAULT NOW(),
-    trigger_machine_id UUID REFERENCES machines(id) ON DELETE SET NULL,
-    UNIQUE (user_id, badge_id)
-);
-
--- Flags
-CREATE TABLE flags (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    machine_id UUID REFERENCES machines(id) ON DELETE CASCADE NOT NULL,
-    reported_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
-    reason flag_reason NOT NULL,
-    details TEXT,
-    status flag_status DEFAULT 'pending',
-    resolved_by UUID REFERENCES profiles(id),
-    resolved_at TIMESTAMPTZ,
-    resolution_notes TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 4. INDEXES
--- ================================
-
-CREATE INDEX idx_machines_location ON machines USING GIST (location);
-CREATE INDEX idx_machines_status ON machines (status) WHERE status = 'active';
-CREATE INDEX idx_machines_name_trgm ON machines USING GIN (name gin_trgm_ops);
-CREATE INDEX idx_machines_description_trgm ON machines USING GIN (description gin_trgm_ops);
-CREATE INDEX idx_machine_photos_machine ON machine_photos (machine_id) WHERE status = 'active';
-CREATE INDEX idx_machine_photos_primary ON machine_photos (machine_id) WHERE is_primary = TRUE AND status = 'active';
-CREATE INDEX idx_visits_user ON visits (user_id);
-CREATE INDEX idx_visits_machine ON visits (machine_id);
-CREATE INDEX idx_visits_visited_at ON visits (visited_at DESC);
-CREATE UNIQUE INDEX idx_visits_unique_daily ON visits (user_id, machine_id, (timezone('UTC', visited_at)::date));
-CREATE INDEX idx_saved_machines_user ON saved_machines (user_id);
-CREATE INDEX idx_user_badges_user ON user_badges (user_id);
-CREATE INDEX idx_flags_machine ON flags (machine_id) WHERE status = 'pending';
-
--- 5. FUNCTIONS
--- ================================
-
--- Auto-update updated_at
-CREATE OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
+ORDER BY m.created_at DESC
+    LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql;
 
--- Auto-set lat/lng from location
-CREATE OR REPLACE FUNCTION set_machine_lat_lng()
+-- ================================================
+-- VISIT COOLDOWN ENFORCEMENT
+-- ================================================
+CREATE OR REPLACE FUNCTION enforce_visit_cooldown()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.latitude := ST_Y(NEW.location::geometry);
-    NEW.longitude := ST_X(NEW.location::geometry);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Update profile counters
-CREATE OR REPLACE FUNCTION update_profile_counts()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF TG_TABLE_NAME = 'machines' THEN
-        IF TG_OP = 'INSERT' THEN
-            UPDATE profiles SET contribution_count = contribution_count + 1 WHERE id = NEW.contributor_id;
-        ELSIF TG_OP = 'DELETE' THEN
-            UPDATE profiles SET contribution_count = contribution_count - 1 WHERE id = OLD.contributor_id;
-        END IF;
-    ELSIF TG_TABLE_NAME = 'visits' THEN
-        IF TG_OP = 'INSERT' THEN
-            UPDATE profiles SET visit_count = visit_count + 1 WHERE id = NEW.user_id;
-        ELSIF TG_OP = 'DELETE' THEN
-            UPDATE profiles SET visit_count = visit_count - 1 WHERE id = OLD.user_id;
-        END IF;
-    ELSIF TG_TABLE_NAME = 'user_badges' THEN
-        IF TG_OP = 'INSERT' THEN
-            UPDATE profiles SET badge_count = badge_count + 1 WHERE id = NEW.user_id;
-        ELSIF TG_OP = 'DELETE' THEN
-            UPDATE profiles SET badge_count = badge_count - 1 WHERE id = OLD.user_id;
-        END IF;
+    IF EXISTS (
+        SELECT 1 FROM visits
+        WHERE user_id = NEW.user_id
+          AND machine_id = NEW.machine_id
+          AND visited_at >= NOW() - INTERVAL '24 hours'
+    ) THEN
+        RAISE EXCEPTION 'already visited';
     END IF;
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
--- Update machine counters (flag threshold = 3)
-CREATE OR REPLACE FUNCTION update_machine_counts()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF TG_TABLE_NAME = 'visits' THEN
-        IF TG_OP = 'INSERT' THEN
-            UPDATE machines SET
-                visit_count = visit_count + 1,
-                verification_count = CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END,
-                last_verified_at = CASE WHEN NEW.still_exists IS NOT NULL THEN NOW() ELSE last_verified_at END,
-                last_verified_by = CASE WHEN NEW.still_exists IS NOT NULL THEN NEW.user_id ELSE last_verified_by END,
-                status = CASE 
-                    WHEN status = 'pending' AND (CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END) >= 2 
-                    THEN 'active'::machine_status 
-                    ELSE status 
-                END,
-                auto_activated = CASE 
-                    WHEN status = 'pending' AND (CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END) >= 2 
-                    THEN TRUE 
-                    ELSE auto_activated 
-                END
-            WHERE id = NEW.machine_id;
-        ELSIF TG_OP = 'DELETE' THEN
-            UPDATE machines SET visit_count = visit_count - 1 WHERE id = OLD.machine_id;
-        END IF;
-    ELSIF TG_TABLE_NAME = 'machine_photos' THEN
-        IF TG_OP = 'INSERT' THEN
-            UPDATE machines SET photo_count = photo_count + 1 WHERE id = NEW.machine_id;
-        ELSIF TG_OP = 'DELETE' THEN
-            UPDATE machines SET photo_count = photo_count - 1 WHERE id = OLD.machine_id;
-        END IF;
-    ELSIF TG_TABLE_NAME = 'flags' THEN
-        IF TG_OP = 'INSERT' THEN
-            UPDATE machines SET
-                flag_count = flag_count + 1,
-                status = CASE WHEN flag_count + 1 >= 3 THEN 'flagged'::machine_status ELSE status END
-            WHERE id = NEW.machine_id;
-        END IF;
-    END IF;
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
--- Auto-create profile on signup
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-    INSERT INTO profiles (id, username, display_name, avatar_url)
-    VALUES (
-        NEW.id,
-        NEW.raw_user_meta_data->>'username',
-        COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name'),
-        NEW.raw_user_meta_data->>'avatar_url'
-    );
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql;
 
+CREATE TRIGGER trigger_enforce_visit_cooldown
+    BEFORE INSERT ON visits
+    FOR EACH ROW EXECUTE FUNCTION enforce_visit_cooldown();
+
+-- 11. GRANTS
 -- ================================
+GRANT EXECUTE ON FUNCTION record_machine_gone_report(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) TO authenticated;
+
 -- SERVER-SIDE VISIT CREATION
 -- Prevents cheating by calculating distance on server
 -- ================================
