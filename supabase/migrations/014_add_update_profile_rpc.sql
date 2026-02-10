@@ -3,7 +3,8 @@
 
 CREATE OR REPLACE FUNCTION update_profile(
     p_display_name TEXT DEFAULT NULL,
-    p_bio TEXT DEFAULT NULL
+    p_bio TEXT DEFAULT NULL,
+    p_receive_newsletter BOOLEAN DEFAULT NULL
 )
 RETURNS JSON AS $$
 DECLARE
@@ -21,6 +22,7 @@ BEGIN
     SET 
         display_name = COALESCE(p_display_name, display_name),
         bio = COALESCE(p_bio, bio),
+        receive_newsletter = COALESCE(p_receive_newsletter, receive_newsletter),
         updated_at = NOW()
     WHERE id = v_user_id;
 
@@ -31,4 +33,4 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Grant execute to authenticated users
-GRANT EXECUTE ON FUNCTION update_profile(TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION update_profile(TEXT, TEXT, BOOLEAN) TO authenticated;
