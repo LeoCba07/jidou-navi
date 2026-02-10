@@ -133,7 +133,10 @@
     "bioPlaceholder": "Tell us about your vending adventures...",
     "updateProfile": "Update Profile",
     "updateSuccess": "Profile updated successfully!",
-    "updateError": "Failed to update profile."
+    "updateError": "Failed to update profile.",
+    "sortDistance": "Distance",
+    "sortXP": "XP",
+    "xpEstimate": "~{{xp}} XP"
   },
   "map": {
     "searchPlaceholder": "Search machines...",

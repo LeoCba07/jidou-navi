@@ -133,7 +133,10 @@
     "bioPlaceholder": "Cuéntanos sobre tus aventuras...",
     "updateProfile": "Actualizar Perfil",
     "updateSuccess": "¡Perfil actualizado con éxito!",
-    "updateError": "Error al actualizar el perfil."
+    "updateError": "Error al actualizar el perfil.",
+    "sortDistance": "Distancia",
+    "sortXP": "XP",
+    "xpEstimate": "~{{xp}} XP"
   },
   "map": {
     "searchPlaceholder": "Buscar máquinas...",

@@ -1,5 +1,5 @@
 // Profile screen - user info, stats, badges, and logout
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
@@ -15,15 +15,16 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useVisitedMachinesStore } from '../../src/store/visitedMachinesStore';
 import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
-import { fetchSavedMachines, unsaveMachine, SavedMachine } from '../../src/lib/machines';
+import { fetchSavedMachines, unsaveMachine, SavedMachine, calculateDistance } from '../../src/lib/machines';
 import { uploadAvatar } from '../../src/lib/storage';
-import { getLevelProgress } from '../../src/lib/xp';
+import { getLevelProgress, XP_VALUES } from '../../src/lib/xp';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import SettingsModal from '../../src/components/profile/SettingsModal';
 import StatProgressCard from '../../src/components/profile/StatProgressCard';
@@ -72,11 +73,34 @@ export default function ProfileScreen() {
   } | null>(null);
   const [friendsModalVisible, setFriendsModalVisible] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  type SortMode = 'distance' | 'xp';
+  const [sortMode, setSortMode] = useState<SortMode>('distance');
 
   // Reset image error whenever the profile avatar URL changes so new avatars are attempted
   useEffect(() => {
     setImageError(false);
   }, [profile?.avatar_url]);
+
+  async function getUserLocation() {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setUserLocation(null);
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      setUserLocation({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      });
+    } catch (error) {
+      console.warn('Failed to get user location:', error);
+      setUserLocation(null);
+    }
+  }
 
   // Refresh data when tab is focused (e.g., after saving a machine)
   useFocusEffect(
@@ -87,6 +111,7 @@ export default function ProfileScreen() {
         loadSavedMachines();
         loadPendingRequestCount();
         loadFriends();
+        getUserLocation();
       }
     }, [user])
   );
@@ -227,7 +252,7 @@ export default function ProfileScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingRequestCount(), loadFriends()]);
+    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingRequestCount(), loadFriends(), getUserLocation()]);
     setRefreshing(false);
   }, [user]);
 
@@ -295,6 +320,52 @@ export default function ProfileScreen() {
       ]
     );
   }
+
+  function getEstimatedXP(machineId: string): number {
+    if (visitedMachineIds.has(machineId)) {
+      return XP_VALUES.PHOTO_UPLOAD;
+    }
+    return XP_VALUES.PHOTO_UPLOAD + XP_VALUES.VERIFY_MACHINE;
+  }
+
+  function formatDistance(meters: number): string {
+    if (meters < 1000) {
+      return `${Math.round(meters)}m`;
+    }
+    return `${(meters / 1000).toFixed(1)}km`;
+  }
+
+  const sortedSavedMachines = useMemo(() => {
+    const mapped = savedMachines.map((saved) => {
+      const distance = userLocation
+        ? calculateDistance(
+            userLocation.lat,
+            userLocation.lng,
+            saved.machine.latitude,
+            saved.machine.longitude
+          )
+        : null;
+      const xp = getEstimatedXP(saved.machine_id);
+      return { saved, distance, xp };
+    });
+
+    mapped.sort((a, b) => {
+      if (sortMode === 'distance') {
+        if (a.distance === null && b.distance === null) return 0;
+        if (a.distance === null) return 1;
+        if (b.distance === null) return -1;
+        return a.distance - b.distance;
+      }
+      // Sort by XP descending, break ties by distance ascending
+      if (b.xp !== a.xp) return b.xp - a.xp;
+      if (a.distance === null && b.distance === null) return 0;
+      if (a.distance === null) return 1;
+      if (b.distance === null) return -1;
+      return a.distance - b.distance;
+    });
+
+    return mapped;
+  }, [savedMachines, userLocation, sortMode, visitedMachineIds]);
 
   return (
     <View style={styles.container}>
@@ -412,7 +483,39 @@ export default function ProfileScreen() {
 
         {/* Quest Log Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.questLog')}</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('profile.questLog')}</Text>
+            {savedMachines.length > 0 && (
+              <View style={styles.sortToggle}>
+                <Pressable
+                  style={[styles.sortButton, sortMode === 'distance' && styles.sortButtonActive]}
+                  onPress={() => setSortMode('distance')}
+                >
+                  <Ionicons
+                    name="navigate-outline"
+                    size={12}
+                    color={sortMode === 'distance' ? '#fff' : '#666'}
+                  />
+                  <Text style={[styles.sortButtonText, sortMode === 'distance' && styles.sortButtonTextActive]}>
+                    {t('profile.sortDistance')}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.sortButton, sortMode === 'xp' && styles.sortButtonActive]}
+                  onPress={() => setSortMode('xp')}
+                >
+                  <Ionicons
+                    name="flash-outline"
+                    size={12}
+                    color={sortMode === 'xp' ? '#fff' : '#666'}
+                  />
+                  <Text style={[styles.sortButtonText, sortMode === 'xp' && styles.sortButtonTextActive]}>
+                    {t('profile.sortXP')}
+                  </Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
           {loadingSaved ? (
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : savedMachines.length === 0 ? (
@@ -425,7 +528,7 @@ export default function ProfileScreen() {
             </View>
           ) : (
             <View style={styles.savedList}>
-              {savedMachines.map((saved) => (
+              {sortedSavedMachines.map(({ saved, distance, xp }) => (
                 <Pressable
                   key={saved.id}
                   style={styles.savedCard}
@@ -457,6 +560,25 @@ export default function ProfileScreen() {
                       <Text style={styles.savedAddress} numberOfLines={1}>
                         {saved.machine.address || t('machine.noAddress')}
                       </Text>
+                    </View>
+                    <View style={styles.savedStatsRow}>
+                      <View style={styles.savedStat}>
+                        <Ionicons name="flash" size={12} color="#D97706" />
+                        <Text style={styles.savedStatText}>
+                          {t('profile.xpEstimate', { xp })}
+                        </Text>
+                      </View>
+                      {distance !== null && (
+                        <>
+                          <Text style={styles.savedStatDivider}>•</Text>
+                          <View style={styles.savedStat}>
+                            <Ionicons name="navigate" size={12} color="#3C91E6" />
+                            <Text style={styles.savedStatText}>
+                              {t('machine.away', { distance: formatDistance(distance) })}
+                            </Text>
+                          </View>
+                        </>
+                      )}
                     </View>
                   </View>
                   <View style={styles.cardActions}>
@@ -865,6 +987,56 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     color: '#999',
     flex: 1,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  sortToggle: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: '#f0f0f0',
+  },
+  sortButtonActive: {
+    backgroundColor: '#FF4B4B',
+  },
+  sortButtonText: {
+    fontSize: 11,
+    fontFamily: 'Inter-SemiBold',
+    color: '#666',
+  },
+  sortButtonTextActive: {
+    color: '#fff',
+  },
+  savedStatsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 4,
+  },
+  savedStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  savedStatText: {
+    fontSize: 11,
+    fontFamily: 'Inter-SemiBold',
+    color: '#666',
+  },
+  savedStatDivider: {
+    fontSize: 11,
+    color: '#ccc',
   },
   cardActions: {
     flexDirection: 'column',
