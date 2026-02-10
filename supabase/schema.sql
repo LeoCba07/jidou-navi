@@ -176,6 +176,8 @@ CREATE POLICY "Users can earn badges" ON user_badges FOR INSERT WITH CHECK (auth
 -- Flags
 CREATE POLICY "Users can view own flags" ON flags FOR SELECT USING (auth.uid() = reported_by);
 CREATE POLICY "Users can create flags" ON flags FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Admins can view all flags" ON flags FOR SELECT USING (EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'));
+CREATE POLICY "Admins can update flags" ON flags FOR UPDATE USING (EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'));
 
 -- 8. SEED DATA
 -- ================================
