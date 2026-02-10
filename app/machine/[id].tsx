@@ -63,6 +63,7 @@ export default function MachineDetailScreen() {
   const clearCache = useMachinesCacheStore((state) => state.clearCache);
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
+  const [visitCheckDone, setVisitCheckDone] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -286,7 +287,10 @@ export default function MachineDetailScreen() {
   // Check if user already visited this machine recently
   useEffect(() => {
     async function checkUserVisit() {
-      if (!user) return;
+      if (!user) {
+        setVisitCheckDone(true);
+        return;
+      }
 
       // Get user's most recent visit to this machine
       const { data: visitData } = await supabase
@@ -305,6 +309,7 @@ export default function MachineDetailScreen() {
           setHasCheckedIn(true);
         }
       }
+      setVisitCheckDone(true);
     }
 
     checkUserVisit();
@@ -960,7 +965,7 @@ export default function MachineDetailScreen() {
                 <Pressable
                   style={[styles.verifyButton, isNeverVerified && styles.verifyButtonNever]}
                   onPress={handleCheckIn}
-                  disabled={checkingIn}
+                  disabled={checkingIn || hasCheckedIn}
                 >
                   <Text style={styles.verifyButtonText}>
                     {t(isNeverVerified ? 'machine.beFirstToVerify' : 'machine.verifyNow')}
@@ -1041,10 +1046,10 @@ export default function MachineDetailScreen() {
               <Pressable
                 style={[
                   styles.secondaryButton,
-                  (checkingIn || hasCheckedIn) && styles.buttonDisabled,
+                  (checkingIn || hasCheckedIn || !visitCheckDone) && styles.buttonDisabled,
                 ]}
                 onPress={handleCheckIn}
-                disabled={checkingIn || hasCheckedIn}
+                disabled={checkingIn || hasCheckedIn || !visitCheckDone}
               >
                 {checkingIn ? (
                   <ActivityIndicator size="small" color={COLORS.text} />
