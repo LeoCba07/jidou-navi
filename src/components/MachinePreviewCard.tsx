@@ -118,7 +118,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
                 size={14}
                 color={lastSeenInfo.color}
               />
-              <Text style={[styles.statTextMuted, { color: lastSeenInfo.color }]}>
+              <Text style={[styles.statTextMuted, { color: lastSeenInfo.color }]} numberOfLines={1}>
                 {lastSeenInfo.text}
               </Text>
             </View>
@@ -206,14 +206,17 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
-    gap: 12,
+    gap: 4,
+    columnGap: 10,
     marginBottom: 8,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    flexShrink: 1,
   },
   statText: {
     fontSize: 13,
