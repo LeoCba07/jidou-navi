@@ -234,6 +234,7 @@ export default function ProfileScreen() {
         primary_photo_url: saved.machine.primary_photo_url || '',
         visit_count: String(saved.machine.visit_count),
         status: saved.machine.status || '',
+        last_verified_at: saved.machine.last_verified_at || '',
       },
     });
   }

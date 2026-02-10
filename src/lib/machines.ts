@@ -184,6 +184,7 @@ export type SavedMachine = {
     primary_photo_url: string | null;
     status: string;
     visit_count: number;
+    last_verified_at: string | null;
   };
 };
 
@@ -306,6 +307,7 @@ export type DiscoverMachine = {
   visit_count: number;
   created_at: string;
   categories: MachineCategory[] | null;
+  last_verified_at: string | null;
 };
 
 // Type for machine with engagement data (upvotes, visitors)
@@ -349,7 +351,8 @@ export async function fetchPopularMachines(limit: number = 20): Promise<Discover
       status,
       visit_count,
       created_at,
-      categories
+      categories,
+      last_verified_at
     `)
     .eq('status', 'active')
     .order('visit_count', { ascending: false })
@@ -381,7 +384,8 @@ export async function fetchRecentMachines(limit: number = 20): Promise<DiscoverM
       status,
       visit_count,
       created_at,
-      categories
+      categories,
+      last_verified_at
     `)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
@@ -414,7 +418,8 @@ export async function fetchSavedMachines(): Promise<SavedMachine[]> {
         latitude,
         longitude,
         status,
-        visit_count
+        visit_count,
+        last_verified_at
       )
     `)
     .order('saved_at', { ascending: false });

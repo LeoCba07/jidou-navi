@@ -25,6 +25,7 @@ export const COLORS = {
   success: '#22C55E',
   warning: '#F59E0B',
   error: '#EF4444',
+  indigo: '#6366F1',
 
   // Badge rarity colors
   badgeCommon: '#9CA3AF',

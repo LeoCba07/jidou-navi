@@ -32,13 +32,13 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
   // Compute last seen text and color once (memoized)
   const lastSeenInfo = useMemo(() => {
     if (!machine.last_verified_at) {
-      return { text: t('machine.neverVerified'), color: '#6366F1' };
+      return { text: t('machine.neverVerified'), color: COLORS.indigo };
     }
 
     const lastSeen = new Date(machine.last_verified_at);
     // Validate parsed date - treat invalid dates as never verified
     if (isNaN(lastSeen.getTime())) {
-      return { text: t('machine.neverVerified'), color: '#6366F1' };
+      return { text: t('machine.neverVerified'), color: COLORS.indigo };
     }
     
     const now = new Date();

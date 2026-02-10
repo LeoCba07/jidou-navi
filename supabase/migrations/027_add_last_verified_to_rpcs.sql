@@ -1,5 +1,5 @@
 -- Add last_verified_at to nearby_machines and machines_in_bounds RPCs
--- This fixes the "Never verified" not updating after check-in (Issue #246)
+-- This fixes the "Never verified" not updating after check-in (Issues #244, #246)
 -- Must DROP first because CREATE OR REPLACE cannot change return type
 
 -- ================================

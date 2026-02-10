@@ -952,7 +952,7 @@ export default function MachineDetailScreen() {
                 <Ionicons
                   name={isNeverVerified ? 'help-circle-outline' : 'alert-circle-outline'}
                   size={20}
-                  color={isNeverVerified ? '#6366F1' : '#F59E0B'}
+                  color={isNeverVerified ? COLORS.indigo : '#F59E0B'}
                 />
                 <Text style={[styles.verifyPromptText, isNeverVerified && styles.verifyPromptTextNever]}>
                   {t(isNeverVerified ? 'machine.neverVerifiedPrompt' : 'machine.stalePrompt')}
@@ -1380,7 +1380,7 @@ const styles = StyleSheet.create({
   },
   verifyPromptNever: {
     backgroundColor: '#EEF2FF',
-    borderColor: '#6366F1',
+    borderColor: COLORS.indigo,
   },
   verifyPromptTextNever: {
     color: '#3730A3',
@@ -1392,7 +1392,7 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.sm,
   },
   verifyButtonNever: {
-    backgroundColor: '#6366F1',
+    backgroundColor: COLORS.indigo,
   },
   verifyButtonText: {
     fontSize: 13,
