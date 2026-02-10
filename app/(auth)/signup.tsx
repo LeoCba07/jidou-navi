@@ -34,6 +34,7 @@ export default function SignupScreen() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [country, setCountry] = useState<string | null>(null);
+  const [receiveNewsletter, setReceiveNewsletter] = useState(false);
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const { showError, showSuccess } = useAppModal();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -101,6 +102,7 @@ export default function SignupScreen() {
         data: {
           username: username.trim(),
           country: country,
+          receive_newsletter: receiveNewsletter,
         },
       },
     });
@@ -269,6 +271,19 @@ export default function SignupScreen() {
               </View>
             </View>
 
+            <Pressable
+              style={styles.newsletterContainer}
+              onPress={() => setReceiveNewsletter(!receiveNewsletter)}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: receiveNewsletter }}
+              accessibilityLabel={t('auth.newsletter.label')}
+            >
+              <View style={[styles.checkbox, receiveNewsletter && styles.checkboxChecked]}>
+                {receiveNewsletter && <Ionicons name="checkmark" size={16} color="#fff" />}
+              </View>
+              <Text style={styles.newsletterText}>{t('auth.newsletter.label')}</Text>
+            </Pressable>
+
             <Button
               title={t('auth.createAccount')}
               onPress={handleSignup}
@@ -407,6 +422,33 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: SPACING.sm,
+  },
+  newsletterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+    paddingHorizontal: SPACING.xs,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 2,
+    borderWidth: 3,
+    borderColor: COLORS.backgroundDark,
+    backgroundColor: COLORS.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SPACING.md,
+  },
+  checkboxChecked: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primaryDark,
+  },
+  newsletterText: {
+    fontSize: 14,
+    fontFamily: FONTS.body,
+    color: COLORS.text,
+    flex: 1,
   },
   footer: {
     flexDirection: 'row',

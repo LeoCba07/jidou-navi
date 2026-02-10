@@ -34,6 +34,10 @@
     "country": "País",
     "selectCountry": "Seleccionar País",
     "countryHelper": "Representa a tu país en el ranking global!",
+    "newsletter": {
+      "label": "Recibir boletines y promociones por correo electrónico",
+      "success": "Preferencia de boletín actualizada"
+    },
     "createAccount": "Crear Cuenta",
     "dontHaveAccount": "¿No tienes una cuenta?",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",

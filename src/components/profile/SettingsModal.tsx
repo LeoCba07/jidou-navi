@@ -50,6 +50,7 @@ export default function SettingsModal({
   // Profile edit state
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
   const [bio, setBio] = useState(profile?.bio || '');
+  const [receiveNewsletter, setReceiveNewsletter] = useState(profile?.receive_newsletter || false);
   const [saving, setSaving] = useState(false);
 
   // Sync state when profile or visibility changes
@@ -57,6 +58,7 @@ export default function SettingsModal({
     if (visible && profile) {
       setDisplayName(profile.display_name || '');
       setBio(profile.bio || '');
+      setReceiveNewsletter(profile.receive_newsletter || false);
     }
   }, [visible, profile]);
 
@@ -88,6 +90,7 @@ export default function SettingsModal({
       const { data, error } = await supabase.rpc('update_profile', {
         p_display_name: trimmedName,
         p_bio: bio.trim(),
+        p_receive_newsletter: receiveNewsletter,
       });
 
       if (error) throw error;
@@ -100,6 +103,7 @@ export default function SettingsModal({
             ...profile,
             display_name: trimmedName,
             bio: bio.trim(),
+            receive_newsletter: receiveNewsletter,
           });
         }
         showSuccess(t('common.success'), t('profile.updateSuccess'));
@@ -365,6 +369,19 @@ export default function SettingsModal({
                 </View>
 
                 <Pressable
+                  style={styles.newsletterToggle}
+                  onPress={() => setReceiveNewsletter(!receiveNewsletter)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: receiveNewsletter }}
+                  accessibilityLabel={t('auth.newsletter.label')}
+                >
+                  <View style={[styles.checkbox, receiveNewsletter && styles.checkboxChecked]}>
+                    {receiveNewsletter && <Ionicons name="checkmark" size={16} color="#fff" />}
+                  </View>
+                  <Text style={styles.newsletterText}>{t('auth.newsletter.label')}</Text>
+                </Pressable>
+
+                <Pressable
                   style={[styles.saveButton, saving && styles.saveButtonDisabled]}
                   onPress={handleSaveProfile}
                   disabled={saving}
@@ -559,6 +576,32 @@ const styles = StyleSheet.create({
   bioInput: {
     height: 100,
     paddingTop: 12,
+  },
+  newsletterToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#f9f9f9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  checkboxChecked: {
+    backgroundColor: '#FF4B4B',
+    borderColor: '#CC3C3C',
+  },
+  newsletterText: {
+    fontSize: 14,
+    fontFamily: 'Inter',
+    color: '#333',
+    flex: 1,
   },
   saveButton: {
     backgroundColor: '#FF4B4B',

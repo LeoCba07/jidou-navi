@@ -606,6 +606,7 @@ export type Database = {
           username: string | null
           visit_count: number | null
           xp: number | null
+          receive_newsletter: boolean | null
         }
         Insert: {
           avatar_url?: string | null
@@ -622,6 +623,7 @@ export type Database = {
           username?: string | null
           visit_count?: number | null
           xp?: number | null
+          receive_newsletter?: boolean | null
         }
         Update: {
           avatar_url?: string | null
@@ -638,6 +640,7 @@ export type Database = {
           username?: string | null
           visit_count?: number | null
           xp?: number | null
+          receive_newsletter?: boolean | null
         }
         Relationships: []
       }
@@ -2221,7 +2224,11 @@ export type Database = {
       }
       unlockrows: { Args: { "": string }; Returns: number }
       update_profile: {
-        Args: { p_bio?: string; p_display_name?: string }
+        Args: { 
+          p_bio?: string; 
+          p_display_name?: string;
+          p_receive_newsletter?: boolean;
+        }
         Returns: Json
       }
       updategeometrysrid: {

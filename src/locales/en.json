@@ -34,6 +34,10 @@
     "country": "Country",
     "selectCountry": "Select Country",
     "countryHelper": "Represent your country on the global leaderboard!",
+    "newsletter": {
+      "label": "Receive newsletters and promotions via email",
+      "success": "Newsletter preference updated"
+    },
     "createAccount": "Create Account",
     "dontHaveAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
