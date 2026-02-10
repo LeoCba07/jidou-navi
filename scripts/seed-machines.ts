@@ -15,14 +15,14 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Category mapping from Japanese to slug
 const categoryMap: Record<string, string> = {
-  '飲み物': 'drinks',
-  '食べ物': 'food',
+  '飲み物': 'eats',
+  '食べ物': 'eats',
   'ガチャポン': 'gachapon',
   '珍しい': 'weird',
   'レトロ': 'retro',
-  'アイスクリーム': 'food',
-  'コーヒー': 'drinks',
-  'アルコール': 'drinks',
+  'アイスクリーム': 'eats',
+  'コーヒー': 'eats',
+  'アルコール': 'eats',
 };
 
 interface MachineJSON {

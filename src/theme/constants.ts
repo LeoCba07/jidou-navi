@@ -94,14 +94,11 @@ export const FONTS = {
 
 // Category colors for filter chips
 export const CATEGORY_COLORS = {
-  drinks: '#3C91E6',
-  food: '#FF4B4B',
+  eats: '#FF4B4B',
   gachapon: '#FFB7CE',
   weird: '#9B59B6',
   retro: '#FFD966',
-  'ice-cream': '#E74C3C',
-  coffee: '#8B4513',
-  alcohol: '#F39C12',
+  'local-gems': '#2ECC71',
 } as const;
 
 export const VERIFICATION_THRESHOLD = 2;
