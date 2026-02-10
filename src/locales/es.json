@@ -498,6 +498,7 @@
     "approveError": "Error al aprobar la máquina. Por favor intenta de nuevo.",
     "rejectSuccess": "Máquina rechazada. El contribuidor ha sido notificado.",
     "rejectError": "Error al rechazar la máquina. Por favor intenta de nuevo.",
+    "noReason": "No se proporcionó un motivo",
     "rejectReason": "Motivo del Rechazo",
     "selectRejectReason": "Por favor selecciona un motivo para rechazar este envío:",
     "customReasonPlaceholder": "Ingresa un motivo personalizado...",
