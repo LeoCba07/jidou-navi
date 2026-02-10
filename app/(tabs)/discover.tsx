@@ -39,6 +39,7 @@ import { useVisitedMachinesStore } from '../../src/store/visitedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { LeaderboardScreen } from '../../src/components/leaderboard';
 import { DiscoverMachineCard } from '../../src/components/discover';
+import RecentVisitorsModal from '../../src/components/discover/RecentVisitorsModal';
 import DailyVotesIndicator, { type DailyVotesIndicatorRef } from '../../src/components/discover/DailyVotesIndicator';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
 
@@ -47,7 +48,7 @@ export default function DiscoverScreen() {
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const { visitedMachineIds } = useVisitedMachinesStore();
-  const { showError, showSuccess } = useAppModal();
+  const { showError, showSuccess, showInfo, hideModal } = useAppModal();
   const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
 
@@ -168,6 +169,28 @@ export default function DiscoverScreen() {
         focusMachineId: machine.id,
       },
     });
+  }
+
+  async function handleVisitorPress(machineId: string, initialVisitors: any[], totalCount: number) {
+    // If we only have the preview (5), fetch all of them (or a larger page)
+    // For now, if totalCount > initialVisitors.length, we fetch up to 20
+    let allVisitors = initialVisitors;
+    if (totalCount > initialVisitors.length) {
+      const { fetchMachineVisitors } = await import('../../src/lib/machines');
+      allVisitors = await fetchMachineVisitors(machineId, 50);
+    }
+
+    showInfo(
+      '',
+      '',
+      () => {},
+      'OK',
+      undefined,
+      <RecentVisitorsModal 
+        visitors={allVisitors} 
+        onClose={hideModal} 
+      />
+    );
   }
 
   // Handle upvote/remove upvote
@@ -529,6 +552,7 @@ export default function DiscoverScreen() {
                   onUpvotePress={handleUpvotePress}
                   onSavePress={handleSaveToggle}
                   onShowOnMap={handleShowOnMap}
+                  onVisitorPress={handleVisitorPress}
                 />
               ))}
             </View>
@@ -564,6 +588,7 @@ export default function DiscoverScreen() {
                   onUpvotePress={handleUpvotePress}
                   onSavePress={handleSaveToggle}
                   onShowOnMap={handleShowOnMap}
+                  onVisitorPress={handleVisitorPress}
                 />
               ))}
             </View>
