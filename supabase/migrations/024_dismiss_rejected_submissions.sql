@@ -9,12 +9,14 @@ ADD COLUMN IF NOT EXISTS dismissed_at TIMESTAMPTZ;
 COMMENT ON COLUMN machines.dismissed_at IS 'Timestamp when user dismissed a rejected submission from their profile view';
 
 -- 2. Update get_user_pending_machines to exclude dismissed machines
+DROP FUNCTION IF EXISTS get_user_pending_machines(uuid);
+
 CREATE OR REPLACE FUNCTION get_user_pending_machines(
     target_user_id UUID DEFAULT NULL
 )
 RETURNS TABLE (
     id UUID,
-    name TEXT,
+    name VARCHAR(200),
     description TEXT,
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
