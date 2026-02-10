@@ -302,9 +302,8 @@ export default function MachineDetailScreen() {
         .limit(1);
 
       if (visitData && visitData.length > 0 && visitData[0].visited_at) {
-        // Check if visit was within 7 days
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        // Check if visit was within the last 7 days (exact 168 hours to match backend)
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         if (new Date(visitData[0].visited_at) >= sevenDaysAgo) {
           setHasCheckedIn(true);
         }
