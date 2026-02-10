@@ -18,6 +18,9 @@ export const COLORS = {
   textMuted: '#666666',
   textLight: '#999999',
 
+  // Borders
+  borderLight: 'rgba(0, 0, 0, 0.15)',
+
   // Status colors
   success: '#22C55E',
   warning: '#F59E0B',

@@ -23,7 +23,6 @@ import { useVisitedMachinesStore } from '../../src/store/visitedMachinesStore';
 import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine, calculateDistance } from '../../src/lib/machines';
-import { fetchUserPendingMachines, dismissRejectedMachine, UserPendingMachine } from '../../src/lib/admin';
 import { uploadAvatar } from '../../src/lib/storage';
 import { getLevelProgress, XP_VALUES } from '../../src/lib/xp';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -61,10 +60,8 @@ export default function ProfileScreen() {
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
-  const [pendingMachines, setPendingMachines] = useState<UserPendingMachine[]>([]);
   const [loadingBadges, setLoadingBadges] = useState(true);
   const [loadingSaved, setLoadingSaved] = useState(true);
-  const [loadingPending, setLoadingPending] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -112,7 +109,6 @@ export default function ProfileScreen() {
         fetchBadges();
         fetchAllBadges();
         loadSavedMachines();
-        loadPendingMachines();
         loadPendingRequestCount();
         loadFriends();
         getUserLocation();
@@ -221,51 +217,7 @@ export default function ProfileScreen() {
     setLoadingSaved(false);
   }
 
-  // Fetch user's pending/rejected machines
-  async function loadPendingMachines() {
-    if (!user) return;
-    const machines = await fetchUserPendingMachines();
-    setPendingMachines(machines);
-    setLoadingPending(false);
-  }
-
   // Handle unsave action
-  function handleUnsave(machineId: string) {
-    showConfirm(
-      t('profile.removeFromSaved.title'),
-      t('profile.removeFromSaved.message'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.remove'),
-          style: 'destructive',
-          onPress: async () => {
-            // Optimistic update
-            setSavedMachines((prev) => prev.filter((m) => m.machine_id !== machineId));
-            removeSaved(machineId);
-            const success = await unsaveMachine(machineId);
-            if (!success) {
-              // Revert on failure - reload the list
-              loadSavedMachines();
-              showError(t('common.error'), t('profile.removeError'));
-            }
-          },
-        },
-      ]
-    );
-  }
-
-  // Handle dismiss rejected submission
-  async function handleDismissRejected(machineId: string) {
-    // Optimistic update
-    setPendingMachines((prev) => prev.filter((m) => m.id !== machineId));
-    const success = await dismissRejectedMachine(machineId);
-    if (!success) {
-      // Revert on failure - reload the list
-      loadPendingMachines();
-      showError(t('common.error'), t('profile.dismissError'));
-    }
-  }
 
   // Navigate to machine detail
   function goToMachine(saved: SavedMachine) {
@@ -300,7 +252,7 @@ export default function ProfileScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingMachines(), loadPendingRequestCount(), loadFriends(), getUserLocation()]);
+    await Promise.all([fetchBadges(), fetchAllBadges(), loadSavedMachines(), loadPendingRequestCount(), loadFriends(), getUserLocation()]);
     setRefreshing(false);
   }, [user]);
 
@@ -528,70 +480,6 @@ export default function ProfileScreen() {
             allBadges={allBadges}
           />
         </View>
-
-        {/* Pending Submissions Section */}
-        {pendingMachines.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('profile.mySubmissions')}</Text>
-            {loadingPending ? (
-              <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
-            ) : (
-              <View style={styles.savedList}>
-                {pendingMachines.map((machine) => (
-                  <View key={machine.id} style={styles.pendingCard}>
-                    {machine.primary_photo_url ? (
-                      <Image
-                        source={{ uri: machine.primary_photo_url }}
-                        style={[styles.savedPhoto, styles.savedPhotoWithImage]}
-                      />
-                    ) : (
-                      <View style={[styles.savedPhoto, styles.savedPhotoPlaceholder]}>
-                        <Ionicons name="image-outline" size={24} color="#ccc" />
-                      </View>
-                    )}
-                    <View style={styles.savedInfo}>
-                      <View style={styles.savedNameRow}>
-                        <Text style={styles.savedName} numberOfLines={1}>
-                          {machine.name || t('machine.unnamed')}
-                        </Text>
-                        {machine.status === 'pending' ? (
-                          <View style={styles.pendingBadge}>
-                            <Ionicons name="time-outline" size={12} color="#D97706" />
-                            <Text style={styles.pendingBadgeText}>{t('profile.pendingReview')}</Text>
-                          </View>
-                        ) : (
-                          <View style={styles.rejectedBadge}>
-                            <Ionicons name="close-circle-outline" size={12} color="#DC2626" />
-                            <Text style={styles.rejectedBadgeText}>{t('profile.rejected')}</Text>
-                          </View>
-                        )}
-                      </View>
-                      {machine.status === 'rejected' && machine.rejection_reason && (
-                        <Text style={styles.rejectionReason} numberOfLines={2}>
-                          {machine.rejection_reason}
-                        </Text>
-                      )}
-                      {machine.status === 'pending' && (
-                        <Text style={styles.pendingHint}>{t('profile.pendingHint')}</Text>
-                      )}
-                      {machine.status === 'rejected' && (
-                        <Pressable
-                          style={styles.dismissButton}
-                          onPress={() => handleDismissRejected(machine.id)}
-                          accessibilityRole="button"
-                          accessibilityLabel={t('common.ok')}
-                          hitSlop={8}
-                        >
-                          <Text style={styles.dismissButtonText}>{t('common.ok')}</Text>
-                        </Pressable>
-                      )}
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
 
         {/* Quest Log Section */}
         <View style={styles.section}>
@@ -1162,73 +1050,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  pendingCard: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    padding: 12,
-    alignItems: 'flex-start',
-    borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 0,
-    elevation: 2,
-  },
-  pendingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  pendingBadgeText: {
-    fontSize: 10,
-    fontFamily: 'Inter-SemiBold',
-    color: '#D97706',
-  },
-  rejectedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#FEE2E2',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  rejectedBadgeText: {
-    fontSize: 10,
-    fontFamily: 'Inter-SemiBold',
-    color: '#DC2626',
-  },
-  rejectionReason: {
-    fontSize: 12,
-    fontFamily: 'Inter',
-    color: '#DC2626',
-    marginTop: 4,
-  },
-  pendingHint: {
-    fontSize: 12,
-    fontFamily: 'Inter',
-    color: '#999',
-    marginTop: 4,
-  },
-  dismissButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 4,
-    marginTop: 8,
-  },
-  dismissButtonText: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: '#6B7280',
   },
   friendsSectionHeader: {
     flexDirection: 'row',

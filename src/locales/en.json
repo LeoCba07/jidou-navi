@@ -509,6 +509,7 @@
     "approveError": "Failed to approve machine. Please try again.",
     "rejectSuccess": "Machine rejected. The contributor has been notified.",
     "rejectError": "Failed to reject machine. Please try again.",
+    "noReason": "No reason provided",
     "rejectReason": "Rejection Reason",
     "selectRejectReason": "Please select a reason for rejecting this submission:",
     "customReasonPlaceholder": "Enter custom reason...",
