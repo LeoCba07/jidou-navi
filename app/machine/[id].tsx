@@ -996,7 +996,7 @@ export default function MachineDetailScreen() {
                     size={18}
                     color={isSaved ? COLORS.primary : COLORS.text}
                   />
-                  <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]}>
+                  <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]} numberOfLines={1}>
                     {isSaved ? t('common.saved') : t('common.save')}
                   </Text>
                 </View>
@@ -1017,7 +1017,7 @@ export default function MachineDetailScreen() {
               ) : (
                 <View style={styles.buttonContent}>
                   <Ionicons name="camera-outline" size={18} color={COLORS.text} />
-                  <Text style={styles.secondaryButtonText}>{t('machine.addPhoto')}</Text>
+                  <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.addPhoto')}</Text>
                 </View>
               )}
             </Pressable>
@@ -1039,7 +1039,7 @@ export default function MachineDetailScreen() {
                       size={18}
                       color={hasCheckedIn ? COLORS.success : COLORS.text}
                     />
-                    <Text style={[styles.secondaryButtonText, hasCheckedIn && styles.visitedText]}>
+                    <Text style={[styles.secondaryButtonText, hasCheckedIn && styles.visitedText]} numberOfLines={1}>
                       {hasCheckedIn ? t('machine.visited') : t('machine.iVisited')}
                     </Text>
                   </View>
@@ -1425,17 +1425,17 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: COLORS.text,
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: FONTS.button,
+    textAlign: 'center',
   },
   savedButton: {
     backgroundColor: '#FEF2F2',
     borderColor: COLORS.primary,
   },
   buttonContent: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.xs,
+    gap: 2,
   },
   buttonDisabled: {
     opacity: 0.6,
