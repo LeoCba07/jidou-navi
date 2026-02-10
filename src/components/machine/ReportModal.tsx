@@ -1,5 +1,5 @@
 // Modal for reporting issues with a machine
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -39,6 +39,14 @@ export default function ReportModal({
   const [selectedReason, setSelectedReason] = useState<ReportReason | null>(null);
   const [details, setDetails] = useState('');
 
+  // Reset state when modal closes (handles both user close and parent close)
+  useEffect(() => {
+    if (!visible) {
+      setSelectedReason(null);
+      setDetails('');
+    }
+  }, [visible]);
+
   const handleSubmit = async () => {
     if (!selectedReason) return;
     await onSubmit(selectedReason, details.trim() || undefined);
@@ -46,8 +54,6 @@ export default function ReportModal({
 
   const handleClose = () => {
     if (isSubmitting) return;
-    setSelectedReason(null);
-    setDetails('');
     onClose();
   };
 

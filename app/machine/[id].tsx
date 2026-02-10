@@ -34,7 +34,8 @@ import { Sentry } from '../../src/lib/sentry';
 import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
-import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, ReportReason } from '../../src/lib/machines';
+import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine } from '../../src/lib/machines';
+import type { ReportReason } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
@@ -963,7 +964,7 @@ export default function MachineDetailScreen() {
             <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
           </Pressable>
 
-          {/* Secondary actions - three buttons */}
+          {/* Secondary actions - four buttons (including report/flag) */}
           <View style={styles.secondaryActions}>
             <Pressable
               style={styles.secondaryButtonSmall}

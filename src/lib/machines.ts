@@ -567,7 +567,8 @@ export async function reportMachine(
   details?: string
 ): Promise<ReportResult> {
   try {
-    const { data, error } = await (supabase as any).rpc('report_machine', {
+    // @ts-expect-error - report_machine RPC not yet in generated types
+    const { data, error } = await supabase.rpc('report_machine', {
       p_machine_id: machineId,
       p_reason: reason,
       p_details: details || null,
@@ -578,7 +579,7 @@ export async function reportMachine(
       return { success: false, error: 'network_error' };
     }
 
-    return data as ReportResult;
+    return data as unknown as ReportResult;
   } catch (e) {
     console.error('Network error reporting machine:', e);
     return { success: false, error: 'network_error' };

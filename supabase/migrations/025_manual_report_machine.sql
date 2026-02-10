@@ -5,7 +5,7 @@
 -- 1. FUNCTION: Report a machine issue
 -- ============================================
 -- Allows users to manually report issues with machines
--- Validates authentication, prevents duplicates, rate limits
+-- Validates authentication, prevents duplicates, rate limits via check_rate_limit()
 
 CREATE OR REPLACE FUNCTION report_machine(
     p_machine_id UUID,
@@ -19,9 +19,6 @@ SET search_path = public
 AS $$
 DECLARE
     v_valid_reasons TEXT[] := ARRAY['not_exists', 'duplicate', 'wrong_location', 'inappropriate', 'other'];
-    v_recent_report_count INT;
-    v_rate_limit INT := 5;
-    v_rate_limit_hours INT := 1;
 BEGIN
     -- Check authentication
     IF auth.uid() IS NULL THEN
@@ -43,25 +40,21 @@ BEGIN
         RETURN json_build_object('success', false, 'error', 'machine_not_found');
     END IF;
 
-    -- Check for existing pending report from same user on same machine
+    -- Check for existing report from same user on same machine (any status)
     IF EXISTS (
         SELECT 1 FROM flags
         WHERE machine_id = p_machine_id
         AND reported_by = auth.uid()
-        AND status = 'pending'
     ) THEN
         RETURN json_build_object('success', false, 'error', 'already_reported');
     END IF;
 
-    -- Rate limit: max 5 reports per hour per user
-    SELECT COUNT(*) INTO v_recent_report_count
-    FROM flags
-    WHERE reported_by = auth.uid()
-    AND created_at > NOW() - INTERVAL '1 hour' * v_rate_limit_hours;
-
-    IF v_recent_report_count >= v_rate_limit THEN
+    -- Rate limit: max 5 reports per 60 minutes per user (uses shared rate limit helper)
+    BEGIN
+        PERFORM check_rate_limit('report_machine', 5, 60);
+    EXCEPTION WHEN OTHERS THEN
         RETURN json_build_object('success', false, 'error', 'rate_limited');
-    END IF;
+    END;
 
     -- Insert the flag
     INSERT INTO flags (machine_id, reported_by, reason, details, status)
@@ -71,5 +64,5 @@ BEGIN
 END;
 $$;
 
--- Grant execute permission
-GRANT EXECUTE ON FUNCTION report_machine TO authenticated;
+-- Grant execute permission (with full signature)
+GRANT EXECUTE ON FUNCTION report_machine(UUID, TEXT, TEXT) TO authenticated;
