@@ -191,6 +191,8 @@
     "uploadError": "Error al subir la foto.",
     "stalePrompt": "Esta máquina no ha sido verificada recientemente. ¿Puedes confirmar que sigue aquí?",
     "verifyNow": "Verificar Ahora",
+    "neverVerifiedPrompt": "Nadie ha verificado esta máquina todavía. ¡Sé el primero en confirmar que está aquí!",
+    "beFirstToVerify": "¡Sé el Primero!",
     "stats": {
       "visits": "Visitas",
       "verified": "Verificado",

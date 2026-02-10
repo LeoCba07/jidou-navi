@@ -943,22 +943,33 @@ export default function MachineDetailScreen() {
           </View>
         )}
 
-        {/* Re-verification prompt for stale machines */}
-        {shouldShowVerifyPrompt() && (
-          <View style={styles.section}>
-            <View style={styles.verifyPrompt}>
-              <Ionicons name="alert-circle-outline" size={20} color="#F59E0B" />
-              <Text style={styles.verifyPromptText}>{t('machine.stalePrompt')}</Text>
-              <Pressable
-                style={styles.verifyButton}
-                onPress={handleCheckIn}
-                disabled={checkingIn}
-              >
-                <Text style={styles.verifyButtonText}>{t('machine.verifyNow')}</Text>
-              </Pressable>
+        {/* Re-verification prompt for never-verified or stale machines */}
+        {shouldShowVerifyPrompt() && (() => {
+          const isNeverVerified = !params.last_verified_at;
+          return (
+            <View style={styles.section}>
+              <View style={[styles.verifyPrompt, isNeverVerified && styles.verifyPromptNever]}>
+                <Ionicons
+                  name={isNeverVerified ? 'help-circle-outline' : 'alert-circle-outline'}
+                  size={20}
+                  color={isNeverVerified ? '#6366F1' : '#F59E0B'}
+                />
+                <Text style={[styles.verifyPromptText, isNeverVerified && styles.verifyPromptTextNever]}>
+                  {t(isNeverVerified ? 'machine.neverVerifiedPrompt' : 'machine.stalePrompt')}
+                </Text>
+                <Pressable
+                  style={[styles.verifyButton, isNeverVerified && styles.verifyButtonNever]}
+                  onPress={handleCheckIn}
+                  disabled={checkingIn}
+                >
+                  <Text style={styles.verifyButtonText}>
+                    {t(isNeverVerified ? 'machine.beFirstToVerify' : 'machine.verifyNow')}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
-        )}
+          );
+        })()}
 
         {/* Action buttons */}
         <View style={styles.actions}>
@@ -1005,25 +1016,27 @@ export default function MachineDetailScreen() {
                 </View>
               )}
             </Pressable>
-            <Pressable
-              style={[
-                styles.secondaryButton,
-                uploading && styles.buttonDisabled,
-              ]}
-              onPress={handleAddPhoto}
-              disabled={uploading}
-              accessibilityLabel={t('machine.addPhoto')}
-              accessibilityRole="button"
-            >
-              {uploading ? (
-                <ActivityIndicator size="small" color={COLORS.text} />
-              ) : (
-                <View style={styles.buttonContent}>
-                  <Ionicons name="camera-outline" size={18} color={COLORS.text} />
-                  <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.addPhoto')}</Text>
-                </View>
-              )}
-            </Pressable>
+            {(isVisited || hasCheckedIn) && (
+              <Pressable
+                style={[
+                  styles.secondaryButton,
+                  uploading && styles.buttonDisabled,
+                ]}
+                onPress={handleAddPhoto}
+                disabled={uploading}
+                accessibilityLabel={t('machine.addPhoto')}
+                accessibilityRole="button"
+              >
+                {uploading ? (
+                  <ActivityIndicator size="small" color={COLORS.text} />
+                ) : (
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="camera-outline" size={18} color={COLORS.text} />
+                    <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.addPhoto')}</Text>
+                  </View>
+                )}
+              </Pressable>
+            )}
             {!shouldShowVerifyPrompt() && (
               <Pressable
                 style={[
@@ -1365,11 +1378,21 @@ const styles = StyleSheet.create({
     color: '#92400E',
     lineHeight: 18,
   },
+  verifyPromptNever: {
+    backgroundColor: '#EEF2FF',
+    borderColor: '#6366F1',
+  },
+  verifyPromptTextNever: {
+    color: '#3730A3',
+  },
   verifyButton: {
     backgroundColor: COLORS.warning,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     borderRadius: BORDER_RADIUS.sm,
+  },
+  verifyButtonNever: {
+    backgroundColor: '#6366F1',
   },
   verifyButtonText: {
     fontSize: 13,
