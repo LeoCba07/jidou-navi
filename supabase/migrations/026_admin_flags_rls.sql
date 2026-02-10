@@ -1,4 +1,5 @@
 -- Admins can view all flags for moderation
+DROP POLICY IF EXISTS "Admins can view all flags" ON flags;
 CREATE POLICY "Admins can view all flags"
     ON flags FOR SELECT
     USING (
@@ -10,6 +11,7 @@ CREATE POLICY "Admins can view all flags"
     );
 
 -- Admins can update flags (resolve/dismiss)
+DROP POLICY IF EXISTS "Admins can update flags" ON flags;
 CREATE POLICY "Admins can update flags"
     ON flags FOR UPDATE
     USING (
