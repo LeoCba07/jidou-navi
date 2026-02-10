@@ -9,6 +9,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -19,6 +20,7 @@ import { supportedLanguages, LanguageCode } from '../../lib/i18n';
 import { Tables } from '../../lib/database.types';
 import { supabase } from '../../lib/supabase';
 import { useAppModal } from '../../hooks/useAppModal';
+import { fetchUserPendingMachines, dismissRejectedMachine, UserPendingMachine } from '../../lib/admin';
 
 type Profile = Tables<'profiles'>;
 type UpdateProfileResult = { success: boolean; error?: string };
@@ -45,13 +47,17 @@ export default function SettingsModal({
   const { t } = useTranslation();
   const { showError, showSuccess } = useAppModal();
   const { currentLanguage, setCurrentLanguage } = useLanguageStore();
-  const [currentScreen, setCurrentScreen] = useState<'main' | 'language' | 'edit_profile'>('main');
+  const [currentScreen, setCurrentScreen] = useState<'main' | 'language' | 'edit_profile' | 'my_submissions'>('main');
   
   // Profile edit state
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
   const [bio, setBio] = useState(profile?.bio || '');
   const [receiveNewsletter, setReceiveNewsletter] = useState(profile?.receive_newsletter || false);
   const [saving, setSaving] = useState(false);
+
+  // My Submissions state
+  const [pendingMachines, setPendingMachines] = useState<UserPendingMachine[]>([]);
+  const [loadingPending, setLoadingPending] = useState(false);
 
   // Sync state when profile or visibility changes
   useEffect(() => {
@@ -61,6 +67,36 @@ export default function SettingsModal({
       setReceiveNewsletter(profile.receive_newsletter || false);
     }
   }, [visible, profile]);
+
+  // Load pending machines when entering that screen
+  useEffect(() => {
+    if (currentScreen === 'my_submissions' && user) {
+      loadPendingSubmissions();
+    }
+  }, [currentScreen, user]);
+
+  async function loadPendingSubmissions() {
+    setLoadingPending(true);
+    try {
+      const data = await fetchUserPendingMachines();
+      setPendingMachines(data);
+    } catch (err) {
+      console.error('[Settings] Error loading pending machines:', err);
+    } finally {
+      setLoadingPending(false);
+    }
+  }
+
+  async function handleDismissRejected(machineId: string) {
+    try {
+      const success = await dismissRejectedMachine(machineId);
+      if (success) {
+        setPendingMachines(prev => prev.filter(m => m.id !== machineId));
+      }
+    } catch (err) {
+      showError(t('common.error'), t('admin.dismissError'));
+    }
+  }
 
   // Get current language display name
   const currentLanguageName = supportedLanguages.find(l => l.code === currentLanguage)?.nativeName || 'English';
@@ -146,6 +182,8 @@ export default function SettingsModal({
                 ? t('profile.language') 
                 : currentScreen === 'edit_profile'
                 ? t('profile.editProfile')
+                : currentScreen === 'my_submissions'
+                ? t('profile.mySubmissions')
                 : t('profile.accountSettings')}
             </Text>
             <Pressable onPress={handleClose} style={styles.closeButton} disabled={saving}>
@@ -175,6 +213,25 @@ export default function SettingsModal({
                   <Text style={styles.itemValue}>
                     {profile?.display_name || profile?.username || t('common.user')}
                   </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </Pressable>
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* My Submissions */}
+            <View style={styles.section}>
+              <Pressable
+                style={styles.itemRow}
+                onPress={() => setCurrentScreen('my_submissions')}
+                accessibilityRole="button"
+                accessibilityLabel={t('profile.mySubmissions')}
+              >
+                <Ionicons name="cube-outline" size={20} color="#666" />
+                <View style={styles.itemContent}>
+                  <Text style={styles.itemLabel}>{t('profile.mySubmissions')}</Text>
+                  <Text style={styles.itemValue}>{t('admin.pendingReview')}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />
               </Pressable>
@@ -338,6 +395,64 @@ export default function SettingsModal({
                     );
                   })}
                 </View>
+              </View>
+            ) : currentScreen === 'my_submissions' ? (
+              /* My Submissions Screen */
+              <View style={styles.submissionsScreen}>
+                {loadingPending ? (
+                  <ActivityIndicator color="#FF4B4B" style={styles.loader} />
+                ) : pendingMachines.length === 0 ? (
+                  <View style={styles.emptyState}>
+                    <Ionicons name="cube-outline" size={48} color="#ccc" />
+                    <Text style={styles.emptyText}>{t('admin.queueEmptySubtext')}</Text>
+                  </View>
+                ) : (
+                  <View style={styles.submissionsList}>
+                    {pendingMachines.map((machine) => (
+                      <View key={machine.id} style={styles.submissionCard}>
+                        {machine.primary_photo_url ? (
+                          <Image
+                            source={{ uri: machine.primary_photo_url }}
+                            style={styles.submissionPhoto}
+                          />
+                        ) : (
+                          <View style={[styles.submissionPhoto, styles.photoPlaceholder]}>
+                            <Ionicons name="image-outline" size={24} color="#ccc" />
+                          </View>
+                        )}
+                        <View style={styles.submissionInfo}>
+                          <View style={styles.statusRow}>
+                            <Text style={styles.submissionName} numberOfLines={1}>
+                              {machine.name || t('machine.unnamed')}
+                            </Text>
+                            {machine.status === 'pending' ? (
+                              <View style={[styles.statusBadge, styles.pendingBadge]}>
+                                <Text style={styles.statusBadgeText}>{t('profile.pendingReview')}</Text>
+                              </View>
+                            ) : (
+                              <View style={[styles.statusBadge, styles.rejectedBadge]}>
+                                <Text style={styles.statusBadgeText}>{t('profile.rejected')}</Text>
+                              </View>
+                            )}
+                          </View>
+                          {machine.status === 'rejected' && (
+                            <View style={styles.rejectionInfo}>
+                              <Text style={styles.rejectionReason} numberOfLines={2}>
+                                {machine.rejection_reason || t('admin.noReason')}
+                              </Text>
+                              <Pressable 
+                                style={styles.dismissButton} 
+                                onPress={() => handleDismissRejected(machine.id)}
+                              >
+                                <Text style={styles.dismissText}>{t('common.dismiss')}</Text>
+                              </Pressable>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </View>
             ) : (
               /* Edit Profile Screen */
@@ -548,6 +663,101 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Inter',
     color: '#666',
+  },
+  submissionsScreen: {
+    padding: 16,
+  },
+  submissionsList: {
+    gap: 12,
+  },
+  submissionCard: {
+    flexDirection: 'row',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+    overflow: 'hidden',
+  },
+  submissionPhoto: {
+    width: 80,
+    height: 80,
+  },
+  photoPlaceholder: {
+    backgroundColor: '#eee',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  submissionInfo: {
+    flex: 1,
+    padding: 10,
+    justifyContent: 'center',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  submissionName: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: '#333',
+    marginRight: 8,
+  },
+  statusBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  pendingBadge: {
+    backgroundColor: '#FEF3C7',
+  },
+  rejectedBadge: {
+    backgroundColor: '#FEE2E2',
+  },
+  statusBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Inter-Bold',
+    textTransform: 'uppercase',
+  },
+  rejectionInfo: {
+    marginTop: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rejectionReason: {
+    flex: 1,
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#EF4444',
+    marginRight: 8,
+  },
+  dismissButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: '#eee',
+    borderRadius: 4,
+  },
+  dismissText: {
+    fontSize: 11,
+    fontFamily: 'Inter-Medium',
+    color: '#666',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    marginTop: 12,
+    fontSize: 14,
+    fontFamily: 'Inter',
+    color: '#999',
+  },
+  loader: {
+    marginTop: 40,
   },
   editProfileScreen: {
     padding: 20,
