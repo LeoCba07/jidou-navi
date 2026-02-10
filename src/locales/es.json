@@ -7,6 +7,7 @@
   "common": {
     "cancel": "Cancelar",
     "ok": "OK",
+    "close": "Cerrar",
     "error": "Error",
     "success": "Éxito",
     "loading": "Cargando...",
@@ -515,5 +516,25 @@
     "daysAgo": "hace {{count}} día(s)",
     "hoursAgo": "hace {{count}} hora(s)",
     "justNow": "Ahora mismo"
+  },
+  "report": {
+    "title": "Reportar Problema",
+    "subtitle": "¿Qué problema tiene esta máquina?",
+    "reasons": {
+      "not_exists": "La máquina no existe",
+      "duplicate": "Listado duplicado",
+      "wrong_location": "Ubicación incorrecta",
+      "inappropriate": "Contenido inapropiado",
+      "other": "Otro"
+    },
+    "detailsOptional": "Detalles adicionales (opcional)",
+    "detailsRequired": "Por favor describe el problema",
+    "submit": "Enviar",
+    "success": "¡Gracias por tu reporte!",
+    "errors": {
+      "alreadyReported": "Ya has reportado esta máquina.",
+      "rateLimited": "Demasiados reportes. Intenta más tarde.",
+      "generic": "Error al enviar reporte. Intenta de nuevo."
+    }
   }
 }

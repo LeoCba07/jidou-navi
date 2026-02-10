@@ -7,6 +7,7 @@
   "common": {
     "cancel": "Cancel",
     "ok": "OK",
+    "close": "Close",
     "error": "Error",
     "success": "Success",
     "loading": "Loading...",
@@ -519,5 +520,25 @@
     "daysAgo": "{{count}} day(s) ago",
     "hoursAgo": "{{count}} hour(s) ago",
     "justNow": "Just now"
+  },
+  "report": {
+    "title": "Report Issue",
+    "subtitle": "What's wrong with this machine?",
+    "reasons": {
+      "not_exists": "Machine doesn't exist",
+      "duplicate": "Duplicate listing",
+      "wrong_location": "Wrong location",
+      "inappropriate": "Inappropriate content",
+      "other": "Other"
+    },
+    "detailsOptional": "Additional details (optional)",
+    "detailsRequired": "Please describe the issue",
+    "submit": "Submit",
+    "success": "Thank you for your report!",
+    "errors": {
+      "alreadyReported": "You've already reported this machine.",
+      "rateLimited": "Too many reports. Please try again later.",
+      "generic": "Failed to submit report. Please try again."
+    }
   }
 }

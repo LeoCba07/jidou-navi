@@ -34,7 +34,8 @@ import { Sentry } from '../../src/lib/sentry';
 import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStore } from '../../src/store';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
-import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance } from '../../src/lib/machines';
+import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine } from '../../src/lib/machines';
+import type { ReportReason } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
@@ -43,6 +44,7 @@ import { ImageSkeleton } from '../../src/components/ImageSkeleton';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
+import { ReportModal } from '../../src/components/machine';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -70,6 +72,8 @@ export default function MachineDetailScreen() {
   const fullScreenScrollViewRef = useRef<ScrollView>(null);
   const [addressCopied, setAddressCopied] = useState(false);
   const [geocodedAddress, setGeocodedAddress] = useState<string | null>(null);
+  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -725,6 +729,43 @@ export default function MachineDetailScreen() {
     }
   }
 
+  async function handleReport(reason: ReportReason, details?: string) {
+    setReportSubmitting(true);
+    try {
+      const result = await reportMachine(params.id, reason, details);
+      
+      if (result.success) {
+        setReportModalVisible(false);
+        showSuccess(t('common.success'), t('report.success'));
+        Analytics.track('machine_reported', {
+          machine_id: params.id,
+          reason,
+        });
+      } else {
+        // Handle specific errors
+        switch (result.error) {
+          case 'already_reported':
+            showError(t('common.error'), t('report.errors.alreadyReported'));
+            break;
+          case 'rate_limited':
+            showError(t('common.error'), t('report.errors.rateLimited'));
+            break;
+          default:
+            showError(t('common.error'), t('report.errors.generic'));
+        }
+      }
+    } catch (error) {
+      console.error('Report error:', error);
+      Sentry.captureException(error, {
+        tags: { context: 'machine_report' },
+        extra: { machineId: params.id, reason }
+      });
+      showError(t('common.error'), t('report.errors.generic'));
+    } finally {
+      setReportSubmitting(false);
+    }
+  }
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
     // Guard against division by zero
@@ -923,8 +964,18 @@ export default function MachineDetailScreen() {
             <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
           </Pressable>
 
-          {/* Secondary actions - three buttons */}
+          {/* Secondary actions - four buttons (including report/flag) */}
           <View style={styles.secondaryActions}>
+            <Pressable
+              style={styles.secondaryButtonSmall}
+              onPress={() => setReportModalVisible(true)}
+              accessibilityLabel={t('report.title')}
+              accessibilityRole="button"
+            >
+              <View style={styles.buttonContent}>
+                <Ionicons name="flag-outline" size={18} color={COLORS.text} />
+              </View>
+            </Pressable>
             <Pressable
               style={[
                 styles.secondaryButton,
@@ -1049,6 +1100,14 @@ export default function MachineDetailScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Report Modal */}
+      <ReportModal
+        visible={reportModalVisible}
+        onClose={() => setReportModalVisible(false)}
+        onSubmit={handleReport}
+        isSubmitting={reportSubmitting}
+      />
     </View>
   );
 }
@@ -1344,6 +1403,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.sm,
+    borderRadius: BORDER_RADIUS.pixel,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.15)',
+    ...SHADOWS.pixel,
+  },
+  secondaryButtonSmall: {
+    backgroundColor: '#f0f0f0',
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
     borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     justifyContent: 'center',

@@ -5,6 +5,7 @@ import { Sentry } from './sentry';
 type EventName = 
   | 'app_open'
   | 'machine_view'
+  | 'machine_reported'
   | 'check_in'
   | 'photo_upload'
   | 'share_machine'
