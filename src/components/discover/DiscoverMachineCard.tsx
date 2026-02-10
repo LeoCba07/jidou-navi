@@ -21,6 +21,7 @@ type DiscoverMachineCardProps = {
   onUpvotePress: (machineId: string) => void;
   onSavePress: (machineId: string) => void;
   onShowOnMap: (machine: EngagedMachine) => void;
+  onVisitorPress?: (machineId: string, visitors: MachineVisitor[], count: number) => void;
 };
 
 export default function DiscoverMachineCard({
@@ -33,6 +34,7 @@ export default function DiscoverMachineCard({
   onUpvotePress,
   onSavePress,
   onShowOnMap,
+  onVisitorPress,
 }: DiscoverMachineCardProps) {
   const { t } = useTranslation();
   const isVisited = useVisitedMachinesStore((state) => state.isVisited(machine.id));
@@ -139,6 +141,7 @@ export default function DiscoverMachineCard({
               totalCount={visitorCount}
               maxDisplay={5}
               size={24}
+              onPress={onVisitorPress ? () => onVisitorPress(machine.id, visitors, visitorCount) : undefined}
             />
             <Text style={styles.visitorsLabel}>
               {t('discover.recentVisitors')}

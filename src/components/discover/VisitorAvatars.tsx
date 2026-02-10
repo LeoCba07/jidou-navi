@@ -9,7 +9,7 @@ type VisitorAvatarsProps = {
   totalCount?: number;
   maxDisplay?: number;
   size?: number;
-  onAvatarPress?: (userId: string) => void;
+  onPress?: () => void;
 };
 
 export default function VisitorAvatars({
@@ -17,29 +17,26 @@ export default function VisitorAvatars({
   totalCount = 0,
   maxDisplay = 5,
   size = 28,
-  onAvatarPress,
+  onPress,
 }: VisitorAvatarsProps) {
   const displayVisitors = visitors.slice(0, maxDisplay);
   const overflowCount = totalCount > maxDisplay ? totalCount - maxDisplay : 0;
   const overlap = size * 0.3;
-
-  const handlePress = (userId: string) => {
-    if (onAvatarPress) {
-      onAvatarPress(userId);
-    } else {
-      router.push(`/profile/${userId}`);
-    }
-  };
 
   if (displayVisitors.length === 0) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
+    <Pressable 
+      style={styles.container} 
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel="See recent visitors"
+    >
       <View style={[styles.avatarRow, { height: size }]}>
         {displayVisitors.map((visitor, index) => (
-          <Pressable
+          <View
             key={visitor.user_id}
             style={[
               styles.avatarWrapper,
@@ -51,16 +48,13 @@ export default function VisitorAvatars({
                 zIndex: displayVisitors.length - index,
               },
             ]}
-            onPress={() => handlePress(visitor.user_id)}
-            accessibilityRole="button"
-            accessibilityLabel={visitor.display_name || visitor.username || 'User profile'}
           >
             <UserAvatar
               url={visitor.avatar_url}
               size={size - 4}
               style={styles.avatar}
             />
-          </Pressable>
+          </View>
         ))}
         {overflowCount > 0 && (
           <View
@@ -80,7 +74,7 @@ export default function VisitorAvatars({
           </View>
         )}
       </View>
-    </View>
+    </Pressable>
   );
 }
 
