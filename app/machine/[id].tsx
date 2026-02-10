@@ -973,7 +973,7 @@ export default function MachineDetailScreen() {
               accessibilityRole="button"
             >
               <View style={styles.buttonContent}>
-                <Ionicons name="flag-outline" size={18} color={COLORS.text} />
+                <Ionicons name="flag-outline" size={18} color={COLORS.warning} />
               </View>
             </Pressable>
             <Pressable
@@ -1412,7 +1412,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.pixel,
   },
   secondaryButtonSmall: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#FEF3C7',
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.md,
     borderRadius: BORDER_RADIUS.pixel,
@@ -1420,7 +1420,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 48,
     borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
+    borderColor: COLORS.warning,
     ...SHADOWS.pixel,
   },
   secondaryButtonText: {
