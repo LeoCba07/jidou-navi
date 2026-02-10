@@ -63,6 +63,7 @@ export default function MachineDetailScreen() {
   const clearCache = useMachinesCacheStore((state) => state.clearCache);
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
+  const [visitCheckDone, setVisitCheckDone] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -286,7 +287,10 @@ export default function MachineDetailScreen() {
   // Check if user already visited this machine recently
   useEffect(() => {
     async function checkUserVisit() {
-      if (!user) return;
+      if (!user) {
+        setVisitCheckDone(true);
+        return;
+      }
 
       // Get user's most recent visit to this machine
       const { data: visitData } = await supabase
@@ -298,13 +302,13 @@ export default function MachineDetailScreen() {
         .limit(1);
 
       if (visitData && visitData.length > 0 && visitData[0].visited_at) {
-        // Check if visit was within 24 hours
-        const twentyFourHoursAgo = new Date();
-        twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-        if (new Date(visitData[0].visited_at) >= twentyFourHoursAgo) {
+        // Check if visit was within the last 7 days (exact 168 hours to match backend)
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        if (new Date(visitData[0].visited_at) >= sevenDaysAgo) {
           setHasCheckedIn(true);
         }
       }
+      setVisitCheckDone(true);
     }
 
     checkUserVisit();
@@ -960,7 +964,7 @@ export default function MachineDetailScreen() {
                 <Pressable
                   style={[styles.verifyButton, isNeverVerified && styles.verifyButtonNever]}
                   onPress={handleCheckIn}
-                  disabled={checkingIn}
+                  disabled={checkingIn || hasCheckedIn}
                 >
                   <Text style={styles.verifyButtonText}>
                     {t(isNeverVerified ? 'machine.beFirstToVerify' : 'machine.verifyNow')}
@@ -1041,10 +1045,10 @@ export default function MachineDetailScreen() {
               <Pressable
                 style={[
                   styles.secondaryButton,
-                  (checkingIn || hasCheckedIn) && styles.buttonDisabled,
+                  (checkingIn || hasCheckedIn || !visitCheckDone) && styles.buttonDisabled,
                 ]}
                 onPress={handleCheckIn}
-                disabled={checkingIn || hasCheckedIn}
+                disabled={checkingIn || hasCheckedIn || !visitCheckDone}
               >
                 {checkingIn ? (
                   <ActivityIndicator size="small" color={COLORS.text} />

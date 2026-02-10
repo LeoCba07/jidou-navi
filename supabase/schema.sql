@@ -13,7 +13,7 @@ BEGIN
         SELECT 1 FROM visits
         WHERE user_id = NEW.user_id
           AND machine_id = NEW.machine_id
-          AND visited_at >= NOW() - INTERVAL '24 hours'
+          AND visited_at >= NOW() - INTERVAL '7 days'
     ) THEN
         RAISE EXCEPTION 'already visited';
     END IF;
