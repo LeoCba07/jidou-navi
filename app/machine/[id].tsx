@@ -32,6 +32,7 @@ import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
 import { Sentry } from '../../src/lib/sentry';
 import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStore } from '../../src/store';
+import { useMachinesCacheStore } from '../../src/store/machinesCacheStore';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine } from '../../src/lib/machines';
@@ -59,6 +60,7 @@ export default function MachineDetailScreen() {
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const showShareCard = useUIStore((state) => state.showShareCard);
   const { showError, showSuccess, showConfirm } = useAppModal();
+  const clearCache = useMachinesCacheStore((state) => state.clearCache);
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
@@ -496,6 +498,7 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
       addVisited(params.id as string); // Add to visited machines store
+      clearCache(); // Invalidate map cache so fresh data (with updated last_verified_at) is fetched
 
       // If user reported machine as gone, record it for auto-flagging
       if (!stillExists) {

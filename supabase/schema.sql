@@ -272,7 +272,8 @@ RETURNS TABLE (
     verification_count INTEGER,
     primary_photo_url TEXT,
     categories JSON,
-    directions_hint TEXT
+    directions_hint TEXT,
+    last_verified_at TIMESTAMPTZ
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -295,7 +296,8 @@ BEGIN
             WHERE mc.machine_id = m.id),
             '[]'::json
         ) as categories,
-        m.directions_hint
+        m.directions_hint,
+        m.last_verified_at
     FROM machines m
     LEFT JOIN machine_photos mp ON mp.machine_id = m.id AND mp.is_primary = TRUE AND mp.status = 'active'
     LEFT JOIN machine_categories mc ON mc.machine_id = m.id
@@ -312,7 +314,7 @@ BEGIN
                 AND m.id > cursor_id
             )
         )
-    GROUP BY m.id, m.name, m.description, m.address, m.latitude, m.longitude, m.location, m.status, m.visit_count, mp.photo_url, m.directions_hint
+    GROUP BY m.id, m.name, m.description, m.address, m.latitude, m.longitude, m.location, m.status, m.visit_count, mp.photo_url, m.directions_hint, m.last_verified_at
     ORDER BY ST_Distance(m.location, ST_MakePoint(lng, lat)::geography), m.id
     LIMIT limit_count;
 END;
@@ -467,7 +469,8 @@ RETURNS TABLE (
     verification_count INTEGER,
     primary_photo_url TEXT,
     categories JSON,
-    directions_hint TEXT
+    directions_hint TEXT,
+    last_verified_at TIMESTAMPTZ
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -490,7 +493,8 @@ BEGIN
             WHERE mc.machine_id = m.id),
             '[]'::json
         ) as categories,
-        m.directions_hint
+        m.directions_hint,
+        m.last_verified_at
     FROM machines m
     LEFT JOIN machine_photos mp ON mp.machine_id = m.id AND mp.is_primary = TRUE AND mp.status = 'active'
     WHERE m.status = 'active'
