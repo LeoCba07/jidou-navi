@@ -37,7 +37,7 @@ BEGIN
 
     RETURN FOUND;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ============================================
 -- 2. FIX clear_machine_gone_reports() MISSING AUTH
@@ -59,7 +59,7 @@ BEGIN
     DELETE FROM machine_gone_reports
     WHERE machine_id = p_machine_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ============================================
 -- 3. RESTRICT VISITS TABLE TO AUTHENTICATED USERS
@@ -94,7 +94,7 @@ RETURNS VOID AS $$
 BEGIN
     DELETE FROM rate_limit_log WHERE created_at < NOW() - INTERVAL '1 day';
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Helper: check and record a rate-limited action
 -- Returns TRUE if allowed, raises exception if rate limit exceeded.
@@ -122,7 +122,7 @@ BEGIN
 
     RETURN TRUE;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- RLS for rate_limit_log: no direct access, only through functions
 ALTER TABLE rate_limit_log ENABLE ROW LEVEL SECURITY;
@@ -175,7 +175,7 @@ BEGIN
 
     RETURN v_visit;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 4b. Rate-limited record_machine_gone_report: max 10 reports per 60 minutes
 CREATE OR REPLACE FUNCTION record_machine_gone_report(p_machine_id UUID)
@@ -229,7 +229,7 @@ BEGIN
         'flagged', gone_count >= flag_threshold
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 4c. Rate-limited remove_photo: max 10 removals per 60 minutes
 -- (already recreated above with auth fix, now add rate limit)
@@ -266,7 +266,7 @@ BEGIN
 
     RETURN FOUND;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Grants
 GRANT EXECUTE ON FUNCTION check_rate_limit(VARCHAR, INT, INT) TO authenticated;
