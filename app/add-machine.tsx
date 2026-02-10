@@ -538,7 +538,7 @@ export default function AddMachineScreen() {
                       setManualLng(location.longitude.toString());
                     }
                   }}
-                  trackColor={{ false: '#767577', true: COLORS.primary }}
+                  trackColor={{ false: COLORS.textMuted, true: COLORS.primary }}
                   accessibilityLabel={t('addMachine.toggleDevMode')}
                 />
               </View>
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
+    borderColor: COLORS.borderLight,
     ...SHADOWS.pixel,
   },
   photoButtonText: {
@@ -724,7 +724,7 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.pixel,
     backgroundColor: COLORS.surface,
     borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
+    borderColor: COLORS.borderLight,
   },
   categoryText: {
     fontSize: 14,
