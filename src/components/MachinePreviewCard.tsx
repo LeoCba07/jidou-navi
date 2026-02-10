@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { NearbyMachine } from '../lib/machines';
 import { useVisitedMachinesStore } from '../store/visitedMachinesStore';
-import { COLORS, VERIFICATION_THRESHOLD } from '../theme/constants';
+import { COLORS } from '../theme/constants';
 import VisitedStamp from './machine/VisitedStamp';
 
 type Props = {
@@ -27,8 +27,41 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
     : `${(actualDistance / 1000).toFixed(1)}km`;
 
   const categories = machine.categories || [];
-  const isActive = machine.status === 'active';
-  const isVerified = (machine.verification_count || 0) >= VERIFICATION_THRESHOLD;
+
+  // Format last seen time
+  const getLastSeenText = () => {
+    if (!machine.last_verified_at) {
+      return t('machine.neverVerified');
+    }
+    const lastSeen = new Date(machine.last_verified_at);
+    const now = new Date();
+    const diffMs = now.getTime() - lastSeen.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffDays > 0) {
+      return t('machine.lastSeenDays', { count: diffDays });
+    }
+    if (diffHours > 0) {
+      return t('machine.lastSeenHours', { count: diffHours });
+    }
+    return t('machine.lastSeenNow');
+  };
+
+  // Determine color based on freshness
+  const getLastSeenColor = () => {
+    if (!machine.last_verified_at) {
+      return COLORS.warning; // Never verified - orange
+    }
+    const lastSeen = new Date(machine.last_verified_at);
+    const now = new Date();
+    const diffMs = now.getTime() - lastSeen.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays <= 30) return COLORS.success; // Fresh - green
+    if (diffDays <= 90) return COLORS.secondary; // Moderate - blue
+    return COLORS.warning; // Stale - orange
+  };
 
   return (
     <View style={styles.container}>
@@ -80,14 +113,12 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
             </View>
             <View style={styles.statItem}>
               <Ionicons
-                name={isVerified ? 'shield-checkmark' : isActive ? 'checkmark-circle' : 'help-circle'}
+                name="time-outline"
                 size={14}
-                color={isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning}
+                color={getLastSeenColor()}
               />
-              <Text style={[styles.statTextMuted, isVerified ? styles.verifiedText : isActive ? styles.activeText : styles.unknownText]}>
-                {isVerified 
-                  ? t('machine.stats.verified') 
-                  : isActive ? t('machine.active') : t('machine.unverified')}
+              <Text style={[styles.statTextMuted, { color: getLastSeenColor() }]}>
+                {getLastSeenText()}
               </Text>
             </View>
           </View>
@@ -192,15 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter',
     color: COLORS.textMuted,
-  },
-  activeText: {
-    color: COLORS.success,
-  },
-  verifiedText: {
-    color: COLORS.secondary,
-  },
-  unknownText: {
-    color: COLORS.warning,
   },
   tapIndicator: {
     flexDirection: 'row',
