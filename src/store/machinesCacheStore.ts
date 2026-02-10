@@ -193,7 +193,6 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
   clearCache: () => {
     set({
       tileCache: new Map(),
-      visibleMachines: [],
       lastFetchBounds: null,
     });
   },

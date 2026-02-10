@@ -32,6 +32,7 @@ import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
 import { Sentry } from '../../src/lib/sentry';
 import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStore } from '../../src/store';
+import { useMachinesCacheStore } from '../../src/store/machinesCacheStore';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine } from '../../src/lib/machines';
@@ -59,6 +60,7 @@ export default function MachineDetailScreen() {
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const showShareCard = useUIStore((state) => state.showShareCard);
   const { showError, showSuccess, showConfirm } = useAppModal();
+  const clearCache = useMachinesCacheStore((state) => state.clearCache);
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
@@ -496,6 +498,7 @@ export default function MachineDetailScreen() {
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
       addVisited(params.id as string); // Add to visited machines store
+      clearCache(); // Invalidate map cache so fresh data (with updated last_verified_at) is fetched
 
       // If user reported machine as gone, record it for auto-flagging
       if (!stillExists) {
@@ -940,22 +943,33 @@ export default function MachineDetailScreen() {
           </View>
         )}
 
-        {/* Re-verification prompt for stale machines */}
-        {shouldShowVerifyPrompt() && (
-          <View style={styles.section}>
-            <View style={styles.verifyPrompt}>
-              <Ionicons name="alert-circle-outline" size={20} color="#F59E0B" />
-              <Text style={styles.verifyPromptText}>{t('machine.stalePrompt')}</Text>
-              <Pressable
-                style={styles.verifyButton}
-                onPress={handleCheckIn}
-                disabled={checkingIn}
-              >
-                <Text style={styles.verifyButtonText}>{t('machine.verifyNow')}</Text>
-              </Pressable>
+        {/* Re-verification prompt for never-verified or stale machines */}
+        {shouldShowVerifyPrompt() && (() => {
+          const isNeverVerified = !params.last_verified_at;
+          return (
+            <View style={styles.section}>
+              <View style={[styles.verifyPrompt, isNeverVerified && styles.verifyPromptNever]}>
+                <Ionicons
+                  name={isNeverVerified ? 'help-circle-outline' : 'alert-circle-outline'}
+                  size={20}
+                  color={isNeverVerified ? COLORS.indigo : '#F59E0B'}
+                />
+                <Text style={[styles.verifyPromptText, isNeverVerified && styles.verifyPromptTextNever]}>
+                  {t(isNeverVerified ? 'machine.neverVerifiedPrompt' : 'machine.stalePrompt')}
+                </Text>
+                <Pressable
+                  style={[styles.verifyButton, isNeverVerified && styles.verifyButtonNever]}
+                  onPress={handleCheckIn}
+                  disabled={checkingIn}
+                >
+                  <Text style={styles.verifyButtonText}>
+                    {t(isNeverVerified ? 'machine.beFirstToVerify' : 'machine.verifyNow')}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
-        )}
+          );
+        })()}
 
         {/* Action buttons */}
         <View style={styles.actions}>
@@ -1002,25 +1016,27 @@ export default function MachineDetailScreen() {
                 </View>
               )}
             </Pressable>
-            <Pressable
-              style={[
-                styles.secondaryButton,
-                uploading && styles.buttonDisabled,
-              ]}
-              onPress={handleAddPhoto}
-              disabled={uploading}
-              accessibilityLabel={t('machine.addPhoto')}
-              accessibilityRole="button"
-            >
-              {uploading ? (
-                <ActivityIndicator size="small" color={COLORS.text} />
-              ) : (
-                <View style={styles.buttonContent}>
-                  <Ionicons name="camera-outline" size={18} color={COLORS.text} />
-                  <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.addPhoto')}</Text>
-                </View>
-              )}
-            </Pressable>
+            {(isVisited || hasCheckedIn) && (
+              <Pressable
+                style={[
+                  styles.secondaryButton,
+                  uploading && styles.buttonDisabled,
+                ]}
+                onPress={handleAddPhoto}
+                disabled={uploading}
+                accessibilityLabel={t('machine.addPhoto')}
+                accessibilityRole="button"
+              >
+                {uploading ? (
+                  <ActivityIndicator size="small" color={COLORS.text} />
+                ) : (
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="camera-outline" size={18} color={COLORS.text} />
+                    <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.addPhoto')}</Text>
+                  </View>
+                )}
+              </Pressable>
+            )}
             {!shouldShowVerifyPrompt() && (
               <Pressable
                 style={[
@@ -1362,11 +1378,21 @@ const styles = StyleSheet.create({
     color: '#92400E',
     lineHeight: 18,
   },
+  verifyPromptNever: {
+    backgroundColor: '#EEF2FF',
+    borderColor: COLORS.indigo,
+  },
+  verifyPromptTextNever: {
+    color: '#3730A3',
+  },
   verifyButton: {
     backgroundColor: COLORS.warning,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     borderRadius: BORDER_RADIUS.sm,
+  },
+  verifyButtonNever: {
+    backgroundColor: COLORS.indigo,
   },
   verifyButtonText: {
     fontSize: 13,

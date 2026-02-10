@@ -325,6 +325,7 @@ export default function DiscoverScreen() {
         visit_count: String(machine.visit_count),
         status: machine.status || '',
         categories: JSON.stringify(machine.categories || []),
+        last_verified_at: machine.last_verified_at || '',
       },
     });
   }
