@@ -550,3 +550,37 @@ export async function fetchMachineVisitorCount(machineId: string): Promise<numbe
     return 0;
   }
 }
+
+// Report reason types
+export type ReportReason = 'not_exists' | 'duplicate' | 'wrong_location' | 'inappropriate' | 'other';
+
+// Report result from RPC
+type ReportResult = {
+  success: boolean;
+  error?: string;
+};
+
+// Report a machine for an issue
+export async function reportMachine(
+  machineId: string,
+  reason: ReportReason,
+  details?: string
+): Promise<ReportResult> {
+  try {
+    const { data, error } = await (supabase as any).rpc('report_machine', {
+      p_machine_id: machineId,
+      p_reason: reason,
+      p_details: details || null,
+    });
+
+    if (error) {
+      console.error('Error reporting machine:', error);
+      return { success: false, error: 'network_error' };
+    }
+
+    return data as ReportResult;
+  } catch (e) {
+    console.error('Network error reporting machine:', e);
+    return { success: false, error: 'network_error' };
+  }
+}
