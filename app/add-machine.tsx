@@ -14,6 +14,7 @@ import {
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import * as FileSystem from 'expo-file-system';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../src/lib/supabase';
 import { Sentry } from '../src/lib/sentry';
@@ -43,6 +44,13 @@ const CATEGORIES = [
 const NAME_MAX_LENGTH = 70;
 const DESCRIPTION_MAX_LENGTH = 250;
 const DIRECTIONS_HINT_MAX_LENGTH = 200;
+const MAX_PHOTOS = 2;
+
+interface PhotoData {
+  uri: string;
+  size: number;
+  exifLocation?: GpsCoordinates;
+}
 
 export default function AddMachineScreen() {
   const { t } = useTranslation();
@@ -50,8 +58,7 @@ export default function AddMachineScreen() {
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const { showError, showSuccess, showConfirm, showInfo } = useAppModal();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [photo, setPhoto] = useState<string | null>(null);
-  const [photoSize, setPhotoSize] = useState<number | null>(null);
+  const [photos, setPhotos] = useState<PhotoData[]>([]);
   const [compressing, setCompressing] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -64,7 +71,6 @@ export default function AddMachineScreen() {
   const [exifLocation, setExifLocation] = useState<GpsCoordinates | null>(null);
   const [showLocationVerification, setShowLocationVerification] = useState(false);
   const [locationSource, setLocationSource] = useState<'gps' | 'exif'>('gps');
-  const exifDecisionRef = useRef<((accepted: boolean) => void) | null>(null);
 
   const isDev = profile?.role === 'admin';
 
@@ -83,7 +89,7 @@ export default function AddMachineScreen() {
     })();
   }, []);
 
-  function handleRemovePhoto() {
+  function handleRemovePhoto(index: number) {
     showConfirm(
       t('addMachine.removePhotoConfirm.title'),
       t('addMachine.removePhotoConfirm.message'),
@@ -92,13 +98,51 @@ export default function AddMachineScreen() {
         {
           text: t('common.remove'),
           style: 'destructive',
-          onPress: () => {
-            setPhoto(null);
-            setPhotoSize(null);
-            setExifLocation(null);
-            setShowLocationVerification(false);
-            if (!isManualLocation) {
-              setLocationSource('gps');
+          onPress: async () => {
+            const newPhotos = [...photos];
+            const removedPhoto = newPhotos.splice(index, 1)[0];
+            setPhotos(newPhotos);
+
+            // If we removed the photo that provided the EXIF location, and we are not in manual mode
+            if (removedPhoto.exifLocation && locationSource === 'exif') {
+              const otherExifPhoto = newPhotos.find(p => p.exifLocation);
+              
+              if (otherExifPhoto && otherExifPhoto.exifLocation) {
+                // Use location from another photo
+                setLocation(otherExifPhoto.exifLocation);
+                setExifLocation(otherExifPhoto.exifLocation);
+              } else {
+                // No more EXIF photos: fall back to GPS
+                setExifLocation(null);
+                setLocationSource('gps');
+                
+                if (!isManualLocation) {
+                  try {
+                    const pos = await Location.getCurrentPositionAsync({
+                      accuracy: Location.Accuracy.Balanced,
+                    });
+                    setLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+                  } catch (error) {
+                    console.warn('Failed to refresh GPS after photo removal:', error);
+                    setLocation(null);
+                  }
+                } else {
+                  setLocation(null);
+                }
+              }
+            }
+
+            if (newPhotos.length === 0) {
+              setExifLocation(null);
+              setShowLocationVerification(false);
+              if (!isManualLocation) {
+                setLocationSource('gps');
+                // Refresh GPS to be sure
+                try {
+                  const pos = await Location.getCurrentPositionAsync({});
+                  setLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+                } catch (e) {}
+              }
             }
           },
         },
@@ -106,13 +150,12 @@ export default function AddMachineScreen() {
     );
   }
 
-  function waitForExifDecision(): Promise<boolean> {
-    return new Promise((resolve) => {
-      exifDecisionRef.current = resolve;
-    });
-  }
-
   async function pickImage(useCamera: boolean) {
+    if (photos.length >= MAX_PHOTOS) {
+      showInfo(t('modal.info'), t('addMachine.maxPhotosReached', { count: MAX_PHOTOS }));
+      return;
+    }
+
     const permission = useCamera
       ? await ImagePicker.requestCameraPermissionsAsync()
       : await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -122,105 +165,69 @@ export default function AddMachineScreen() {
       return;
     }
 
-    setCompressing(true);
-
     try {
-      // For gallery images, first select without editing to preserve EXIF
-      // Then we'll apply editing after checking EXIF
-      if (!useCamera) {
-        // Step 1: Select image without editing to read EXIF
-        const preEditResult = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
-          quality: 1, // Full quality to preserve EXIF
-          allowsEditing: false,
-        });
+      const result = useCamera 
+        ? await ImagePicker.launchCameraAsync({
+            mediaTypes: ['images'],
+            quality: IMAGE_QUALITY,
+            allowsEditing: true,
+            aspect: [4, 3],
+          })
+        : await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            quality: 1, // Full quality for EXIF preservation
+            allowsMultipleSelection: true,
+            selectionLimit: MAX_PHOTOS - photos.length,
+            exif: true,
+          });
 
-        if (preEditResult.canceled || !preEditResult.assets[0]) {
-          setCompressing(false);
-          return;
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        return;
+      }
+
+      setCompressing(true);
+
+      const newPhotos: PhotoData[] = [];
+
+      for (const asset of result.assets) {
+        const uri = asset.uri;
+
+        // Get file size without loading full blob into memory
+        let size = asset.fileSize || 0;
+        if (!size) {
+          try {
+            const fileInfo = await FileSystem.getInfoAsync(uri);
+            if (fileInfo.exists) {
+              size = fileInfo.size;
+            }
+          } catch (e) {
+            console.warn('Failed to get file size via FileSystem:', e);
+          }
         }
 
-        // New image selected, now we can safely clear old EXIF state
-        setExifLocation(null);
-        setShowLocationVerification(false);
-        if (!isManualLocation) {
-          setLocationSource('gps');
-        }
+        // Try to extract GPS from EXIF
+        const gpsData = await extractGpsFromExif(uri);
 
-        const originalUri = preEditResult.assets[0].uri;
-
-        // Step 2: Try to extract GPS from EXIF
-        const gpsData = await extractGpsFromExif(originalUri);
-
-        // Snapshot location before EXIF decision so we can restore on cancel
-        const prevLocation = location;
-        const prevLocationSource = locationSource;
-
-        if (gpsData) {
-          // Store EXIF location and show verification modal
+        // Logic for EXIF: only ask/use for the first valid GPS found if we don't have one
+        if (gpsData && !isManualLocation && locationSource === 'gps') {
           setExifLocation(gpsData);
           setShowLocationVerification(true);
-          await waitForExifDecision();
         }
 
-        // Step 3: Now apply editing with compression
-        const editResult = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
-          quality: IMAGE_QUALITY,
-          allowsEditing: true,
-          aspect: [4, 3],
-        });
+        newPhotos.push({ uri, size, exifLocation: gpsData || undefined });
+      }
 
-        if (!editResult.canceled && editResult.assets[0]) {
-          const asset = editResult.assets[0];
-          setPhoto(asset.uri);
-
-          // Get file size
-          const response = await fetch(asset.uri);
-          const blob = await response.blob();
-          setPhotoSize(blob.size);
-
-          // If no EXIF data was found, notify the user now (after they've finished editing)
-          if (!gpsData) {
-            if (location) {
-              showInfo(t('modal.info'), t('addMachine.noExifDataFallback'));
-            } else {
-              showInfo(t('modal.info'), t('addMachine.noExifDataNoLocation'));
-            }
-          }
+      // If no EXIF was found in any of the new photos and it's the first set of photos
+      if (photos.length === 0 && !newPhotos.some(p => p.exifLocation)) {
+        if (location) {
+          showInfo(t('modal.info'), t('addMachine.noExifDataFallback'));
         } else {
-          // User cancelled editing — restore location to pre-EXIF state
-          setLocation(prevLocation);
-          setLocationSource(prevLocationSource);
-          setExifLocation(null);
-          setShowLocationVerification(false);
-        }
-      } else {
-        // Camera: no EXIF GPS typically available on iOS
-        const result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ['images'],
-          quality: IMAGE_QUALITY,
-          allowsEditing: true,
-          aspect: [4, 3],
-        });
-
-        if (!result.canceled && result.assets[0]) {
-          // New photo from camera, clear any old EXIF
-          setExifLocation(null);
-          setShowLocationVerification(false);
-          if (!isManualLocation) {
-            setLocationSource('gps');
-          }
-          
-          const asset = result.assets[0];
-          setPhoto(asset.uri);
-
-          // Get file size
-          const response = await fetch(asset.uri);
-          const blob = await response.blob();
-          setPhotoSize(blob.size);
+          showInfo(t('modal.info'), t('addMachine.noExifDataNoLocation'));
         }
       }
+
+      setPhotos(prev => [...prev, ...newPhotos].slice(0, MAX_PHOTOS));
+
     } catch (error) {
       console.error('Image picker error:', error);
       Sentry.captureException(error, { tags: { context: 'add_machine_picker' } });
@@ -237,8 +244,6 @@ export default function AddMachineScreen() {
       setLocationSource('exif');
     }
     setShowLocationVerification(false);
-    exifDecisionRef.current?.(true);
-    exifDecisionRef.current = null;
   }
 
   function handleLocationVerificationReject() {
@@ -246,8 +251,6 @@ export default function AddMachineScreen() {
     setExifLocation(null);
     setLocationSource('gps');
     setShowLocationVerification(false);
-    exifDecisionRef.current?.(false);
-    exifDecisionRef.current = null;
   }
 
   function toggleCategory(id: string) {
@@ -257,7 +260,7 @@ export default function AddMachineScreen() {
   }
 
   async function handleSubmit() {
-    if (!photo) {
+    if (photos.length === 0) {
       showError(t('common.error'), t('addMachine.validation.photoRequired'));
       return;
     }
@@ -278,7 +281,7 @@ export default function AddMachineScreen() {
       const lng = parseFloat(manualLng);
       
       // Basic number check (must be finite numbers)
-      if (isNaN(lat) || isNaN(lng) || !isFinite(lat) || !isFinite(lng)) {
+      if (isNaN(lat) || !isFinite(lat) || isNaN(lng) || !isFinite(lng)) {
         showError(t('common.error'), t('addMachine.validation.invalidCoordinates'));
         return;
       }
@@ -301,29 +304,39 @@ export default function AddMachineScreen() {
     setSubmitting(true);
 
     try {
-      // Upload photo to Supabase Storage
-      const fileName = `machine_${Date.now()}.jpg`;
+      // 1. Upload all photos first
+      const photoUploadPromises = photos.map(async (photoData, index) => {
+        // Use a temporary name with a timestamp/random to avoid collisions before we have the machine ID
+        const tempName = `pending_${user?.id}_${index}_${Date.now()}.jpg`;
+        
+        const formData = new FormData();
+        formData.append('file', {
+          uri: photoData.uri,
+          name: tempName,
+          type: 'image/jpeg',
+        } as any);
 
-      // Create form data for React Native
-      const formData = new FormData();
-      formData.append('file', {
-        uri: photo,
-        name: fileName,
-        type: 'image/jpeg',
-      } as any);
+        const { error: uploadError } = await supabase.storage
+          .from('machine-photos')
+          .upload(tempName, formData, { contentType: 'multipart/form-data' });
 
-      const { error: uploadError } = await supabase.storage
-        .from('machine-photos')
-        .upload(fileName, formData, { contentType: 'multipart/form-data' });
+        if (uploadError) throw uploadError;
 
-      if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage
+          .from('machine-photos')
+          .getPublicUrl(tempName);
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('machine-photos')
-        .getPublicUrl(fileName);
+        return {
+          photo_url: urlData.publicUrl,
+          is_primary: index === 0,
+          status: 'active' as const,
+          uploaded_by: user?.id,
+        };
+      });
 
-      // Insert machine record (status = pending for admin review)
+      const uploadedPhotosData = await Promise.all(photoUploadPromises);
+
+      // 2. Insert machine record
       const { data: machine, error: insertError } = await supabase.from('machines').insert({
         name: name,
         description: description,
@@ -335,20 +348,22 @@ export default function AddMachineScreen() {
         directions_hint: directionsHint.trim() || null,
       }).select('id').single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        // Optional: Cleanup uploaded photos if machine insert fails
+        // For now, we'll just throw and let the user retry
+        throw insertError;
+      }
 
-      // Insert photo record
-      const { error: photoError } = await supabase.from('machine_photos').insert({
+      // 3. Link photos to the machine
+      const photoRecords = uploadedPhotosData.map(p => ({
+        ...p,
         machine_id: machine.id,
-        photo_url: urlData.publicUrl,
-        is_primary: true,
-        status: 'active',
-        uploaded_by: user?.id,
-      });
+      }));
 
-      if (photoError) console.error('Photo insert error:', photoError);
+      const { error: photosError } = await supabase.from('machine_photos').insert(photoRecords);
+      if (photosError) throw photosError;
 
-      // Insert selected categories
+      // 4. Insert selected categories
       if (selectedCategories.length > 0) {
         // Fetch category IDs from slugs
         const { data: categoryData, error: categoryFetchError } = await supabase
@@ -428,22 +443,35 @@ export default function AddMachineScreen() {
               <ActivityIndicator size="large" color={COLORS.primary} />
               <Text style={styles.compressingText}>{t('addMachine.processingImage')}</Text>
             </View>
-          ) : photo ? (
-            <Pressable onPress={handleRemovePhoto}>
-              <Image source={{ uri: photo }} style={styles.photo} />
-              <Text style={styles.photoHint}>
-                {t('addMachine.tapToRemove')}{photoSize ? ` • ${(photoSize / 1024).toFixed(0)}KB` : ''}
-              </Text>
-            </Pressable>
           ) : (
-            <View style={styles.photoButtons}>
-              <Pressable style={styles.photoButton} onPress={() => pickImage(true)}>
-                <Text style={styles.photoButtonText}>{t('addMachine.takePhoto')}</Text>
-              </Pressable>
-              <Pressable style={styles.photoButton} onPress={() => pickImage(false)}>
-                <Text style={styles.photoButtonText}>{t('addMachine.chooseFromGallery')}</Text>
-              </Pressable>
-            </View>
+            <>
+              {photos.map((p, index) => (
+                <View key={index} style={{ marginBottom: index < photos.length - 1 ? 16 : 0 }}>
+                  <Pressable onPress={() => handleRemovePhoto(index)}>
+                    <Image source={{ uri: p.uri }} style={styles.photo} />
+                    <Text style={styles.photoHint}>
+                      {t('addMachine.tapToRemove')}
+                      {index === 0 && photos.length > 1 ? ` (${t('addMachine.primary')})` : ''}
+                    </Text>
+                  </Pressable>
+                </View>
+              ))}
+
+              {photos.length < MAX_PHOTOS && (
+                <View style={[styles.photoButtons, photos.length > 0 && { marginTop: 16 }]}>
+                  <Pressable style={styles.photoButton} onPress={() => pickImage(true)}>
+                    <Text style={styles.photoButtonText}>
+                      {photos.length > 0 ? t('addMachine.takeAnotherPhoto') : t('addMachine.takePhoto')}
+                    </Text>
+                  </Pressable>
+                  <Pressable style={styles.photoButton} onPress={() => pickImage(false)}>
+                    <Text style={styles.photoButtonText}>
+                      {photos.length > 0 ? t('addMachine.chooseAnotherFromGallery') : t('addMachine.chooseFromGallery')}
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
+            </>
           )}
         </View>
 
