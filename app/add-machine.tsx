@@ -14,6 +14,7 @@ import {
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import * as FileSystem from 'expo-file-system';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../src/lib/supabase';
 import { Sentry } from '../src/lib/sentry';
@@ -96,20 +97,37 @@ export default function AddMachineScreen() {
         {
           text: t('common.remove'),
           style: 'destructive',
-          onPress: () => {
+          onPress: async () => {
             const newPhotos = [...photos];
             const removedPhoto = newPhotos.splice(index, 1)[0];
             setPhotos(newPhotos);
 
             // If we removed the photo that provided the EXIF location, and we are not in manual mode
-            // we might want to revert to GPS location or check if another photo has EXIF
             if (removedPhoto.exifLocation && locationSource === 'exif') {
               const otherExifPhoto = newPhotos.find(p => p.exifLocation);
+              
               if (otherExifPhoto && otherExifPhoto.exifLocation) {
+                // Use location from another photo
                 setLocation(otherExifPhoto.exifLocation);
+                setExifLocation(otherExifPhoto.exifLocation);
               } else {
+                // No more EXIF photos: fall back to GPS
+                setExifLocation(null);
                 setLocationSource('gps');
-                // We'll need to re-fetch GPS or use the last known one
+                
+                if (!isManualLocation) {
+                  try {
+                    const pos = await Location.getCurrentPositionAsync({
+                      accuracy: Location.Accuracy.Balanced,
+                    });
+                    setLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+                  } catch (error) {
+                    console.warn('Failed to refresh GPS after photo removal:', error);
+                    setLocation(null);
+                  }
+                } else {
+                  setLocation(null);
+                }
               }
             }
 
@@ -118,6 +136,11 @@ export default function AddMachineScreen() {
               setShowLocationVerification(false);
               if (!isManualLocation) {
                 setLocationSource('gps');
+                // Refresh GPS to be sure
+                try {
+                  const pos = await Location.getCurrentPositionAsync({});
+                  setLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+                } catch (e) {}
               }
             }
           },
@@ -151,9 +174,10 @@ export default function AddMachineScreen() {
           })
         : await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
-            quality: IMAGE_QUALITY,
+            quality: 1, // Full quality for EXIF preservation
             allowsMultipleSelection: true,
             selectionLimit: MAX_PHOTOS - photos.length,
+            exif: true,
           });
 
       if (result.canceled || !result.assets || result.assets.length === 0) {
@@ -167,10 +191,18 @@ export default function AddMachineScreen() {
       for (const asset of result.assets) {
         const uri = asset.uri;
 
-        // Get file size
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        const size = blob.size;
+        // Get file size without loading full blob into memory
+        let size = asset.fileSize || 0;
+        if (!size) {
+          try {
+            const fileInfo = await FileSystem.getInfoAsync(uri);
+            if (fileInfo.exists) {
+              size = fileInfo.size;
+            }
+          } catch (e) {
+            console.warn('Failed to get file size via FileSystem:', e);
+          }
+        }
 
         // Try to extract GPS from EXIF
         const gpsData = await extractGpsFromExif(uri);
@@ -271,7 +303,39 @@ export default function AddMachineScreen() {
     setSubmitting(true);
 
     try {
-      // 1. Insert machine record first to get ID
+      // 1. Upload all photos first
+      const photoUploadPromises = photos.map(async (photoData, index) => {
+        // Use a temporary name with a timestamp/random to avoid collisions before we have the machine ID
+        const tempName = `pending_${user?.id}_${index}_${Date.now()}.jpg`;
+        
+        const formData = new FormData();
+        formData.append('file', {
+          uri: photoData.uri,
+          name: tempName,
+          type: 'image/jpeg',
+        } as any);
+
+        const { error: uploadError } = await supabase.storage
+          .from('machine-photos')
+          .upload(tempName, formData, { contentType: 'multipart/form-data' });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+          .from('machine-photos')
+          .getPublicUrl(tempName);
+
+        return {
+          photo_url: urlData.publicUrl,
+          is_primary: index === 0,
+          status: 'active' as const,
+          uploaded_by: user?.id,
+        };
+      });
+
+      const uploadedPhotosData = await Promise.all(photoUploadPromises);
+
+      // 2. Insert machine record
       const { data: machine, error: insertError } = await supabase.from('machines').insert({
         name: name,
         description: description,
@@ -283,41 +347,18 @@ export default function AddMachineScreen() {
         directions_hint: directionsHint.trim() || null,
       }).select('id').single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        // Optional: Cleanup uploaded photos if machine insert fails
+        // For now, we'll just throw and let the user retry
+        throw insertError;
+      }
 
-      // 2. Upload all photos
-      const photoUploadPromises = photos.map(async (photoData, index) => {
-        const fileName = `machine_${machine.id}_${index}_${Date.now()}.jpg`;
-        
-        const formData = new FormData();
-        formData.append('file', {
-          uri: photoData.uri,
-          name: fileName,
-          type: 'image/jpeg',
-        } as any);
+      // 3. Link photos to the machine
+      const photoRecords = uploadedPhotosData.map(p => ({
+        ...p,
+        machine_id: machine.id,
+      }));
 
-        const { error: uploadError } = await supabase.storage
-          .from('machine-photos')
-          .upload(fileName, formData, { contentType: 'multipart/form-data' });
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from('machine-photos')
-          .getPublicUrl(fileName);
-
-        return {
-          machine_id: machine.id,
-          photo_url: urlData.publicUrl,
-          is_primary: index === 0, // First photo is primary
-          status: 'active',
-          uploaded_by: user?.id,
-        };
-      });
-
-      const photoRecords = await Promise.all(photoUploadPromises);
-
-      // 3. Insert photo records
       const { error: photosError } = await supabase.from('machine_photos').insert(photoRecords);
       if (photosError) throw photosError;
 
