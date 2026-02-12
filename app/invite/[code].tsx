@@ -3,11 +3,13 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../../src/theme/constants';
+import { useAuthStore } from '../../src/store/authStore';
 
 export const REFERRAL_STORAGE_KEY = 'pending_referral_code';
 
 export default function InviteScreen() {
   const { code } = useLocalSearchParams<{ code: string }>();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     async function handleInvite() {
@@ -20,12 +22,16 @@ export default function InviteScreen() {
         }
       }
       
-      // Redirect to welcome/signup screen
-      router.replace('/(auth)');
+      // If already logged in, go to home, otherwise go to auth
+      if (user) {
+        router.replace('/(tabs)');
+      } else {
+        router.replace('/(auth)');
+      }
     }
 
     handleInvite();
-  }, [code]);
+  }, [code, user]);
 
   return (
     <View style={styles.container}>

@@ -20,8 +20,10 @@ import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import CountryPicker from '../../src/components/CountryPicker';
 import Button from '../../src/components/Button';
-import { Country, getCountryByCode } from '../../src/lib/countries';
-import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
+import { Country, getCountryByCode } from '../../lib/countries';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../theme/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { REFERRAL_STORAGE_KEY } from '../invite/[code]';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
@@ -111,7 +113,7 @@ export default function SignupScreen() {
           username: username.trim(),
           country: country,
           receive_newsletter: receiveNewsletter,
-          referral_code: referralCode, // Include referral code in metadata
+          referral_code: referralCode,
         },
       },
     });
@@ -122,7 +124,7 @@ export default function SignupScreen() {
       return;
     }
 
-    // Clear referral code after successful signup attempt
+    // Clear referral code after successful signup
     if (referralCode) {
       try {
         await AsyncStorage.removeItem(REFERRAL_STORAGE_KEY);

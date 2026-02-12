@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import * as Clipboard from 'expo-clipboard';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { unregisterPushNotificationsAsync } from '../../src/lib/notifications';
@@ -98,7 +99,6 @@ export default function ProfileScreen() {
     } catch (error) {
       // Fallback to clipboard if sharing fails
       try {
-        const Clipboard = require('expo-clipboard');
         await Clipboard.setStringAsync(inviteLink);
         showSuccess(t('common.success'), t('profile.inviteLinkCopied'));
       } catch (e) {

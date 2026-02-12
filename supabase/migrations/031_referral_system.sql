@@ -6,22 +6,30 @@ ALTER TABLE profiles
 ADD COLUMN IF NOT EXISTS referred_by_id UUID REFERENCES profiles(id),
 ADD COLUMN IF NOT EXISTS referral_code TEXT UNIQUE;
 
--- 2. Add Team Hunt Badge
+-- 2. Add Team Hunt Badge (Generic description - Copilot comment 5)
 INSERT INTO badges (slug, name, description, trigger_type, trigger_value, rarity, display_order)
-VALUES ('team_hunt', 'Team Hunt', 'Referred a friend who visited 3 machines', 'referral_milestone', '{"count": 3}', 'rare', 100)
+VALUES ('team_hunt', 'Team Hunt', 'Part of the referral milestone - 3 machines visited', 'referral_milestone', '{"count": 3}', 'rare', 100)
 ON CONFLICT (slug) DO NOTHING;
 
--- 3. Function to generate a unique short referral code
-CREATE OR REPLACE FUNCTION generate_referral_code()
+-- 3. Function to generate a unique short referral code with collision handling
+CREATE OR REPLACE FUNCTION generate_unique_referral_code()
 RETURNS TEXT AS $$
 DECLARE
   chars TEXT := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  result TEXT := '';
+  new_code TEXT;
+  found_code TEXT;
 BEGIN
-  FOR i IN 1..6 LOOP
-    result := result || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
+  LOOP
+    new_code := '';
+    FOR i IN 1..6 LOOP
+      new_code := new_code || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
+    END LOOP;
+    
+    SELECT referral_code INTO found_code FROM profiles WHERE referral_code = new_code;
+    IF NOT FOUND THEN
+      RETURN new_code;
+    END IF;
   END LOOP;
-  RETURN result;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -30,7 +38,7 @@ CREATE OR REPLACE FUNCTION handle_new_profile_referral_logic()
 RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.referral_code IS NULL THEN
-    NEW.referral_code := generate_referral_code();
+    NEW.referral_code := generate_unique_referral_code();
   END IF;
   RETURN NEW;
 END;
@@ -52,7 +60,7 @@ BEGIN
     v_ref_code := NEW.raw_user_meta_data->>'referral_code';
     
     -- Try to find referrer ID from code
-    IF v_ref_code IS NOT NULL THEN
+    IF v_ref_code IS NOT NULL AND v_ref_code <> '' THEN
         SELECT id INTO v_referrer_id FROM profiles WHERE referral_code = v_ref_code;
     END IF;
 
@@ -70,8 +78,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
--- 6. Update existing profiles with a referral code
-UPDATE profiles SET referral_code = generate_referral_code() WHERE referral_code IS NULL;
+-- 6. Update existing profiles with a referral code (Robust bulk update - Copilot comment 3)
+DO $$ 
+DECLARE 
+    r RECORD;
+BEGIN
+    FOR r IN SELECT id FROM profiles WHERE referral_code IS NULL LOOP
+        UPDATE profiles SET referral_code = generate_unique_referral_code() WHERE id = r.id;
+    END LOOP;
+END $$;
 
 -- 7. Trigger to handle referral rewards (100 XP to referrer)
 CREATE OR REPLACE FUNCTION process_referral_signup_reward()
@@ -79,6 +94,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.referred_by_id IS NOT NULL THEN
     -- Award 100 XP to the referrer
+    -- Corrected level calculation (Copilot comment 2)
     UPDATE profiles 
     SET xp = xp + 100,
         level = floor(0.1 * sqrt(xp + 100)) + 1
@@ -101,18 +117,25 @@ DECLARE
   v_referrer_id UUID;
   v_visit_count INTEGER;
   v_badge_id UUID;
+  v_has_badge BOOLEAN;
 BEGIN
-  -- Get referrer of the user who just made a visit
+  -- 1. Performance optimization: Quick exit if user already has badge (Copilot comment 9)
+  SELECT id INTO v_badge_id FROM badges WHERE slug = 'team_hunt';
+  SELECT EXISTS (SELECT 1 FROM user_badges WHERE user_id = NEW.user_id AND badge_id = v_badge_id) INTO v_has_badge;
+  
+  IF v_has_badge THEN
+    RETURN NEW;
+  END IF;
+
+  -- 2. Get referrer
   SELECT referred_by_id INTO v_referrer_id FROM profiles WHERE id = NEW.user_id;
 
   IF v_referrer_id IS NOT NULL THEN
     -- Count distinct machine visits for this user
     SELECT COUNT(DISTINCT machine_id) INTO v_visit_count FROM visits WHERE user_id = NEW.user_id;
 
-    IF v_visit_count = 3 THEN
-      SELECT id INTO v_badge_id FROM badges WHERE slug = 'team_hunt';
-      
-      -- Award badge to the friend (the one who visited)
+    IF v_visit_count >= 3 THEN
+      -- Award badge to the friend
       INSERT INTO user_badges (user_id, badge_id)
       VALUES (NEW.user_id, v_badge_id)
       ON CONFLICT DO NOTHING;
