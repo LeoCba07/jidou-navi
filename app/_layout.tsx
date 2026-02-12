@@ -32,7 +32,6 @@ import LanguageSelector from '../src/components/LanguageSelector';
 import ShareableCard from '../src/components/ShareableCard';
 import ErrorBoundary from '../src/components/ErrorBoundary';
 import { registerForPushNotificationsAsync } from '../src/lib/notifications';
-import * as Notifications from 'expo-notifications';
 
 export default function RootLayout() {
   const router = useRouter();

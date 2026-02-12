@@ -1,7 +1,7 @@
 -- Create push_tokens table for notifications
 CREATE TABLE IF NOT EXISTS push_tokens (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     token TEXT UNIQUE NOT NULL,
     platform TEXT, -- 'ios', 'android'
     device_name TEXT,
@@ -55,6 +55,6 @@ BEGIN
 
     RETURN v_token_record;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION upsert_push_token(TEXT, TEXT, TEXT) TO authenticated;
