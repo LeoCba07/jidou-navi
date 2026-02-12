@@ -18,13 +18,14 @@ import { getLevelProgress } from '../../src/lib/xp';
 import { useBadgeTranslation } from '../../src/hooks/useBadgeTranslation';
 import UserAvatar from '../../src/components/UserAvatar';
 
+const pixelEmptyBadges = require('../../assets/pixel-empty-badges.png');
+
 // Public profile data we fetch for other users
 type PublicProfile = {
   id: string;
   username: string;
   display_name: string | null;
   avatar_url: string | null;
-  bio: string | null;
   xp: number;
   visit_count: number;
   contribution_count: number;
@@ -84,7 +85,7 @@ export default function UserProfileScreen() {
 
     const { data, error } = await supabase
       .from('public_profiles')
-      .select('id, username, display_name, avatar_url, bio, contribution_count, visit_count, badge_count, country, xp, level, role, created_at')
+      .select('id, username, display_name, avatar_url, contribution_count, visit_count, badge_count, country, xp, level, role, created_at')
       .eq('id', id)
       .single();
 
@@ -171,24 +172,15 @@ export default function UserProfileScreen() {
               borderColor="#FF4B4B"
               style={styles.avatar}
             />
+            <View style={styles.levelBadge}>
+              <Text style={styles.levelText}>
+                {t('profile.level')} {levelProgress.currentLevel}
+              </Text>
+            </View>
           </View>
           <Text style={styles.displayName}>
             {profile.display_name || profile.username || t('common.user')}
           </Text>
-          <Text style={styles.username}>@{profile.username || 'user'}</Text>
-
-          {/* Level Badge */}
-          <View style={styles.levelBadge}>
-            <Text style={styles.levelText}>
-              {t('profile.level')} {levelProgress.currentLevel}
-            </Text>
-          </View>
-
-          {profile.bio && (
-            <Text style={styles.bio} numberOfLines={3}>
-              {profile.bio}
-            </Text>
-          )}
         </View>
 
         {/* Stats Section */}
@@ -226,7 +218,7 @@ export default function UserProfileScreen() {
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : badges.length === 0 ? (
             <View style={styles.emptyBadges}>
-              <Ionicons name="trophy-outline" size={40} color="#ccc" />
+              <Image source={pixelEmptyBadges} style={styles.emptyImage} />
               <Text style={styles.emptyBadgesText}>{t('profile.noBadgesYet')}</Text>
             </View>
           ) : (
@@ -344,7 +336,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   avatarContainer: {
-    marginBottom: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+    position: 'relative',
   },
   avatar: {
     width: 100,
@@ -358,32 +352,22 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textAlign: 'center',
   },
-  username: {
-    fontSize: 13,
-    fontFamily: 'Inter',
-    color: '#999',
-    marginBottom: 12,
-  },
   levelBadge: {
+    position: 'absolute',
+    bottom: -6,
+    alignSelf: 'center',
     backgroundColor: '#2B2B2B',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
     borderRadius: 2,
-    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#444',
+    zIndex: 2,
   },
   levelText: {
     color: '#fff',
     fontSize: 12,
     fontFamily: 'Silkscreen',
-  },
-  bio: {
-    fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#444',
-    textAlign: 'center',
-    paddingHorizontal: 16,
   },
   statsRow: {
     flexDirection: 'row',
@@ -411,8 +395,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   statBlockLabel: {
-    fontSize: 10,
-    fontFamily: 'Inter-Bold',
+    fontSize: 8,
+    fontFamily: 'Silkscreen',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -424,10 +408,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 13,
-    fontFamily: 'Inter-Bold',
+    fontSize: 11,
+    fontFamily: 'Silkscreen',
     color: '#2B2B2B',
-    marginBottom: 12,
+    marginBottom: 14,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -471,9 +455,20 @@ const styles = StyleSheet.create({
   },
   emptyBadges: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     padding: 24,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 0,
+    elevation: 2,
+  },
+  emptyImage: {
+    width: 120,
+    height: 120,
   },
   emptyBadgesText: {
     fontSize: 14,

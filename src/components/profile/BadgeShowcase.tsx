@@ -6,6 +6,9 @@ import type { Badge } from '../../lib/badges';
 import LockedBadgeCard from './LockedBadgeCard';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
+const pixelEmptyBadges = require('../../../assets/pixel-empty-badges.png');
+const pixelStatBadges = require('../../../assets/pixel-stat-badges.png');
+
 // Badge type from joined query (user's earned badges)
 type UserBadge = {
   id: string;
@@ -80,7 +83,7 @@ export default function BadgeShowcase({
   if (allBadges.length === 0) {
     return (
       <View style={styles.emptyState}>
-        <Ionicons name="trophy-outline" size={48} color="#ccc" />
+        <Image source={pixelEmptyBadges} style={styles.emptyImage} />
         <Text style={styles.emptyText}>{t('profile.noBadgesYet')}</Text>
         <Text style={styles.emptySubtext}>{t('profile.badgesHint')}</Text>
       </View>
@@ -129,9 +132,10 @@ export default function BadgeShowcase({
                       style={styles.badgeIcon}
                     />
                   ) : (
-                    <View style={styles.badgeIconPlaceholder}>
-                      <Ionicons name="trophy" size={24} color="#FF4B4B" />
-                    </View>
+                    <Image
+                      source={pixelStatBadges}
+                      style={styles.badgeIcon}
+                    />
                   )}
                   <Text style={styles.badgeName} numberOfLines={1}>
                     {translation.name}
@@ -185,8 +189,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sectionLabel: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
+    fontSize: 10,
+    fontFamily: 'Silkscreen',
     color: '#666',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -208,13 +212,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   badgeIcon: {
-    width: 36,
-    height: 36,
+    width: 42,
+    height: 42,
     marginBottom: 8,
   },
   badgeIconPlaceholder: {
-    width: 36,
-    height: 36,
+    width: 42,
+    height: 42,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
@@ -227,15 +231,27 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 2,
+    borderWidth: 2,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
     padding: 32,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 0,
+    elevation: 2,
+  },
+  emptyImage: {
+    width: 120,
+    height: 120,
   },
   emptyText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    fontFamily: 'Silkscreen',
     color: '#666',
-    marginTop: 12,
+    marginTop: 8,
+    textAlign: 'center',
   },
   emptySubtext: {
     fontSize: 14,

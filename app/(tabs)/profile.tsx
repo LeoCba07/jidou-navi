@@ -40,6 +40,14 @@ import type { Badge } from '../../src/lib/badges';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
 import { BORDER_RADIUS, COLORS, FONTS, SHADOWS, SPACING } from '../../src/theme/constants';
 
+// Pixel art assets for empty states and icons
+const pixelEmptyQuest = require('../../assets/pixel-empty-quest.png');
+const pixelEmptyFriends = require('../../assets/pixel-empty-friends.png');
+const pixelCoffee = require('../../assets/pixel-coffee.png');
+const pixelStatAdded = require('../../assets/pixel-stat-added.png');
+const pixelStatBadges = require('../../assets/pixel-stat-badges.png');
+const pixelStatVisits = require('../../assets/pixel-stat-visits.png');
+
 // Badge type from joined query
 type UserBadge = {
   id: string;
@@ -445,7 +453,6 @@ export default function ProfileScreen() {
             <Text style={styles.displayName}>
               {profile?.display_name || profile?.username || t('common.user')}
             </Text>
-            <Text style={styles.username}>@{profile?.username || 'user'}</Text>
             
             {/* XP and Level Bar */}
             <View style={styles.xpSection}>
@@ -473,69 +480,37 @@ export default function ProfileScreen() {
             </View>
 
             {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
-          </View>
 
-          {/* Invitation Card */}
-          <View style={styles.inviteCard}>
-            <View style={styles.inviteContent}>
-              <View style={styles.giftIconContainer}>
-                <Ionicons name="gift" size={24} color="#fff" />
+            {/* Stats Banner */}
+            <View style={styles.statsBanner}>
+              <View style={styles.statsBannerColumn}>
+                <Image source={pixelStatAdded} style={styles.statsBannerIcon} />
+                <Text style={styles.statsBannerLabel}>{t('profile.machinesAdded')}</Text>
+                <Text style={styles.statsBannerNumber}>{profile?.contribution_count || 0}</Text>
               </View>
-              <View style={styles.inviteTextContainer}>
-                <Text style={styles.inviteTitle}>{t('profile.inviteTitle')}</Text>
-                <Text style={styles.inviteDescription}>{t('profile.inviteDescription')}</Text>
+              <View style={styles.statsBannerDivider} />
+              <View style={styles.statsBannerColumn}>
+                <Image source={pixelStatBadges} style={styles.statsBannerIcon} />
+                <Text style={styles.statsBannerLabel}>{t('profile.badges')}</Text>
+                <Text style={styles.statsBannerNumber}>{profile?.badge_count || 0}</Text>
+              </View>
+              <View style={styles.statsBannerDivider} />
+              <View style={styles.statsBannerColumn}>
+                <Image source={pixelStatVisits} style={styles.statsBannerIcon} />
+                <Text style={styles.statsBannerLabel}>{t('profile.machinesVisited')}</Text>
+                <Text style={styles.statsBannerNumber}>{profile?.visit_count || 0}</Text>
               </View>
             </View>
-            <Pressable style={styles.inviteButton} onPress={handleInvite}>
-              <Text style={styles.inviteButtonText}>{t('profile.inviteButton')}</Text>
-              <Ionicons name="share-social-outline" size={16} color="#fff" />
-            </Pressable>
           </View>
-        </View>
-
-        {/* Stats Section */}
-        <View style={styles.statsDashboard}>
-          {/* Simple stat blocks row */}
-          <View style={styles.statsRow}>
-            <View style={styles.statBlock}>
-              <View style={styles.statBlockHeader}>
-                <Ionicons name="cube-outline" size={18} color="#FF4B4B" />
-                <Text style={[styles.statBlockLabel, { color: '#FF4B4B' }]}>
-                  {t('profile.machinesAdded')}
-                </Text>
-              </View>
-              <Text style={[styles.statBlockNumber, { color: '#FF4B4B' }]}>
-                {profile?.contribution_count || 0}
-              </Text>
-            </View>
-            <View style={styles.statBlock}>
-              <View style={styles.statBlockHeader}>
-                <Ionicons name="trophy-outline" size={18} color="#D97706" />
-                <Text style={[styles.statBlockLabel, { color: '#D97706' }]}>
-                  {t('profile.badges')}
-                </Text>
-              </View>
-              <Text style={[styles.statBlockNumber, { color: '#D97706' }]}>
-                {profile?.badge_count || 0}
-              </Text>
-            </View>
-          </View>
-
-          {/* Progress card for visits */}
-          <StatProgressCard
-            icon="footsteps-outline"
-            label={t('profile.machinesVisited')}
-            currentCount={profile?.visit_count || 0}
-            color="#3C91E6"
-            triggerType="visit_count"
-            allBadges={allBadges}
-          />
         </View>
 
         {/* Quest Log Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('profile.questLog')}</Text>
+            <View style={styles.sectionTitleRow}>
+              <Ionicons name="map-outline" size={16} color="#FF4B4B" style={styles.sectionTitleIcon} />
+              <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('profile.questLog')}</Text>
+            </View>
             {savedMachines.length > 0 && (
               <View style={styles.sortToggle}>
                 <Pressable
@@ -571,7 +546,7 @@ export default function ProfileScreen() {
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : savedMachines.length === 0 ? (
             <View style={styles.emptyBadges}>
-              <Ionicons name="bookmark-outline" size={48} color="#ccc" />
+              <Image source={pixelEmptyQuest} style={styles.emptyImage} />
               <Text style={styles.emptyText}>{t('profile.noQuestLog')}</Text>
               <Text style={styles.emptySubtext}>
                 {t('profile.questLogHint')}
@@ -660,7 +635,10 @@ export default function ProfileScreen() {
 
         {/* Badges Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
+          <View style={styles.sectionTitleRow}>
+            <Ionicons name="trophy-outline" size={16} color="#D97706" style={styles.sectionTitleIcon} />
+            <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
+          </View>
           {loadingBadges ? (
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : (
@@ -683,7 +661,10 @@ export default function ProfileScreen() {
         {/* Friends Section */}
         <View style={styles.section}>
           <View style={styles.friendsSectionHeader}>
-            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('friends.yourFriends')}</Text>
+            <View style={styles.sectionTitleRow}>
+              <Ionicons name="people-outline" size={16} color="#3C91E6" style={styles.sectionTitleIcon} />
+              <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('friends.yourFriends')}</Text>
+            </View>
             <Pressable
               style={styles.addFriendButton}
               onPress={() => setFriendsModalVisible(true)}
@@ -703,7 +684,7 @@ export default function ProfileScreen() {
           </View>
           {friends.length === 0 ? (
             <View style={styles.emptyBadges}>
-              <Ionicons name="people-outline" size={48} color="#ccc" />
+              <Image source={pixelEmptyFriends} style={styles.emptyImage} />
               <Text style={styles.emptyText}>{t('friends.noFriends')}</Text>
               <Text style={styles.emptySubtext}>{t('friends.noFriendsHint')}</Text>
             </View>
@@ -721,10 +702,33 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Invitation Card */}
+        <View style={styles.section}>
+          <View style={styles.inviteCard}>
+            <View style={styles.inviteContent}>
+              <View style={styles.giftIconContainer}>
+                <Ionicons name="gift" size={24} color="#fff" />
+              </View>
+              <View style={styles.inviteTextContainer}>
+                <Text style={styles.inviteTitle}>{t('profile.inviteTitle')}</Text>
+                <Text style={styles.inviteDescription}>{t('profile.inviteDescription')}</Text>
+              </View>
+            </View>
+            <Pressable style={styles.inviteButton} onPress={handleInvite}>
+              <Text style={styles.inviteButtonText}>{t('profile.inviteButton')}</Text>
+              <Ionicons name="share-social-outline" size={16} color="#fff" />
+            </Pressable>
+          </View>
+        </View>
+
         {/* Support Us Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.supportUs')}</Text>
+          <View style={styles.sectionTitleRow}>
+            <Ionicons name="heart-outline" size={16} color="#FF4B4B" style={styles.sectionTitleIcon} />
+            <Text style={styles.sectionTitle}>{t('profile.supportUs')}</Text>
+          </View>
           <View style={styles.supportContainer}>
+            <Image source={pixelCoffee} style={styles.coffeeImage} />
             <Text style={styles.supportText}>{t('profile.supportDescription')}</Text>
             <Pressable
               style={styles.supportButton}
@@ -970,6 +974,41 @@ const styles = StyleSheet.create({
   statsDashboard: {
     marginBottom: 24,
   },
+  statsBanner: {
+    flexDirection: 'row',
+    backgroundColor: '#FF4B4B',
+    marginHorizontal: -24,
+    marginBottom: -24,
+    marginTop: 16,
+    paddingVertical: 16,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
+  },
+  statsBannerColumn: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  statsBannerDivider: {
+    width: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  statsBannerIcon: {
+    width: 36,
+    height: 36,
+  },
+  statsBannerLabel: {
+    fontSize: 8,
+    fontFamily: 'Silkscreen',
+    color: 'rgba(255, 255, 255, 0.85)',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  },
+  statsBannerNumber: {
+    fontSize: 28,
+    fontFamily: 'DotGothic16',
+    color: '#fff',
+  },
   statsRow: {
     flexDirection: 'row',
     gap: 12,
@@ -1012,9 +1051,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
-    marginBottom: 12,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 12,
+  },
+  sectionTitleIcon: {
+    marginTop: -10,
+  },
+  coffeeImage: {
+    width: 80,
+    height: 80,
+    alignSelf: 'center',
+    marginBottom: 8,
   },
   badgeLoader: {
     marginTop: 20,
@@ -1024,6 +1077,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 32,
     alignItems: 'center',
+  },
+  emptyImage: {
+    width: 120,
+    height: 120,
   },
   emptyText: {
     fontSize: 16,

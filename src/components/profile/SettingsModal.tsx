@@ -51,7 +51,6 @@ export default function SettingsModal({
   
   // Profile edit state
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
-  const [bio, setBio] = useState(profile?.bio || '');
   const [receiveNewsletter, setReceiveNewsletter] = useState(profile?.receive_newsletter || false);
   const [saving, setSaving] = useState(false);
 
@@ -63,10 +62,20 @@ export default function SettingsModal({
   useEffect(() => {
     if (visible && profile) {
       setDisplayName(profile.display_name || '');
-      setBio(profile.bio || '');
       setReceiveNewsletter(profile.receive_newsletter || false);
     }
   }, [visible, profile]);
+
+  // Compute name change cooldown
+  const lastNameChange = (profile as any)?.last_display_name_change;
+  const nameChangeCooldownDays = (() => {
+    if (!lastNameChange) return 0;
+    const elapsed = Date.now() - new Date(lastNameChange).getTime();
+    const cooldownMs = 14 * 86400000;
+    if (elapsed >= cooldownMs) return 0;
+    return Math.ceil((cooldownMs - elapsed) / 86400000);
+  })();
+  const isNameChangeDisabled = nameChangeCooldownDays > 0;
 
   // Load pending machines when entering that screen
   useEffect(() => {
@@ -125,25 +134,24 @@ export default function SettingsModal({
     try {
       const { data, error } = await supabase.rpc('update_profile', {
         p_display_name: trimmedName,
-        p_bio: bio.trim(),
         p_receive_newsletter: receiveNewsletter,
       });
 
       if (error) throw error;
 
-      const result = data as UpdateProfileResult;
+      const result = data as UpdateProfileResult & { days_remaining?: number };
       if (result.success) {
-        // Update local state in parent
         if (profile) {
           onProfileUpdate({
             ...profile,
             display_name: trimmedName,
-            bio: bio.trim(),
             receive_newsletter: receiveNewsletter,
           });
         }
         showSuccess(t('common.success'), t('profile.updateSuccess'));
-        handleClose(); // Close modal and reset to main screen
+        handleClose();
+      } else if (result.error === 'name_change_cooldown') {
+        showError(t('common.error'), t('profile.nameChangeCooldown', { days: result.days_remaining || 14 }));
       } else {
         showError(t('common.error'), result.error || t('profile.updateError'));
       }
@@ -460,27 +468,19 @@ export default function SettingsModal({
                 <View style={styles.field}>
                   <Text style={styles.label}>{t('profile.displayName')}</Text>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, isNameChangeDisabled && styles.inputDisabled]}
                     value={displayName}
                     onChangeText={setDisplayName}
                     placeholder={t('auth.usernamePlaceholder')}
                     maxLength={100}
                     autoCorrect={false}
+                    editable={!isNameChangeDisabled}
                   />
-                </View>
-
-                <View style={styles.field}>
-                  <Text style={styles.label}>{t('profile.bio')}</Text>
-                  <TextInput
-                    style={[styles.input, styles.bioInput]}
-                    value={bio}
-                    onChangeText={setBio}
-                    placeholder={t('profile.bioPlaceholder')}
-                    multiline
-                    numberOfLines={4}
-                    maxLength={500}
-                    textAlignVertical="top"
-                  />
+                  {isNameChangeDisabled && (
+                    <Text style={styles.cooldownText}>
+                      {t('profile.nameChangeCooldown', { days: nameChangeCooldownDays })}
+                    </Text>
+                  )}
                 </View>
 
                 <Pressable
@@ -783,9 +783,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     color: '#2B2B2B',
   },
-  bioInput: {
-    height: 100,
-    paddingTop: 12,
+  inputDisabled: {
+    backgroundColor: '#eee',
+    color: '#999',
+  },
+  cooldownText: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#999',
+    marginTop: 4,
   },
   newsletterToggle: {
     flexDirection: 'row',

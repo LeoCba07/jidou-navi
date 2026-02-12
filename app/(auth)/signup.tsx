@@ -20,8 +20,8 @@ import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import CountryPicker from '../../src/components/CountryPicker';
 import Button from '../../src/components/Button';
-import { Country, getCountryByCode } from '../../lib/countries';
-import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../theme/constants';
+import { Country, getCountryByCode } from '../../src/lib/countries';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { REFERRAL_STORAGE_KEY } from '../invite/[code]';
 

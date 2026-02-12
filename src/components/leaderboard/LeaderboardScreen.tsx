@@ -1,7 +1,9 @@
 // Leaderboard section component for Discover screen
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
+const pixelEmptyFriends = require('../../../assets/pixel-empty-friends.png');
 import { useTranslation } from 'react-i18next';
 import { useFriendsStore } from '../../store/friendsStore';
 import { useAuthStore } from '../../store/authStore';
@@ -68,7 +70,7 @@ export default function LeaderboardScreen() {
           </View>
         ) : showNoFriendsState ? (
           <View style={styles.emptyState}>
-            <Ionicons name="people-outline" size={32} color="#ccc" />
+            <Image source={pixelEmptyFriends} style={styles.emptyImage} />
             <Text style={styles.emptyText}>{t('leaderboard.noFriendsYet')}</Text>
           </View>
         ) : currentLeaderboard.length === 0 ? (
@@ -136,6 +138,10 @@ const styles = StyleSheet.create({
   emptyState: {
     padding: 24,
     alignItems: 'center',
+  },
+  emptyImage: {
+    width: 120,
+    height: 120,
   },
   emptyText: {
     fontSize: 13,
