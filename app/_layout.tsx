@@ -31,6 +31,7 @@ import AppModal from '../src/components/AppModal';
 import LanguageSelector from '../src/components/LanguageSelector';
 import ShareableCard from '../src/components/ShareableCard';
 import ErrorBoundary from '../src/components/ErrorBoundary';
+import { registerForPushNotificationsAsync } from '../src/lib/notifications';
 
 export default function RootLayout() {
   const router = useRouter();
@@ -74,6 +75,8 @@ export default function RootLayout() {
         loadVisitedMachines();
         // Track app_open for authenticated user
         Analytics.track('app_open');
+        // Register for push notifications
+        registerForPushNotificationsAsync();
       }
       setLoading(false);
       setIsReady(true);
@@ -88,6 +91,8 @@ export default function RootLayout() {
           fetchProfile(session.user.id, session.user.email);
           loadSavedMachines();
           loadVisitedMachines();
+          // Register for push notifications on login
+          registerForPushNotificationsAsync();
           // Track app_open when user logs in if they weren't before
           if (event === 'SIGNED_IN') {
             Analytics.track('app_open');
@@ -100,7 +105,27 @@ export default function RootLayout() {
       }
     );
 
-    return () => subscription.unsubscribe();
+    // Notification listener
+    let notificationListener: any;
+    try {
+      const Notifications = require('expo-notifications');
+      notificationListener = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log('Notification tapped!', response.notification.request.content.data);
+        const url = response.notification.request.content.data?.url;
+        if (url) {
+          router.push(url);
+        }
+      });
+    } catch (e) {
+      console.warn('Could not initialize notification listeners:', e);
+    }
+
+    return () => {
+      subscription.unsubscribe();
+      if (notificationListener) {
+        notificationListener.remove();
+      }
+    };
   }, []);
 
   // Load saved machines for the current user

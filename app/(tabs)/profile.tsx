@@ -18,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
+import { unregisterPushNotificationsAsync } from '../../src/lib/notifications';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useVisitedMachinesStore } from '../../src/store/visitedMachinesStore';
 import { useFriendsStore } from '../../src/store/friendsStore';
@@ -264,6 +265,7 @@ export default function ProfileScreen() {
         text: t('auth.logout'),
         style: 'destructive',
         onPress: async () => {
+          await unregisterPushNotificationsAsync();
           await supabase.auth.signOut();
         },
       },
@@ -298,6 +300,8 @@ export default function ProfileScreen() {
           onPress: async () => {
             try {
               if (!user) return;
+
+              await unregisterPushNotificationsAsync();
 
               // Call RPC function to delete user and all related data
               // @ts-ignore - RPC function to be added in database

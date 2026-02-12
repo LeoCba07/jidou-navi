@@ -51,6 +51,9 @@ yarn.lock
 # Environment
 .env
 
+# Supabase
+supabase/.temp/
+
 # Backups
 backups/*.sql
 
