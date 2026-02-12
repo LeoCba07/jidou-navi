@@ -91,8 +91,8 @@ export default function ProfileScreen() {
     
     try {
       await Share.share({
-        message: t('profile.inviteDescription') + '\n' + inviteLink,
-        url: inviteLink, // iOS supports URL separately
+        message: t('profile.inviteMessage') + '\n' + inviteLink,
+        url: inviteLink, 
         title: t('profile.inviteTitle'),
       });
     } catch (error) {
@@ -915,7 +915,9 @@ const styles = StyleSheet.create({
     borderColor: COLORS.backgroundDark,
     padding: SPACING.lg,
     marginTop: SPACING.xl,
-    marginHorizontal: SPACING.lg,
+    // Remove marginHorizontal if it's already inside a padded container, 
+    // or set it to match other sections.
+    width: '100%', 
     ...SHADOWS.pixel,
   },
   inviteContent: {
