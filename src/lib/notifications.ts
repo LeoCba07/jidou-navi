@@ -35,8 +35,6 @@ if (Notifications) {
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
-        // New properties to ensure visibility in foreground
-        priority: Notifications.AndroidImportance.MAX,
       }),
     });
   } catch (e) {

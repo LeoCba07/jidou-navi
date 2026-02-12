@@ -1,6 +1,6 @@
 -- Create push_tokens table for notifications
 CREATE TABLE IF NOT EXISTS push_tokens (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
     token TEXT UNIQUE NOT NULL,
     platform TEXT, -- 'ios', 'android'
@@ -22,10 +22,15 @@ ON push_tokens FOR ALL
 USING (auth.uid() = user_id)
 WITH CHECK (auth.uid() = user_id);
 
--- Update trigger
-CREATE TRIGGER trigger_push_tokens_updated_at
-    BEFORE UPDATE ON push_tokens
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+-- Update trigger (assuming update_updated_at exists from schema.sql)
+DO $$ 
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'update_updated_at') THEN
+        CREATE TRIGGER trigger_push_tokens_updated_at
+            BEFORE UPDATE ON push_tokens
+            FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+    END IF;
+END $$;
 
 -- RPC to upsert push token
 CREATE OR REPLACE FUNCTION upsert_push_token(

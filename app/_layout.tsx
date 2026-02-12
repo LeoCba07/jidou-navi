@@ -99,8 +99,6 @@ export default function RootLayout() {
             Analytics.track('app_open');
           }
         } else {
-          // Unregister push notifications on logout
-          unregisterPushNotificationsAsync();
           setProfile(null);
           setSavedMachineIds([]); // Clear saved machines on logout
           setVisitedMachineIds([]); // Clear visited machines on logout
