@@ -136,7 +136,12 @@
     "updateError": "Failed to update profile.",
     "sortDistance": "Distance",
     "sortXP": "XP",
-    "xpEstimate": "~{{xp}} XP"
+    "xpEstimate": "~{{xp}} XP",
+    "inviteTitle": "Invite a Friend",
+    "inviteDescription": "Invite your friends to JidouNavi and earn 100 XP when they sign up!",
+    "inviteMessage": "Your friend invited you to JidouNavi! Join to discover Japan's most unique vending machines.",
+    "inviteButton": "Share Invite Link",
+    "inviteLinkCopied": "Invite link copied to clipboard!"
   },
   "map": {
     "searchPlaceholder": "Search machines...",

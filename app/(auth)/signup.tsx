@@ -20,8 +20,10 @@ import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import CountryPicker from '../../src/components/CountryPicker';
 import Button from '../../src/components/Button';
-import { Country, getCountryByCode } from '../../src/lib/countries';
-import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
+import { Country, getCountryByCode } from '../../lib/countries';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../theme/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { REFERRAL_STORAGE_KEY } from '../invite/[code]';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
@@ -94,6 +96,14 @@ export default function SignupScreen() {
 
     setLoading(true);
 
+    // Check for pending referral code
+    let referralCode = null;
+    try {
+      referralCode = await AsyncStorage.getItem(REFERRAL_STORAGE_KEY);
+    } catch (e) {
+      console.warn('Failed to fetch referral code from storage', e);
+    }
+
     // Create auth user
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
@@ -103,6 +113,7 @@ export default function SignupScreen() {
           username: username.trim(),
           country: country,
           receive_newsletter: receiveNewsletter,
+          referral_code: referralCode,
         },
       },
     });
@@ -113,7 +124,12 @@ export default function SignupScreen() {
       return;
     }
 
-    // Profile is created automatically by database trigger on auth.users
+    // Clear referral code after successful signup
+    if (referralCode) {
+      try {
+        await AsyncStorage.removeItem(REFERRAL_STORAGE_KEY);
+      } catch (e) {}
+    }
 
     setLoading(false);
     showSuccess(
