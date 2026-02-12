@@ -164,7 +164,15 @@ export default function MachineDetailScreen() {
   }, [params, machineData]);
 
   // Map individual constants for easier usage in existing JSX
-  const { name, description, latitude, longitude, primaryPhotoUrl, lastVerifiedAt } = displayData;
+  const { 
+    name, 
+    description, 
+    latitude, 
+    longitude, 
+    primary_photo_url: primaryPhotoUrl, 
+    last_verified_at: lastVerifiedAt 
+  } = displayData;
+  
   const initialDistance = displayData.distance_meters;
   const initialVisitCount = displayData.visit_count;
   const categories = displayData.categories;

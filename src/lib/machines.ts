@@ -65,6 +65,7 @@ export async function fetchMachineById(machineId: string): Promise<NearbyMachine
       .from('machines_with_details')
       .select('*')
       .eq('id', machineId)
+      .eq('status', 'active')
       .single();
 
     if (error) {

@@ -77,10 +77,8 @@ export default function ShareableCard() {
 
       await Sharing.shareAsync(uri, {
         mimeType: 'image/png',
-        dialogTitle: t('share.dialogTitle'),
+        dialogTitle: message, // Use the full message as the title/prompt where supported
         UTI: 'public.png',
-        // Note: some platforms might not support both file and message simultaneously 
-        // in shareAsync, but it's the best attempt.
       });
 
       Analytics.track('share_machine', {
