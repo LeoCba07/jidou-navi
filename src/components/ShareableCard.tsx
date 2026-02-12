@@ -71,11 +71,16 @@ export default function ShareableCard() {
         return;
       }
 
-      // Share the image
+      // Share the image with a message containing the deep link
+      const shareUrl = `https://jidounavi.com/machine/${shareCard.machineId}`;
+      const message = `${t('share.message', { name: machineName })}\n${shareUrl}`;
+
       await Sharing.shareAsync(uri, {
         mimeType: 'image/png',
         dialogTitle: t('share.dialogTitle'),
         UTI: 'public.png',
+        // Note: some platforms might not support both file and message simultaneously 
+        // in shareAsync, but it's the best attempt.
       });
 
       Analytics.track('share_machine', {

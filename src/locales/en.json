@@ -348,7 +348,8 @@
     "shareToSocial": "Share to Social",
     "maybeLater": "Maybe later",
     "notAvailable": "Sharing is not available on this device",
-    "dialogTitle": "Share your vending machine discovery!"
+    "dialogTitle": "Share your vending machine discovery!",
+    "message": "Check out this vending machine I found on JidouNavi: {{name}}"
   },
   "discover": {
     "title": "Discover",
