@@ -31,6 +31,8 @@ import AppModal from '../src/components/AppModal';
 import LanguageSelector from '../src/components/LanguageSelector';
 import ShareableCard from '../src/components/ShareableCard';
 import ErrorBoundary from '../src/components/ErrorBoundary';
+import { registerForPushNotificationsAsync } from '../src/lib/notifications';
+import * as Notifications from 'expo-notifications';
 
 export default function RootLayout() {
   const router = useRouter();
@@ -74,6 +76,8 @@ export default function RootLayout() {
         loadVisitedMachines();
         // Track app_open for authenticated user
         Analytics.track('app_open');
+        // Register for push notifications
+        registerForPushNotificationsAsync();
       }
       setLoading(false);
       setIsReady(true);
@@ -88,11 +92,15 @@ export default function RootLayout() {
           fetchProfile(session.user.id, session.user.email);
           loadSavedMachines();
           loadVisitedMachines();
+          // Register for push notifications on login
+          registerForPushNotificationsAsync();
           // Track app_open when user logs in if they weren't before
           if (event === 'SIGNED_IN') {
             Analytics.track('app_open');
           }
         } else {
+          // Unregister push notifications on logout
+          unregisterPushNotificationsAsync();
           setProfile(null);
           setSavedMachineIds([]); // Clear saved machines on logout
           setVisitedMachineIds([]); // Clear visited machines on logout
@@ -100,7 +108,18 @@ export default function RootLayout() {
       }
     );
 
-    return () => subscription.unsubscribe();
+    // Notification listener
+    const notificationListener = Notifications.addNotificationResponseReceivedListener(response => {
+      const url = response.notification.request.content.data?.url;
+      if (url) {
+        router.push(url);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      notificationListener.remove();
+    };
   }, []);
 
   // Load saved machines for the current user
