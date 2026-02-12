@@ -1,5 +1,5 @@
 // Machine detail screen
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -78,7 +78,6 @@ export default function MachineDetailScreen() {
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [machineData, setMachineData] = useState<NearbyMachine | null>(null);
-  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -96,13 +95,18 @@ export default function MachineDetailScreen() {
     categories?: string;
   }>();
 
+  // Initialize loading state to true if we don't have basic data yet
+  const [isLoadingData, setIsLoadingData] = useState(!params.name || params.name === '[id]');
+
   // Load machine data if missing (Deep Linking)
   useEffect(() => {
     async function loadMissingData() {
       if (!params.id) return;
       
-      // If we already have the name, we assume we have the basic data from navigation
-      if (params.name) {
+      // If we already have the name, we don't STRICTLY need to fetch, 
+      // but for deep links we usually don't.
+      if (params.name && params.name.length > 0 && params.name !== '[id]') {
+        setIsLoadingData(false);
         return;
       }
 
@@ -113,10 +117,10 @@ export default function MachineDetailScreen() {
           setMachineData(data);
         } else {
           showError(t('common.error'), t('map.fetchError'));
-          router.back();
+          router.replace('/(tabs)');
         }
       } catch (err) {
-        console.error('Error loading deep linked machine:', err);
+        console.error('[DeepLink] Error loading deep linked machine:', err);
       } finally {
         setIsLoadingData(false);
       }
@@ -125,16 +129,45 @@ export default function MachineDetailScreen() {
     loadMissingData();
   }, [params.id, params.name]);
 
-  // Derived values from either params or fetched machineData
-  const name = params.name || machineData?.name || '';
-  const description = params.description || machineData?.description || '';
-  const latitude = params.latitude || machineData?.latitude?.toString() || '';
-  const longitude = params.longitude || machineData?.longitude?.toString() || '';
-  const initialDistance = params.distance_meters || machineData?.distance_meters?.toString() || '0';
-  const primaryPhotoUrl = params.primary_photo_url || machineData?.primary_photo_url || '';
-  const initialVisitCount = params.visit_count || machineData?.visit_count?.toString() || '0';
-  const lastVerifiedAt = params.last_verified_at || machineData?.last_verified_at || '';
-  const categoriesJson = params.categories || (machineData?.categories ? JSON.stringify(machineData.categories) : '[]');
+  // Consolidate data into a single source of truth for the UI
+  const displayData = useMemo(() => {
+    // Helper to check if a param value is valid/useful
+    const isValid = (val: any) => val && typeof val === 'string' && val !== 'undefined' && val !== 'null' && val !== '[id]' && val.length > 0;
+
+    const useFetchResult = !isValid(params.name);
+
+    if (useFetchResult && machineData) {
+      return {
+        name: machineData.name || '',
+        description: machineData.description || '',
+        latitude: machineData.latitude?.toString() || '',
+        longitude: machineData.longitude?.toString() || '',
+        distance_meters: machineData.distance_meters?.toString() || '0',
+        primary_photo_url: machineData.primary_photo_url || '',
+        visit_count: machineData.visit_count?.toString() || '0',
+        last_verified_at: machineData.last_verified_at || '',
+        categories: machineData.categories || [],
+      };
+    }
+
+    return {
+      name: params.name || '',
+      description: params.description || '',
+      latitude: params.latitude || '',
+      longitude: params.longitude || '',
+      distance_meters: params.distance_meters || '0',
+      primary_photo_url: params.primary_photo_url || '',
+      visit_count: params.visit_count || '0',
+      last_verified_at: params.last_verified_at || '',
+      categories: params.categories ? JSON.parse(params.categories) : [],
+    };
+  }, [params, machineData]);
+
+  // Map individual constants for easier usage in existing JSX
+  const { name, description, latitude, longitude, primaryPhotoUrl, lastVerifiedAt } = displayData;
+  const initialDistance = displayData.distance_meters;
+  const initialVisitCount = displayData.visit_count;
+  const categories = displayData.categories;
 
   const isVisited = useVisitedMachinesStore((state) => state.isVisited(params.id));
 
@@ -321,9 +354,6 @@ export default function MachineDetailScreen() {
     return diffDays > 90;
   };
 
-  // Parse categories from JSON string
-  const categories = categoriesJson ? JSON.parse(categoriesJson) : [];
-
   // Check if machine is saved
   const isSaved = savedMachineIds.has(params.id);
 
@@ -400,6 +430,14 @@ export default function MachineDetailScreen() {
     });
 
     if (url) Linking.openURL(url);
+  }
+
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)');
+    }
   }
 
   async function handleCopyAddress() {
@@ -827,11 +865,20 @@ export default function MachineDetailScreen() {
     setActivePhotoIndex(roundIndex);
   };
 
+  if (isLoadingData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>{t('common.loading')}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Pressable onPress={handleBack} style={styles.backButton}>
           <Text style={styles.backText}>← {t('common.back')}</Text>
         </Pressable>
       </View>
@@ -911,7 +958,7 @@ export default function MachineDetailScreen() {
 
         {/* Title Card */}
         <View style={styles.titleCard}>
-          <Text style={styles.name}>{params.name || t('machine.unnamed')}</Text>
+          <Text style={styles.name}>{name || t('machine.unnamed')}</Text>
 
           {/* Categories */}
           {categories.length > 0 && (
@@ -934,9 +981,9 @@ export default function MachineDetailScreen() {
           </View>
 
           {/* Description */}
-          {params.description && (
-            <Text style={styles.titleDescription}>{params.description}</Text>
-          )}
+          {description ? (
+            <Text style={styles.titleDescription}>{description}</Text>
+          ) : null}
         </View>
 
         {/* Status Row - Simplified */}
@@ -1561,5 +1608,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+    gap: SPACING.md,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
   },
 });
