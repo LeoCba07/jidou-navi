@@ -51,6 +51,8 @@ type UserBadge = {
   };
 };
 
+import * as Sharing from 'expo-sharing';
+
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile, setProfile } = useAuthStore();
@@ -77,6 +79,30 @@ export default function ProfileScreen() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   type SortMode = 'distance' | 'xp';
   const [sortMode, setSortMode] = useState<SortMode>('distance');
+
+  const inviteLink = profile?.referral_code 
+    ? `https://jidou-navi.app/invite/${profile.referral_code}` 
+    : '';
+
+  async function handleInvite() {
+    if (!inviteLink) return;
+    
+    const isAvailable = await Sharing.isAvailableAsync();
+    if (isAvailable) {
+      await Sharing.shareAsync(inviteLink, {
+        dialogTitle: t('profile.inviteTitle'),
+      });
+    } else {
+      // Fallback to clipboard
+      try {
+        const Clipboard = require('expo-clipboard');
+        await Clipboard.setStringAsync(inviteLink);
+        showSuccess(t('common.success'), t('profile.inviteLinkCopied'));
+      } catch (e) {
+        console.warn('Clipboard failed', e);
+      }
+    }
+  }
 
   // Reset image error whenever the profile avatar URL changes so new avatars are attempted
   useEffect(() => {
@@ -444,6 +470,23 @@ export default function ProfileScreen() {
             </View>
 
             {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
+          </View>
+
+          {/* Invitation Card */}
+          <View style={styles.inviteCard}>
+            <View style={styles.inviteContent}>
+              <View style={styles.giftIconContainer}>
+                <Ionicons name="gift" size={24} color="#fff" />
+              </View>
+              <View style={styles.inviteTextContainer}>
+                <Text style={styles.inviteTitle}>{t('profile.inviteTitle')}</Text>
+                <Text style={styles.inviteDescription}>{t('profile.inviteDescription')}</Text>
+              </View>
+            </View>
+            <Pressable style={styles.inviteButton} onPress={handleInvite}>
+              <Text style={styles.inviteButtonText}>{t('profile.inviteButton')}</Text>
+              <Ionicons name="share-social-outline" size={16} color="#fff" />
+            </Pressable>
           </View>
         </View>
 
@@ -860,6 +903,64 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
     paddingHorizontal: 16,
+  },
+  // Invitation Card
+  inviteCard: {
+    backgroundColor: '#fff',
+    borderRadius: BORDER_RADIUS.pixel,
+    borderWidth: 2,
+    borderColor: COLORS.backgroundDark,
+    padding: SPACING.lg,
+    marginTop: SPACING.xl,
+    marginHorizontal: SPACING.lg,
+    ...SHADOWS.pixel,
+  },
+  inviteContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+    marginBottom: SPACING.lg,
+  },
+  giftIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: BORDER_RADIUS.pixel,
+    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: COLORS.primaryDark,
+  },
+  inviteTextContainer: {
+    flex: 1,
+  },
+  inviteTitle: {
+    fontSize: 14,
+    fontFamily: FONTS.heading,
+    color: COLORS.text,
+    marginBottom: 2,
+  },
+  inviteDescription: {
+    fontSize: 11,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
+    lineHeight: 15,
+  },
+  inviteButton: {
+    backgroundColor: COLORS.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.sm,
+    paddingVertical: SPACING.md,
+    borderRadius: BORDER_RADIUS.pixel,
+    borderWidth: 2,
+    borderColor: COLORS.primaryDark,
+  },
+  inviteButtonText: {
+    color: '#fff',
+    fontSize: 13,
+    fontFamily: FONTS.button,
   },
   statsDashboard: {
     marginBottom: 24,

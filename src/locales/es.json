@@ -136,7 +136,11 @@
     "updateError": "Error al actualizar el perfil.",
     "sortDistance": "Distancia",
     "sortXP": "XP",
-    "xpEstimate": "~{{xp}} XP"
+    "xpEstimate": "~{{xp}} XP",
+    "inviteTitle": "Invita a un amigo",
+    "inviteDescription": "¡Invita a tus amigos a JidouNavi y gana 100 XP cuando se registren!",
+    "inviteButton": "Compartir link de invitación",
+    "inviteLinkCopied": "¡Link de invitación copiado al portapapeles!"
   },
   "map": {
     "searchPlaceholder": "Buscar máquinas...",

@@ -94,6 +94,14 @@ export default function SignupScreen() {
 
     setLoading(true);
 
+    // Check for pending referral code
+    let referralCode = null;
+    try {
+      referralCode = await AsyncStorage.getItem(REFERRAL_STORAGE_KEY);
+    } catch (e) {
+      console.warn('Failed to fetch referral code from storage', e);
+    }
+
     // Create auth user
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
@@ -103,6 +111,7 @@ export default function SignupScreen() {
           username: username.trim(),
           country: country,
           receive_newsletter: receiveNewsletter,
+          referral_code: referralCode, // Include referral code in metadata
         },
       },
     });
@@ -113,7 +122,12 @@ export default function SignupScreen() {
       return;
     }
 
-    // Profile is created automatically by database trigger on auth.users
+    // Clear referral code after successful signup attempt
+    if (referralCode) {
+      try {
+        await AsyncStorage.removeItem(REFERRAL_STORAGE_KEY);
+      } catch (e) {}
+    }
 
     setLoading(false);
     showSuccess(

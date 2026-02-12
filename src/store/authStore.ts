@@ -5,7 +5,11 @@ import { create } from 'zustand';
 import { Session, User } from '@supabase/supabase-js';
 import { Tables } from '../lib/database.types';
 
-type Profile = Tables<'profiles'>;
+// Extended Profile type to include new referral fields
+export type Profile = Tables<'profiles'> & {
+  referral_code?: string | null;
+  referred_by_id?: string | null;
+};
 
 interface AuthState {
   user: User | null;
