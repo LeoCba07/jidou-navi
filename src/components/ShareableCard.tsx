@@ -71,10 +71,13 @@ export default function ShareableCard() {
         return;
       }
 
-      // Share the image
+      // Share the image with a message containing the deep link
+      const shareUrl = `https://jidou-navi.app/machine/${shareCard.machineId}`;
+      const message = `${t('share.message', { name: machineName })}\n${shareUrl}`;
+
       await Sharing.shareAsync(uri, {
         mimeType: 'image/png',
-        dialogTitle: t('share.dialogTitle'),
+        dialogTitle: message, // Use the full message as the title/prompt where supported
         UTI: 'public.png',
       });
 

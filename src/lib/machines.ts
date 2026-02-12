@@ -58,6 +58,28 @@ export type NearbyMachine = {
   directions_hint?: string | null;
 };
 
+// Fetch a single machine by ID
+export async function fetchMachineById(machineId: string): Promise<NearbyMachine | null> {
+  try {
+    const { data, error } = await supabase
+      .from('machines_with_details')
+      .select('*')
+      .eq('id', machineId)
+      .eq('status', 'active')
+      .single();
+
+    if (error) {
+      console.error('Error fetching machine by ID:', error);
+      return null;
+    }
+
+    return data as unknown as NearbyMachine;
+  } catch (e) {
+    console.error('Network error fetching machine by ID:', e);
+    return null;
+  }
+}
+
 // Fetch machines within radius of a location
 // Returns null on network failure so caller can keep cached data
 export async function fetchNearbyMachines(

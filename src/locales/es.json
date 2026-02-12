@@ -348,7 +348,8 @@
     "shareToSocial": "Compartir en Redes",
     "maybeLater": "Quizás después",
     "notAvailable": "Compartir no está disponible en este dispositivo",
-    "dialogTitle": "¡Comparte tu descubrimiento de máquina expendedora!"
+    "dialogTitle": "¡Comparte tu descubrimiento de máquina expendedora!",
+    "message": "Mira esta máquina expendedora que encontré en JidouNavi: {{name}}"
   },
   "discover": {
     "title": "Descubrir",

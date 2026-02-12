@@ -1,5 +1,5 @@
 // Machine detail screen
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -35,8 +35,8 @@ import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStor
 import { useMachinesCacheStore } from '../../src/store/machinesCacheStore';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
-import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine } from '../../src/lib/machines';
-import type { ReportReason } from '../../src/lib/machines';
+import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById } from '../../src/lib/machines';
+import type { NearbyMachine, ReportReason } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
@@ -77,41 +77,124 @@ export default function MachineDetailScreen() {
   const [geocodedAddress, setGeocodedAddress] = useState<string | null>(null);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [machineData, setMachineData] = useState<NearbyMachine | null>(null);
 
   const params = useLocalSearchParams<{
     id: string;
-    name: string;
-    description: string;
-    address: string;
-    latitude: string;
-    longitude: string;
-    distance_meters: string;
-    primary_photo_url: string;
-    visit_count: string;
-    verification_count: string;
-    last_verified_at: string;
-    status: string;
-    categories: string;
+    name?: string;
+    description?: string;
+    address?: string;
+    latitude?: string;
+    longitude?: string;
+    distance_meters?: string;
+    primary_photo_url?: string;
+    visit_count?: string;
+    verification_count?: string;
+    last_verified_at?: string;
+    status?: string;
+    categories?: string;
   }>();
+
+  // Initialize loading state to true if we don't have basic data yet
+  const [isLoadingData, setIsLoadingData] = useState(!params.name || params.name === '[id]');
+
+  // Load machine data if missing (Deep Linking)
+  useEffect(() => {
+    async function loadMissingData() {
+      if (!params.id) return;
+      
+      // If we already have the name, we don't STRICTLY need to fetch, 
+      // but for deep links we usually don't.
+      if (params.name && params.name.length > 0 && params.name !== '[id]') {
+        setIsLoadingData(false);
+        return;
+      }
+
+      setIsLoadingData(true);
+      try {
+        const data = await fetchMachineById(params.id);
+        if (data) {
+          setMachineData(data);
+        } else {
+          showError(t('common.error'), t('map.fetchError'));
+          router.replace('/(tabs)');
+        }
+      } catch (err) {
+        console.error('[DeepLink] Error loading deep linked machine:', err);
+      } finally {
+        setIsLoadingData(false);
+      }
+    }
+
+    loadMissingData();
+  }, [params.id, params.name]);
+
+  // Consolidate data into a single source of truth for the UI
+  const displayData = useMemo(() => {
+    // Helper to check if a param value is valid/useful
+    const isValid = (val: any) => val && typeof val === 'string' && val !== 'undefined' && val !== 'null' && val !== '[id]' && val.length > 0;
+
+    const useFetchResult = !isValid(params.name);
+
+    if (useFetchResult && machineData) {
+      return {
+        name: machineData.name || '',
+        description: machineData.description || '',
+        latitude: machineData.latitude?.toString() || '',
+        longitude: machineData.longitude?.toString() || '',
+        distance_meters: machineData.distance_meters?.toString() || '0',
+        primary_photo_url: machineData.primary_photo_url || '',
+        visit_count: machineData.visit_count?.toString() || '0',
+        last_verified_at: machineData.last_verified_at || '',
+        categories: machineData.categories || [],
+      };
+    }
+
+    return {
+      name: params.name || '',
+      description: params.description || '',
+      latitude: params.latitude || '',
+      longitude: params.longitude || '',
+      distance_meters: params.distance_meters || '0',
+      primary_photo_url: params.primary_photo_url || '',
+      visit_count: params.visit_count || '0',
+      last_verified_at: params.last_verified_at || '',
+      categories: params.categories ? JSON.parse(params.categories) : [],
+    };
+  }, [params, machineData]);
+
+  // Map individual constants for easier usage in existing JSX
+  const { 
+    name, 
+    description, 
+    latitude, 
+    longitude, 
+    primary_photo_url: primaryPhotoUrl, 
+    last_verified_at: lastVerifiedAt 
+  } = displayData;
+  
+  const initialDistance = displayData.distance_meters;
+  const initialVisitCount = displayData.visit_count;
+  const categories = displayData.categories;
 
   const isVisited = useVisitedMachinesStore((state) => state.isVisited(params.id));
 
   useEffect(() => {
-    if (params.id) {
+    if (params.id && name) {
       Analytics.track('machine_view', {
         machine_id: params.id,
-        machine_name: params.name,
+        machine_name: name,
       });
     }
-  }, [params.id]);
+  }, [params.id, name]);
 
-  // Calculate distance if missing (e.g. coming from Profile/Bookmarks)
+  // Calculate distance if missing (e.g. coming from Profile/Bookmarks or Deep Link)
   useEffect(() => {
     let isMounted = true;
 
     async function calculateMissingDistance() {
       // Only calculate if distance is 0 or missing, and we have target coordinates
-      if ((!params.distance_meters || params.distance_meters === '0') && params.latitude && params.longitude) {
+      if ((!initialDistance || initialDistance === '0') && latitude && longitude) {
         try {
           // Check permissions first
           const { status } = await Location.requestForegroundPermissionsAsync();
@@ -131,8 +214,8 @@ export default function MachineDetailScreen() {
             const dist = calculateDistance(
               location.coords.latitude,
               location.coords.longitude,
-              Number(params.latitude),
-              Number(params.longitude)
+              Number(latitude),
+              Number(longitude)
             );
             setLiveDistance(dist);
           }
@@ -147,7 +230,7 @@ export default function MachineDetailScreen() {
     return () => {
       isMounted = false;
     };
-  }, [params.distance_meters, params.latitude, params.longitude]);
+  }, [initialDistance, latitude, longitude]);
 
   // Reverse geocode when address is missing but coordinates exist
   useEffect(() => {
@@ -155,18 +238,19 @@ export default function MachineDetailScreen() {
 
     async function fetchAddress() {
       // Only reverse geocode if no address and we have coordinates
-      if (!params.address && params.latitude && params.longitude) {
+      const currentAddress = params.address || (machineData?.address);
+      if (!currentAddress && latitude && longitude) {
         try {
           const result = await reverseGeocode(
-            Number(params.latitude),
-            Number(params.longitude)
+            Number(latitude),
+            Number(longitude)
           );
           if (isMounted && result.address) {
             setGeocodedAddress(result.address);
           } else if (isMounted) {
             // Fallback to formatted coordinates
             setGeocodedAddress(
-              formatCoordinatesAsLocation(Number(params.latitude), Number(params.longitude))
+              formatCoordinatesAsLocation(Number(latitude), Number(longitude))
             );
           }
         } catch (error) {
@@ -174,7 +258,7 @@ export default function MachineDetailScreen() {
           // Fallback to formatted coordinates
           if (isMounted) {
             setGeocodedAddress(
-              formatCoordinatesAsLocation(Number(params.latitude), Number(params.longitude))
+              formatCoordinatesAsLocation(Number(latitude), Number(longitude))
             );
           }
         }
@@ -186,7 +270,7 @@ export default function MachineDetailScreen() {
     return () => {
       isMounted = false;
     };
-  }, [params.address, params.latitude, params.longitude]);
+  }, [params.address, machineData?.address, latitude, longitude]);
 
   // Initialize and fetch photos in a single effect to avoid race conditions
   useEffect(() => {
@@ -194,8 +278,8 @@ export default function MachineDetailScreen() {
 
     async function loadPhotos() {
       // Seed with primary photo if available
-      if (params.primary_photo_url) {
-        setPhotos([params.primary_photo_url]);
+      if (primaryPhotoUrl) {
+        setPhotos([primaryPhotoUrl]);
       }
 
       const fetchedPhotos = await fetchMachinePhotos(params.id);
@@ -205,7 +289,7 @@ export default function MachineDetailScreen() {
 
       // If no photos were fetched and no primary photo, clear the array
       if (fetchedPhotos.length === 0) {
-        if (!params.primary_photo_url) {
+        if (!primaryPhotoUrl) {
           setPhotos([]);
         }
         // Otherwise keep the primary photo that was seeded
@@ -215,8 +299,8 @@ export default function MachineDetailScreen() {
       let finalPhotos = fetchedPhotos;
 
       // Ensure primary photo is present and first, without duplication
-      if (params.primary_photo_url) {
-        const primary = params.primary_photo_url;
+      if (primaryPhotoUrl) {
+        const primary = primaryPhotoUrl;
         const withoutPrimary = fetchedPhotos.filter((p) => p !== primary);
         finalPhotos = [primary, ...withoutPrimary];
       }
@@ -229,10 +313,10 @@ export default function MachineDetailScreen() {
     return () => {
       isMounted = false;
     };
-  }, [params.id, params.primary_photo_url]);
+  }, [params.id, primaryPhotoUrl]);
 
   // Use local state for visit count so it updates after check-in
-  const displayVisitCount = visitCount ?? Number(params.visit_count || 0);
+  const displayVisitCount = visitCount ?? Number(initialVisitCount || 0);
 
   // Format relative date for last verified
   const formatRelativeDate = (dateString: string | undefined): string | null => {
@@ -250,12 +334,12 @@ export default function MachineDetailScreen() {
     return `${Math.floor(diffDays / 365)} years ago`;
   };
 
-  const lastVerifiedText = formatRelativeDate(params.last_verified_at);
+  const lastVerifiedText = formatRelativeDate(lastVerifiedAt);
 
   // Get freshness color based on last verified date
   const getFreshnessColor = (): string => {
-    if (!params.last_verified_at) return '#F59E0B'; // Yellow - unknown
-    const date = new Date(params.last_verified_at);
+    if (!lastVerifiedAt) return '#F59E0B'; // Yellow - unknown
+    const date = new Date(lastVerifiedAt);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -270,16 +354,13 @@ export default function MachineDetailScreen() {
   // Check if should show re-verification prompt (>90 days since last verified and user hasn't checked in)
   const shouldShowVerifyPrompt = (): boolean => {
     if (hasCheckedIn) return false;
-    if (!params.last_verified_at) return true; // Never verified
-    const date = new Date(params.last_verified_at);
+    if (!lastVerifiedAt) return true; // Never verified
+    const date = new Date(lastVerifiedAt);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     return diffDays > 90;
   };
-
-  // Parse categories from JSON string
-  const categories = params.categories ? JSON.parse(params.categories) : [];
 
   // Check if machine is saved
   const isSaved = savedMachineIds.has(params.id);
@@ -328,13 +409,13 @@ export default function MachineDetailScreen() {
           y: 0,
           animated: false,
         });
-      }, MODAL_SCROLL_DELAY_MS);
+      }, 50);
 
       return () => clearTimeout(timer);
     }
   }, [isFullScreen]);
 
-  const parsedDistance = Number(params.distance_meters);
+  const parsedDistance = Number(initialDistance);
   const displayDistance =
     (Number.isFinite(liveDistance as number) ? (liveDistance as number) : null) ??
     (Number.isFinite(parsedDistance) ? parsedDistance : null);
@@ -347,9 +428,9 @@ export default function MachineDetailScreen() {
         : `${(displayDistance / 1000).toFixed(1)}km`;
 
   function openDirections() {
-    const lat = params.latitude;
-    const lng = params.longitude;
-    const label = encodeURIComponent(params.name || 'Vending Machine');
+    const lat = latitude;
+    const lng = longitude;
+    const label = encodeURIComponent(name || 'Vending Machine');
 
     const url = Platform.select({
       ios: `maps:?daddr=${lat},${lng}&q=${label}`,
@@ -359,8 +440,16 @@ export default function MachineDetailScreen() {
     if (url) Linking.openURL(url);
   }
 
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)');
+    }
+  }
+
   async function handleCopyAddress() {
-    const addressToCopy = params.address || geocodedAddress;
+    const addressToCopy = params.address || machineData?.address || geocodedAddress;
     if (addressToCopy && Clipboard?.setStringAsync) {
       try {
         await Clipboard.setStringAsync(addressToCopy);
@@ -784,11 +873,20 @@ export default function MachineDetailScreen() {
     setActivePhotoIndex(roundIndex);
   };
 
+  if (isLoadingData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>{t('common.loading')}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <Pressable onPress={handleBack} style={styles.backButton}>
           <Text style={styles.backText}>← {t('common.back')}</Text>
         </Pressable>
       </View>
@@ -868,7 +966,7 @@ export default function MachineDetailScreen() {
 
         {/* Title Card */}
         <View style={styles.titleCard}>
-          <Text style={styles.name}>{params.name || t('machine.unnamed')}</Text>
+          <Text style={styles.name}>{name || t('machine.unnamed')}</Text>
 
           {/* Categories */}
           {categories.length > 0 && (
@@ -891,9 +989,9 @@ export default function MachineDetailScreen() {
           </View>
 
           {/* Description */}
-          {params.description && (
-            <Text style={styles.titleDescription}>{params.description}</Text>
-          )}
+          {description ? (
+            <Text style={styles.titleDescription}>{description}</Text>
+          ) : null}
         </View>
 
         {/* Status Row - Simplified */}
@@ -1518,5 +1616,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+    gap: SPACING.md,
+  },
+  loadingText: {
+    fontSize: 14,
+    fontFamily: FONTS.body,
+    color: COLORS.textMuted,
   },
 });
