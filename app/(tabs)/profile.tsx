@@ -36,6 +36,7 @@ import UserAvatar from '../../src/components/UserAvatar';
 import type { Friend } from '../../src/store/friendsStore';
 import type { Badge } from '../../src/lib/badges';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
+import { BORDER_RADIUS, COLORS, FONTS, SHADOWS, SPACING } from '../../src/theme/constants';
 
 // Badge type from joined query
 type UserBadge = {
