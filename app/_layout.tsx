@@ -109,16 +109,25 @@ export default function RootLayout() {
     );
 
     // Notification listener
-    const notificationListener = Notifications.addNotificationResponseReceivedListener(response => {
-      const url = response.notification.request.content.data?.url;
-      if (url) {
-        router.push(url);
-      }
-    });
+    let notificationListener: any;
+    try {
+      const Notifications = require('expo-notifications');
+      notificationListener = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log('Notification tapped!', response.notification.request.content.data);
+        const url = response.notification.request.content.data?.url;
+        if (url) {
+          router.push(url);
+        }
+      });
+    } catch (e) {
+      console.warn('Could not initialize notification listeners:', e);
+    }
 
     return () => {
       subscription.unsubscribe();
-      notificationListener.remove();
+      if (notificationListener) {
+        notificationListener.remove();
+      }
     };
   }, []);
 
