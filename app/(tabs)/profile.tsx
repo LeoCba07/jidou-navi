@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Linking,
+  Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -88,13 +89,14 @@ export default function ProfileScreen() {
   async function handleInvite() {
     if (!inviteLink) return;
     
-    const isAvailable = await Sharing.isAvailableAsync();
-    if (isAvailable) {
-      await Sharing.shareAsync(inviteLink, {
-        dialogTitle: t('profile.inviteTitle'),
+    try {
+      await Share.share({
+        message: t('profile.inviteDescription') + '\n' + inviteLink,
+        url: inviteLink, // iOS supports URL separately
+        title: t('profile.inviteTitle'),
       });
-    } else {
-      // Fallback to clipboard
+    } catch (error) {
+      // Fallback to clipboard if sharing fails
       try {
         const Clipboard = require('expo-clipboard');
         await Clipboard.setStringAsync(inviteLink);
