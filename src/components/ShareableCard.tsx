@@ -72,7 +72,7 @@ export default function ShareableCard() {
       }
 
       // Share the image with a message containing the deep link
-      const shareUrl = `https://jidounavi.com/machine/${shareCard.machineId}`;
+      const shareUrl = `https://jidou-navi.app/machine/${shareCard.machineId}`;
       const message = `${t('share.message', { name: machineName })}\n${shareUrl}`;
 
       await Sharing.shareAsync(uri, {
