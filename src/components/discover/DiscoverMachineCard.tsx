@@ -128,7 +128,7 @@ export default function DiscoverMachineCard({
             <Text style={styles.statText}>{machine.visit_count || 0}</Text>
           </View>
           <View style={styles.stat}>
-            <Image source={require('../../../assets/pixel-ui-heart.png')} style={{ width: 14, height: 14 }} />
+            <Image source={require('../../../assets/pixel-ui-heart.png')} style={{ width: 18, height: 18 }} />
             <Text style={styles.statText}>{machine.upvote_count || 0}</Text>
           </View>
         </View>
@@ -186,7 +186,7 @@ export default function DiscoverMachineCard({
             accessibilityRole="button"
             accessibilityLabel={t('discover.showOnMap')}
           >
-            <Ionicons name="map-outline" size={18} color="#3C91E6" />
+            <Image source={require('../../../assets/pixel-tab-map.png')} style={{ width: 18, height: 18 }} />
           </Pressable>
         </View>
       </View>

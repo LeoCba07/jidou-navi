@@ -495,7 +495,7 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionTitleRow}>
-              <Ionicons name="map-outline" size={16} color="#FF4B4B" style={styles.sectionTitleIcon} />
+              <Image source={require('../../assets/pixel-tab-map.png')} style={[{ width: 16, height: 16 }, styles.sectionTitleIcon]} />
               <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('profile.questLog')}</Text>
             </View>
             {savedMachines.length > 0 && (
@@ -611,7 +611,7 @@ export default function ProfileScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={t('discover.showOnMap')}
                     >
-                      <Ionicons name="map-outline" size={20} color="#3C91E6" />
+                      <Image source={require('../../assets/pixel-tab-map.png')} style={{ width: 20, height: 20 }} />
                     </Pressable>
                   </View>
                 </Pressable>
@@ -969,7 +969,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitleIcon: {
-    marginTop: -10,
+    marginTop: -2,
   },
   coffeeImage: {
     width: 80,

@@ -62,7 +62,7 @@ const DailyVotesIndicator = forwardRef<DailyVotesIndicatorRef, DailyVotesIndicat
       <Animated.View style={[styles.compactContainer, !hasVotesLeft && styles.compactContainerEmpty, animatedStyle]}>
         <Image
           source={HEART_ICON}
-          style={{ width: 16, height: 16, opacity: hasVotesLeft ? 1 : 0.3 }}
+          style={{ width: 18, height: 18, opacity: hasVotesLeft ? 1 : 0.3 }}
         />
         <Text style={[styles.compactText, !hasVotesLeft && styles.compactTextEmpty]}>
           {remainingVotes}/{MAX_DAILY_UPVOTES}
@@ -78,7 +78,7 @@ const DailyVotesIndicator = forwardRef<DailyVotesIndicatorRef, DailyVotesIndicat
           <Image
             key={index}
             source={HEART_ICON}
-            style={{ width: 20, height: 20, opacity: index < usedVotes ? 0.25 : 1 }}
+            style={{ width: 22, height: 22, opacity: index < usedVotes ? 0.25 : 1 }}
           />
         ))}
       </View>
