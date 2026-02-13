@@ -13,7 +13,7 @@ export default function VisitedStamp({ size = 'default' }: Props) {
     <View style={[styles.container, isSmall && styles.containerSmall]}>
       <View style={[styles.stamp, isSmall && styles.stampSmall]}>
         <Image
-          source={require('../../../assets/favicon-48.png')}
+          source={require('../../../assets/pixel-visited-stamp.png')}
           style={[styles.icon, isSmall && styles.iconSmall]}
         />
         <Text style={[styles.text, isSmall && styles.textSmall]} numberOfLines={1}>{t('share.visited')}</Text>

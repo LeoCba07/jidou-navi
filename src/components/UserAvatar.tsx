@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Image, ImageStyle, StyleProp, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const DEFAULT_AVATAR = require('../../assets/default-avatar.jpg');
+const DEFAULT_AVATAR = require('../../assets/pixel-default-avatar.png');
 
 interface UserAvatarProps {
   url?: string | null;

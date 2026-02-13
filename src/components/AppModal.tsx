@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import {
   View,
   Text,
+  Image,
   Modal,
   Pressable,
   StyleSheet,
@@ -176,6 +177,7 @@ export default function AppModal() {
                         opacity: xpAnim
                       }
                     ]}>
+                      <Image source={require('../../assets/pixel-xp-burst.png')} style={styles.xpBurstIcon} />
                       <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
                     </Animated.View>
                   </View>
@@ -244,6 +246,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   xpBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: '#22C55E',
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -255,6 +260,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 0,
+  },
+  xpBurstIcon: {
+    width: 20,
+    height: 20,
   },
   xpBadgeText: {
     color: '#fff',
