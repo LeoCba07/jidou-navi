@@ -343,7 +343,7 @@ export default function SettingsModal({
                   <Text style={styles.itemLabel}>{t('profile.inviteTitle')}</Text>
                   <Text style={styles.itemValue}>{t('profile.inviteDescription')}</Text>
                 </View>
-                <Image source={require('../../../assets/pixel-ui-share.png')} style={{ width: 20, height: 20, tintColor: '#ccc' }} />
+                <Image source={require('../../../assets/pixel-ui-share.png')} style={{ width: 20, height: 20 }} />
               </Pressable>
             </View>
 

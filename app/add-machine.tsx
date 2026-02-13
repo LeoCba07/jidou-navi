@@ -34,7 +34,6 @@ const IMAGE_QUALITY = 0.5;
 const CATEGORY_ICONS: Record<string, any> = {
   eats: require('../assets/pixel-cat-eats.png'),
   gachapon: require('../assets/pixel-cat-gachapon.png'),
-  weird: require('../assets/pixel-cat-weird.png'),
   retro: require('../assets/pixel-cat-retro.png'),
   'local-gems': require('../assets/pixel-cat-local-gems.png'),
 };
@@ -512,7 +511,7 @@ export default function AddMachineScreen() {
                   ]}
                   onPress={() => toggleCategory(cat.id)}
                 >
-                  <Image source={CATEGORY_ICONS[cat.id]} style={styles.categoryIcon} />
+                  {CATEGORY_ICONS[cat.id] && <Image source={CATEGORY_ICONS[cat.id]} style={styles.categoryIcon} />}
                   <Text
                     style={[
                       styles.categoryText,

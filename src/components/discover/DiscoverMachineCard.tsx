@@ -104,7 +104,7 @@ export default function DiscoverMachineCard({
         )}
         {formattedDistance && (
           <View style={styles.distanceBadge}>
-            <Image source={require('../../../assets/pixel-ui-location.png')} style={{ width: 12, height: 12, tintColor: '#fff' }} />
+            <Image source={require('../../../assets/pixel-ui-location.png')} style={{ width: 12, height: 12 }} />
             <Text style={styles.distanceText}>{formattedDistance}</Text>
           </View>
         )}
@@ -128,7 +128,7 @@ export default function DiscoverMachineCard({
             <Text style={styles.statText}>{machine.visit_count || 0}</Text>
           </View>
           <View style={styles.stat}>
-            <Image source={require('../../../assets/pixel-ui-heart.png')} style={{ width: 14, height: 14, tintColor: '#FF4B4B' }} />
+            <Image source={require('../../../assets/pixel-ui-heart.png')} style={{ width: 14, height: 14 }} />
             <Text style={styles.statText}>{machine.upvote_count || 0}</Text>
           </View>
         </View>
@@ -175,7 +175,7 @@ export default function DiscoverMachineCard({
             ) : (
               <Image
                 source={require('../../../assets/pixel-ui-bookmark.png')}
-                style={{ width: 18, height: 18, tintColor: isSaved ? '#FF4B4B' : '#666', opacity: isSaved ? 1 : 0.5 }}
+                style={{ width: 18, height: 18, opacity: isSaved ? 1 : 0.4 }}
               />
             )}
           </Pressable>

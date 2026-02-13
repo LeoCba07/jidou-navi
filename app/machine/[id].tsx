@@ -45,6 +45,13 @@ import { ImageSkeleton } from '../../src/components/ImageSkeleton';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
+
+const CATEGORY_ICONS: Record<string, any> = {
+  eats: require('../../assets/pixel-cat-eats.png'),
+  gachapon: require('../../assets/pixel-cat-gachapon.png'),
+  retro: require('../../assets/pixel-cat-retro.png'),
+  'local-gems': require('../../assets/pixel-cat-local-gems.png'),
+};
 import { ReportModal } from '../../src/components/machine';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -976,6 +983,9 @@ export default function MachineDetailScreen() {
                   key={cat.id}
                   style={[styles.categoryChip, { backgroundColor: cat.color }]}
                 >
+                  {CATEGORY_ICONS[cat.slug] && (
+                    <Image source={CATEGORY_ICONS[cat.slug]} style={styles.categoryIcon} />
+                  )}
                   <Text style={styles.categoryText}>{cat.name}</Text>
                 </View>
               ))}
@@ -984,7 +994,7 @@ export default function MachineDetailScreen() {
 
           {/* Distance pill */}
           <View style={styles.distancePill}>
-            <Ionicons name="location" size={14} color={COLORS.primary} />
+            <Image source={require('../../assets/pixel-ui-location.png')} style={{ width: 14, height: 14 }} />
             <Text style={styles.distanceText}>{t('machine.away', { distance })}</Text>
           </View>
 
@@ -1349,9 +1359,16 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
     borderRadius: BORDER_RADIUS.pixel,
+  },
+  categoryIcon: {
+    width: 14,
+    height: 14,
   },
   categoryText: {
     fontSize: 11,

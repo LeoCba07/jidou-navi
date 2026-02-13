@@ -165,7 +165,7 @@ export default function AppModal() {
                 {xpAmount && (
                   <View style={styles.xpBadgeContainer}>
                     <Animated.View style={[
-                      styles.xpBadge,
+                      styles.xpBadgeWrapper,
                       {
                         transform: [
                           { scale: xpAnim },
@@ -178,7 +178,9 @@ export default function AppModal() {
                       }
                     ]}>
                       <Image source={require('../../assets/pixel-xp-burst.png')} style={styles.xpBurstIcon} />
-                      <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
+                      <View style={styles.xpBadge}>
+                        <Text style={styles.xpBadgeText}>+{xpAmount} XP</Text>
+                      </View>
                     </Animated.View>
                   </View>
                 )}
@@ -245,25 +247,26 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  xpBadge: {
-    flexDirection: 'row',
+  xpBadgeWrapper: {
     alignItems: 'center',
-    gap: 6,
+    marginBottom: 16,
+  },
+  xpBurstIcon: {
+    width: 48,
+    height: 48,
+    marginBottom: -6,
+  },
+  xpBadge: {
     backgroundColor: '#22C55E',
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 2,
     borderWidth: 2,
     borderColor: '#166534',
-    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 0,
-  },
-  xpBurstIcon: {
-    width: 20,
-    height: 20,
   },
   xpBadgeText: {
     color: '#fff',
