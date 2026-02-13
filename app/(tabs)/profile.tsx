@@ -91,30 +91,6 @@ export default function ProfileScreen() {
   type SortMode = 'distance' | 'xp';
   const [sortMode, setSortMode] = useState<SortMode>('distance');
 
-  const inviteLink = profile?.referral_code 
-    ? `https://jidou-navi.app/invite/${profile.referral_code}` 
-    : '';
-
-  async function handleInvite() {
-    if (!inviteLink) return;
-    
-    try {
-      await Share.share({
-        message: t('profile.inviteMessage') + '\n' + inviteLink,
-        url: inviteLink, 
-        title: t('profile.inviteTitle'),
-      });
-    } catch (error) {
-      // Fallback to clipboard if sharing fails
-      try {
-        await Clipboard.setStringAsync(inviteLink);
-        showSuccess(t('common.success'), t('profile.inviteLinkCopied'));
-      } catch (e) {
-        console.warn('Clipboard failed', e);
-      }
-    }
-  }
-
   // Reset image error whenever the profile avatar URL changes so new avatars are attempted
   useEffect(() => {
     setImageError(false);
@@ -256,6 +232,15 @@ export default function ProfileScreen() {
   }
 
   // Handle unsave action
+  async function handleUnsave(machineId: string) {
+    try {
+      await unsaveMachine(machineId);
+      removeSaved(machineId);
+      setSavedMachines(prev => prev.filter(m => m.machine_id !== machineId));
+    } catch (err) {
+      showError(t('common.error'), t('machine.unsaveError'));
+    }
+  }
 
   // Navigate to machine detail
   function goToMachine(saved: SavedMachine) {
@@ -319,7 +304,9 @@ export default function ProfileScreen() {
         {
           text: t('common.remove'),
           style: 'destructive',
-          onPress: () => removeFriend(friendId),
+          onPress: () => {
+            removeFriend(friendId);
+          },
         },
       ]
     );
@@ -702,25 +689,6 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        {/* Invitation Card */}
-        <View style={styles.section}>
-          <View style={styles.inviteCard}>
-            <View style={styles.inviteContent}>
-              <View style={styles.giftIconContainer}>
-                <Ionicons name="gift" size={24} color="#fff" />
-              </View>
-              <View style={styles.inviteTextContainer}>
-                <Text style={styles.inviteTitle}>{t('profile.inviteTitle')}</Text>
-                <Text style={styles.inviteDescription}>{t('profile.inviteDescription')}</Text>
-              </View>
-            </View>
-            <Pressable style={styles.inviteButton} onPress={handleInvite}>
-              <Text style={styles.inviteButtonText}>{t('profile.inviteButton')}</Text>
-              <Ionicons name="share-social-outline" size={16} color="#fff" />
-            </Pressable>
-          </View>
-        </View>
-
         {/* Support Us Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleRow}>
@@ -910,66 +878,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
     paddingHorizontal: 16,
-  },
-  // Invitation Card
-  inviteCard: {
-    backgroundColor: '#fff',
-    borderRadius: BORDER_RADIUS.pixel,
-    borderWidth: 2,
-    borderColor: COLORS.backgroundDark,
-    padding: SPACING.lg,
-    marginTop: SPACING.xl,
-    // Remove marginHorizontal if it's already inside a padded container, 
-    // or set it to match other sections.
-    width: '100%', 
-    ...SHADOWS.pixel,
-  },
-  inviteContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.md,
-    marginBottom: SPACING.lg,
-  },
-  giftIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: BORDER_RADIUS.pixel,
-    backgroundColor: COLORS.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.primaryDark,
-  },
-  inviteTextContainer: {
-    flex: 1,
-  },
-  inviteTitle: {
-    fontSize: 14,
-    fontFamily: FONTS.heading,
-    color: COLORS.text,
-    marginBottom: 2,
-  },
-  inviteDescription: {
-    fontSize: 11,
-    fontFamily: FONTS.body,
-    color: COLORS.textMuted,
-    lineHeight: 15,
-  },
-  inviteButton: {
-    backgroundColor: COLORS.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: SPACING.sm,
-    paddingVertical: SPACING.md,
-    borderRadius: BORDER_RADIUS.pixel,
-    borderWidth: 2,
-    borderColor: COLORS.primaryDark,
-  },
-  inviteButtonText: {
-    color: '#fff',
-    fontSize: 13,
-    fontFamily: FONTS.button,
   },
   statsDashboard: {
     marginBottom: 24,

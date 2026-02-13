@@ -10,19 +10,20 @@ import {
   TextInput,
   ActivityIndicator,
   Image,
+  Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { User } from '@supabase/supabase-js';
 import { useTranslation } from 'react-i18next';
+import * as Clipboard from 'expo-clipboard';
 import { useLanguageStore } from '../../store/languageStore';
 import { supportedLanguages, LanguageCode } from '../../lib/i18n';
-import { Tables } from '../../lib/database.types';
+import { Profile } from '../../store/authStore';
 import { supabase } from '../../lib/supabase';
 import { useAppModal } from '../../hooks/useAppModal';
 import { fetchUserPendingMachines, dismissRejectedMachine, UserPendingMachine } from '../../lib/admin';
 
-type Profile = Tables<'profiles'>;
 type UpdateProfileResult = { success: boolean; error?: string };
 
 interface SettingsModalProps {
@@ -57,6 +58,31 @@ export default function SettingsModal({
   // My Submissions state
   const [pendingMachines, setPendingMachines] = useState<UserPendingMachine[]>([]);
   const [loadingPending, setLoadingPending] = useState(false);
+
+  // Invitation link logic
+  const inviteLink = profile?.referral_code 
+    ? `https://jidou-navi.app/invite/${profile.referral_code}` 
+    : '';
+
+  async function handleInvite() {
+    if (!inviteLink) return;
+    
+    try {
+      await Share.share({
+        message: t('profile.inviteMessage') + '\n' + inviteLink,
+        url: inviteLink, 
+        title: t('profile.inviteTitle'),
+      });
+    } catch (error) {
+      // Fallback to clipboard if sharing fails
+      try {
+        await Clipboard.setStringAsync(inviteLink);
+        showSuccess(t('common.success'), t('profile.inviteLinkCopied'));
+      } catch (e) {
+        console.warn('Clipboard failed', e);
+      }
+    }
+  }
 
   // Sync state when profile or visibility changes
   useEffect(() => {
@@ -299,6 +325,25 @@ export default function SettingsModal({
                   <Text style={styles.itemValue}>{currentLanguageName}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </Pressable>
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Invite a Friend */}
+            <View style={styles.section}>
+              <Pressable
+                style={styles.itemRow}
+                onPress={handleInvite}
+                accessibilityRole="button"
+                accessibilityLabel={t('profile.inviteTitle')}
+              >
+                <Ionicons name="gift-outline" size={20} color="#666" />
+                <View style={styles.itemContent}>
+                  <Text style={styles.itemLabel}>{t('profile.inviteTitle')}</Text>
+                  <Text style={styles.itemValue}>{t('profile.inviteDescription')}</Text>
+                </View>
+                <Ionicons name="share-social-outline" size={20} color="#ccc" />
               </Pressable>
             </View>
 
