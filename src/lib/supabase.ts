@@ -26,6 +26,5 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Helper types from database schema
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
-export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
+// Re-export helper types from generated database.types for full compatibility
+export type { Tables, TablesInsert, TablesUpdate, Enums } from './database.types';

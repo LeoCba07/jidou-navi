@@ -23,7 +23,6 @@ import { Profile } from '../../store/authStore';
 import { supabase } from '../../lib/supabase';
 import { useAppModal } from '../../hooks/useAppModal';
 import { fetchUserPendingMachines, dismissRejectedMachine, UserPendingMachine } from '../../lib/admin';
-import { BORDER_RADIUS, COLORS, FONTS, SHADOWS, SPACING } from '../../theme/constants';
 
 type UpdateProfileResult = { success: boolean; error?: string };
 
