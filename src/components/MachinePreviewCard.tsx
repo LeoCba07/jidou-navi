@@ -8,6 +8,14 @@ import { useVisitedMachinesStore } from '../store/visitedMachinesStore';
 import { COLORS } from '../theme/constants';
 import VisitedStamp from './machine/VisitedStamp';
 
+const CATEGORY_ICONS: Record<string, any> = {
+  eats: require('../../assets/pixel-cat-eats.png'),
+  gachapon: require('../../assets/pixel-cat-gachapon.png'),
+  weird: require('../../assets/pixel-cat-weird.png'),
+  retro: require('../../assets/pixel-cat-retro.png'),
+  'local-gems': require('../../assets/pixel-cat-local-gems.png'),
+};
+
 type Props = {
   machine: NearbyMachine;
   distanceMeters?: number; // Override distance (e.g., from user's actual location)
@@ -94,6 +102,9 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
                   key={cat.id}
                   style={[styles.categoryChip, { backgroundColor: cat.color }]}
                 >
+                  {CATEGORY_ICONS[cat.slug] && (
+                    <Image source={CATEGORY_ICONS[cat.slug]} style={styles.categoryIcon} />
+                  )}
                   <Text style={styles.categoryText}>{cat.name}</Text>
                 </View>
               ))}
@@ -103,7 +114,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
           {/* Stats row */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Ionicons name="location" size={14} color={COLORS.primary} />
+              <Image source={require('../../assets/pixel-ui-location.png')} style={{ width: 14, height: 14, tintColor: COLORS.primary }} />
               <Text style={styles.statText}>{distance}</Text>
             </View>
             <View style={styles.statItem}>
@@ -195,9 +206,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 2,
+  },
+  categoryIcon: {
+    width: 12,
+    height: 12,
   },
   categoryText: {
     fontSize: 11,

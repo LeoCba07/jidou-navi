@@ -1,8 +1,16 @@
 // Horizontal filter bar with category chips for the map
-import { View, ScrollView, Pressable, Text, StyleSheet } from "react-native";
+import { View, ScrollView, Pressable, Text, Image, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUIStore } from "../store";
+
+const CATEGORY_ICONS: Record<string, any> = {
+  eats: require('../../assets/pixel-cat-eats.png'),
+  gachapon: require('../../assets/pixel-cat-gachapon.png'),
+  weird: require('../../assets/pixel-cat-weird.png'),
+  retro: require('../../assets/pixel-cat-retro.png'),
+  'local-gems': require('../../assets/pixel-cat-local-gems.png'),
+};
 
 // Category definitions with translation keys
 const CATEGORIES = [
@@ -61,6 +69,7 @@ export function CategoryFilterBar() {
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
             >
+              <Image source={CATEGORY_ICONS[cat.slug]} style={styles.chipIcon} />
               <Text
                 style={[styles.chipText, isSelected && styles.chipTextSelected]}
               >
@@ -88,6 +97,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 2,
@@ -99,6 +111,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 0,
     elevation: 2,
+  },
+  chipIcon: {
+    width: 16,
+    height: 16,
   },
   chipSelected: {
     backgroundColor: "#FF4B4B",

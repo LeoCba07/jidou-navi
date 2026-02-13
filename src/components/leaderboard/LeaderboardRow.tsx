@@ -1,9 +1,15 @@
 // Leaderboard row component
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { LeaderboardEntry } from '../../store/friendsStore';
 import UserAvatar from '../UserAvatar';
+
+const MEDAL_ICONS: Record<number, any> = {
+  1: require('../../../assets/pixel-medal-gold.png'),
+  2: require('../../../assets/pixel-medal-silver.png'),
+  3: require('../../../assets/pixel-medal-bronze.png'),
+};
 
 interface LeaderboardRowProps {
   entry: LeaderboardEntry;
@@ -11,9 +17,9 @@ interface LeaderboardRowProps {
 }
 
 function getRankIcon(rank: number): React.ReactNode {
-  if (rank === 1) return <Text style={styles.rankEmoji}>1</Text>;
-  if (rank === 2) return <Text style={styles.rankEmoji}>2</Text>;
-  if (rank === 3) return <Text style={styles.rankEmoji}>3</Text>;
+  if (rank <= 3) {
+    return <Image source={MEDAL_ICONS[rank]} style={{ width: 22, height: 22 }} />;
+  }
   return <Text style={styles.rankNumber}>{rank}</Text>;
 }
 
@@ -95,11 +101,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 14,
     marginRight: 8,
-  },
-  rankEmoji: {
-    fontSize: 14,
-    fontFamily: 'Silkscreen',
-    color: '#2B2B2B',
   },
   rankNumber: {
     fontSize: 12,

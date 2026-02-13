@@ -31,6 +31,14 @@ import { COLORS, SHADOWS, FONTS, SPACING, BORDER_RADIUS, CATEGORY_COLORS } from 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
 
+const CATEGORY_ICONS: Record<string, any> = {
+  eats: require('../assets/pixel-cat-eats.png'),
+  gachapon: require('../assets/pixel-cat-gachapon.png'),
+  weird: require('../assets/pixel-cat-weird.png'),
+  retro: require('../assets/pixel-cat-retro.png'),
+  'local-gems': require('../assets/pixel-cat-local-gems.png'),
+};
+
 // Category definitions with translation keys and colors (matching CategoryFilterBar)
 const CATEGORIES = [
   { id: 'eats', translationKey: 'categories.eats', color: CATEGORY_COLORS.eats },
@@ -504,6 +512,7 @@ export default function AddMachineScreen() {
                   ]}
                   onPress={() => toggleCategory(cat.id)}
                 >
+                  <Image source={CATEGORY_ICONS[cat.id]} style={styles.categoryIcon} />
                   <Text
                     style={[
                       styles.categoryText,
@@ -747,12 +756,19 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.sm,
     borderRadius: BORDER_RADIUS.pixel,
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.borderLight,
+  },
+  categoryIcon: {
+    width: 16,
+    height: 16,
   },
   categoryText: {
     fontSize: 14,

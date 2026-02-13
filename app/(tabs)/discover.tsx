@@ -44,6 +44,11 @@ import RecentVisitorsModal from '../../src/components/discover/RecentVisitorsMod
 import DailyVotesIndicator, { type DailyVotesIndicatorRef } from '../../src/components/discover/DailyVotesIndicator';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
 
+const EMPTY_TRENDING = require('../../assets/pixel-empty-trending.png');
+const EMPTY_NEARBY = require('../../assets/pixel-empty-nearby.png');
+const EMPTY_LOCATION = require('../../assets/pixel-empty-location.png');
+const EMPTY_SEARCH = require('../../assets/pixel-empty-search.png');
+
 export default function DiscoverScreen() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
@@ -470,7 +475,7 @@ export default function DiscoverScreen() {
             </View>
             {fallbackPopular.length === 0 ? (
               <View style={styles.emptyState}>
-                <Ionicons name="search-outline" size={48} color="#ccc" />
+                <Image source={EMPTY_TRENDING} style={styles.emptyImage} />
                 <Text style={styles.emptyText}>{t('discover.noPopular')}</Text>
               </View>
             ) : (
@@ -487,7 +492,7 @@ export default function DiscoverScreen() {
             </View>
             {fallbackRecent.length === 0 ? (
               <View style={styles.emptyState}>
-                <Ionicons name="search-outline" size={48} color="#ccc" />
+                <Image source={EMPTY_SEARCH} style={styles.emptyImage} />
                 <Text style={styles.emptyText}>{t('discover.noRecent')}</Text>
               </View>
             ) : (
@@ -537,7 +542,7 @@ export default function DiscoverScreen() {
           </View>
           {popularMachines.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="flame-outline" size={48} color="#ccc" />
+              <Image source={EMPTY_TRENDING} style={styles.emptyImage} />
               <Text style={styles.emptyText}>{t('discover.noPopularThisWeek')}</Text>
             </View>
           ) : (
@@ -568,12 +573,12 @@ export default function DiscoverScreen() {
           </View>
           {locationError ? (
             <View style={styles.emptyState}>
-              <Ionicons name="location-outline" size={48} color="#ccc" />
+              <Image source={EMPTY_LOCATION} style={styles.emptyImage} />
               <Text style={styles.emptyText}>{t('discover.enableLocation')}</Text>
             </View>
           ) : nearbyMachines.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="search-outline" size={48} color="#ccc" />
+              <Image source={EMPTY_NEARBY} style={styles.emptyImage} />
               <Text style={styles.emptyText}>{t('discover.noNearbyMachines')}</Text>
             </View>
           ) : (
@@ -659,6 +664,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 32,
     alignItems: 'center',
+  },
+  emptyImage: {
+    width: 120,
+    height: 120,
   },
   emptyText: {
     fontSize: 14,

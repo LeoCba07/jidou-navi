@@ -338,12 +338,12 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.inviteTitle')}
               >
-                <Ionicons name="gift-outline" size={20} color="#666" />
+                <Image source={require('../../../assets/pixel-gift-invite.png')} style={{ width: 20, height: 20 }} />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.inviteTitle')}</Text>
                   <Text style={styles.itemValue}>{t('profile.inviteDescription')}</Text>
                 </View>
-                <Ionicons name="share-social-outline" size={20} color="#ccc" />
+                <Image source={require('../../../assets/pixel-ui-share.png')} style={{ width: 20, height: 20, tintColor: '#ccc' }} />
               </Pressable>
             </View>
 
