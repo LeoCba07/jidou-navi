@@ -109,7 +109,7 @@ export default function RootLayout() {
     let notificationListener: any;
     try {
       const Notifications = require('expo-notifications');
-      notificationListener = Notifications.addNotificationResponseReceivedListener(response => {
+      notificationListener = Notifications.addNotificationResponseReceivedListener((response: any) => {
         console.log('Notification tapped!', response.notification.request.content.data);
         const url = response.notification.request.content.data?.url;
         if (url) {

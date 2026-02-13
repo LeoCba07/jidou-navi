@@ -21,6 +21,7 @@ import {
   fetchRecentMachines,
   EngagedMachine,
   DiscoverMachine,
+  MachineVisitor,
   saveMachine,
   unsaveMachine,
 } from '../../src/lib/machines';
