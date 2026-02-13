@@ -1,8 +1,9 @@
 import { useRef, useImperativeHandle, forwardRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MAX_DAILY_UPVOTES } from '../../lib/upvotes';
+
+const HEART_ICON = require('../../../assets/pixel-ui-heart.png');
 
 type DailyVotesIndicatorProps = {
   remainingVotes: number;
@@ -59,10 +60,9 @@ const DailyVotesIndicator = forwardRef<DailyVotesIndicatorRef, DailyVotesIndicat
   if (compact) {
     return (
       <Animated.View style={[styles.compactContainer, !hasVotesLeft && styles.compactContainerEmpty, animatedStyle]}>
-        <Ionicons
-          name="heart"
-          size={12}
-          color={hasVotesLeft ? '#FF4B4B' : '#999'}
+        <Image
+          source={HEART_ICON}
+          style={{ width: 12, height: 12, opacity: hasVotesLeft ? 1 : 0.3 }}
         />
         <Text style={[styles.compactText, !hasVotesLeft && styles.compactTextEmpty]}>
           {remainingVotes}/{MAX_DAILY_UPVOTES}
@@ -75,11 +75,10 @@ const DailyVotesIndicator = forwardRef<DailyVotesIndicatorRef, DailyVotesIndicat
     <Animated.View style={[styles.container, animatedStyle]}>
       <View style={styles.iconRow}>
         {Array.from({ length: MAX_DAILY_UPVOTES }).map((_, index) => (
-          <Ionicons
+          <Image
             key={index}
-            name={index < usedVotes ? 'heart' : 'heart-outline'}
-            size={16}
-            color={index < usedVotes ? '#ccc' : '#FF4B4B'}
+            source={HEART_ICON}
+            style={{ width: 16, height: 16, opacity: index < usedVotes ? 0.25 : 1 }}
           />
         ))}
       </View>
