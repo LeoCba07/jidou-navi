@@ -7,6 +7,7 @@ import { useUIStore } from "../store";
 const CATEGORY_ICONS: Record<string, any> = {
   eats: require('../../assets/pixel-cat-eats.png'),
   gachapon: require('../../assets/pixel-cat-gachapon.png'),
+  weird: require('../../assets/pixel-cat-weird.png'),
   retro: require('../../assets/pixel-cat-retro.png'),
   'local-gems': require('../../assets/pixel-cat-local-gems.png'),
 };
@@ -15,7 +16,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 const CATEGORIES = [
   { slug: "eats", translationKey: "categories.eats", color: "#FF4B4B" },
   { slug: "gachapon", translationKey: "categories.gachapon", color: "#FFB7CE" },
-  { slug: "weird", translationKey: "categories.weird", color: "#9B59B6" },
+  { slug: "weird", translationKey: "categories.weird", color: "#D8B4FE" },
   { slug: "retro", translationKey: "categories.retro", color: "#FFD966" },
   { slug: "local-gems", translationKey: "categories.localGems", color: "#2ECC71" },
 ];

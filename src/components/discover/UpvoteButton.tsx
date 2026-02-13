@@ -1,6 +1,7 @@
 import { useRef, useImperativeHandle, forwardRef } from 'react';
-import { Pressable, Text, ActivityIndicator, StyleSheet, Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Pressable, Text, Image, ActivityIndicator, StyleSheet, Animated } from 'react-native';
+
+const HEART_ICON = require('../../../assets/pixel-ui-heart.png');
 
 type UpvoteButtonProps = {
   upvoteCount: number;
@@ -80,10 +81,13 @@ const UpvoteButton = forwardRef<UpvoteButtonRef, UpvoteButtonProps>(({
             }
           ]}
         >
-          <Ionicons
-            name={isUpvoted ? 'heart' : 'heart-outline'}
-            size={iconSize}
-            color={isUpvoted ? '#FF4B4B' : '#666'}
+          <Image
+            source={HEART_ICON}
+            style={{
+              width: iconSize,
+              height: iconSize,
+              opacity: isUpvoted ? 1 : 0.35,
+            }}
           />
           <Text
             style={[

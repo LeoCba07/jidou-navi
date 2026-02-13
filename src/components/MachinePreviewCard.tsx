@@ -11,6 +11,7 @@ import VisitedStamp from './machine/VisitedStamp';
 const CATEGORY_ICONS: Record<string, any> = {
   eats: require('../../assets/pixel-cat-eats.png'),
   gachapon: require('../../assets/pixel-cat-gachapon.png'),
+  weird: require('../../assets/pixel-cat-weird.png'),
   retro: require('../../assets/pixel-cat-retro.png'),
   'local-gems': require('../../assets/pixel-cat-local-gems.png'),
 };

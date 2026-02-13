@@ -100,7 +100,7 @@ export const FONTS = {
 export const CATEGORY_COLORS = {
   eats: '#FF4B4B',
   gachapon: '#FFB7CE',
-  weird: '#9B59B6',
+  weird: '#D8B4FE',
   retro: '#FFD966',
   'local-gems': '#2ECC71',
 } as const;
