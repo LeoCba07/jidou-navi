@@ -605,7 +605,7 @@ export default function ProfileScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={t('common.remove')}
                     >
-                      <Image source={pixelBookmark} style={{ width: 20, height: 20 }} />
+                      <Image source={pixelBookmark} style={{ width: 20, height: 20, tintColor: '#FF4B4B' }} />
                     </Pressable>
                     <Pressable
                       style={styles.cardActionButton}

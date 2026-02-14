@@ -1099,24 +1099,34 @@ export default function MachineDetailScreen() {
               <Text style={styles.activityTitle}>{t('machine.recentActivity')}</Text>
             </View>
             <View style={styles.activityCard}>
-              {visitors.map((visitor) => (
-                <View key={visitor.user_id} style={styles.activityRow}>
-                  <UserAvatar
-                    url={visitor.avatar_url}
-                    size={28}
-                    borderWidth={2}
-                    borderColor={COLORS.primary}
-                  />
-                  <View style={styles.activityInfo}>
-                    <Text style={styles.activityName} numberOfLines={1}>
-                      @{visitor.username || visitor.display_name}
-                    </Text>
-                    <Text style={styles.activityTime}>
-                      {t('machine.visitedTimeAgo', { time: formatRelativeDate(visitor.visited_at) })}
-                    </Text>
-                  </View>
-                </View>
-              ))}
+              {visitors.map((visitor) => {
+                const time = formatRelativeDate(visitor.visited_at);
+                return (
+                  <Pressable
+                    key={visitor.user_id}
+                    style={styles.activityRow}
+                    onPress={() => router.push(`/profile/${visitor.user_id}`)}
+                    accessibilityRole="button"
+                  >
+                    <UserAvatar
+                      url={visitor.avatar_url}
+                      size={28}
+                      borderWidth={2}
+                      borderColor={COLORS.primary}
+                    />
+                    <View style={styles.activityInfo}>
+                      <Text style={styles.activityName} numberOfLines={1}>
+                        @{visitor.username || visitor.display_name || 'Anonymous'}
+                      </Text>
+                      {time && (
+                        <Text style={styles.activityTime}>
+                          {t('machine.visitedTimeAgo', { time })}
+                        </Text>
+                      )}
+                    </View>
+                  </Pressable>
+                );
+              })}
             </View>
           </View>
         )}
