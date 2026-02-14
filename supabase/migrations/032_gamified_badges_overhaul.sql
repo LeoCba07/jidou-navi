@@ -1,7 +1,10 @@
 -- Migration: Gamified Badges Overhaul (Issue #233)
 -- Clear and replace with 30 achievable, round-number badges
+-- Updated with explicit transaction and retroactive awarding
 
--- 1. Clean up existing badges
+BEGIN;
+
+-- 1. Clean up existing badges (Atomic)
 DELETE FROM user_badges;
 DELETE FROM badges;
 
@@ -71,3 +74,27 @@ VALUES
 INSERT INTO badges (slug, name, description, trigger_type, trigger_value, rarity, display_order)
 VALUES
     ('team_hunt', 'Team Hunt', 'The power of friendship (and coins).', 'referral_milestone', '{"count": 3}', 'rare', 100);
+
+-- 7. RETROACTIVE AWARDING
+-- Award visit_count and contribution_count badges immediately to existing users
+INSERT INTO user_badges (user_id, badge_id)
+SELECT p.id, b.id
+FROM profiles p
+CROSS JOIN badges b
+WHERE 
+    (b.trigger_type = 'visit_count' AND p.visit_count >= (b.trigger_value->>'count')::int)
+    OR
+    (b.trigger_type = 'contribution_count' AND p.contribution_count >= (b.trigger_value->>'count')::int)
+ON CONFLICT DO NOTHING;
+
+-- Special case for team_hunt (if user already had friends who visited machines)
+INSERT INTO user_badges (user_id, badge_id)
+SELECT p.id, b.id
+FROM profiles p
+CROSS JOIN badges b
+WHERE b.slug = 'team_hunt'
+  AND p.referred_by_id IS NOT NULL
+  AND (SELECT count(DISTINCT machine_id) FROM visits WHERE user_id = p.id) >= 3
+ON CONFLICT DO NOTHING;
+
+COMMIT;
