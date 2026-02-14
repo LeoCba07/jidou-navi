@@ -114,37 +114,21 @@ export default function DiscoverScreen() {
       user ? getRemainingUpvotes() : Promise.resolve(MAX_DAILY_UPVOTES),
     ]);
 
-    // Check if we got data from the new functions
-    // If popular is empty AND we got no upvoted IDs, it might mean the migration isn't run
-    // We'll use fallback in that case
-    const shouldUseFallback = popular.length === 0;
+    setPopularMachines(popular);
+    setUpvotedIds(new Set(upvoted));
+    setRemainingVotes(remaining);
+    setUseFallback(false);
 
-    if (shouldUseFallback) {
-      // Load fallback data using original functions
-      const [fallbackPop, fallbackRec] = await Promise.all([
-        fetchPopularMachines(10),
-        fetchRecentMachines(10),
-      ]);
-      setFallbackPopular(fallbackPop);
-      setFallbackRecent(fallbackRec);
-      setUseFallback(true);
-    } else {
-      setPopularMachines(popular);
-      setUpvotedIds(new Set(upvoted));
-      setRemainingVotes(remaining);
-      setUseFallback(false);
-
-      // Load nearby if we have location
-      const location = coords || userLocation;
-      if (location) {
-        const nearby = await fetchNearbyMachinesWithEngagement(
-          location.lat,
-          location.lng,
-          5000,
-          10
-        );
-        setNearbyMachines(nearby);
-      }
+    // Load nearby if we have location
+    const location = coords || userLocation;
+    if (location) {
+      const nearby = await fetchNearbyMachinesWithEngagement(
+        location.lat,
+        location.lng,
+        5000,
+        10
+      );
+      setNearbyMachines(nearby);
     }
 
     setLoading(false);

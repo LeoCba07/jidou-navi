@@ -79,10 +79,7 @@ export default function UserSearchResult({ user, onSendRequest }: UserSearchResu
         {isSending ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <>
-            <Ionicons name="person-add" size={14} color="#fff" />
-            <Text style={styles.addText}>{t('friends.addFriend')}</Text>
-          </>
+          <Ionicons name="person-add" size={16} color="#fff" />
         )}
       </Pressable>
     );
@@ -95,15 +92,12 @@ export default function UserSearchResult({ user, onSendRequest }: UserSearchResu
         style={styles.avatar}
       />
       <View style={styles.info}>
-        <View style={styles.nameRow}>
-          <Text style={styles.displayName} numberOfLines={1}>
-            {user.display_name || user.username}
-          </Text>
-          <View style={styles.levelBadge}>
-            <Text style={styles.levelText}>Lv.{user.level}</Text>
-          </View>
+        <Text style={styles.displayName} numberOfLines={1}>
+          {user.display_name || user.username}
+        </Text>
+        <View style={styles.levelBadge}>
+          <Text style={styles.levelText}>Lv.{user.level}</Text>
         </View>
-        <Text style={styles.username}>@{user.username}</Text>
       </View>
       {renderActionButton()}
     </View>
@@ -119,6 +113,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: '#eee',
+    gap: 10,
   },
   avatar: {
     width: 40,
@@ -129,50 +124,32 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
-    marginLeft: 12,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 2,
   },
   displayName: {
     fontSize: 14,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
-    flex: 1,
+    marginBottom: 4,
   },
   levelBadge: {
+    alignSelf: 'flex-start',
     backgroundColor: '#2B2B2B',
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: 2,
-    marginRight: 10,
   },
   levelText: {
     fontSize: 9,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },
-  username: {
-    fontSize: 11,
-    fontFamily: 'Inter',
-    color: '#999',
-  },
   addButton: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
     borderRadius: 2,
     backgroundColor: '#3C91E6',
-  },
-  addText: {
-    fontSize: 12,
-    fontFamily: 'Inter-SemiBold',
-    color: '#fff',
   },
   pendingBadge: {
     flexDirection: 'row',

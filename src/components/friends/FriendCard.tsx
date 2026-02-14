@@ -28,15 +28,12 @@ export default function FriendCard({ friend, onRemove }: FriendCardProps) {
           style={styles.avatar}
         />
         <View style={styles.info}>
-          <View style={styles.nameRow}>
-            <Text style={styles.displayName} numberOfLines={1}>
-              {friend.display_name || friend.username}
-            </Text>
-            <View style={styles.levelBadge}>
-              <Text style={styles.levelText}>Lv.{friend.level}</Text>
-            </View>
+          <Text style={styles.displayName} numberOfLines={1}>
+            {friend.display_name || friend.username}
+          </Text>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>Lv.{friend.level}</Text>
           </View>
-          <Text style={styles.username}>@{friend.username}</Text>
         </View>
       </Pressable>
       <Pressable
@@ -83,34 +80,23 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
   },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 2,
-  },
   displayName: {
     fontSize: 15,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
-    flex: 1,
+    marginBottom: 4,
   },
   levelBadge: {
+    alignSelf: 'flex-start',
     backgroundColor: '#2B2B2B',
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: 2,
-    marginRight: 8,
   },
   levelText: {
     fontSize: 9,
     fontFamily: 'Silkscreen',
     color: '#fff',
-  },
-  username: {
-    fontSize: 12,
-    fontFamily: 'Inter',
-    color: '#999',
   },
   removeButton: {
     padding: 8,
