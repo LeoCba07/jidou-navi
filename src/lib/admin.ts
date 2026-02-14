@@ -76,8 +76,7 @@ export async function checkDuplicateMachines(
   machineId: string,
   radiusMeters: number = 50
 ): Promise<NearbyMachine[]> {
-  // @ts-expect-error - DB function uses p_ prefix, generated types are out of sync
-  const { data, error } = await supabase.rpc('check_duplicate_machines', {
+  const { data, error } = await (supabase as any).rpc('check_duplicate_machines', {
     p_machine_id: machineId,
     p_radius_meters: radiusMeters,
   });

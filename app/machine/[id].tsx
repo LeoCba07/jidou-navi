@@ -629,6 +629,7 @@ export default function MachineDetailScreen() {
 
       // If user reported machine as gone, record it for auto-flagging
       if (!stillExists) {
+        // @ts-ignore - RPC exists in DB but not in generated types
         await supabase.rpc('record_machine_gone_report', {
           p_machine_id: params.id,
         });
