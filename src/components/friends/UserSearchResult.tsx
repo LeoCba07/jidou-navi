@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { UserSearchResult as UserSearchResultType } from '../../store/friendsStore';
 
 const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
@@ -45,7 +46,7 @@ export default function UserSearchResult({ user, onSendRequest }: UserSearchResu
     if (localStatus === 'accepted') {
       return (
         <View style={styles.friendBadge}>
-          <Ionicons name="checkmark-circle" size={16} color="#22C55E" />
+          <Ionicons name="checkmark-circle" size={ICON_SIZES.xs} color="#22C55E" />
           <Text style={styles.friendText}>{t('friends.friend')}</Text>
         </View>
       );
@@ -54,7 +55,7 @@ export default function UserSearchResult({ user, onSendRequest }: UserSearchResu
     if (localStatus === 'pending_sent') {
       return (
         <View style={styles.pendingBadge}>
-          <Ionicons name="time-outline" size={14} color="#D97706" />
+          <Ionicons name="time-outline" size={ICON_SIZES.xs} color="#D97706" />
           <Text style={styles.pendingText}>{t('friends.requestSent')}</Text>
         </View>
       );
@@ -79,7 +80,7 @@ export default function UserSearchResult({ user, onSendRequest }: UserSearchResu
         {isSending ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Ionicons name="person-add" size={16} color="#fff" />
+          <Ionicons name="person-add" size={ICON_SIZES.xs} color="#fff" />
         )}
       </Pressable>
     );
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   displayName: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   levelText: {
-    fontSize: 9,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
   },
   pendingText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#D97706',
   },
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   friendText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#22C55E',
   },

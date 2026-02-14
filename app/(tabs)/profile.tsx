@@ -38,7 +38,7 @@ import UserAvatar from '../../src/components/UserAvatar';
 import type { Friend } from '../../src/store/friendsStore';
 import type { Badge } from '../../src/lib/badges';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
-import { BORDER_RADIUS, COLORS, FONTS, SHADOWS, SPACING } from '../../src/theme/constants';
+import { BORDER_RADIUS, COLORS, FONTS, SHADOWS, SPACING, FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 // Pixel art assets for empty states and icons
 const pixelEmptyQuest = require('../../assets/pixel-empty-quest.png');
@@ -422,7 +422,7 @@ export default function ProfileScreen() {
               accessibilityRole="button"
               accessibilityLabel={t('profile.accountSettings')}
             >
-              <Ionicons name="settings-outline" size={20} color="#666" />
+              <Ionicons name="settings-outline" size={ICON_SIZES.sm} color="#666" />
             </Pressable>
             <Pressable onPress={handleEditAvatar} style={styles.avatarContainer} disabled={uploadingAvatar}>
               <UserAvatar
@@ -436,7 +436,7 @@ export default function ProfileScreen() {
                 {uploadingAvatar ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Ionicons name="camera" size={16} color="#fff" />
+                  <Ionicons name="camera" size={ICON_SIZES.xs} color="#fff" />
                 )}
               </View>
             </Pressable>
@@ -498,7 +498,7 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionTitleRow}>
-              <Image source={require('../../assets/pixel-tab-map.png')} style={[{ width: 16, height: 16 }, styles.sectionTitleIcon]} />
+              <Image source={pixelBookmark} style={[{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }, styles.sectionTitleIcon]} />
               <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('profile.questLog')}</Text>
             </View>
             {savedMachines.length > 0 && (
@@ -509,7 +509,7 @@ export default function ProfileScreen() {
                 >
                   <Ionicons
                     name="navigate-outline"
-                    size={12}
+                    size={ICON_SIZES.xs}
                     color={sortMode === 'distance' ? '#fff' : '#666'}
                   />
                   <Text style={[styles.sortButtonText, sortMode === 'distance' && styles.sortButtonTextActive]}>
@@ -522,7 +522,7 @@ export default function ProfileScreen() {
                 >
                   <Ionicons
                     name="flash-outline"
-                    size={12}
+                    size={ICON_SIZES.xs}
                     color={sortMode === 'xp' ? '#fff' : '#666'}
                   />
                   <Text style={[styles.sortButtonText, sortMode === 'xp' && styles.sortButtonTextActive]}>
@@ -558,7 +558,7 @@ export default function ProfileScreen() {
                       />
                     ) : (
                       <View style={[styles.savedPhoto, styles.savedPhotoPlaceholder]}>
-                        <Ionicons name="image-outline" size={24} color="#ccc" />
+                        <Ionicons name="image-outline" size={ICON_SIZES.md} color="#ccc" />
                       </View>
                     )}
                   </View>
@@ -572,14 +572,14 @@ export default function ProfileScreen() {
                       </Text>
                     </View>
                     <View style={styles.savedAddressRow}>
-                      <Image source={pixelLocation} style={{ width: 14, height: 14, opacity: 0.5 }} />
+                      <Image source={pixelLocation} style={{ width: ICON_SIZES.xs, height: ICON_SIZES.xs, opacity: 0.5 }} />
                       <Text style={styles.savedAddress} numberOfLines={1}>
                         {saved.machine.address || t('machine.noAddress')}
                       </Text>
                     </View>
                     <View style={styles.savedStatsRow}>
                       <View style={styles.savedStat}>
-                        <Ionicons name="flash" size={12} color="#D97706" />
+                        <Ionicons name="flash" size={ICON_SIZES.xs} color="#D97706" />
                         <Text style={styles.savedStatText}>
                           {t('profile.xpEstimate', { xp })}
                         </Text>
@@ -588,7 +588,7 @@ export default function ProfileScreen() {
                         <>
                           <Text style={styles.savedStatDivider}>•</Text>
                           <View style={styles.savedStat}>
-                            <Ionicons name="navigate" size={12} color="#3C91E6" />
+                            <Ionicons name="navigate" size={ICON_SIZES.xs} color="#3C91E6" />
                             <Text style={styles.savedStatText}>
                               {t('machine.away', { distance: formatDistance(distance) })}
                             </Text>
@@ -605,7 +605,7 @@ export default function ProfileScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={t('common.remove')}
                     >
-                      <Image source={pixelBookmark} style={{ width: 20, height: 20, tintColor: '#FF4B4B' }} />
+                      <Image source={pixelBookmark} style={{ width: ICON_SIZES.md, height: ICON_SIZES.md }} />
                     </Pressable>
                     <Pressable
                       style={styles.cardActionButton}
@@ -614,7 +614,7 @@ export default function ProfileScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={t('discover.showOnMap')}
                     >
-                      <Image source={require('../../assets/pixel-tab-map.png')} style={{ width: 20, height: 20 }} />
+                      <Image source={require('../../assets/pixel-tab-map.png')} style={{ width: ICON_SIZES.md, height: ICON_SIZES.md }} />
                     </Pressable>
                   </View>
                 </Pressable>
@@ -626,7 +626,7 @@ export default function ProfileScreen() {
         {/* Badges Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleRow}>
-            <Ionicons name="trophy-outline" size={16} color="#D97706" style={styles.sectionTitleIcon} />
+            <Ionicons name="trophy-outline" size={ICON_SIZES.sm} color="#D97706" style={styles.sectionTitleIcon} />
             <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           </View>
           {loadingBadges ? (
@@ -652,7 +652,7 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <View style={styles.friendsSectionHeader}>
             <View style={[styles.sectionTitleRow, { marginBottom: 0 }]}>
-              <Ionicons name="people-outline" size={16} color="#3C91E6" style={styles.sectionTitleIcon} />
+              <Ionicons name="people-outline" size={ICON_SIZES.sm} color="#3C91E6" style={styles.sectionTitleIcon} />
               <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('friends.yourFriends')}</Text>
             </View>
             <Pressable
@@ -661,7 +661,7 @@ export default function ProfileScreen() {
               accessibilityRole="button"
               accessibilityLabel={t('friends.addFriend')}
             >
-              <Ionicons name="person-add" size={14} color="#fff" />
+              <Ionicons name="person-add" size={ICON_SIZES.xs} color="#fff" />
               <Text style={styles.addFriendButtonText}>{t('friends.addFriend')}</Text>
               {pendingRequestCount > 0 && (
                 <View style={styles.requestCountBadge}>
@@ -695,7 +695,7 @@ export default function ProfileScreen() {
         {/* Support Us Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleRow}>
-            <Image source={pixelHeart} style={[{ width: 16, height: 16 }, styles.sectionTitleIcon]} />
+            <Image source={pixelHeart} style={[{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }, styles.sectionTitleIcon]} />
             <Text style={styles.sectionTitle}>{t('profile.supportUs')}</Text>
           </View>
           <View style={styles.supportContainer}>
@@ -712,7 +712,7 @@ export default function ProfileScreen() {
               accessibilityRole="button"
               accessibilityLabel={t('profile.supportButton')}
             >
-              <Image source={pixelHeart} style={{ width: 18, height: 18, tintColor: '#fff' }} />
+              <Image source={pixelHeart} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, tintColor: '#fff' }} />
               <Text style={styles.supportButtonText}>{t('profile.supportButton')}</Text>
             </Pressable>
           </View>
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 20,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -819,14 +819,14 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   displayName: {
-    fontSize: 24,
+    fontSize: FONT_SIZES.xxl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
     marginBottom: 4,
     textAlign: 'center',
   },
   username: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     marginBottom: 12,
@@ -848,7 +848,7 @@ const styles = StyleSheet.create({
   },
   levelText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Silkscreen',
   },
   xpBarContainer: {
@@ -869,13 +869,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     textAlign: 'center',
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: '#2B2B2B',
     lineHeight: 20,
   },
   bio: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#444',
     textAlign: 'center',
@@ -905,11 +905,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   statsBannerIcon: {
-    width: 36,
-    height: 36,
+    width: ICON_SIZES.xl,
+    height: ICON_SIZES.xl,
   },
   statsBannerLabel: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: 'rgba(255, 255, 255, 0.85)',
     textTransform: 'uppercase',
@@ -946,7 +946,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   statBlockLabel: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-Bold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -959,7 +959,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
     textTransform: 'uppercase',
@@ -994,13 +994,13 @@ const styles = StyleSheet.create({
     height: 120,
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
     marginTop: 12,
   },
   emptySubtext: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#999',
     textAlign: 'center',
@@ -1051,7 +1051,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   savedName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     flex: 1,
@@ -1062,7 +1062,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   savedAddress: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     flex: 1,
@@ -1090,7 +1090,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4B4B',
   },
   sortButtonText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
   },
@@ -1109,12 +1109,12 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   savedStatText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
   },
   savedStatDivider: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     color: '#ccc',
   },
   cardActions: {
@@ -1146,7 +1146,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   addFriendButtonText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
@@ -1160,7 +1160,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   requestCountText: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-Bold',
     color: '#fff',
   },
@@ -1168,7 +1168,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   moreFriendsText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     textAlign: 'center',
@@ -1181,7 +1181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   supportText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#666',
     textAlign: 'center',
@@ -1204,7 +1204,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   supportButtonText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },

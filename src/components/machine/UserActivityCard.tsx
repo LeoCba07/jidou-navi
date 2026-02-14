@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { SectionHeader } from '../SectionHeader';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../../theme/constants';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 type UserVisit = {
   visited_at: string;
@@ -38,7 +38,7 @@ export function UserActivityCard({ userVisit, isLoggedIn }: UserActivityCardProp
         {userVisit ? (
           <>
             <View style={styles.row}>
-              <Ionicons name="checkmark-circle" size={20} color={COLORS.success} />
+              <Ionicons name="checkmark-circle" size={ICON_SIZES.sm} color={COLORS.success} />
               <Text style={styles.text}>
                 {t('machine.youVisitedOn', { date: formatDate(userVisit.visited_at) })}
               </Text>
@@ -54,7 +54,7 @@ export function UserActivityCard({ userVisit, isLoggedIn }: UserActivityCardProp
         ) : (
           <View style={styles.notVisitedContainer}>
             <View style={styles.row}>
-              <Ionicons name="location-outline" size={20} color={COLORS.textMuted} />
+              <Ionicons name="location-outline" size={ICON_SIZES.sm} color={COLORS.textMuted} />
               <Text style={styles.notVisitedText}>
                 {t('machine.neverCheckedIn')}
               </Text>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   text: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.text,
   },
@@ -96,10 +96,10 @@ const styles = StyleSheet.create({
     marginVertical: SPACING.md,
   },
   trophy: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
   },
   celebratoryText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
   },
@@ -107,12 +107,12 @@ const styles = StyleSheet.create({
     gap: SPACING.xs,
   },
   notVisitedText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
   hintText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
     marginLeft: 28,

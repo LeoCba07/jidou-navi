@@ -12,6 +12,7 @@ import { CategoryFilterBar } from '../../src/components/CategoryFilterBar';
 import { useUIStore, useMachinesCacheStore } from '../../src/store';
 import { useMapFetch } from '../../src/hooks/useMapFetch';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 // Initialize Mapbox with token from env
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN || '');
@@ -427,25 +428,25 @@ export default function MapScreen() {
       {/* Error banner */}
       {fetchError && (
         <View style={styles.errorBanner}>
-          <Ionicons name="cloud-offline-outline" size={18} color="#fff" />
+          <Ionicons name="cloud-offline-outline" size={ICON_SIZES.sm} color="#fff" />
           <Text style={styles.errorText}>{t('map.fetchError')}</Text>
           <Pressable style={styles.retryButton} onPress={handleRetry}>
             <Text style={styles.retryText}>{t('map.retry')}</Text>
           </Pressable>
           <Pressable style={styles.dismissButton} onPress={clearError}>
-            <Ionicons name="close" size={18} color="#fff" />
+            <Ionicons name="close" size={ICON_SIZES.sm} color="#fff" />
           </Pressable>
         </View>
       )}
 
       {/* Recenter button */}
       <Pressable style={styles.recenterButton} onPress={centerOnUser}>
-        <Ionicons name="locate" size={28} color="#333" />
+        <Ionicons name="locate" size={ICON_SIZES.lg} color="#333" />
       </Pressable>
 
       {/* Add machine FAB */}
       <Pressable style={styles.fab} onPress={() => router.push('/add-machine')}>
-        <Ionicons name="add" size={26} color="white" />
+        <Ionicons name="add" size={ICON_SIZES.md} color="white" />
       </Pressable>
 
       {/* Preview card */}
@@ -517,7 +518,7 @@ const styles = StyleSheet.create({
   errorText: {
     flex: 1,
     color: '#fff',
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-Medium',
   },
   retryButton: {
@@ -528,7 +529,7 @@ const styles = StyleSheet.create({
   },
   retryText: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
   },
   dismissButton: {

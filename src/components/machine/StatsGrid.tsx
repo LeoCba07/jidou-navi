@@ -2,7 +2,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, VERIFICATION_THRESHOLD } from '../../theme/constants';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, VERIFICATION_THRESHOLD, FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 type StatsGridProps = {
   visitCount: number;
@@ -28,12 +28,12 @@ export function StatsGrid({
       {/* Row 1 */}
       <View style={styles.row}>
         <View style={styles.cell}>
-          <Ionicons name="eye-outline" size={18} color={COLORS.secondary} />
+          <Ionicons name="eye-outline" size={ICON_SIZES.sm} color={COLORS.secondary} />
           <Text style={styles.value}>{visitCount}</Text>
           <Text style={styles.label}>{t('machine.stats.visits')}</Text>
         </View>
         <View style={styles.cell}>
-          <Ionicons name={isVerified ? 'shield-checkmark' : 'shield-checkmark-outline'} size={18} color={isVerified ? COLORS.secondary : COLORS.success} />
+          <Ionicons name={isVerified ? 'shield-checkmark' : 'shield-checkmark-outline'} size={ICON_SIZES.sm} color={isVerified ? COLORS.secondary : COLORS.success} />
           <Text style={[styles.value, isVerified && { color: COLORS.secondary }]}>{verificationCount}</Text>
           <Text style={styles.label}>{t('machine.stats.verified')}</Text>
         </View>
@@ -43,7 +43,7 @@ export function StatsGrid({
         <View style={styles.cell}>
           <Ionicons
             name={isVerified ? 'shield-checkmark' : isActive ? 'checkmark-circle' : 'help-circle'}
-            size={18}
+            size={ICON_SIZES.sm}
             color={isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning}
           />
           <Text style={[styles.value, { color: isVerified ? COLORS.secondary : isActive ? COLORS.success : COLORS.warning }]}>
@@ -82,19 +82,19 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
   },
   value: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.title,
     color: COLORS.text,
   },
   label: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.textMuted,
     textTransform: 'uppercase',
   },
   freshnessIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
 });

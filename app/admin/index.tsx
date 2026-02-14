@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useAdminStore } from '../../src/store/adminStore';
 import PendingMachineCard from '../../src/components/admin/PendingMachineCard';
+import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export default function AdminDashboard() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#333" />
           </Pressable>
           <Text style={styles.title}>{t('admin.dashboard')}</Text>
           <View style={styles.backButton} />
@@ -71,7 +72,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#333" />
         </Pressable>
         <Text style={styles.title}>{t('admin.dashboard')}</Text>
         <View style={styles.backButton} />
@@ -99,7 +100,7 @@ export default function AdminDashboard() {
           </View>
         ) : error ? (
           <View style={styles.centered}>
-            <Ionicons name="alert-circle-outline" size={48} color="#FF4B4B" />
+            <Ionicons name="alert-circle-outline" size={ICON_SIZES.xxl} color="#FF4B4B" />
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={styles.retryButton} onPress={loadPendingMachines}>
               <Text style={styles.retryText}>{t('map.retry')}</Text>
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
     color: '#FF4B4B',
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#666',
     marginTop: 4,

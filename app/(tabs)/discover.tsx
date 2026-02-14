@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
+import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 import {
   fetchPopularThisWeek,
   fetchNearbyMachinesWithEngagement,
@@ -368,7 +369,7 @@ export default function DiscoverScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="trending-up" size={20} color="#FF4B4B" />
+            <Ionicons name="trending-up" size={ICON_SIZES.sm} color="#FF4B4B" />
             <Text style={styles.sectionTitle}>{t('discover.popularThisWeek')}</Text>
           </View>
           {popularMachines.length === 0 ? (
@@ -399,7 +400,7 @@ export default function DiscoverScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="location" size={20} color="#3C91E6" />
+            <Ionicons name="location" size={ICON_SIZES.sm} color="#3C91E6" />
             <Text style={styles.sectionTitle}>{t('discover.topNearby')}</Text>
           </View>
           {locationError ? (
@@ -460,7 +461,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 20,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -484,7 +485,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
     textTransform: 'uppercase',
@@ -501,7 +502,7 @@ const styles = StyleSheet.create({
     height: 120,
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 12,

@@ -1,5 +1,6 @@
 // Shared earned badge horizontal row used by own profile and other user profiles
 import { View, Text, StyleSheet, ScrollView, Pressable, Image } from 'react-native';
+import { FONT_SIZES } from '../../theme/constants';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
 const pixelStatBadges = require('../../../assets/pixel-stat-badges.png');
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badgeName: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     textAlign: 'center',

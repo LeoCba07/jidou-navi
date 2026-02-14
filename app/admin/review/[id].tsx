@@ -18,6 +18,7 @@ import { useAuthStore } from '../../../src/store/authStore';
 import { useAdminStore } from '../../../src/store/adminStore';
 import { useAppModal } from '../../../src/hooks/useAppModal';
 import RejectReasonModal from '../../../src/components/admin/RejectReasonModal';
+import { FONT_SIZES, ICON_SIZES } from '../../../src/theme/constants';
 
 // Open location in Google Maps with error handling
 const openInMaps = async (lat: number, lng: number) => {
@@ -110,7 +111,7 @@ export default function ReviewMachineScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#333" />
           </Pressable>
           <Text style={styles.title}>{t('admin.review')}</Text>
           <View style={styles.backButton} />
@@ -128,7 +129,7 @@ export default function ReviewMachineScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#333" />
           </Pressable>
           <Text style={styles.title}>{t('admin.review')}</Text>
           <View style={styles.backButton} />
@@ -145,7 +146,7 @@ export default function ReviewMachineScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#333" />
         </Pressable>
         <Text style={styles.title}>{t('admin.review')}</Text>
         <View style={styles.backButton} />
@@ -160,7 +161,7 @@ export default function ReviewMachineScreen() {
           />
         ) : (
           <View style={[styles.photo, styles.photoPlaceholder]}>
-            <Ionicons name="image-outline" size={48} color="#ccc" />
+            <Ionicons name="image-outline" size={ICON_SIZES.xxl} color="#ccc" />
           </View>
         )}
 
@@ -222,7 +223,7 @@ export default function ReviewMachineScreen() {
               )}
             </View>
             {selectedMachine.contributor_id && (
-              <Ionicons name="chevron-forward" size={20} color="#999" />
+              <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#999" />
             )}
           </Pressable>
           <Text style={styles.submittedAt}>
@@ -240,7 +241,7 @@ export default function ReviewMachineScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t('admin.location')}</Text>
           <View style={styles.locationRow}>
-            <Ionicons name="location-outline" size={20} color="#666" />
+            <Ionicons name="location-outline" size={ICON_SIZES.sm} color="#666" />
             <Text style={styles.locationText}>
               {selectedMachine.address || t('machine.noAddress')}
             </Text>
@@ -255,7 +256,7 @@ export default function ReviewMachineScreen() {
               style={styles.openMapsButton}
               onPress={() => openInMaps(selectedMachine.latitude!, selectedMachine.longitude!)}
             >
-              <Ionicons name="map-outline" size={16} color="#3C91E6" />
+              <Ionicons name="map-outline" size={ICON_SIZES.xs} color="#3C91E6" />
               <Text style={styles.openMapsText}>{t('admin.openInMaps')}</Text>
             </Pressable>
           )}
@@ -263,7 +264,7 @@ export default function ReviewMachineScreen() {
           {/* Directions Hint */}
           {selectedMachine.directions_hint && (
             <View style={styles.directionsHint}>
-              <Ionicons name="navigate-outline" size={16} color="#666" />
+              <Ionicons name="navigate-outline" size={ICON_SIZES.xs} color="#666" />
               <Text style={styles.directionsHintText}>{selectedMachine.directions_hint}</Text>
             </View>
           )}
@@ -277,13 +278,13 @@ export default function ReviewMachineScreen() {
             <ActivityIndicator color="#FF4B4B" style={{ marginVertical: 16 }} />
           ) : nearbyMachines.length === 0 ? (
             <View style={styles.noDuplicates}>
-              <Ionicons name="checkmark-circle" size={24} color="#22C55E" />
+              <Ionicons name="checkmark-circle" size={ICON_SIZES.md} color="#22C55E" />
               <Text style={styles.noDuplicatesText}>{t('admin.noDuplicates')}</Text>
             </View>
           ) : (
             <View style={styles.duplicateWarning}>
               <View style={styles.duplicateHeader}>
-                <Ionicons name="warning" size={24} color="#D97706" />
+                <Ionicons name="warning" size={ICON_SIZES.md} color="#D97706" />
                 <Text style={styles.duplicateTitle}>
                   {t('admin.potentialDuplicates', { count: nearbyMachines.length })}
                 </Text>
@@ -297,7 +298,7 @@ export default function ReviewMachineScreen() {
                     />
                   ) : (
                     <View style={[styles.nearbyPhoto, styles.nearbyPhotoPlaceholder]}>
-                      <Ionicons name="image-outline" size={20} color="#ccc" />
+                      <Ionicons name="image-outline" size={ICON_SIZES.sm} color="#ccc" />
                     </View>
                   )}
                   <View style={styles.nearbyInfo}>
@@ -341,7 +342,7 @@ export default function ReviewMachineScreen() {
             <ActivityIndicator color="#FF4B4B" />
           ) : (
             <>
-              <Ionicons name="close-circle-outline" size={20} color="#FF4B4B" />
+              <Ionicons name="close-circle-outline" size={ICON_SIZES.sm} color="#FF4B4B" />
               <Text style={styles.rejectText}>{t('admin.reject')}</Text>
             </>
           )}
@@ -355,7 +356,7 @@ export default function ReviewMachineScreen() {
             <ActivityIndicator color="#fff" />
           ) : (
             <>
-              <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+              <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.sm} color="#fff" />
               <Text style={styles.approveText}>{t('admin.approve')}</Text>
             </>
           )}
@@ -448,7 +449,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-Bold',
     color: '#999',
     textTransform: 'uppercase',
@@ -461,12 +462,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   contributorName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
   },
   submittedAt: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 4,
@@ -484,7 +485,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   coordinates: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 4,
@@ -565,7 +566,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Bold',
   },
   nearbyDistance: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#666',
   },
@@ -631,12 +632,12 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   categoryText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
   noCategoriesText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     fontStyle: 'italic',
@@ -652,7 +653,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   viewProfileText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#3C91E6',
     marginTop: 2,
@@ -668,7 +669,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   openMapsText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#3C91E6',
   },
@@ -684,14 +685,14 @@ const styles = StyleSheet.create({
     borderLeftColor: '#D1D5DB',
   },
   directionsHintText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#4B5563',
     flex: 1,
     lineHeight: 18,
   },
   duplicateExplanation: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#666',
     marginBottom: 12,

@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet, Modal, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { Badge } from '../../lib/badges';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
@@ -40,7 +41,7 @@ export default function BadgeRequirementModal({
         <View style={styles.container}>
           {/* Lock icon and badge name */}
           <View style={styles.header}>
-            <Ionicons name="lock-closed" size={20} color="#999" />
+            <Ionicons name="lock-closed" size={ICON_SIZES.sm} color="#999" />
             <Text style={styles.badgeName}>{translation.name}</Text>
           </View>
 
@@ -50,7 +51,7 @@ export default function BadgeRequirementModal({
               <Image source={{ uri: badge.icon_url }} style={styles.badgeIcon} />
             ) : (
               <View style={styles.badgeIconPlaceholder}>
-                <Ionicons name="trophy" size={40} color="#ccc" />
+                <Ionicons name="trophy" size={ICON_SIZES.xl} color="#ccc" />
               </View>
             )}
           </View>
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   badgeName: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
   },
   description: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#666',
     textAlign: 'center',
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   progressLabel: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 8,
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4B4B',
   },
   encouragement: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     textAlign: 'center',
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   closeButtonText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },

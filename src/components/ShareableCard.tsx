@@ -19,6 +19,7 @@ import * as FileSystem from 'expo-file-system';
 import { Analytics } from '../lib/analytics';
 import { useUIStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
+import { FONT_SIZES, ICON_SIZES } from '../theme/constants';
 import UserAvatar from './UserAvatar';
 import VisitedStamp from './machine/VisitedStamp';
 
@@ -116,7 +117,7 @@ export default function ShareableCard() {
         <View style={styles.container}>
           {/* Close button */}
           <Pressable style={styles.closeButton} onPress={handleClose}>
-            <Ionicons name="close" size={24} color="#666" />
+            <Ionicons name="close" size={ICON_SIZES.md} color="#666" />
           </Pressable>
 
           {/* The shareable card - this gets captured */}
@@ -131,7 +132,7 @@ export default function ShareableCard() {
                 />
               ) : (
                 <View style={[styles.photo, styles.noPhoto]}>
-                  <Ionicons name="cube-outline" size={48} color="#ccc" />
+                  <Ionicons name="cube-outline" size={ICON_SIZES.xxl} color="#ccc" />
                 </View>
               )}
 
@@ -166,7 +167,7 @@ export default function ShareableCard() {
               {/* Location */}
               {machineAddress && (
                 <View style={styles.locationRow}>
-                  <Image source={pixelLocation} style={{ width: 14, height: 14 }} />
+                  <Image source={pixelLocation} style={{ width: ICON_SIZES.xs, height: ICON_SIZES.xs }} />
                   <Text style={styles.locationText} numberOfLines={1}>
                     {machineAddress}
                   </Text>
@@ -217,7 +218,7 @@ export default function ShareableCard() {
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <>
-                <Image source={pixelShare} style={{ width: 20, height: 20, tintColor: '#fff' }} />
+                <Image source={pixelShare} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, tintColor: '#fff' }} />
                 <Text style={styles.shareButtonText}>{t('share.shareToSocial')}</Text>
               </>
             )}
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   machineName: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'PressStart2P',
     color: '#333',
     lineHeight: 18,
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   categoryText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
@@ -327,7 +328,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#666',
   },
@@ -348,7 +349,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   username: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
   },
@@ -358,19 +359,19 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   appIcon: {
-    width: 24,
-    height: 24,
+    width: ICON_SIZES.md,
+    height: ICON_SIZES.md,
     borderRadius: 4,
   },
   appName: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'PressStart2P',
     color: '#FF4B4B',
   },
   cornerAccent: {
     position: 'absolute',
-    width: 12,
-    height: 12,
+    width: ICON_SIZES.xs,
+    height: ICON_SIZES.xs,
     borderColor: '#FF4B4B',
   },
   topLeft: {
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Silkscreen',
   },
   skipButton: {
@@ -431,7 +432,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     color: 'rgba(255, 255, 255, 0.7)',
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
   },
 });

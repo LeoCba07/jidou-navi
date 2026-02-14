@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 const pixelEmptyFriends = require('../../../assets/pixel-empty-friends.png');
 import { useTranslation } from 'react-i18next';
 import { useFriendsStore } from '../../store/friendsStore';
@@ -56,7 +57,7 @@ export default function LeaderboardScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Ionicons name="trophy" size={20} color="#D97706" />
+          <Ionicons name="trophy" size={ICON_SIZES.sm} color="#D97706" />
           <Text style={styles.title}>{t('leaderboard.title')}</Text>
         </View>
         <LeaderboardToggle activeType={activeType} onToggle={handleToggle} />
@@ -75,7 +76,7 @@ export default function LeaderboardScreen() {
           </View>
         ) : currentLeaderboard.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="trophy-outline" size={32} color="#ccc" />
+            <Ionicons name="trophy-outline" size={ICON_SIZES.lg} color="#ccc" />
             <Text style={styles.emptyText}>{t('leaderboard.noData')}</Text>
           </View>
         ) : (
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   title: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
     textTransform: 'uppercase',
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
     height: 120,
   },
   emptyText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 8,

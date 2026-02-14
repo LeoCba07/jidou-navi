@@ -1,5 +1,5 @@
 import { Pressable, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
-import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../theme/constants';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS, FONT_SIZES } from '../theme/constants';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline';
 
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   text: {
-    fontSize: 17,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.button,
     letterSpacing: 1,
   },

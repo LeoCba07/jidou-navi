@@ -1,6 +1,7 @@
 // LockedBadgeCard - displays a locked badge with progress indicator
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { Badge } from '../../lib/badges';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
@@ -17,14 +18,14 @@ export default function LockedBadgeCard({ badge, progress, onPress }: LockedBadg
   return (
     <Pressable style={styles.container} onPress={onPress}>
       <View style={styles.lockOverlay}>
-        <Ionicons name="lock-closed" size={14} color="#999" />
+        <Ionicons name="lock-closed" size={ICON_SIZES.xs} color="#999" />
       </View>
 
       {badge.icon_url ? (
         <Image source={{ uri: badge.icon_url }} style={styles.icon} />
       ) : (
         <View style={styles.iconPlaceholder}>
-          <Ionicons name="trophy" size={24} color="#ccc" />
+          <Ionicons name="trophy" size={ICON_SIZES.md} color="#ccc" />
         </View>
       )}
 
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   name: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#999',
     textAlign: 'center',

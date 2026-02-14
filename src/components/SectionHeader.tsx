@@ -1,6 +1,6 @@
 // Reusable retro-style section header
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS, FONTS, SPACING } from '../theme/constants';
+import { COLORS, FONTS, SPACING, FONT_SIZES } from '../theme/constants';
 
 type SectionHeaderProps = {
   title: string;
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   title: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.heading,
     color: COLORS.primary,
     textTransform: 'uppercase',

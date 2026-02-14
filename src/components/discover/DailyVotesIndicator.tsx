@@ -2,6 +2,7 @@ import { useRef, useImperativeHandle, forwardRef } from 'react';
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MAX_DAILY_UPVOTES } from '../../lib/upvotes';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 const HEART_ICON = require('../../../assets/pixel-ui-heart.png');
 
@@ -62,7 +63,7 @@ const DailyVotesIndicator = forwardRef<DailyVotesIndicatorRef, DailyVotesIndicat
       <Animated.View style={[styles.compactContainer, !hasVotesLeft && styles.compactContainerEmpty, animatedStyle]}>
         <Image
           source={HEART_ICON}
-          style={{ width: 18, height: 18, opacity: hasVotesLeft ? 1 : 0.3 }}
+          style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, opacity: hasVotesLeft ? 1 : 0.3 }}
         />
         <Text style={[styles.compactText, !hasVotesLeft && styles.compactTextEmpty]}>
           {remainingVotes}/{MAX_DAILY_UPVOTES}
@@ -78,7 +79,7 @@ const DailyVotesIndicator = forwardRef<DailyVotesIndicatorRef, DailyVotesIndicat
           <Image
             key={index}
             source={HEART_ICON}
-            style={{ width: 22, height: 22, opacity: index < usedVotes ? 0.25 : 1 }}
+            style={{ width: ICON_SIZES.md, height: ICON_SIZES.md, opacity: index < usedVotes ? 0.25 : 1 }}
           />
         ))}
       </View>
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   text: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#D97706',
   },
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   compactText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#FF4B4B',
   },

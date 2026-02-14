@@ -21,7 +21,7 @@ import { useAppModal } from '../../src/hooks/useAppModal';
 import CountryPicker from '../../src/components/CountryPicker';
 import Button from '../../src/components/Button';
 import { Country, getCountryByCode } from '../../src/lib/countries';
-import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS, FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { REFERRAL_STORAGE_KEY } from '../invite/[code]';
 
@@ -159,7 +159,7 @@ export default function SignupScreen() {
         onPress={() => router.canGoBack() ? router.back() : router.replace('/(auth)')}
         hitSlop={12}
       >
-        <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+        <Ionicons name="arrow-back" size={ICON_SIZES.md} color={COLORS.text} />
       </Pressable>
 
       <ScrollView
@@ -189,7 +189,7 @@ export default function SignupScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.username')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="person-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <Ionicons name="person-outline" size={ICON_SIZES.sm} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={username}
@@ -212,7 +212,7 @@ export default function SignupScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={t('auth.selectCountry')}
               >
-                <Ionicons name="flag-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <Ionicons name="flag-outline" size={ICON_SIZES.sm} color={COLORS.textLight} style={styles.inputIcon} />
                 {country ? (
                   <View style={styles.selectedCountry}>
                     <Text style={styles.countryFlag}>{getCountryByCode(country)?.flag}</Text>
@@ -221,7 +221,7 @@ export default function SignupScreen() {
                 ) : (
                   <Text style={styles.placeholder}>{t('auth.selectCountry')}</Text>
                 )}
-                <Ionicons name="chevron-down" size={20} color={COLORS.textLight} />
+                <Ionicons name="chevron-down" size={ICON_SIZES.sm} color={COLORS.textLight} />
               </Pressable>
               <Text style={styles.helperText}>{t('auth.countryHelper')}</Text>
             </View>
@@ -229,7 +229,7 @@ export default function SignupScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.email')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="mail-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={ICON_SIZES.sm} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={email}
@@ -246,7 +246,7 @@ export default function SignupScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.password')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={ICON_SIZES.sm} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={password}
@@ -263,7 +263,7 @@ export default function SignupScreen() {
                 >
                   <Ionicons
                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={20}
+                    size={ICON_SIZES.sm}
                     color={COLORS.textLight}
                   />
                 </Pressable>
@@ -273,7 +273,7 @@ export default function SignupScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={ICON_SIZES.sm} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={confirmPassword}
@@ -290,7 +290,7 @@ export default function SignupScreen() {
                 >
                   <Ionicons
                     name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
-                    size={20}
+                    size={ICON_SIZES.sm}
                     color={COLORS.textLight}
                   />
                 </Pressable>
@@ -305,7 +305,7 @@ export default function SignupScreen() {
               accessibilityLabel={t('auth.newsletter.label')}
             >
               <View style={[styles.checkbox, receiveNewsletter && styles.checkboxChecked]}>
-                {receiveNewsletter && <Ionicons name="checkmark" size={16} color="#fff" />}
+                {receiveNewsletter && <Ionicons name="checkmark" size={ICON_SIZES.xs} color="#fff" />}
               </View>
               <Text style={styles.newsletterText}>{t('auth.newsletter.label')}</Text>
             </Pressable>
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
     paddingBottom: SPACING.xs,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   label: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
     marginBottom: SPACING.xs,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   helperText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
     marginTop: SPACING.xs,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingVertical: 12,
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.body,
     color: COLORS.text,
   },
@@ -432,14 +432,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   countryName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.body,
     color: COLORS.text,
   },
   placeholder: {
     flex: 1,
     paddingVertical: 12,
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
   },
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primaryDark,
   },
   newsletterText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.text,
     flex: 1,
@@ -483,12 +483,12 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xxl,
   },
   footerText: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
   linkText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     color: COLORS.primary,
     fontFamily: FONTS.button,
   },

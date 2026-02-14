@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { NearbyMachine } from '../lib/machines';
 import { useVisitedMachinesStore } from '../store/visitedMachinesStore';
-import { COLORS } from '../theme/constants';
+import { COLORS, FONT_SIZES, ICON_SIZES } from '../theme/constants';
 import VisitedStamp from './machine/VisitedStamp';
 
 const CATEGORY_ICONS: Record<string, any> = {
@@ -81,7 +81,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
             <Image source={{ uri: machine.primary_photo_url }} style={styles.photo} />
           ) : (
             <View style={[styles.photo, styles.noPhoto]}>
-              <Ionicons name="image-outline" size={40} color="#ccc" />
+              <Ionicons name="image-outline" size={ICON_SIZES.xl} color="#ccc" />
             </View>
           )}
         </View>
@@ -114,11 +114,11 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
           {/* Stats row */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Image source={require('../../assets/pixel-ui-location.png')} style={{ width: 14, height: 14 }} />
+              <Image source={require('../../assets/pixel-ui-location.png')} style={{ width: ICON_SIZES.xs, height: ICON_SIZES.xs }} />
               <Text style={styles.statText}>{distance}</Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons name="eye-outline" size={14} color={COLORS.textMuted} />
+              <Ionicons name="eye-outline" size={ICON_SIZES.xs} color={COLORS.textMuted} />
               <Text style={styles.statTextMuted}>
                 {t('machine.visits', { count: machine.visit_count })}
               </Text>
@@ -126,7 +126,7 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
             <View style={styles.statItem}>
               <Ionicons
                 name="time-outline"
-                size={14}
+                size={ICON_SIZES.xs}
                 color={lastSeenInfo.color}
               />
               <Text style={[styles.statTextMuted, { color: lastSeenInfo.color }]} numberOfLines={1}>
@@ -138,14 +138,14 @@ export function MachinePreviewCard({ machine, distanceMeters, onPress, onClose }
           {/* Tap indicator */}
           <View style={styles.tapIndicator}>
             <Text style={styles.tapText}>{t('machine.tapForDetails')}</Text>
-            <Ionicons name="chevron-forward" size={14} color="#FF4B4B" />
+            <Ionicons name="chevron-forward" size={ICON_SIZES.xs} color="#FF4B4B" />
           </View>
         </View>
       </Pressable>
 
       {/* Close button */}
       <Pressable style={styles.closeButton} onPress={onClose}>
-        <Ionicons name="close" size={18} color="#666" />
+        <Ionicons name="close" size={ICON_SIZES.sm} color="#666" />
       </Pressable>
     </View>
   );
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   name: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
     marginBottom: 6,
@@ -214,11 +214,11 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   categoryIcon: {
-    width: 12,
-    height: 12,
+    width: ICON_SIZES.xs,
+    height: ICON_SIZES.xs,
   },
   categoryText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
@@ -237,12 +237,12 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   statText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: COLORS.primary,
   },
   statTextMuted: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: COLORS.textMuted,
   },
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   tapText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Silkscreen',
     color: '#FF4B4B',
   },

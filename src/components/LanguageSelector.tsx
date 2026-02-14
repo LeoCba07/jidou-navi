@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useLanguageStore } from '../store/languageStore';
 import { supportedLanguages, LanguageCode } from '../lib/i18n';
+import { FONT_SIZES, ICON_SIZES } from '../theme/constants';
 
 const { width } = Dimensions.get('window');
 
@@ -106,7 +107,7 @@ export default function LanguageSelector() {
                       <Text style={styles.languageNameEnglish}>{language.name}</Text>
                     </View>
                     {isSelected && (
-                      <Ionicons name="checkmark-circle" size={24} color="#FF4B4B" />
+                      <Ionicons name="checkmark-circle" size={ICON_SIZES.md} color="#FF4B4B" />
                     )}
                   </Pressable>
                 );
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#333',
     marginBottom: 20,
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   languageName: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
     marginBottom: 2,
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     color: '#FF4B4B',
   },
   languageNameEnglish: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#666',
   },
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.15)',
   },
   cancelText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Silkscreen',
     color: '#666',
   },

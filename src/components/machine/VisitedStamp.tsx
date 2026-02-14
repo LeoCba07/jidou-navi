@@ -1,5 +1,6 @@
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 type Props = {
   size?: 'small' | 'default';
@@ -62,24 +63,24 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   icon: {
-    width: 18,
-    height: 18,
+    width: ICON_SIZES.sm,
+    height: ICON_SIZES.sm,
     borderRadius: 9,
   },
   iconSmall: {
-    width: 14,
-    height: 14,
+    width: ICON_SIZES.xs,
+    height: ICON_SIZES.xs,
     borderRadius: 7,
   },
   text: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Silkscreen',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 0,
   },
   textSmall: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
   },
 });

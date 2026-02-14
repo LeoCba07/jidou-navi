@@ -17,6 +17,7 @@ import { router } from 'expo-router';
 import { User } from '@supabase/supabase-js';
 import { useTranslation } from 'react-i18next';
 import * as Clipboard from 'expo-clipboard';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import { useLanguageStore } from '../../store/languageStore';
 import { supportedLanguages, LanguageCode } from '../../lib/i18n';
 import { Profile } from '../../store/authStore';
@@ -216,7 +217,7 @@ export default function SettingsModal({
           <View style={styles.header}>
             {currentScreen !== 'main' && (
               <Pressable onPress={() => setCurrentScreen('main')} style={styles.backButton} disabled={saving}>
-                <Ionicons name="arrow-back" size={24} color="#666" />
+                <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#666" />
               </Pressable>
             )}
             <Text style={styles.title}>
@@ -229,7 +230,7 @@ export default function SettingsModal({
                 : t('profile.accountSettings')}
             </Text>
             <Pressable onPress={handleClose} style={styles.closeButton} disabled={saving}>
-              <Ionicons name="close" size={24} color="#666" />
+              <Ionicons name="close" size={ICON_SIZES.md} color="#666" />
             </Pressable>
           </View>
 
@@ -249,14 +250,14 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.editProfile')}
               >
-                <Ionicons name="person-outline" size={20} color="#666" />
+                <Ionicons name="person-outline" size={ICON_SIZES.sm} color="#666" />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.editProfile')}</Text>
                   <Text style={styles.itemValue}>
                     {profile?.display_name || profile?.username || t('common.user')}
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
               </Pressable>
             </View>
 
@@ -270,12 +271,12 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.mySubmissions')}
               >
-                <Ionicons name="cube-outline" size={20} color="#666" />
+                <Ionicons name="cube-outline" size={ICON_SIZES.sm} color="#666" />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.mySubmissions')}</Text>
                   <Text style={styles.itemValue}>{t('admin.pendingReview')}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
               </Pressable>
             </View>
 
@@ -294,12 +295,12 @@ export default function SettingsModal({
                     accessibilityRole="button"
                     accessibilityLabel={t('admin.dashboard')}
                   >
-                    <Ionicons name="shield-checkmark" size={20} color="#FF4B4B" />
+                    <Ionicons name="shield-checkmark" size={ICON_SIZES.sm} color="#FF4B4B" />
                     <View style={styles.itemContent}>
                       <Text style={[styles.itemLabel, { color: '#FF4B4B' }]}>{t('admin.dashboard')}</Text>
                       <Text style={styles.itemValue}>{t('admin.reviewSubmissions')}</Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={20} color="#FF4B4B" />
+                    <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#FF4B4B" />
                   </Pressable>
                 </View>
                 <View style={styles.divider} />
@@ -309,7 +310,7 @@ export default function SettingsModal({
             {/* Email */}
             <View style={styles.section}>
               <View style={styles.itemRow}>
-                <Ionicons name="mail-outline" size={20} color="#666" />
+                <Ionicons name="mail-outline" size={ICON_SIZES.sm} color="#666" />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('auth.email')}</Text>
                   <Text style={styles.itemValue}>{user?.email}</Text>
@@ -327,12 +328,12 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.language')}
               >
-                <Ionicons name="language-outline" size={20} color="#666" />
+                <Ionicons name="language-outline" size={ICON_SIZES.sm} color="#666" />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.language')}</Text>
                   <Text style={styles.itemValue}>{currentLanguageName}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
               </Pressable>
             </View>
 
@@ -346,12 +347,12 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.inviteTitle')}
               >
-                <Image source={require('../../../assets/pixel-gift-invite.png')} style={{ width: 20, height: 20 }} />
+                <Image source={require('../../../assets/pixel-gift-invite.png')} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }} />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.inviteTitle')}</Text>
                   <Text style={styles.itemValue}>{t('profile.inviteDescription')}</Text>
                 </View>
-                <Image source={require('../../../assets/pixel-ui-share.png')} style={{ width: 20, height: 20 }} />
+                <Image source={require('../../../assets/pixel-ui-share.png')} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }} />
               </Pressable>
             </View>
 
@@ -368,11 +369,11 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.privacyPolicy')}
               >
-                <Ionicons name="shield-checkmark-outline" size={20} color="#666" />
+                <Ionicons name="shield-checkmark-outline" size={ICON_SIZES.sm} color="#666" />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.privacyPolicy')}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
               </Pressable>
             </View>
 
@@ -388,11 +389,11 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('profile.termsOfService')}
               >
-                <Ionicons name="document-text-outline" size={20} color="#666" />
+                <Ionicons name="document-text-outline" size={ICON_SIZES.sm} color="#666" />
                 <View style={styles.itemContent}>
                   <Text style={styles.itemLabel}>{t('profile.termsOfService')}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
               </Pressable>
             </View>
 
@@ -409,7 +410,7 @@ export default function SettingsModal({
                 accessibilityRole="button"
                 accessibilityLabel={t('auth.logout')}
               >
-                <Ionicons name="log-out-outline" size={20} color="#FF4B4B" />
+                <Ionicons name="log-out-outline" size={ICON_SIZES.sm} color="#FF4B4B" />
                 <Text style={styles.logoutText}>{t('auth.logout')}</Text>
               </Pressable>
             </View>
@@ -450,7 +451,7 @@ export default function SettingsModal({
                           <Text style={styles.languageNameEnglish}>{language.name}</Text>
                         </View>
                         {isSelected && (
-                          <Ionicons name="checkmark-circle" size={24} color="#FF4B4B" />
+                          <Ionicons name="checkmark-circle" size={ICON_SIZES.md} color="#FF4B4B" />
                         )}
                       </Pressable>
                     );
@@ -464,7 +465,7 @@ export default function SettingsModal({
                   <ActivityIndicator color="#FF4B4B" style={styles.loader} />
                 ) : pendingMachines.length === 0 ? (
                   <View style={styles.emptyState}>
-                    <Ionicons name="cube-outline" size={48} color="#ccc" />
+                    <Ionicons name="cube-outline" size={ICON_SIZES.xxl} color="#ccc" />
                     <Text style={styles.emptyText}>{t('admin.queueEmptySubtext')}</Text>
                   </View>
                 ) : (
@@ -478,7 +479,7 @@ export default function SettingsModal({
                           />
                         ) : (
                           <View style={[styles.submissionPhoto, styles.photoPlaceholder]}>
-                            <Ionicons name="image-outline" size={24} color="#ccc" />
+                            <Ionicons name="image-outline" size={ICON_SIZES.md} color="#ccc" />
                           </View>
                         )}
                         <View style={styles.submissionInfo}>
@@ -560,7 +561,7 @@ export default function SettingsModal({
                   accessibilityLabel={t('auth.newsletter.label')}
                 >
                   <View style={[styles.checkbox, receiveNewsletter && styles.checkboxChecked]}>
-                    {receiveNewsletter && <Ionicons name="checkmark" size={16} color="#fff" />}
+                    {receiveNewsletter && <Ionicons name="checkmark" size={ICON_SIZES.xs} color="#fff" />}
                   </View>
                   <Text style={styles.newsletterText}>{t('auth.newsletter.label')}</Text>
                 </Pressable>
@@ -624,7 +625,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -650,12 +651,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemLabel: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
   },
   itemValue: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#666',
     marginTop: 2,
@@ -681,7 +682,7 @@ const styles = StyleSheet.create({
     borderColor: '#FF4B4B',
   },
   logoutText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.md,
     color: '#FF4B4B',
     fontFamily: 'Silkscreen',
   },
@@ -720,7 +721,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   languageName: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
     marginBottom: 2,
@@ -729,7 +730,7 @@ const styles = StyleSheet.create({
     color: '#FF4B4B',
   },
   languageNameEnglish: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#666',
   },
@@ -769,7 +770,7 @@ const styles = StyleSheet.create({
   },
   submissionName: {
     flex: 1,
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
     marginRight: 8,
@@ -786,7 +787,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEE2E2',
   },
   statusBadgeText: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-Bold',
     textTransform: 'uppercase',
   },
@@ -798,7 +799,7 @@ const styles = StyleSheet.create({
   },
   rejectionReason: {
     flex: 1,
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#EF4444',
     marginRight: 8,
@@ -810,7 +811,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   dismissText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-Medium',
     color: '#666',
   },
@@ -821,7 +822,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     marginTop: 12,
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#999',
   },
@@ -836,7 +837,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-Bold',
     color: '#666',
     textTransform: 'uppercase',
@@ -848,7 +849,7 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     borderRadius: 4,
     padding: 12,
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter',
     color: '#2B2B2B',
   },
@@ -860,19 +861,19 @@ const styles = StyleSheet.create({
     borderColor: '#FF4B4B',
   },
   validationError: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#FF4B4B',
     marginTop: 4,
   },
   nameChangeInfo: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 4,
   },
   cooldownText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#FF4B4B',
     marginTop: 4,
@@ -898,7 +899,7 @@ const styles = StyleSheet.create({
     borderColor: '#CC3C3C',
   },
   newsletterText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#333',
     flex: 1,
@@ -919,7 +920,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   saveButtonText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },

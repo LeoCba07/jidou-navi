@@ -2,6 +2,7 @@
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { LeaderboardEntry } from '../../store/friendsStore';
 import UserAvatar from '../UserAvatar';
 
@@ -70,7 +71,7 @@ export default function LeaderboardRow({ entry, showWeeklyXp = false }: Leaderbo
       </View>
       {showWeeklyXp && entry.xp_this_week > 0 && (
         <View style={styles.weeklyXp}>
-          <Ionicons name="trending-up" size={12} color="#22C55E" />
+          <Ionicons name="trending-up" size={ICON_SIZES.xs} color="#22C55E" />
           <Text style={styles.weeklyXpText}>+{entry.xp_this_week}</Text>
         </View>
       )}
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   rankNumber: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
   },
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 2,
@@ -137,12 +138,12 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   levelText: {
-    fontSize: 9,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },
   xpText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#666',
   },
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   weeklyXpText: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#22C55E',
   },

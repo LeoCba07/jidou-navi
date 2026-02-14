@@ -11,6 +11,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useUIStore } from '../store/uiStore';
+import { FONT_SIZES, ICON_SIZES } from '../theme/constants';
 
 const { width } = Dimensions.get('window');
 
@@ -252,8 +253,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   xpBurstIcon: {
-    width: 48,
-    height: 48,
+    width: ICON_SIZES.xxl,
+    height: ICON_SIZES.xxl,
     marginBottom: -6,
   },
   xpBadge: {
@@ -270,18 +271,18 @@ const styles = StyleSheet.create({
   },
   xpBadgeText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Silkscreen-Bold',
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#333',
     marginBottom: 12,
     textAlign: 'center',
   },
   message: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter',
     color: '#666',
     textAlign: 'center',
@@ -333,7 +334,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
   },
   buttonText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     textAlign: 'center',
   },

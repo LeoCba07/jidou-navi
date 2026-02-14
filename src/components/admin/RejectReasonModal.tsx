@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 interface RejectReasonModalProps {
   visible: boolean;
@@ -69,7 +70,7 @@ export default function RejectReasonModal({
           <View style={styles.header}>
             <Text style={styles.title}>{t('admin.rejectReason')}</Text>
             <Pressable onPress={handleClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#666" />
+              <Ionicons name="close" size={ICON_SIZES.md} color="#666" />
             </Pressable>
           </View>
 
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#666',
     marginBottom: 16,
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF4B4B',
   },
   reasonText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#333',
     flex: 1,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#333',
     minHeight: 80,
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#666',
   },
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   rejectText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },
