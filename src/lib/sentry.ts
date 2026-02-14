@@ -15,8 +15,6 @@ export function initSentry() {
     tracesSampleRate: 0.2,
     // Only send errors in production
     enabled: !__DEV__,
-    // Enable unhandled promise rejection tracking
-    enableNativeUncaughtExceptionTracking: true,
     // Attach user info to errors
     beforeSend(event) {
       // Remove sensitive data if needed

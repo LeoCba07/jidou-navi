@@ -90,6 +90,7 @@ export async function registerForPushNotificationsAsync() {
     }
 
     // Store/Update token in Supabase
+    // @ts-ignore - RPC exists in DB but not in generated types
     const { error } = await supabase.rpc('upsert_push_token', {
       p_token: token,
       p_platform: Platform.OS,
@@ -121,7 +122,7 @@ export async function unregisterPushNotificationsAsync() {
     });
     const token = tokenData.data;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('push_tokens')
       .delete()
       .eq('token', token);
