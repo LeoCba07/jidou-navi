@@ -35,13 +35,18 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const latestQueryRef = useRef<string>("");
 
-  // Dismiss keyboard when screen loses focus
+  // Dismiss keyboard and clear state when screen loses focus
   useFocusEffect(
     useCallback(() => {
       return () => {
+        inputRef.current?.blur();
         Keyboard.dismiss();
         setIsFocused(false);
         setShowResults(false);
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+          debounceRef.current = null;
+        }
       };
     }, [])
   );
@@ -133,6 +138,11 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
     inputRef.current?.blur();
     setShowResults(false);
     setIsFocused(false);
+    latestQueryRef.current = "";
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
   };
 
   const insets = useSafeAreaInsets();
@@ -140,8 +150,8 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
 
   return (
     <>
-      {/* Overlay to dismiss results when tapping outside - active when focused */}
-      {isFocused && (
+      {/* Overlay to dismiss results when tapping outside - active when focused or showing results */}
+      {(isFocused || showResults) && (
         <Pressable
           style={styles.overlay}
           onPress={dismissResults}
@@ -159,7 +169,11 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
             value={query}
             onChangeText={handleSearch}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            onBlur={() => {
+              setIsFocused(false);
+              // Small delay to allow result selection before hiding
+              setTimeout(() => setShowResults(false), 200);
+            }}
             placeholder={t('map.searchPlaceholder')}
             placeholderTextColor="#999"
             returnKeyType="search"
