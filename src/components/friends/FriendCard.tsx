@@ -1,6 +1,7 @@
 // Friend list item component
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import type { Friend } from '../../store/friendsStore';
 
@@ -16,21 +17,26 @@ export default function FriendCard({ friend, onRemove }: FriendCardProps) {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={friend.avatar_url ? { uri: friend.avatar_url } : DEFAULT_AVATAR}
-        style={styles.avatar}
-      />
-      <View style={styles.info}>
-        <View style={styles.nameRow}>
-          <Text style={styles.displayName} numberOfLines={1}>
-            {friend.display_name || friend.username}
-          </Text>
-          <View style={styles.levelBadge}>
-            <Text style={styles.levelText}>Lv.{friend.level}</Text>
+      <Pressable
+        style={styles.profileArea}
+        onPress={() => router.push(`/profile/${friend.id}`)}
+      >
+        <Image
+          source={friend.avatar_url ? { uri: friend.avatar_url } : DEFAULT_AVATAR}
+          style={styles.avatar}
+        />
+        <View style={styles.info}>
+          <View style={styles.nameRow}>
+            <Text style={styles.displayName} numberOfLines={1}>
+              {friend.display_name || friend.username}
+            </Text>
+            <View style={styles.levelBadge}>
+              <Text style={styles.levelText}>Lv.{friend.level}</Text>
+            </View>
           </View>
+          <Text style={styles.username}>@{friend.username}</Text>
         </View>
-        <Text style={styles.username}>@{friend.username}</Text>
-      </View>
+      </Pressable>
       <Pressable
         style={styles.removeButton}
         onPress={() => onRemove(friend.id)}
@@ -58,6 +64,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 0,
     elevation: 2,
+  },
+  profileArea: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   avatar: {
     width: 48,

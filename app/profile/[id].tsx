@@ -16,9 +16,13 @@ import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
 import { getLevelProgress } from '../../src/lib/xp';
 import { useBadgeTranslation } from '../../src/hooks/useBadgeTranslation';
+import { useAppModal } from '../../src/hooks/useAppModal';
 import UserAvatar from '../../src/components/UserAvatar';
 
 const pixelEmptyBadges = require('../../assets/pixel-empty-badges.png');
+const pixelStatAdded = require('../../assets/pixel-stat-added.png');
+const pixelStatBadges = require('../../assets/pixel-stat-badges.png');
+const pixelStatVisits = require('../../assets/pixel-stat-visits.png');
 
 // Public profile data we fetch for other users
 type PublicProfile = {
@@ -60,6 +64,7 @@ const RARITY_COLORS: Record<string, string> = {
 export default function UserProfileScreen() {
   const { t } = useTranslation();
   const { getBadgeTranslation } = useBadgeTranslation();
+  const { showInfo } = useAppModal();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuthStore();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
@@ -149,6 +154,10 @@ export default function UserProfileScreen() {
   }
 
   const levelProgress = getLevelProgress(profile.xp || 0);
+  const rawPercentage = Number(levelProgress?.percentage);
+  const safePercentage = Number.isFinite(rawPercentage)
+    ? Math.min(100, Math.max(0, rawPercentage))
+    : 0;
 
   return (
     <View style={styles.container}>
@@ -167,53 +176,61 @@ export default function UserProfileScreen() {
           <View style={styles.avatarContainer}>
             <UserAvatar
               url={profile.avatar_url}
-              size={100}
+              size={120}
               borderWidth={4}
               borderColor="#FF4B4B"
               style={styles.avatar}
             />
+          </View>
+          <Text style={styles.displayName}>
+            {profile.display_name || profile.username || t('common.user')}
+          </Text>
+
+          {/* XP and Level Bar */}
+          <View style={styles.xpSection}>
             <View style={styles.levelBadge}>
               <Text style={styles.levelText}>
                 {t('profile.level')} {levelProgress.currentLevel}
               </Text>
             </View>
+            <View style={styles.xpBarContainer}>
+              <View style={[styles.xpBarFill, { width: `${safePercentage}%` }]} />
+              <Text style={styles.xpText}>
+                {Math.floor(levelProgress.currentXP)} / {Math.floor(levelProgress.xpForNextLevel)} XP
+              </Text>
+            </View>
           </View>
-          <Text style={styles.displayName}>
-            {profile.display_name || profile.username || t('common.user')}
-          </Text>
-        </View>
 
-        {/* Stats Section */}
-        <View style={styles.statsRow}>
-          <View style={styles.statBlock}>
-            <View style={styles.statBlockHeader}>
-              <Ionicons name="footsteps-outline" size={18} color="#3C91E6" />
-              <Text style={[styles.statBlockLabel, { color: '#3C91E6' }]}>
-                {t('profile.machinesVisited')}
-              </Text>
+          {/* Stats Banner */}
+          <View style={styles.statsBanner}>
+            <View style={styles.statsBannerColumn}>
+              <Image source={pixelStatAdded} style={styles.statsBannerIcon} />
+              <Text style={styles.statsBannerLabel}>{t('profile.machinesAdded')}</Text>
+              <Text style={styles.statsBannerNumber}>{profile.contribution_count || 0}</Text>
             </View>
-            <Text style={[styles.statBlockNumber, { color: '#3C91E6' }]}>
-              {profile.visit_count || 0}
-            </Text>
-          </View>
-          <View style={styles.statBlock}>
-            <View style={styles.statBlockHeader}>
-              <Ionicons name="cube-outline" size={18} color="#FF4B4B" />
-              <Text style={[styles.statBlockLabel, { color: '#FF4B4B' }]}>
-                {t('profile.machinesAdded')}
-              </Text>
+            <View style={styles.statsBannerDivider} />
+            <View style={styles.statsBannerColumn}>
+              <Image source={pixelStatBadges} style={styles.statsBannerIcon} />
+              <Text style={styles.statsBannerLabel}>{t('profile.badges')}</Text>
+              <Text style={styles.statsBannerNumber}>{profile.badge_count || 0}</Text>
             </View>
-            <Text style={[styles.statBlockNumber, { color: '#FF4B4B' }]}>
-              {profile.contribution_count || 0}
-            </Text>
+            <View style={styles.statsBannerDivider} />
+            <View style={styles.statsBannerColumn}>
+              <Image source={pixelStatVisits} style={styles.statsBannerIcon} />
+              <Text style={styles.statsBannerLabel}>{t('profile.machinesVisited')}</Text>
+              <Text style={styles.statsBannerNumber}>{profile.visit_count || 0}</Text>
+            </View>
           </View>
         </View>
 
         {/* Badges Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {t('profile.badges')} ({badges.length})
-          </Text>
+          <View style={styles.sectionTitleRow}>
+            <Ionicons name="trophy-outline" size={16} color="#D97706" style={styles.sectionTitleIcon} />
+            <Text style={styles.sectionTitle}>
+              {t('profile.badges')} ({badges.length})
+            </Text>
+          </View>
           {loadingBadges ? (
             <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
           ) : badges.length === 0 ? (
@@ -234,8 +251,9 @@ export default function UserProfileScreen() {
                   userBadge.badge.description
                 );
                 return (
-                  <View
+                  <Pressable
                     key={userBadge.id}
+                    onPress={() => showInfo(translation.name, translation.description)}
                     style={[
                       styles.badgeItem,
                       {
@@ -252,13 +270,13 @@ export default function UserProfileScreen() {
                       />
                     ) : (
                       <View style={styles.badgePlaceholder}>
-                        <Ionicons name="trophy" size={24} color="#FF4B4B" />
+                        <Ionicons name="trophy" size={28} color="#FF4B4B" />
                       </View>
                     )}
                     <Text style={styles.badgeName} numberOfLines={1}>
                       {translation.name}
                     </Text>
-                  </View>
+                  </Pressable>
                 );
               })}
             </ScrollView>
@@ -336,14 +354,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   avatarContainer: {
-    marginBottom: 16,
+    marginBottom: 12,
     alignItems: 'center',
-    position: 'relative',
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
   displayName: {
     fontSize: 22,
@@ -352,66 +369,100 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textAlign: 'center',
   },
+  xpSection: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingHorizontal: 12,
+  },
   levelBadge: {
-    position: 'absolute',
-    bottom: -6,
-    alignSelf: 'center',
     backgroundColor: '#2B2B2B',
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
     borderRadius: 2,
+    marginBottom: 8,
     borderWidth: 1,
     borderColor: '#444',
-    zIndex: 2,
   },
   levelText: {
     color: '#fff',
     fontSize: 12,
     fontFamily: 'Silkscreen',
   },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  statBlock: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    padding: 16,
+  xpBarContainer: {
+    width: '100%',
+    height: 20,
+    backgroundColor: '#f0f0f0',
     borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 0,
-    elevation: 2,
-    alignItems: 'center',
+    borderColor: '#2B2B2B',
+    borderRadius: 2,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  statBlockHeader: {
+  xpBarFill: {
+    height: '100%',
+    backgroundColor: '#22C55E',
+  },
+  xpText: {
+    position: 'absolute',
+    width: '100%',
+    textAlign: 'center',
+    fontSize: 10,
+    fontFamily: 'Silkscreen',
+    color: '#2B2B2B',
+    lineHeight: 20,
+  },
+  statsBanner: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 8,
+    backgroundColor: '#FF4B4B',
+    marginHorizontal: -24,
+    marginBottom: -24,
+    marginTop: 16,
+    paddingVertical: 16,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
   },
-  statBlockLabel: {
+  statsBannerColumn: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 4,
+  },
+  statsBannerDivider: {
+    width: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  statsBannerIcon: {
+    width: 36,
+    height: 36,
+  },
+  statsBannerLabel: {
     fontSize: 8,
     fontFamily: 'Silkscreen',
+    color: 'rgba(255, 255, 255, 0.85)',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    textAlign: 'center',
   },
-  statBlockNumber: {
+  statsBannerNumber: {
     fontSize: 28,
     fontFamily: 'DotGothic16',
+    color: '#fff',
   },
   section: {
     marginBottom: 24,
   },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 12,
+  },
+  sectionTitleIcon: {
+    marginTop: -2,
+  },
   sectionTitle: {
-    fontSize: 11,
-    fontFamily: 'Silkscreen',
+    fontSize: 13,
+    fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
-    marginBottom: 14,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -436,13 +487,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   badgeIcon: {
-    width: 36,
-    height: 36,
+    width: 42,
+    height: 42,
     marginBottom: 8,
   },
   badgePlaceholder: {
-    width: 36,
-    height: 36,
+    width: 42,
+    height: 42,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
