@@ -57,6 +57,8 @@
       "enterPassword": "Please enter your password",
       "enterUsername": "Please enter a username",
       "usernameMinLength": "Username must be at least 3 characters",
+      "usernameMaxLength": "Username must be 15 characters or less",
+      "usernameFormat": "Letters, numbers, underscores, and hyphens only",
       "passwordMinLength": "Password must be at least 6 characters",
       "passwordsNoMatch": "Passwords do not match",
       "selectCountry": "Please select your country"
@@ -132,6 +134,7 @@
     "updateProfile": "Update Profile",
     "updateSuccess": "Profile updated successfully!",
     "updateError": "Failed to update profile.",
+    "nameChangeInfo": "You can change your name once every 14 days",
     "nameChangeCooldown": "You can change your name again in {{days}} days",
     "unsaveConfirmTitle": "Remove from Quest Log",
     "unsaveConfirmMessage": "Remove this machine from your quest log?",

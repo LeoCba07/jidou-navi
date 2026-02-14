@@ -77,6 +77,14 @@ export default function SignupScreen() {
       showError(t('common.error'), t('auth.validation.usernameMinLength'));
       return;
     }
+    if (username.trim().length > 15) {
+      showError(t('common.error'), t('auth.validation.usernameMaxLength'));
+      return;
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(username.trim())) {
+      showError(t('common.error'), t('auth.validation.usernameFormat'));
+      return;
+    }
     if (!password) {
       showError(t('common.error'), t('auth.validation.enterPassword'));
       return;
@@ -189,6 +197,7 @@ export default function SignupScreen() {
                   placeholderTextColor={COLORS.textLight}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  maxLength={15}
                 />
               </View>
               <Text style={styles.helperText}>{t('auth.usernameHelper')}</Text>

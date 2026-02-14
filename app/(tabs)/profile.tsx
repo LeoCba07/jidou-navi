@@ -909,7 +909,7 @@ const styles = StyleSheet.create({
     height: 36,
   },
   statsBannerLabel: {
-    fontSize: 8,
+    fontSize: 10,
     fontFamily: 'Silkscreen',
     color: 'rgba(255, 255, 255, 0.85)',
     textTransform: 'uppercase',

@@ -155,6 +155,14 @@ export default function SettingsModal({
       showError(t('common.error'), t('auth.validation.enterUsername'));
       return;
     }
+    if (trimmedName.length < 3) {
+      showError(t('common.error'), t('auth.validation.usernameMinLength'));
+      return;
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(trimmedName)) {
+      showError(t('common.error'), t('auth.validation.usernameFormat'));
+      return;
+    }
 
     setSaving(true);
     try {
@@ -513,14 +521,30 @@ export default function SettingsModal({
                 <View style={styles.field}>
                   <Text style={styles.label}>{t('profile.displayName')}</Text>
                   <TextInput
-                    style={[styles.input, isNameChangeDisabled && styles.inputDisabled]}
+                    style={[
+                      styles.input,
+                      isNameChangeDisabled && styles.inputDisabled,
+                      displayName.length > 0 && !isNameChangeDisabled && (
+                        !/^[a-zA-Z0-9_-]+$/.test(displayName) || displayName.trim().length < 3
+                      ) && styles.inputError,
+                    ]}
                     value={displayName}
                     onChangeText={setDisplayName}
                     placeholder={t('auth.usernamePlaceholder')}
-                    maxLength={100}
+                    maxLength={15}
                     autoCorrect={false}
+                    autoCapitalize="none"
                     editable={!isNameChangeDisabled}
                   />
+                  {displayName.length > 0 && !isNameChangeDisabled && !/^[a-zA-Z0-9_-]+$/.test(displayName) ? (
+                    <Text style={styles.validationError}>{t('auth.validation.usernameFormat')}</Text>
+                  ) : displayName.length > 0 && !isNameChangeDisabled && displayName.trim().length < 3 ? (
+                    <Text style={styles.validationError}>{t('auth.validation.usernameMinLength')}</Text>
+                  ) : (
+                    <Text style={styles.nameChangeInfo}>
+                      {t('profile.nameChangeInfo')}
+                    </Text>
+                  )}
                   {isNameChangeDisabled && (
                     <Text style={styles.cooldownText}>
                       {t('profile.nameChangeCooldown', { days: nameChangeCooldownDays })}
@@ -832,10 +856,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     color: '#999',
   },
-  cooldownText: {
+  inputError: {
+    borderColor: '#FF4B4B',
+  },
+  validationError: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#FF4B4B',
+    marginTop: 4,
+  },
+  nameChangeInfo: {
     fontSize: 12,
     fontFamily: 'Inter',
     color: '#999',
+    marginTop: 4,
+  },
+  cooldownText: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#FF4B4B',
     marginTop: 4,
   },
   newsletterToggle: {

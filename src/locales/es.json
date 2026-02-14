@@ -57,6 +57,8 @@
       "enterPassword": "Por favor ingresa tu contraseña",
       "enterUsername": "Por favor ingresa un nombre de usuario",
       "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres",
+      "usernameMaxLength": "El nombre de usuario debe tener 15 caracteres o menos",
+      "usernameFormat": "Solo letras, números, guiones bajos y guiones",
       "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
       "passwordsNoMatch": "Las contraseñas no coinciden",
       "selectCountry": "Por favor selecciona tu país"
@@ -132,6 +134,7 @@
     "updateProfile": "Actualizar Perfil",
     "updateSuccess": "¡Perfil actualizado con éxito!",
     "updateError": "Error al actualizar el perfil.",
+    "nameChangeInfo": "Puedes cambiar tu nombre una vez cada 14 días",
     "nameChangeCooldown": "Puedes cambiar tu nombre en {{days}} días",
     "unsaveConfirmTitle": "Eliminar del Registro",
     "unsaveConfirmMessage": "¿Eliminar esta máquina de tu registro de misiones?",
