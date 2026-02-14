@@ -119,6 +119,7 @@ export default function SignupScreen() {
       options: {
         data: {
           username: username.trim(),
+          full_name: username.trim(),
           country: country,
           receive_newsletter: receiveNewsletter,
           referral_code: referralCode,

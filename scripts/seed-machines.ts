@@ -121,6 +121,16 @@ async function seedMachines() {
 
   console.log(`📦 Loaded ${data.machines.length} machines from JSON\n`);
 
+  // Clean up existing seeded data before re-seeding
+  console.log('🗑️  Cleaning existing machine data...');
+  const { error: delCatErr } = await supabase.from('machine_categories').delete().neq('machine_id', '00000000-0000-0000-0000-000000000000');
+  if (delCatErr) console.log(`  ⚠ machine_categories cleanup: ${delCatErr.message}`);
+  const { error: delPhotoErr } = await supabase.from('machine_photos').delete().neq('machine_id', '00000000-0000-0000-0000-000000000000');
+  if (delPhotoErr) console.log(`  ⚠ machine_photos cleanup: ${delPhotoErr.message}`);
+  const { error: delMachErr } = await supabase.from('machines').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+  if (delMachErr) console.log(`  ⚠ machines cleanup: ${delMachErr.message}`);
+  console.log('✅ Cleanup complete\n');
+
   // Get category IDs
   const categoryIds = await getCategoryIds();
   console.log('📁 Categories:', Object.keys(categoryIds).join(', '), '\n');

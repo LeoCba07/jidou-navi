@@ -37,15 +37,12 @@ export default function FriendRequestCard({ request, onAccept, onDecline }: Frie
           style={styles.avatar}
         />
         <View style={styles.info}>
-          <View style={styles.nameRow}>
-            <Text style={styles.displayName} numberOfLines={1}>
-              {request.display_name || request.username}
-            </Text>
-            <View style={styles.levelBadge}>
-              <Text style={styles.levelText}>Lv.{request.level}</Text>
-            </View>
+          <Text style={styles.displayName} numberOfLines={1}>
+            {request.display_name || request.username}
+          </Text>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelText}>Lv.{request.level}</Text>
           </View>
-          <Text style={styles.username} numberOfLines={1}>@{request.username}</Text>
         </View>
       </View>
       <View style={styles.actions}>
@@ -109,19 +106,14 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
   },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 2,
-  },
   displayName: {
     fontSize: 15,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
-    flex: 1,
+    marginBottom: 4,
   },
   levelBadge: {
+    alignSelf: 'flex-start',
     backgroundColor: '#2B2B2B',
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -131,11 +123,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Silkscreen',
     color: '#fff',
-  },
-  username: {
-    fontSize: 12,
-    fontFamily: 'Inter',
-    color: '#999',
   },
   actions: {
     flexDirection: 'row',

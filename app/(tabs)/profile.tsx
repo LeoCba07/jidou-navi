@@ -651,7 +651,7 @@ export default function ProfileScreen() {
         {/* Friends Section */}
         <View style={styles.section}>
           <View style={styles.friendsSectionHeader}>
-            <View style={styles.sectionTitleRow}>
+            <View style={[styles.sectionTitleRow, { marginBottom: 0 }]}>
               <Ionicons name="people-outline" size={16} color="#3C91E6" style={styles.sectionTitleIcon} />
               <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('friends.yourFriends')}</Text>
             </View>
