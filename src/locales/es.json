@@ -215,6 +215,8 @@
     "visitMoreToUnlock": "¡Visita {{count}} más para desbloquear!",
     "thisWillUnlock": "¡Esto lo desbloqueará!",
     "progressCount": "{{current}}/{{required}} visitas",
+    "recentActivity": "Actividad Reciente",
+    "visitedTimeAgo": "visitó {{time}}",
     "copyAddress": "Copiar",
     "addressCopied": "¡Copiado!",
     "estimatedAddress": "Estimado desde coordenadas",

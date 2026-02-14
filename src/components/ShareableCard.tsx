@@ -22,6 +22,9 @@ import { useAuthStore } from '../store/authStore';
 import UserAvatar from './UserAvatar';
 import VisitedStamp from './machine/VisitedStamp';
 
+const pixelLocation = require('../../assets/pixel-ui-location.png');
+const pixelShare = require('../../assets/pixel-ui-share.png');
+
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 48;
 
@@ -163,7 +166,7 @@ export default function ShareableCard() {
               {/* Location */}
               {machineAddress && (
                 <View style={styles.locationRow}>
-                  <Ionicons name="location" size={14} color="#FF4B4B" />
+                  <Image source={pixelLocation} style={{ width: 14, height: 14 }} />
                   <Text style={styles.locationText} numberOfLines={1}>
                     {machineAddress}
                   </Text>
@@ -214,7 +217,7 @@ export default function ShareableCard() {
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <>
-                <Ionicons name="share-outline" size={20} color="#fff" />
+                <Image source={pixelShare} style={{ width: 20, height: 20, tintColor: '#fff' }} />
                 <Text style={styles.shareButtonText}>{t('share.shareToSocial')}</Text>
               </>
             )}

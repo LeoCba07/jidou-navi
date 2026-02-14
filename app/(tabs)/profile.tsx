@@ -47,6 +47,9 @@ const pixelCoffee = require('../../assets/pixel-coffee.png');
 const pixelStatAdded = require('../../assets/pixel-stat-added.png');
 const pixelStatBadges = require('../../assets/pixel-stat-badges.png');
 const pixelStatVisits = require('../../assets/pixel-stat-visits.png');
+const pixelBookmark = require('../../assets/pixel-ui-bookmark.png');
+const pixelLocation = require('../../assets/pixel-ui-location.png');
+const pixelHeart = require('../../assets/pixel-ui-heart.png');
 
 // Badge type from joined query
 type UserBadge = {
@@ -569,7 +572,7 @@ export default function ProfileScreen() {
                       </Text>
                     </View>
                     <View style={styles.savedAddressRow}>
-                      <Ionicons name="location-outline" size={14} color="#999" />
+                      <Image source={pixelLocation} style={{ width: 14, height: 14, opacity: 0.5 }} />
                       <Text style={styles.savedAddress} numberOfLines={1}>
                         {saved.machine.address || t('machine.noAddress')}
                       </Text>
@@ -602,7 +605,7 @@ export default function ProfileScreen() {
                       accessibilityRole="button"
                       accessibilityLabel={t('common.remove')}
                     >
-                      <Ionicons name="bookmark" size={20} color="#FF4B4B" />
+                      <Image source={pixelBookmark} style={{ width: 20, height: 20, tintColor: '#FF4B4B' }} />
                     </Pressable>
                     <Pressable
                       style={styles.cardActionButton}
@@ -692,7 +695,7 @@ export default function ProfileScreen() {
         {/* Support Us Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleRow}>
-            <Ionicons name="heart-outline" size={16} color="#FF4B4B" style={styles.sectionTitleIcon} />
+            <Image source={pixelHeart} style={[{ width: 16, height: 16 }, styles.sectionTitleIcon]} />
             <Text style={styles.sectionTitle}>{t('profile.supportUs')}</Text>
           </View>
           <View style={styles.supportContainer}>
@@ -709,7 +712,7 @@ export default function ProfileScreen() {
               accessibilityRole="button"
               accessibilityLabel={t('profile.supportButton')}
             >
-              <Ionicons name="heart" size={18} color="#fff" />
+              <Image source={pixelHeart} style={{ width: 18, height: 18, tintColor: '#fff' }} />
               <Text style={styles.supportButtonText}>{t('profile.supportButton')}</Text>
             </Pressable>
           </View>

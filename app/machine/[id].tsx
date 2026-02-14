@@ -35,7 +35,7 @@ import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStor
 import { useMachinesCacheStore } from '../../src/store/machinesCacheStore';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
-import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById } from '../../src/lib/machines';
+import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById, fetchMachineVisitors, type MachineVisitor } from '../../src/lib/machines';
 import type { NearbyMachine, ReportReason } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
@@ -44,6 +44,7 @@ import { useAppModal } from '../../src/hooks/useAppModal';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
+import UserAvatar from '../../src/components/UserAvatar';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
 
 const CATEGORY_ICONS: Record<string, any> = {
@@ -53,6 +54,11 @@ const CATEGORY_ICONS: Record<string, any> = {
   retro: require('../../assets/pixel-cat-retro.png'),
   'local-gems': require('../../assets/pixel-cat-local-gems.png'),
 };
+
+const pixelBookmark = require('../../assets/pixel-ui-bookmark.png');
+const pixelLocation = require('../../assets/pixel-ui-location.png');
+const pixelDiscover = require('../../assets/pixel-tab-discover.png');
+
 import { ReportModal } from '../../src/components/machine';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -86,6 +92,8 @@ export default function MachineDetailScreen() {
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [machineData, setMachineData] = useState<NearbyMachine | null>(null);
+  const [visitors, setVisitors] = useState<MachineVisitor[]>([]);
+  const [loadingVisitors, setLoadingVisitors] = useState(true);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -322,6 +330,20 @@ export default function MachineDetailScreen() {
       isMounted = false;
     };
   }, [params.id, primaryPhotoUrl]);
+
+  // Fetch recent visitors
+  useEffect(() => {
+    let isMounted = true;
+    async function loadVisitors() {
+      const data = await fetchMachineVisitors(params.id, 5);
+      if (isMounted) {
+        setVisitors(data);
+        setLoadingVisitors(false);
+      }
+    }
+    loadVisitors();
+    return () => { isMounted = false; };
+  }, [params.id]);
 
   // Use local state for visit count so it updates after check-in
   const displayVisitCount = visitCount ?? Number(initialVisitCount || 0);
@@ -600,6 +622,9 @@ export default function MachineDetailScreen() {
       setHasCheckedIn(true);
       addVisited(params.id as string); // Add to visited machines store
       clearCache(); // Invalidate map cache so fresh data (with updated last_verified_at) is fetched
+
+      // Refresh visitors list so current user appears
+      fetchMachineVisitors(params.id, 5).then(setVisitors);
 
       // If user reported machine as gone, record it for auto-flagging
       if (!stillExists) {
@@ -974,7 +999,17 @@ export default function MachineDetailScreen() {
 
         {/* Title Card */}
         <View style={styles.titleCard}>
-          <Text style={styles.name}>{name || t('machine.unnamed')}</Text>
+          <View style={styles.titleRow}>
+            <Text style={[styles.name, { flex: 1 }]}>{name || t('machine.unnamed')}</Text>
+            <Pressable
+              style={styles.flagButton}
+              onPress={() => setReportModalVisible(true)}
+              accessibilityLabel={t('report.title')}
+              accessibilityRole="button"
+            >
+              <Ionicons name="flag-outline" size={14} color={COLORS.primary} />
+            </Pressable>
+          </View>
 
           {/* Categories */}
           {categories.length > 0 && (
@@ -995,7 +1030,7 @@ export default function MachineDetailScreen() {
 
           {/* Distance pill */}
           <View style={styles.distancePill}>
-            <Image source={require('../../assets/pixel-ui-location.png')} style={{ width: 14, height: 14 }} />
+            <Image source={pixelLocation} style={{ width: 14, height: 14 }} />
             <Text style={styles.distanceText}>{t('machine.away', { distance })}</Text>
           </View>
 
@@ -1005,11 +1040,11 @@ export default function MachineDetailScreen() {
           ) : null}
         </View>
 
-        {/* Status Row - Simplified */}
-        <View style={styles.section}>
+        {/* Status Row - Compact */}
+        <View style={styles.statusRowWrapper}>
           <View style={styles.statusRow}>
             <View style={styles.statusItem}>
-              <Ionicons name="eye-outline" size={16} color={COLORS.textMuted} />
+              <Ionicons name="eye-outline" size={14} color={COLORS.textMuted} />
               <Text style={styles.statusText}>
                 {t(displayVisitCount === 1 ? 'machine.visit' : 'machine.visits', { count: displayVisitCount })}
               </Text>
@@ -1033,7 +1068,7 @@ export default function MachineDetailScreen() {
           <View style={styles.section}>
             <View style={styles.locationCard}>
               <View style={styles.addressContent}>
-                <Ionicons name="location-outline" size={18} color={COLORS.textMuted} />
+                <Image source={pixelLocation} style={{ width: 18, height: 18, opacity: 0.6 }} />
                 <View style={styles.addressTextContainer}>
                   <Text style={styles.address}>{params.address || geocodedAddress}</Text>
                   {!params.address && geocodedAddress && (
@@ -1052,6 +1087,46 @@ export default function MachineDetailScreen() {
                   </Text>
                 </Pressable>
               )}
+            </View>
+          </View>
+        )}
+
+        {/* Recent Activity */}
+        {!loadingVisitors && visitors.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.activityHeader}>
+              <Image source={pixelDiscover} style={{ width: 16, height: 16, opacity: 0.5 }} />
+              <Text style={styles.activityTitle}>{t('machine.recentActivity')}</Text>
+            </View>
+            <View style={styles.activityCard}>
+              {visitors.map((visitor) => {
+                const time = formatRelativeDate(visitor.visited_at);
+                return (
+                  <Pressable
+                    key={visitor.user_id}
+                    style={styles.activityRow}
+                    onPress={() => router.push(`/profile/${visitor.user_id}`)}
+                    accessibilityRole="button"
+                  >
+                    <UserAvatar
+                      url={visitor.avatar_url}
+                      size={28}
+                      borderWidth={2}
+                      borderColor={COLORS.primary}
+                    />
+                    <View style={styles.activityInfo}>
+                      <Text style={styles.activityName} numberOfLines={1}>
+                        @{visitor.username || visitor.display_name || 'Anonymous'}
+                      </Text>
+                      {time && (
+                        <Text style={styles.activityTime}>
+                          {t('machine.visitedTimeAgo', { time })}
+                        </Text>
+                      )}
+                    </View>
+                  </Pressable>
+                );
+              })}
             </View>
           </View>
         )}
@@ -1088,21 +1163,14 @@ export default function MachineDetailScreen() {
         <View style={styles.actions}>
           {/* Primary action - full width */}
           <Pressable style={styles.primaryButton} onPress={openDirections}>
-            <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
+            <View style={styles.primaryButtonContent}>
+              <Image source={pixelLocation} style={{ width: 16, height: 16, tintColor: '#fff' }} />
+              <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
+            </View>
           </Pressable>
 
-          {/* Secondary actions - four buttons (including report/flag) */}
+          {/* Secondary actions */}
           <View style={styles.secondaryActions}>
-            <Pressable
-              style={styles.secondaryButtonSmall}
-              onPress={() => setReportModalVisible(true)}
-              accessibilityLabel={t('report.title')}
-              accessibilityRole="button"
-            >
-              <View style={styles.buttonContent}>
-                <Ionicons name="flag-outline" size={18} color={COLORS.warning} />
-              </View>
-            </Pressable>
             <Pressable
               style={[
                 styles.secondaryButton,
@@ -1118,11 +1186,7 @@ export default function MachineDetailScreen() {
                 <ActivityIndicator size="small" color={COLORS.primary} />
               ) : (
                 <View style={styles.buttonContent}>
-                  <Ionicons
-                    name={isSaved ? 'bookmark' : 'bookmark-outline'}
-                    size={18}
-                    color={isSaved ? COLORS.primary : COLORS.text}
-                  />
+                  <Image source={pixelBookmark} style={{ width: 18, height: 18, opacity: isSaved ? 1 : 0.4 }} />
                   <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]} numberOfLines={1}>
                     {isSaved ? t('common.saved') : t('common.save')}
                   </Text>
@@ -1298,12 +1362,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.xs,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.pixel,
   },
   paginationDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BORDER_RADIUS.pixel,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   paginationDotActive: {
@@ -1317,15 +1381,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.pixel,
   },
   photoCountText: {
     color: '#fff',
     fontSize: 12,
-    fontFamily: FONTS.bodySemiBold,
+    fontFamily: FONTS.button,
   },
   noPhoto: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: COLORS.backgroundDark,
     justifyContent: 'center',
     alignItems: 'center',
     width: SCREEN_WIDTH,
@@ -1333,7 +1397,7 @@ const styles = StyleSheet.create({
   noPhotoText: {
     color: COLORS.textLight,
     fontSize: 16,
-    fontFamily: FONTS.body,
+    fontFamily: FONTS.button,
   },
   // Title Card
   titleCard: {
@@ -1345,6 +1409,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.backgroundDark,
     ...SHADOWS.pixel,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: SPACING.sm,
+  },
+  flagButton: {
+    padding: SPACING.xs,
+    marginTop: 2,
   },
   name: {
     fontSize: 24,
@@ -1400,14 +1473,20 @@ const styles = StyleSheet.create({
     marginTop: SPACING.md,
   },
   // Status Row
+  statusRowWrapper: {
+    paddingHorizontal: SPACING.lg,
+    marginTop: SPACING.sm,
+  },
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
-    padding: SPACING.md,
-    borderWidth: 1,
-    borderColor: '#eee',
+    borderRadius: BORDER_RADIUS.pixel,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderWidth: 2,
+    borderColor: COLORS.borderLight,
+    ...SHADOWS.pixel,
   },
   statusItem: {
     flexDirection: 'row',
@@ -1427,7 +1506,7 @@ const styles = StyleSheet.create({
   freshnessDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: BORDER_RADIUS.pixel,
   },
   // Sections
   section: {
@@ -1437,14 +1516,15 @@ const styles = StyleSheet.create({
   // Location Card
   locationCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.pixel,
     padding: SPACING.lg,
-    borderWidth: 1,
-    borderColor: '#eee',
+    borderWidth: 2,
+    borderColor: COLORS.borderLight,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: SPACING.md,
+    ...SHADOWS.pixel,
   },
   addressContent: {
     flex: 1,
@@ -1469,10 +1549,12 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   copyButton: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.backgroundDark,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.pixel,
+    borderWidth: 2,
+    borderColor: COLORS.borderLight,
   },
   copyButtonText: {
     fontSize: 12,
@@ -1488,7 +1570,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
     borderWidth: 1,
     borderColor: COLORS.warning,
-    borderRadius: BORDER_RADIUS.md,
+    borderRadius: BORDER_RADIUS.pixel,
     padding: SPACING.md,
   },
   verifyPromptText: {
@@ -1509,7 +1591,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.warning,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.pixel,
   },
   verifyButtonNever: {
     backgroundColor: COLORS.indigo,
@@ -1540,6 +1622,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: FONTS.button,
   },
+  primaryButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.sm,
+  },
   secondaryActions: {
     flexDirection: 'row',
     gap: SPACING.md,
@@ -1555,18 +1643,6 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderWidth: 2,
     borderColor: 'rgba(0, 0, 0, 0.15)',
-    ...SHADOWS.pixel,
-  },
-  secondaryButtonSmall: {
-    backgroundColor: '#FEF3C7',
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.md,
-    borderRadius: BORDER_RADIUS.pixel,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-    borderWidth: 2,
-    borderColor: COLORS.warning,
     ...SHADOWS.pixel,
   },
   secondaryButtonText: {
@@ -1605,7 +1681,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 10,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 20,
+    borderRadius: BORDER_RADIUS.pixel,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
   },
   fullScreenCarousel: {
     width: SCREEN_WIDTH,
@@ -1628,12 +1706,52 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: BORDER_RADIUS.pixel,
   },
   fullScreenPaginationText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: FONTS.button,
+  },
+  activityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    marginBottom: SPACING.sm,
+  },
+  activityTitle: {
+    fontSize: 13,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  activityCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.pixel,
+    borderWidth: 2,
+    borderColor: COLORS.borderLight,
+    padding: SPACING.md,
+    gap: SPACING.md,
+    ...SHADOWS.pixel,
+  },
+  activityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  activityInfo: {
+    flex: 1,
+  },
+  activityName: {
+    fontSize: 13,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.text,
+  },
+  activityTime: {
+    fontSize: 11,
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
   },
   loadingContainer: {
     flex: 1,
