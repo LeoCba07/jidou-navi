@@ -159,10 +159,12 @@ async function seedMachines() {
       }
 
       // Upload images and create photo records
-      for (let i = 0; i < machine.images.length; i++) {
-        const img = machine.images[i];
-        if (!img.local_path) continue;
+      const isPlaceholder = machine.images.length === 1 &&
+        machine.images[0].local_path.includes('placeholder/');
 
+      if (isPlaceholder) {
+        // Upload placeholder and mark as needs_photo
+        const img = machine.images[0];
         const photoUrl = await uploadImage(img.local_path, machineId);
         if (photoUrl) {
           const { error: photoError } = await supabase
@@ -170,14 +172,37 @@ async function seedMachines() {
             .insert({
               machine_id: machineId,
               photo_url: photoUrl,
-              is_primary: i === 0,
-              status: 'active',
+              is_primary: true,
+              status: 'needs_photo',
             });
 
           if (photoError) {
-            console.log(`  ⚠ Photo insert failed: ${photoError.message}`);
+            console.log(`  ⚠ Placeholder photo insert failed: ${photoError.message}`);
           } else {
-            console.log(`  📷 Uploaded photo ${i + 1}`);
+            console.log(`  📷 Placeholder photo set (needs user photo)`);
+          }
+        }
+      } else {
+        for (let i = 0; i < machine.images.length; i++) {
+          const img = machine.images[i];
+          if (!img.local_path) continue;
+
+          const photoUrl = await uploadImage(img.local_path, machineId);
+          if (photoUrl) {
+            const { error: photoError } = await supabase
+              .from('machine_photos')
+              .insert({
+                machine_id: machineId,
+                photo_url: photoUrl,
+                is_primary: i === 0,
+                status: 'active',
+              });
+
+            if (photoError) {
+              console.log(`  ⚠ Photo insert failed: ${photoError.message}`);
+            } else {
+              console.log(`  📷 Uploaded photo ${i + 1}`);
+            }
           }
         }
       }

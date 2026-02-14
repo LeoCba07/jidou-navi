@@ -127,7 +127,12 @@
       "features": [
         "Maruichi's special frozen ramen and gyoza available for easy purchase."
       ],
-      "images": []
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/placeholder/pixel-empty-location.png"
+        }
+      ]
     },
     {
       "source_id": "3765",
@@ -235,7 +240,7 @@
         "意識の高い方へ"
       ],
       "features": [
-        "Beverage vending machine with a variety of drink options."
+        "Vending machine cafe offering frozen dumplings, curry, bento boxes, crepes, ramen, and drinks all in one spot in Koganei."
       ],
       "images": [
         {
@@ -338,7 +343,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Frozen food market in Saitama with sweets, horse sashimi, Korean food, yakitori, gyoza, Taiwanese dishes, and ramen from popular restaurants."
       ],
       "images": [
         {
@@ -454,7 +459,12 @@
       "features": [
         "Fresh noodles available for easy home cooking. Restaurant quality at your convenience."
       ],
-      "images": []
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/placeholder/pixel-empty-location.png"
+        }
+      ]
     },
     {
       "source_id": "3375",
@@ -478,7 +488,7 @@
         "国民食"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Farm-fresh eggs straight from Tanaka Farm in Saitama. Perfect for tamago kake gohan or homemade baking."
       ],
       "images": [
         {
@@ -516,9 +526,14 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Maruhashi's signature boiled offal stew (motsu-ni) in Isesaki. A hearty Gunma comfort food staple, available 24/7."
       ],
-      "images": []
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/placeholder/pixel-empty-location.png"
+        }
+      ]
     },
     {
       "source_id": "3322",
@@ -544,7 +559,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Premium quality meat available from this specialty vending machine."
+        "Yakiniku Yamato's prepared BBQ side dishes in Funabashi. Ready-to-eat meat dishes from a local yakiniku restaurant."
       ],
       "images": [
         {
@@ -583,7 +598,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Retro-style hamburgers near Tateishi in Katsushika. Nostalgic taste reminiscent of classic Japanese burger shops."
       ],
       "images": [
         {
@@ -645,7 +660,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Retro bento boxes from a vintage vending machine in Inashiki, Ibaraki. A nostalgic late-night meal experience."
       ],
       "images": [
         {
@@ -677,7 +692,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "CDs and music from Cafe & CD Shop Sammy in Hatogaya, Saitama. Browse and buy physical music from this unique retro spot."
       ],
       "images": [
         {
@@ -709,9 +724,14 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Retro vending machine cafeteria in Isesaki, Gunma serving hot udon, soba, and hamburgers. A nostalgic Showa-era dining experience."
       ],
-      "images": []
+      "images": [
+        {
+          "url": null,
+          "local_path": "images/placeholder/pixel-empty-location.png"
+        }
+      ]
     },
     {
       "source_id": "3429",
@@ -735,7 +755,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Fresh bakery items available around the clock. Various breads and pastries."
+        "Wide variety of fresh bread from Shimizu Bakery in Isesaki. Savory, sweet, and sandwich options baked daily."
       ],
       "images": [
         {
@@ -802,7 +822,7 @@
         "意識の高い方へ"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Homemade vegetable dressing from FOODS&BAR A-ONE in Toda, Saitama. A salad lover's dream condiment."
       ],
       "images": [
         {
@@ -834,7 +854,7 @@
     {
       "source_id": "4168",
       "source_url": "https://jihanki.sagase.com/jihanki/4168/",
-      "name": "７’ｓクレープ秋葉原店",
+      "name": "Seven's Crepe Akihabara",
       "location": {
         "address": "Tokyo, Chiyoda-ku, Sotokanda 1-14-3",
         "latitude": 35.698576,
@@ -856,7 +876,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Frozen crepes from Seven's Crepe in Akihabara. Sweet treats and dessert crepes perfect for a snack break in the electronics district."
       ],
       "images": [
         {
@@ -901,7 +921,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Beetopia's artisan honey and bee-related goods in Shibuya. Specialty honey varieties sourced from dedicated apiaries."
       ],
       "images": [
         {
@@ -939,7 +959,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Snack vending machine with CalorieMate, KitKat, Bourbon Petit series, and ramune candy at Tsukamoto Building Materials in Ichikawa."
       ],
       "images": [
         {
@@ -976,7 +996,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Roasted sweet potatoes and seasoned chicken wings (tebasaki) in Chiba. Choose your favorite wing flavor, available day and night."
       ],
       "images": [
         {
@@ -1009,7 +1029,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Fresh bananas available from a vending machine in Shibuya. A healthy grab-and-go snack in the heart of Tokyo."
       ],
       "images": [
         {
@@ -1045,7 +1065,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Quality coffee products available anytime. Beans, drinks, or brewing supplies."
+        "Blue Bottle Coffee vending machine in Jiyugaoka. Premium coffee, instant coffee, beans, and even yokan from the beloved brand."
       ],
       "images": [
         {
@@ -1078,7 +1098,7 @@
         "頑張った自分にご褒美"
       ],
       "features": [
-        "Frozen ramen vending machine. Authentic restaurant-quality noodles available 24/7."
+        "Frozen Jiro-style ramen from GK Hearty Ramen at MEGA Don Quijote in Saitama. Thick noodles, rich pork broth, and loads of garlic."
       ],
       "images": [
         {
@@ -1117,7 +1137,7 @@
         "買えるのはここだけ"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "MUJI travel amenities vending machine in Shinjuku. Skincare, toiletries, and everyday essentials for on-the-go convenience."
       ],
       "images": [
         {
@@ -1144,7 +1164,7 @@
         "ワクワク"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Official baseball souvenirs at the Baseball Museum near Tokyo Dome. Ball-shaped mugs, pens, and collectible memorabilia."
       ],
       "images": [
         {
@@ -1171,7 +1191,7 @@
         "買えるのはここだけ"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Upcycled apple products from Apple Cycle in Shibuya. Eco-friendly goods made from discarded apple materials."
       ],
       "images": [
         {
@@ -1204,7 +1224,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Regional retro curry packets from all across Japan. A must-visit in Edogawa for curry lovers and collectors."
       ],
       "images": [
         {
@@ -1322,7 +1342,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Pipo-kun police mascot goods at the Kyobashi Police Museum in Tokyo. Cute official merchandise and souvenirs."
       ],
       "images": [
         {
@@ -1350,7 +1370,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Beverage vending machine with a variety of drink options."
+        "Craft cola made with natural spices and cola nut from Ira, a specialty artisan cola brand in Harajuku."
       ],
       "images": [
         {
@@ -1410,7 +1430,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Rice clay (okome no nendo) craft kits from Gincho in Asakusa. Safe, fun modeling clay made from real rice."
       ],
       "images": [
         {
@@ -1439,7 +1459,7 @@
         "その他"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Camping essentials at the foot of Mt. Fuji: instant ramen, marshmallows, sponges, detergent, and other outdoor supplies."
       ],
       "images": [
         {
@@ -1466,7 +1486,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Hot spring water from Haraho Onsen in Izu. Take home genuine onsen water from this historic thermal spring."
       ],
       "images": [
         {
@@ -1499,7 +1519,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Live goldfish vending machine in Yamatokoriyama, Nara — Japan's goldfish capital. A quirky local tradition."
       ],
       "images": [
         {
@@ -1515,7 +1535,7 @@
     {
       "source_id": "3393",
       "source_url": "https://jihanki.sagase.com/jihanki/3393/",
-      "name": "ピッツェリアロベルティーノ",
+      "name": "Pizzeria Robertino",
       "location": {
         "address": "Kanagawa, Kawasaki 402",
         "latitude": 35.564859,
@@ -1536,7 +1556,7 @@
         "頑張った自分にご褒美"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Authentic Neapolitan pizza and Italian specialties from Pizzeria Robertino in Kawasaki. Restaurant-quality frozen pizza."
       ],
       "images": [
         {
@@ -1567,7 +1587,7 @@
         "頑張った自分にご褒美"
       ],
       "features": [
-        "Frozen ramen vending machine. Authentic restaurant-quality noodles available 24/7."
+        "Hakata tonkotsu ramen and niboshi (dried sardine) ramen from Debuchan in Shinjuku. Famous rich broths frozen for home enjoyment."
       ],
       "images": [
         {
@@ -1594,7 +1614,7 @@
         "一度は買ってみたい"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Fresh tomatoes straight from Ohno Farm in Gifu. Locally grown produce from farm to vending machine."
       ],
       "images": [
         {
@@ -1627,7 +1647,7 @@
         "国民食"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Premium rice and rice balls from Kamigohan in rural Gunma. Locally harvested rice sold direct from the source."
       ],
       "images": [
         {
@@ -1658,7 +1678,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Hot toasted sandwiches from a retro vending machine in Gunma. A nostalgic quick meal reminiscent of Showa-era highway rest stops."
       ],
       "images": [
         {
@@ -1740,7 +1760,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Original dressings and specialty oils from Pizzeria Pesca in Gunma. Italian-inspired condiments from a local favorite."
       ],
       "images": [
         {
@@ -1763,7 +1783,7 @@
       ],
       "categories": [],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Regional rice varieties from Furusato in Shinjuku. Try different premium rice brands from across Japan."
       ],
       "images": [
         {
@@ -1790,7 +1810,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Official Pokemon goods vending machine at Haneda Airport. Plushies, keychains, and collectibles for fans on the go."
       ],
       "images": [
         {
@@ -1818,7 +1838,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Iwashita New Ginger pickling base at the New Ginger Museum in Tochigi. The iconic pink ginger brand's home turf."
       ],
       "images": [
         {
@@ -1849,7 +1869,7 @@
         "急に無性に食べたくなる"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Tsukishima monja-yaki (okoge style) available to take home from Tokyo's famous monja street in Chuo-ku."
       ],
       "images": [
         {
@@ -1878,7 +1898,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Beverage vending machine with a variety of drink options."
+        "Fresh-squeezed orange juice on demand from Feed Me Orange in Shibuya. Watch real oranges get juiced right before your eyes."
       ],
       "images": [
         {
@@ -1910,7 +1930,7 @@
         "頑張った自分にご褒美"
       ],
       "features": [
-        "Frozen ramen vending machine. Authentic restaurant-quality noodles available 24/7."
+        "Frozen Jiro-style ramen from GK Hearty Ramen near Akabane Station. Massive portions of hearty noodles to go."
       ],
       "images": [
         {
@@ -1950,7 +1970,7 @@
         "お酒のお供に"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Authentic Korean kimchi and changja (marinated cod roe) from Hanok in Tochigi. Perfect as a side dish or with drinks."
       ],
       "images": [
         {
@@ -1982,7 +2002,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Premium peanuts from Mamesho Ubukata in Chiba, a specialty nut shop. Roasted, flavored, and gift-boxed varieties."
       ],
       "images": [
         {
@@ -2032,7 +2052,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "A little pocket shop in Kitakami, Iwate selling snacks, sweets, and unique goods. A community favorite."
       ],
       "images": [
         {
@@ -2077,7 +2097,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Fresh strawberries from Misono Strawberry Land in Saitama. Seasonal farm-fresh berries direct from the grower."
       ],
       "images": [
         {
@@ -2142,7 +2162,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Beautiful origami paper from a vending machine in Kami, Tochigi. Traditional Japanese washi and craft paper."
       ],
       "images": [
         {
@@ -2172,7 +2192,7 @@
         "一度は買ってみたい"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Tom and Jerry licensed merchandise in Kichijoji, Tokyo. Character goods from the classic cartoon duo."
       ],
       "images": [
         {
@@ -2212,7 +2232,7 @@
         "頑張った自分にご褒美"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Frozen Italian dishes from Italian Bar Eight in Chiba. Pasta, risotto, hors d'oeuvres, and meat dishes from a real restaurant kitchen."
       ],
       "images": [
         {
@@ -2260,7 +2280,7 @@
         "買えるのはここだけ"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Omikuji fortune-telling vending machine in Fukuoka. Draw your fortune Japanese-style from this unique machine."
       ],
       "images": [
         {
@@ -2290,7 +2310,7 @@
         "夜食に是非"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Meat from Ikoi no Mise Cafe Rio in Chiba. Quality cuts and prepared meat products for home cooking."
       ],
       "images": [
         {
@@ -2322,7 +2342,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Kumamon character goods at Haneda Airport. Official merchandise featuring Kumamoto's beloved bear mascot."
       ],
       "images": [
         {
@@ -2349,7 +2369,7 @@
         "ワクワク"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Robot and mecha figurines from Robo Shop on Odaiba, Tokyo. Collectible figures for anime and robot enthusiasts."
       ],
       "images": [
         {
@@ -2377,7 +2397,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Omikuji fortunes and omamori charms at Nakayamadera Temple in Saga. Traditional temple souvenirs from a vending machine."
       ],
       "images": [
         {
@@ -2439,7 +2459,7 @@
         "ワクワク"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Sanrio character lottery machine at Haneda Airport. Try your luck for Hello Kitty, My Melody, and other Sanrio prizes."
       ],
       "images": [
         {
@@ -2466,7 +2486,7 @@
         "ワクワク"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Original artwork and handmade goods from local creators in Tochigi. Support indie artists through this creative vending machine."
       ],
       "images": [
         {
@@ -2499,7 +2519,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Koji miso, fermented miso paste, and amazake from a traditional maker in Toyama. Artisan fermented foods."
       ],
       "images": [
         {
@@ -2560,7 +2580,7 @@
         "一度は買ってみたい"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Hakata-ori traditional textile goods from Kuroki in Fukuoka. Beautiful woven accessories and fabric items."
       ],
       "images": [
         {
@@ -2592,7 +2612,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Mystery goods and mini hanging scrolls with Ryukyu poetry from Crest in Okinawa. Unique local treasures."
       ],
       "images": [
         {
@@ -2619,7 +2639,7 @@
         "一度は買ってみたい"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Pop Mart designer blind box figures in Harajuku. Trendy collectible figurines from the popular toy brand."
       ],
       "images": [
         {
@@ -2646,7 +2666,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Anime figure vending machine at Haneda Airport. Collectible figurines from popular anime series."
       ],
       "images": [
         {
@@ -2671,7 +2691,7 @@
         "グッズ"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Face mask vending machine at Haneda Airport. Quick grab for protective masks and hygiene essentials."
       ],
       "images": [
         {
@@ -2735,7 +2755,7 @@
         "ワクワク"
       ],
       "features": [
-        "Beverage vending machine with a variety of drink options."
+        "Community vending machine with drinks, snack tickets, dagashi candy, and even dog treats at this Okayama hangout spot."
       ],
       "images": [
         {
@@ -2786,7 +2806,7 @@
         "意識の高い方へ"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Innovation vending machine showcasing local Gunma products: cricket chocolate, lavender jam, herb tea, olive matcha, and more."
       ],
       "images": [
         {
@@ -2834,7 +2854,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Hot spring water from Oto Wakuwaku Onsen in Nagasaki. Authentic thermal water to enjoy at home."
       ],
       "images": [
         {
@@ -2907,7 +2927,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Premium quality meat available from this specialty vending machine."
+        "Braised pork, seasoned hormone offal, motsu stew, and yakitori from Sandaime Tokunaga in Toyama. Craft meat products at great prices."
       ],
       "images": [
         {
@@ -2953,7 +2973,7 @@
         "気になるあの子に"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Earrings and piercings from a jewelry vending machine in Osaka's shopping district. Affordable fashion accessories."
       ],
       "images": [
         {
@@ -2990,7 +3010,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Local egg custard pudding from Yufuin Onsen Mushisha in Oita. A hot spring town delicacy made with locally sourced eggs."
       ],
       "images": [
         {
@@ -3040,7 +3060,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Chicken giblet stew (tori-motsu-ni) from Restaurant Fugetsu in Toyama. A rich, savory home-style dish."
       ],
       "images": [
         {
@@ -3067,7 +3087,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Pokemon bug cages and character goods at Jihanki Ichiba market in Saitama. Fun items for kids and collectors."
       ],
       "images": [
         {
@@ -3095,7 +3115,7 @@
         "お土産に是非"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Sakamoto Ryoma historical figurines and lucky charms in Nagasaki. Souvenirs honoring the legendary samurai."
       ],
       "images": [
         {
@@ -3123,7 +3143,7 @@
         "空腹時にガツンと"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Natural stones and crystals from Stone & Cafe Ange in Mie. Gemstones, healing crystals, and stone accessories."
       ],
       "images": [
         {
@@ -3169,7 +3189,7 @@
         "ワクワク"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Pet waste bags (unchi bukuro) from Hygge in Gunma. A practical and unique vending machine for dog owners."
       ],
       "images": [
         {
@@ -3199,7 +3219,7 @@
         "ワクワク"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Lace accessories and design goods from Pantograps in Yokohama. Delicate handcrafted textile items."
       ],
       "images": [
         {
@@ -3229,7 +3249,7 @@
         "甘いものは別腹"
       ],
       "features": [
-        "Food vending machine offering delicious items anytime."
+        "Yuru Camp themed food and goods near Mt. Fuji. Shimarin dango, houtou noodles, and grilled peaches with 3D postcards."
       ],
       "images": [
         {
@@ -3254,7 +3274,7 @@
         "グッズ"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Camping gear and outdoor supplies available from this vending machine in Fukuoka. Essentials for your next adventure."
       ],
       "images": [
         {
@@ -3293,7 +3313,7 @@
         "懐かしさいっぱい"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Bubble wrap (puchi-puchi) from Kawakami in Nagoya. Buy everyone's favorite poppable packing material on demand."
       ],
       "images": [
         {
@@ -3320,7 +3340,7 @@
         "ちびっこ大好き"
       ],
       "features": [
-        "Unique vending machine worth visiting. Discover something special!"
+        "Commemorative souvenir medals from a vending machine in Ehime. Collectible pressed medals popular with kids and tourists."
       ],
       "images": [
         {
@@ -3488,32 +3508,6 @@
       ]
     },
     {
-      "source_id": "5007",
-      "source_url": null,
-      "name": "Beetopia Honey",
-      "name_en": "Beetopia Honey",
-      "location": {
-        "address": "In front of Ashville, 1-19-11 Jingumae, Shibuya-ku, Tokyo",
-        "latitude": 35.6702,
-        "longitude": 139.7057
-      },
-      "merchandise": [
-        "食べ物"
-      ],
-      "categories": [
-        "食べ物"
-      ],
-      "features": [
-        "Premium honey vending machine. Specially selected rich honey and bee-related goods."
-      ],
-      "images": [
-        {
-          "url": null,
-          "local_path": "images/5007/1.webp"
-        }
-      ]
-    },
-    {
       "source_id": "5008",
       "source_url": null,
       "name": "Ira Cola",
@@ -3563,32 +3557,6 @@
         {
           "url": null,
           "local_path": "images/5009/1.jpg"
-        }
-      ]
-    },
-    {
-      "source_id": "5010",
-      "source_url": null,
-      "name": "Blue Bottle Coffee",
-      "name_en": "Blue Bottle Coffee",
-      "location": {
-        "address": "2-8-16 Jiyugaoka, Meguro-ku, Tokyo",
-        "latitude": 35.6077,
-        "longitude": 139.6695
-      },
-      "merchandise": [
-        "コーヒー"
-      ],
-      "categories": [
-        "コーヒー"
-      ],
-      "features": [
-        "Blue Bottle Coffee vending machine. Premium coffee, instant coffee, beans, and even yokan."
-      ],
-      "images": [
-        {
-          "url": null,
-          "local_path": "images/5010/1.jpg"
         }
       ]
     },
@@ -3852,84 +3820,6 @@
         {
           "url": null,
           "local_path": "images/5020/1.jpg"
-        }
-      ]
-    },
-    {
-      "source_id": "5021",
-      "source_url": null,
-      "name": "Delicious Roasted Sweet Potato",
-      "name_en": "Delicious Roasted Sweet Potato",
-      "location": {
-        "address": "10-3 Renjakucho, Kawagoe City, Saitama",
-        "latitude": 35.9225,
-        "longitude": 139.4856
-      },
-      "merchandise": [
-        "焼き芋"
-      ],
-      "categories": [
-        "食べ物"
-      ],
-      "features": [
-        "Matured baked sweet potatoes using patented method. Honey-sweet Beni Haruka variety. Hot or cold, 24/7."
-      ],
-      "images": [
-        {
-          "url": null,
-          "local_path": "images/5021/1.jpg"
-        }
-      ]
-    },
-    {
-      "source_id": "5022",
-      "source_url": null,
-      "name": "Thank You Chicken Wings",
-      "name_en": "Thank You Chicken Wings",
-      "location": {
-        "address": "2-11-1 Fujimi, Chuo-ku, Chiba City, Chiba",
-        "latitude": 35.6089,
-        "longitude": 140.1123
-      },
-      "merchandise": [
-        "焼き芋"
-      ],
-      "categories": [
-        "食べ物"
-      ],
-      "features": [
-        "500 yen vending machine with roasted sweet potatoes and chicken wings. Choose your wing flavor!"
-      ],
-      "images": [
-        {
-          "url": null,
-          "local_path": "images/5022/1.jpg"
-        }
-      ]
-    },
-    {
-      "source_id": "5023",
-      "source_url": null,
-      "name": "Shimizu Bakery",
-      "name_en": "Shimizu Bakery",
-      "location": {
-        "address": "928-13 Otamachi, Isesaki City, Gunma",
-        "latitude": 36.3089,
-        "longitude": 139.1834
-      },
-      "merchandise": [
-        "パン"
-      ],
-      "categories": [
-        "食べ物"
-      ],
-      "features": [
-        "Wide variety of fresh bread. Savory, sweet, and sandwiches from local bakery."
-      ],
-      "images": [
-        {
-          "url": null,
-          "local_path": "images/5023/1.jpg"
         }
       ]
     },
