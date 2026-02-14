@@ -58,6 +58,7 @@ const CATEGORY_ICONS: Record<string, any> = {
 const pixelBookmark = require('../../assets/pixel-ui-bookmark.png');
 const pixelLocation = require('../../assets/pixel-ui-location.png');
 const pixelDiscover = require('../../assets/pixel-tab-discover.png');
+const pixelShare = require('../../assets/pixel-ui-share.png');
 
 import { ReportModal } from '../../src/components/machine';
 
@@ -1040,53 +1041,52 @@ export default function MachineDetailScreen() {
           ) : null}
         </View>
 
-        {/* Status Row - Compact */}
-        <View style={styles.statusRowWrapper}>
-          <View style={styles.statusRow}>
-            <View style={styles.statusItem}>
-              <Ionicons name="eye-outline" size={14} color={COLORS.textMuted} />
-              <Text style={styles.statusText}>
-                {t(displayVisitCount === 1 ? 'machine.visit' : 'machine.visits', { count: displayVisitCount })}
-              </Text>
-            </View>
-            {lastVerifiedText && (
-              <>
-                <Text style={styles.statusDivider}>•</Text>
-                <View style={styles.statusItem}>
-                  <View style={[styles.freshnessDot, { backgroundColor: freshnessColor }]} />
-                  <Text style={styles.statusText}>
-                    {t('machine.verifiedAgo', { time: lastVerifiedText })}
-                  </Text>
-                </View>
-              </>
-            )}
-          </View>
-        </View>
-
         {/* Location Card */}
         {(params.address || geocodedAddress) && (
           <View style={styles.section}>
-            <View style={styles.locationCard}>
-              <View style={styles.addressContent}>
-                <Image source={pixelLocation} style={{ width: 18, height: 18, opacity: 0.6 }} />
-                <View style={styles.addressTextContainer}>
-                  <Text style={styles.address}>{params.address || geocodedAddress}</Text>
-                  {!params.address && geocodedAddress && (
-                    <Text style={styles.estimatedLabel}>{t('machine.estimatedAddress')}</Text>
-                  )}
+            <View style={styles.locationCardColumn}>
+              <View style={styles.locationCardRow}>
+                <View style={styles.addressContent}>
+                  <Image source={pixelLocation} style={{ width: 18, height: 18, opacity: 0.6 }} />
+                  <View style={styles.addressTextContainer}>
+                    <Text style={styles.address}>{params.address || geocodedAddress}</Text>
+                    {!params.address && geocodedAddress && (
+                      <Text style={styles.estimatedLabel}>{t('machine.estimatedAddress')}</Text>
+                    )}
+                  </View>
                 </View>
+                {Clipboard?.setStringAsync && (params.address || geocodedAddress) && (
+                  <Pressable
+                    style={styles.copyButton}
+                    onPress={handleCopyAddress}
+                    accessibilityLabel={t('machine.copyAddress')}
+                  >
+                    <Text style={styles.copyButtonText}>
+                      {addressCopied ? t('machine.addressCopied') : t('machine.copyAddress')}
+                    </Text>
+                  </Pressable>
+                )}
               </View>
-              {Clipboard?.setStringAsync && (params.address || geocodedAddress) && (
-                <Pressable
-                  style={styles.copyButton}
-                  onPress={handleCopyAddress}
-                  accessibilityLabel={t('machine.copyAddress')}
-                >
-                  <Text style={styles.copyButtonText}>
-                    {addressCopied ? t('machine.addressCopied') : t('machine.copyAddress')}
+              <View style={styles.locationDivider} />
+              <View style={styles.visitCountRow}>
+                <View style={styles.statusItem}>
+                  <Ionicons name="eye-outline" size={14} color={COLORS.textMuted} />
+                  <Text style={styles.statusText}>
+                    {t(displayVisitCount === 1 ? 'machine.visit' : 'machine.visits', { count: displayVisitCount })}
                   </Text>
-                </Pressable>
-              )}
+                </View>
+                {lastVerifiedText && (
+                  <>
+                    <Text style={styles.statusDivider}>•</Text>
+                    <View style={styles.statusItem}>
+                      <View style={[styles.freshnessDot, { backgroundColor: freshnessColor }]} />
+                      <Text style={styles.statusText}>
+                        {t('machine.verifiedAgo', { time: lastVerifiedText })}
+                      </Text>
+                    </View>
+                  </>
+                )}
+              </View>
             </View>
           </View>
         )}
@@ -1116,7 +1116,7 @@ export default function MachineDetailScreen() {
                     />
                     <View style={styles.activityInfo}>
                       <Text style={styles.activityName} numberOfLines={1}>
-                        @{visitor.username || visitor.display_name || 'Anonymous'}
+                        {visitor.display_name || visitor.username || 'Anonymous'}
                       </Text>
                       {time && (
                         <Text style={styles.activityTime}>
@@ -1131,42 +1131,35 @@ export default function MachineDetailScreen() {
           </View>
         )}
 
-        {/* Re-verification prompt for never-verified or stale machines */}
-        {shouldShowVerifyPrompt() && (() => {
-          const isNeverVerified = !params.last_verified_at;
-          return (
-            <View style={styles.section}>
-              <View style={[styles.verifyPrompt, isNeverVerified && styles.verifyPromptNever]}>
-                <Ionicons
-                  name={isNeverVerified ? 'help-circle-outline' : 'alert-circle-outline'}
-                  size={20}
-                  color={isNeverVerified ? COLORS.indigo : '#F59E0B'}
-                />
-                <Text style={[styles.verifyPromptText, isNeverVerified && styles.verifyPromptTextNever]}>
-                  {t(isNeverVerified ? 'machine.neverVerifiedPrompt' : 'machine.stalePrompt')}
-                </Text>
-                <Pressable
-                  style={[styles.verifyButton, isNeverVerified && styles.verifyButtonNever]}
-                  onPress={handleCheckIn}
-                  disabled={checkingIn || hasCheckedIn}
-                >
-                  <Text style={styles.verifyButtonText}>
-                    {t(isNeverVerified ? 'machine.beFirstToVerify' : 'machine.verifyNow')}
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          );
-        })()}
-
         {/* Action buttons */}
         <View style={styles.actions}>
-          {/* Primary action - full width */}
-          <Pressable style={styles.primaryButton} onPress={openDirections}>
-            <View style={styles.primaryButtonContent}>
-              <Image source={pixelLocation} style={{ width: 16, height: 16, tintColor: '#fff' }} />
-              <Text style={styles.primaryButtonText}>{t('machine.getDirections')}</Text>
-            </View>
+          {/* Primary action - Check-In / Verify */}
+          <Pressable
+            style={[
+              styles.checkInButton,
+              hasCheckedIn && styles.checkInButtonVisited,
+            ]}
+            onPress={handleCheckIn}
+            disabled={checkingIn || hasCheckedIn || !visitCheckDone}
+          >
+            {checkingIn ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <View style={styles.primaryButtonContent}>
+                <Ionicons
+                  name={hasCheckedIn ? 'checkmark-circle' : 'checkmark-circle-outline'}
+                  size={18}
+                  color="#fff"
+                />
+                <Text style={styles.primaryButtonText}>
+                  {hasCheckedIn
+                    ? t('machine.visited')
+                    : shouldShowVerifyPrompt()
+                      ? (!lastVerifiedAt ? t('machine.beFirstToVerify') : t('machine.verifyNow'))
+                      : t('machine.iVisited')}
+                </Text>
+              </View>
+            )}
           </Pressable>
 
           {/* Secondary actions */}
@@ -1214,31 +1207,12 @@ export default function MachineDetailScreen() {
                 )}
               </Pressable>
             )}
-            {!shouldShowVerifyPrompt() && (
-              <Pressable
-                style={[
-                  styles.secondaryButton,
-                  (checkingIn || hasCheckedIn || !visitCheckDone) && styles.buttonDisabled,
-                ]}
-                onPress={handleCheckIn}
-                disabled={checkingIn || hasCheckedIn || !visitCheckDone}
-              >
-                {checkingIn ? (
-                  <ActivityIndicator size="small" color={COLORS.text} />
-                ) : (
-                  <View style={styles.buttonContent}>
-                    <Ionicons
-                      name={hasCheckedIn ? 'checkmark-circle' : 'checkmark-circle-outline'}
-                      size={18}
-                      color={hasCheckedIn ? COLORS.success : COLORS.text}
-                    />
-                    <Text style={[styles.secondaryButtonText, hasCheckedIn && styles.visitedText]} numberOfLines={1}>
-                      {hasCheckedIn ? t('machine.visited') : t('machine.iVisited')}
-                    </Text>
-                  </View>
-                )}
-              </Pressable>
-            )}
+            <Pressable style={styles.secondaryButton} onPress={openDirections}>
+              <View style={styles.buttonContent}>
+                <Image source={pixelShare} style={{ width: 18, height: 18 }} />
+                <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.getDirections')}</Text>
+              </View>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
@@ -1472,22 +1446,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginTop: SPACING.md,
   },
-  // Status Row
-  statusRowWrapper: {
-    paddingHorizontal: SPACING.lg,
-    marginTop: SPACING.sm,
-  },
-  statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.pixel,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    borderWidth: 2,
-    borderColor: COLORS.borderLight,
-    ...SHADOWS.pixel,
-  },
   statusItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1514,17 +1472,29 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xxl,
   },
   // Location Card
-  locationCard: {
+  locationCardColumn: {
     backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.pixel,
     padding: SPACING.lg,
     borderWidth: 2,
     borderColor: COLORS.borderLight,
+    ...SHADOWS.pixel,
+  },
+  locationCardRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: SPACING.md,
-    ...SHADOWS.pixel,
+  },
+  locationDivider: {
+    height: 1,
+    backgroundColor: COLORS.borderLight,
+    marginVertical: SPACING.md,
+  },
+  visitCountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
   },
   addressContent: {
     flex: 1,
@@ -1561,46 +1531,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.button,
     color: COLORS.text,
   },
-  // Verify Prompt
-  verifyPrompt: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: SPACING.sm,
-    backgroundColor: '#FEF3C7',
-    borderWidth: 1,
-    borderColor: COLORS.warning,
-    borderRadius: BORDER_RADIUS.pixel,
-    padding: SPACING.md,
-  },
-  verifyPromptText: {
-    flex: 1,
-    fontSize: 13,
-    fontFamily: FONTS.body,
-    color: '#92400E',
-    lineHeight: 18,
-  },
-  verifyPromptNever: {
-    backgroundColor: '#EEF2FF',
-    borderColor: COLORS.indigo,
-  },
-  verifyPromptTextNever: {
-    color: '#3730A3',
-  },
-  verifyButton: {
-    backgroundColor: COLORS.warning,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    borderRadius: BORDER_RADIUS.pixel,
-  },
-  verifyButtonNever: {
-    backgroundColor: COLORS.indigo,
-  },
-  verifyButtonText: {
-    fontSize: 13,
-    fontFamily: FONTS.button,
-    color: '#fff',
-  },
   // Actions
   actions: {
     padding: SPACING.lg,
@@ -1608,14 +1538,19 @@ const styles = StyleSheet.create({
     gap: SPACING.lg,
     marginTop: SPACING.xxl,
   },
-  primaryButton: {
-    backgroundColor: COLORS.primary,
+  checkInButton: {
+    backgroundColor: COLORS.success,
     paddingVertical: SPACING.lg,
     borderRadius: BORDER_RADIUS.pixel,
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: COLORS.primaryDark,
+    borderColor: '#1A9D48',
     ...SHADOWS.pixelLarge,
+  },
+  checkInButtonVisited: {
+    backgroundColor: '#86EFAC',
+    borderColor: '#6EE09A',
+    opacity: 0.7,
   },
   primaryButtonText: {
     color: '#fff',
