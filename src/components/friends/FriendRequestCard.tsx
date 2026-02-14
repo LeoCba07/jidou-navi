@@ -31,20 +31,22 @@ export default function FriendRequestCard({ request, onAccept, onDecline }: Frie
 
   return (
     <View style={styles.container}>
-      <Image
-        source={request.avatar_url ? { uri: request.avatar_url } : DEFAULT_AVATAR}
-        style={styles.avatar}
-      />
-      <View style={styles.info}>
-        <View style={styles.nameRow}>
-          <Text style={styles.displayName} numberOfLines={1}>
-            {request.display_name || request.username}
-          </Text>
-          <View style={styles.levelBadge}>
-            <Text style={styles.levelText}>Lv.{request.level}</Text>
+      <View style={styles.topRow}>
+        <Image
+          source={request.avatar_url ? { uri: request.avatar_url } : DEFAULT_AVATAR}
+          style={styles.avatar}
+        />
+        <View style={styles.info}>
+          <View style={styles.nameRow}>
+            <Text style={styles.displayName} numberOfLines={1}>
+              {request.display_name || request.username}
+            </Text>
+            <View style={styles.levelBadge}>
+              <Text style={styles.levelText}>Lv.{request.level}</Text>
+            </View>
           </View>
+          <Text style={styles.username} numberOfLines={1}>@{request.username}</Text>
         </View>
-        <Text style={styles.username}>@{request.username}</Text>
       </View>
       <View style={styles.actions}>
         <Pressable
@@ -80,8 +82,6 @@ export default function FriendRequestCard({ request, onAccept, onDecline }: Frie
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 2,
     padding: 12,
@@ -92,6 +92,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 0,
     elevation: 2,
+    gap: 10,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   avatar: {
     width: 48,
@@ -135,7 +140,7 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     gap: 8,
-    marginLeft: 8,
+    justifyContent: 'flex-end',
   },
   declineButton: {
     paddingHorizontal: 12,
