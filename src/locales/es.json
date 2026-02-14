@@ -476,7 +476,8 @@
     "searchToAdd": "Busca usuarios para agregar como amigos",
     "searchResults": "Resultados de Búsqueda",
     "searching": "Buscando...",
-    "noUsersFound": "No se encontraron usuarios para \"{{query}}\""
+    "noUsersFound": "No se encontraron usuarios para \"{{query}}\"",
+    "openProfile": "Abrir perfil"
   },
   "leaderboard": {
     "title": "Clasificacion",
