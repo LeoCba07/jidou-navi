@@ -1141,6 +1141,14 @@ export default function MachineDetailScreen() {
             ]}
             onPress={handleCheckIn}
             disabled={checkingIn || hasCheckedIn || !visitCheckDone}
+            accessibilityRole="button"
+            accessibilityLabel={
+              hasCheckedIn
+                ? t('machine.visited')
+                : shouldShowVerifyPrompt()
+                  ? (!lastVerifiedAt ? t('machine.beFirstToVerify') : t('machine.verifyNow'))
+                  : t('machine.iVisited')
+            }
           >
             {checkingIn ? (
               <ActivityIndicator size="small" color="#fff" />
@@ -1207,7 +1215,12 @@ export default function MachineDetailScreen() {
                 )}
               </Pressable>
             )}
-            <Pressable style={styles.secondaryButton} onPress={openDirections}>
+            <Pressable
+              style={styles.secondaryButton}
+              onPress={openDirections}
+              accessibilityRole="button"
+              accessibilityLabel={t('machine.getDirections')}
+            >
               <View style={styles.buttonContent}>
                 <Image source={pixelShare} style={{ width: 18, height: 18 }} />
                 <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.getDirections')}</Text>
@@ -1548,8 +1561,8 @@ const styles = StyleSheet.create({
     ...SHADOWS.pixelLarge,
   },
   checkInButtonVisited: {
-    backgroundColor: '#86EFAC',
-    borderColor: '#6EE09A',
+    backgroundColor: '#16A34A',
+    borderColor: '#15803D',
     opacity: 0.7,
   },
   primaryButtonText: {

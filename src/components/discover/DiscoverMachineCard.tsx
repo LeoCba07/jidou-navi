@@ -75,7 +75,7 @@ export default function DiscoverMachineCard({
         distance_meters: String(machine.distance_meters || 0),
         primary_photo_url: machine.primary_photo_url || '',
         visit_count: String(machine.visit_count),
-        last_verified_at: machine.last_verified_at || '',
+        last_verified_at: machine.last_verified_at ?? '',
         status: machine.status || '',
         categories: JSON.stringify(machine.categories || []),
       },

@@ -347,7 +347,7 @@ export type EngagedMachine = {
   upvote_count: number;
   weekly_activity?: number;
   categories: MachineCategory[] | null;
-  last_verified_at: string | null;
+  last_verified_at?: string | null;
 };
 
 // Type for machine visitor
