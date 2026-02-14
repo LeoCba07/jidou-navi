@@ -15,9 +15,10 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
 import { getLevelProgress } from '../../src/lib/xp';
-import { useBadgeTranslation } from '../../src/hooks/useBadgeTranslation';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import UserAvatar from '../../src/components/UserAvatar';
+import EarnedBadgeRow from '../../src/components/profile/EarnedBadgeRow';
+import type { UserBadge } from '../../src/components/profile/EarnedBadgeRow';
 
 const pixelEmptyBadges = require('../../assets/pixel-empty-badges.png');
 const pixelStatAdded = require('../../assets/pixel-stat-added.png');
@@ -40,30 +41,8 @@ type PublicProfile = {
   created_at: string | null;
 };
 
-// Badge type from joined query
-type UserBadge = {
-  id: string;
-  unlocked_at: string;
-  badge: {
-    id: string;
-    slug: string;
-    name: string;
-    description: string;
-    icon_url: string | null;
-    rarity: string | null;
-  };
-};
-
-// Rarity colors for badge borders
-const RARITY_COLORS: Record<string, string> = {
-  common: '#9CA3AF',
-  rare: '#3B82F6',
-  epic: '#8B5CF6',
-};
-
 export default function UserProfileScreen() {
   const { t } = useTranslation();
-  const { getBadgeTranslation } = useBadgeTranslation();
   const { showInfo } = useAppModal();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuthStore();
@@ -239,47 +218,10 @@ export default function UserProfileScreen() {
               <Text style={styles.emptyBadgesText}>{t('profile.noBadgesYet')}</Text>
             </View>
           ) : (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.badgesScroll}
-            >
-              {badges.map((userBadge) => {
-                const translation = getBadgeTranslation(
-                  userBadge.badge.slug,
-                  userBadge.badge.name,
-                  userBadge.badge.description
-                );
-                return (
-                  <Pressable
-                    key={userBadge.id}
-                    onPress={() => showInfo(translation.name, translation.description)}
-                    style={[
-                      styles.badgeItem,
-                      {
-                        borderColor:
-                          RARITY_COLORS[userBadge.badge.rarity || 'common'] ||
-                          RARITY_COLORS.common,
-                      },
-                    ]}
-                  >
-                    {userBadge.badge.icon_url ? (
-                      <Image
-                        source={{ uri: userBadge.badge.icon_url }}
-                        style={styles.badgeIcon}
-                      />
-                    ) : (
-                      <View style={styles.badgePlaceholder}>
-                        <Ionicons name="trophy" size={28} color="#FF4B4B" />
-                      </View>
-                    )}
-                    <Text style={styles.badgeName} numberOfLines={1}>
-                      {translation.name}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
+            <EarnedBadgeRow
+              badges={badges}
+              onBadgePress={(badge) => showInfo(badge.name, badge.description)}
+            />
           )}
         </View>
       </ScrollView>
@@ -468,41 +410,6 @@ const styles = StyleSheet.create({
   },
   badgeLoader: {
     padding: 20,
-  },
-  badgesScroll: {
-    gap: 12,
-    paddingRight: 20,
-  },
-  badgeItem: {
-    width: 100,
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    padding: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 0,
-    elevation: 2,
-  },
-  badgeIcon: {
-    width: 42,
-    height: 42,
-    marginBottom: 8,
-  },
-  badgePlaceholder: {
-    width: 42,
-    height: 42,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  badgeName: {
-    fontSize: 11,
-    fontFamily: 'Inter-SemiBold',
-    color: '#2B2B2B',
-    textAlign: 'center',
   },
   emptyBadges: {
     backgroundColor: '#fff',

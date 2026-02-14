@@ -476,7 +476,8 @@
     "searchToAdd": "Search for users to add as friends",
     "searchResults": "Search Results",
     "searching": "Searching...",
-    "noUsersFound": "No users found for \"{{query}}\""
+    "noUsersFound": "No users found for \"{{query}}\"",
+    "openProfile": "Open profile"
   },
   "leaderboard": {
     "title": "Leaderboard",

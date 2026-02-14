@@ -20,6 +20,8 @@ export default function FriendCard({ friend, onRemove }: FriendCardProps) {
       <Pressable
         style={styles.profileArea}
         onPress={() => router.push(`/profile/${friend.id}`)}
+        accessibilityRole="button"
+        accessibilityLabel={t('friends.openProfile')}
       >
         <Image
           source={friend.avatar_url ? { uri: friend.avatar_url } : DEFAULT_AVATAR}
