@@ -343,7 +343,8 @@
       "guard_100": { "name": "Oracle of Truth", "description": "If you say it is there, it is there." },
       "guard_150": { "name": "Shield of the City", "description": "Protecting the map from obsolescence." },
       "guard_250": { "name": "Final Arbiter", "description": "The ultimate authority on machine existence." },
-      "team_hunt": { "name": "Team Hunt", "description": "The power of friendship (and coins)." }
+      "team_hunt": { "name": "Team Hunt", "description": "The power of friendship (and coins)." },
+      "epic_master": { "name": "Master of the Grid", "description": "The ultimate achievement: You have visited EVERY machine on the map!" }
     }
   },
   "modal": {

@@ -343,7 +343,8 @@
       "guard_100": { "name": "Oráculo de la Verdad", "description": "Si dices que está ahí, es que está ahí." },
       "guard_150": { "name": "Escudo de la Ciudad", "description": "Protegiendo el mapa de la obsolescencia." },
       "guard_250": { "name": "Árbitro Final", "description": "La autoridad máxima sobre la existencia de máquinas." },
-      "team_hunt": { "name": "Caza en Equipo", "description": "El poder de la amistad (y las monedas)." }
+      "team_hunt": { "name": "Caza en Equipo", "description": "El poder de la amistad (y las monedas)." },
+      "epic_master": { "name": "Maestro de la Red", "description": "El logro definitivo: ¡Has visitado TODAS las máquinas en el mapa!" }
     }
   },
   "modal": {
