@@ -642,9 +642,12 @@ export default function ProfileScreen() {
               onLockedBadgePress={(badge, progress) => {
                 setSelectedBadge({ badge, progress, isEarned: false });
               }}
-              onEarnedBadgePress={(badge) => {
+              onEarnedBadgePress={(earnedBadge) => {
+                const fullBadge = allBadges.find((b) => b.id === earnedBadge.id);
+                if (!fullBadge) return;
+                
                 setSelectedBadge({ 
-                  badge: badge as Badge, 
+                  badge: fullBadge, 
                   progress: { current: 0, required: 0 }, 
                   isEarned: true 
                 });

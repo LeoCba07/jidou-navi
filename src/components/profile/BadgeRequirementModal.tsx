@@ -90,7 +90,7 @@ export default function BadgeRequirementModal({
           )}
 
           {isEarned && (
-            <Text style={styles.unlockedDate}>
+            <Text style={styles.earnedLabel}>
               {t('profile.unlockedBadges')}
             </Text>
           )}
@@ -154,14 +154,14 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   badgeIconPlaceholder: {
-    width: 64,
-    height: 64,
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-    borderRadius: 32,
+    borderRadius: 40,
   },
-  unlockedDate: {
+  earnedLabel: {
     fontSize: FONT_SIZES.sm,
     fontFamily: 'Silkscreen',
     color: '#F59E0B',
