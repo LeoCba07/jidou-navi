@@ -8,11 +8,13 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '../store/uiStore';
 import { useBadgeTranslation } from '../hooks/useBadgeTranslation';
+import { getBadgeImage } from '../lib/badge-images';
 
 const { width } = Dimensions.get('window');
 
@@ -76,6 +78,9 @@ export default function BadgeUnlockModal() {
   const { badges, onDismiss } = badgePopup;
   const title = badges.length === 1 ? t('badges.earned') : t('badges.earnedPlural');
 
+  // For the main icon, use the first badge's image or a default trophy
+  const mainBadgeImage = badges.length > 0 ? getBadgeImage(badges[0].slug) : null;
+
   return (
     <Modal transparent visible animationType="none" onRequestClose={handleClose}>
       <View style={styles.overlay}>
@@ -88,9 +93,13 @@ export default function BadgeUnlockModal() {
             },
           ]}
         >
-          {/* Trophy icon */}
+          {/* Main Badge/Trophy icon */}
           <View style={styles.iconContainer}>
-            <Text style={styles.trophyIcon}>🏆</Text>
+            {mainBadgeImage ? (
+              <Image source={mainBadgeImage} style={styles.mainBadgeIcon} />
+            ) : (
+              <Text style={styles.trophyIcon}>🏆</Text>
+            )}
           </View>
 
           {/* Title */}
@@ -100,10 +109,15 @@ export default function BadgeUnlockModal() {
           <View style={styles.badgesList}>
             {badges.map((badge) => {
               const translation = getBadgeTranslation(badge.slug, badge.name, badge.description);
+              const badgeImage = getBadgeImage(badge.slug);
               return (
                 <View key={badge.id} style={styles.badgeItem}>
                   <View style={styles.badgeIconWrapper}>
-                    <Text style={styles.badgeEmoji}>🎖️</Text>
+                    {badgeImage ? (
+                      <Image source={badgeImage} style={styles.smallBadgeIcon} />
+                    ) : (
+                      <Text style={styles.badgeEmoji}>🎖️</Text>
+                    )}
                   </View>
                   <View style={styles.badgeInfo}>
                     <Text style={styles.badgeName}>{translation.name}</Text>
@@ -179,6 +193,16 @@ const styles = StyleSheet.create({
   },
   trophyIcon: {
     fontSize: 40,
+  },
+  mainBadgeIcon: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+  },
+  smallBadgeIcon: {
+    width: 32,
+    height: 32,
+    resizeMode: 'contain',
   },
   title: {
     fontSize: 18,
