@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Bold',
   },
   nearbyDistance: {
-    fontSize: FONT_SIZES.xs,
+    fontSize: FONT_SIZES.xxs,
     fontFamily: 'Inter',
     color: '#666',
   },

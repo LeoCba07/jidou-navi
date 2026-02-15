@@ -1424,8 +1424,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.xs,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
     borderRadius: BORDER_RADIUS.pixel,
   },
   categoryIcon: {
@@ -1443,8 +1443,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: SPACING.xs,
     backgroundColor: '#FEF2F2',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
     borderRadius: BORDER_RADIUS.round,
     alignSelf: 'flex-start',
   },
@@ -1457,7 +1457,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
-    lineHeight: 24,
+    lineHeight: 22,
     marginTop: SPACING.md,
   },
   statusItem: {
@@ -1476,8 +1476,8 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING.sm,
   },
   freshnessDot: {
-    width: 10,
-    height: 10,
+    width: 12,
+    height: 12,
     borderRadius: BORDER_RADIUS.pixel,
   },
   // Sections

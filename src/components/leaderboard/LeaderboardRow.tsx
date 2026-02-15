@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   weeklyXpText: {
-    fontSize: FONT_SIZES.xs,
+    fontSize: FONT_SIZES.xxs,
     fontFamily: 'Inter-SemiBold',
     color: '#22C55E',
   },

@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   nextMilestone: {
-    fontSize: FONT_SIZES.sm,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#666',
     marginTop: 8,
