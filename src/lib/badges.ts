@@ -103,41 +103,25 @@ export async function checkAndAwardBadges(
     .eq('id', user.id)
     .single();
 
-  if (profileError) {
-    console.error('Error fetching profile for badge check:', profileError);
-    Sentry.captureException(profileError, {
-      tags: { context: 'badges_profile_fetch', user_id: user.id },
-    });
-    return [];
-  } else if (!profile) {
-    const message = `Missing profile for badge check for user ${user.id}`;
-    console.error(message);
-    Sentry.captureException(new Error(message), {
-      tags: { context: 'badges_profile_fetch', user_id: user.id },
-    });
+  if (profileError || !profile) {
     return [];
   }
 
-  // Fetch category visit counts and verification count in parallel
-  const [categoryVisitCounts, verificationCount] = await Promise.all([
+  // Fetch category visit counts, verification count, and total machines count in parallel
+  const [categoryVisitCounts, verificationCount, totalMachinesResult] = await Promise.all([
     getCategoryVisitCounts(user.id),
     getVerificationCount(user.id),
+    supabase.from('machines').select('*', { count: 'exact', head: true }).eq('status', 'active')
   ]);
+
+  const totalMachinesCount = totalMachinesResult.count || 0;
 
   // Fetch all badges
   const { data: allBadges, error: badgesError } = await supabase
     .from('badges')
     .select('*');
 
-  if (badgesError) {
-    console.error('Error fetching badges:', badgesError);
-    Sentry.captureException(badgesError, { tags: { context: 'badges_fetch_all' } });
-    return [];
-  } else if (!allBadges) {
-    Sentry.captureMessage('Badges data missing without an associated error', {
-      level: 'warning',
-      tags: { context: 'badges_fetch_all' },
-    });
+  if (badgesError || !allBadges) {
     return [];
   }
 
@@ -148,8 +132,6 @@ export async function checkAndAwardBadges(
     .eq('user_id', user.id);
 
   if (earnedError) {
-    console.error('Error fetching earned badges:', earnedError);
-    Sentry.captureException(earnedError, { tags: { context: 'badges_fetch_earned' } });
     return [];
   }
 
@@ -173,6 +155,7 @@ export async function checkAndAwardBadges(
       contribution_count: profile.contribution_count ?? 0,
       category_visit_counts: categoryVisitCounts,
       verification_count: verificationCount,
+      total_machines_count: totalMachinesCount,
     });
 
     if (isEarned) {
@@ -221,27 +204,36 @@ function checkBadgeEligibility(
     contribution_count: number;
     category_visit_counts: Record<string, number>;
     verification_count: number;
+    total_machines_count: number;
   }
 ): boolean {
   const trigger = badge.trigger_value;
-  if (!trigger) return false;
+  if (!trigger && badge.trigger_type !== 'special') return false;
 
   switch (badge.trigger_type) {
     case 'visit_count':
-      return stats.visit_count >= (trigger.count || 0);
+      return stats.visit_count >= (trigger?.count || 0);
 
     case 'contribution_count':
-      return stats.contribution_count >= (trigger.count || 0);
+      return stats.contribution_count >= (trigger?.count || 0);
 
     case 'category_visit': {
-      const category = trigger.category;
+      const category = trigger?.category;
       if (!category) return false;
       const categoryCount = stats.category_visit_counts[category] || 0;
-      return categoryCount >= (trigger.count || 0);
+      return categoryCount >= (trigger?.count || 0);
     }
 
     case 'verification_count':
-      return stats.verification_count >= (trigger.count || 0);
+      return stats.verification_count >= (trigger?.count || 0);
+
+    case 'special':
+      if (badge.slug === 'epic_master') {
+        // Award if user has visited every active machine
+        // (Ensuring stats.visit_count represents unique visits)
+        return stats.total_machines_count > 0 && stats.visit_count >= stats.total_machines_count;
+      }
+      return false;
 
     default:
       return false;
