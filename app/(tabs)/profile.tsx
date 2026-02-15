@@ -83,10 +83,10 @@ export default function ProfileScreen() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
-  const [badgeRequirementModalVisible, setBadgeRequirementModalVisible] = useState(false);
-  const [selectedLockedBadge, setSelectedLockedBadge] = useState<{
+  const [selectedBadge, setSelectedBadge] = useState<{
     badge: Badge;
     progress: { current: number; required: number };
+    isEarned: boolean;
   } | null>(null);
   const [friendsModalVisible, setFriendsModalVisible] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -640,10 +640,15 @@ export default function ProfileScreen() {
                 contribution_count: profile?.contribution_count || 0,
               }}
               onLockedBadgePress={(badge, progress) => {
-                setSelectedLockedBadge({ badge, progress });
-                setBadgeRequirementModalVisible(true);
+                setSelectedBadge({ badge, progress, isEarned: false });
               }}
-              onEarnedBadgePress={(badge) => showInfo(badge.name, badge.description)}
+              onEarnedBadgePress={(badge) => {
+                setSelectedBadge({ 
+                  badge: badge as Badge, 
+                  progress: { current: 0, required: 0 }, 
+                  isEarned: true 
+                });
+              }}
             />
           )}
         </View>
@@ -733,10 +738,11 @@ export default function ProfileScreen() {
       />
       {/* Badge Requirement Modal */}
       <BadgeRequirementModal
-        badge={selectedLockedBadge?.badge || null}
-        userProgress={selectedLockedBadge?.progress || { current: 0, required: 0 }}
-        visible={badgeRequirementModalVisible}
-        onClose={() => setBadgeRequirementModalVisible(false)}
+        badge={selectedBadge?.badge || null}
+        userProgress={selectedBadge?.progress || { current: 0, required: 0 }}
+        isEarned={selectedBadge?.isEarned}
+        visible={!!selectedBadge}
+        onClose={() => setSelectedBadge(null)}
       />
 
       {/* Friends Modal */}
