@@ -10,7 +10,7 @@ import {
   Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { searchMachines, SearchResult } from "../lib/machines";
@@ -28,11 +28,29 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const inputRef = useRef<TextInput>(null);
 
   // Refs for debounce and race condition handling
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const latestQueryRef = useRef<string>("");
+
+  // Dismiss keyboard and clear state when screen loses focus
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        inputRef.current?.blur();
+        Keyboard.dismiss();
+        setIsFocused(false);
+        setShowResults(false);
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
+          debounceRef.current = null;
+        }
+      };
+    }, [])
+  );
 
   // Cleanup debounce on unmount
   useEffect(() => {
@@ -78,7 +96,9 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
 
   const handleResultPress = (result: SearchResult) => {
     Keyboard.dismiss();
+    inputRef.current?.blur();
     setShowResults(false);
+    setIsFocused(false);
     setQuery("");
 
     if (onResultSelect) {
@@ -116,7 +136,14 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
 
   const dismissResults = () => {
     Keyboard.dismiss();
+    inputRef.current?.blur();
     setShowResults(false);
+    setIsFocused(false);
+    latestQueryRef.current = "";
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
   };
 
   const insets = useSafeAreaInsets();
@@ -124,8 +151,8 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
 
   return (
     <>
-      {/* Overlay to dismiss results when tapping outside */}
-      {showResults && (
+      {/* Overlay to dismiss results when tapping outside - active when focused or showing results */}
+      {(isFocused || showResults) && (
         <Pressable
           style={styles.overlay}
           onPress={dismissResults}
@@ -135,12 +162,24 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
 
       <View style={[styles.container, { top: topInset + 10 }]}>
         {/* Search input */}
-        <View style={styles.inputContainer}>
-          <Ionicons name="search" size={ICON_SIZES.sm} color="#999" style={styles.icon} />
+        <View style={[styles.inputContainer, isFocused && styles.inputContainerFocused]}>
+          <Ionicons 
+            name="search" 
+            size={ICON_SIZES.sm} 
+            color={isFocused ? "#FF4B4B" : "#999"} 
+            style={styles.icon} 
+          />
           <TextInput
+            ref={inputRef}
             style={styles.input}
             value={query}
             onChangeText={handleSearch}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => {
+              setIsFocused(false);
+              // Small delay to allow result selection before hiding
+              setTimeout(() => setShowResults(false), 200);
+            }}
             placeholder={t('map.searchPlaceholder')}
             placeholderTextColor="#999"
             returnKeyType="search"
@@ -242,6 +281,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  inputContainerFocused: {
+    borderColor: "#FF4B4B",
+    shadowOpacity: 0.25,
+    elevation: 5,
   },
   icon: {
     marginRight: 8,
