@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { Badge } from '../../lib/badges';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
+import { getBadgeImage } from '../../lib/badge-images';
 
 interface LockedBadgeCardProps {
   badge: Badge;
@@ -23,6 +24,8 @@ export default function LockedBadgeCard({ badge, progress, onPress }: LockedBadg
 
       {badge.icon_url ? (
         <Image source={{ uri: badge.icon_url }} style={styles.icon} />
+      ) : getBadgeImage(badge.slug) ? (
+        <Image source={getBadgeImage(badge.slug)} style={styles.icon} />
       ) : (
         <View style={styles.iconPlaceholder}>
           <Ionicons name="trophy" size={ICON_SIZES.md} color="#ccc" />

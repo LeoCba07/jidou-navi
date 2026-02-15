@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet, ScrollView, Pressable, Image } from 'react-native';
 import { FONT_SIZES } from '../../theme/constants';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
+import { getBadgeImage } from '../../lib/badge-images';
 
 const pixelStatBadges = require('../../../assets/pixel-stat-badges.png');
 
@@ -62,6 +63,11 @@ export default function EarnedBadgeRow({ badges, onBadgePress }: EarnedBadgeRowP
             {userBadge.badge.icon_url ? (
               <Image
                 source={{ uri: userBadge.badge.icon_url }}
+                style={styles.badgeIcon}
+              />
+            ) : getBadgeImage(userBadge.badge.slug) ? (
+              <Image
+                source={getBadgeImage(userBadge.badge.slug)}
                 style={styles.badgeIcon}
               />
             ) : (
