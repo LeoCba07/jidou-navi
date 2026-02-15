@@ -25,7 +25,7 @@ const UpvoteButton = forwardRef<UpvoteButtonRef, UpvoteButtonProps>(({
   onPress,
   size = 'medium',
 }, ref) => {
-  const iconSize = size === 'small' ? ICON_SIZES.md : ICON_SIZES.md;
+  const iconSize = size === 'small' ? ICON_SIZES.sm : ICON_SIZES.md;
   const fontSize = size === 'small' ? FONT_SIZES.xs : FONT_SIZES.md;
 
   const shakeAnim = useRef(new Animated.Value(0)).current;

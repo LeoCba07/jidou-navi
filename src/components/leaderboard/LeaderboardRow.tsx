@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   levelText: {
-    fontSize: FONT_SIZES.xs,
+    fontSize: FONT_SIZES.xxs,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },
