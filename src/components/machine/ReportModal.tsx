@@ -13,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { ReportReason } from '../../lib/machines';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 interface ReportModalProps {
   visible: boolean;
@@ -77,7 +78,7 @@ export default function ReportModal({
               accessibilityRole="button"
               accessibilityLabel={t('common.close')}
             >
-              <Ionicons name="close" size={24} color="#666" />
+              <Ionicons name="close" size={ICON_SIZES.md} color="#666" />
             </Pressable>
           </View>
 
@@ -108,7 +109,7 @@ export default function ReportModal({
                 </View>
                 <Ionicons
                   name={reason.icon}
-                  size={18}
+                  size={ICON_SIZES.sm}
                   color={selectedReason === reason.key ? '#FF4B4B' : '#666'}
                   style={styles.reasonIcon}
                 />
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#666',
     marginBottom: 16,
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   reasonText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#333',
     flex: 1,
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     borderRadius: 2,
     padding: 12,
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#333',
     minHeight: 80,
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#666',
   },
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   submitText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },

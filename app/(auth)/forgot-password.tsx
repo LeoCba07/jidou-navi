@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import Button from '../../src/components/Button';
-import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS } from '../../src/theme/constants';
+import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS, FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 export default function ForgotPasswordScreen() {
   const { t } = useTranslation();
@@ -79,7 +79,7 @@ export default function ForgotPasswordScreen() {
           ]}
         >
           <View style={styles.successIconContainer}>
-            <Ionicons name="mail-outline" size={48} color={COLORS.primary} />
+            <Ionicons name="mail-outline" size={ICON_SIZES.xxl} color={COLORS.primary} />
           </View>
           <Text style={styles.successTitle}>{t('auth.checkYourEmail')}</Text>
           <Text style={styles.successText}>
@@ -103,7 +103,7 @@ export default function ForgotPasswordScreen() {
         onPress={() => router.canGoBack() ? router.back() : router.replace('/(auth)/login')}
         hitSlop={12}
       >
-        <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+        <Ionicons name="arrow-back" size={ICON_SIZES.md} color={COLORS.text} />
       </Pressable>
 
       <KeyboardAvoidingView
@@ -134,7 +134,7 @@ export default function ForgotPasswordScreen() {
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.email')}</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="mail-outline" size={20} color={COLORS.textLight} style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={ICON_SIZES.sm} color={COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={email}
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   title: {
-    fontSize: 24,
+    fontSize: FONT_SIZES.xxl,
     fontFamily: FONTS.title,
     color: COLORS.text,
     marginBottom: SPACING.sm,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   label: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
     marginBottom: SPACING.xs,
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.pixelLarge,
   },
   successTitle: {
-    fontSize: 20,
+    fontSize: FONT_SIZES.xl,
     fontFamily: FONTS.title,
     color: COLORS.text,
     textAlign: 'center',

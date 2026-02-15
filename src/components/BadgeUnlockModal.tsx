@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '../store/uiStore';
 import { useBadgeTranslation } from '../hooks/useBadgeTranslation';
+import { FONT_SIZES } from '../theme/constants';
 import { getBadgeImage } from '../lib/badge-images';
 
 const { width } = Dimensions.get('window');
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#333',
     marginBottom: 20,
@@ -237,19 +238,19 @@ const styles = StyleSheet.create({
     borderColor: '#FF4B4B',
   },
   badgeEmoji: {
-    fontSize: 24,
+    fontSize: FONT_SIZES.xxl,
   },
   badgeInfo: {
     flex: 1,
   },
   badgeName: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#333',
     marginBottom: 2,
   },
   badgeDescription: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#666',
     lineHeight: 18,
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewAllText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#3C91E6',
   },
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   dismissText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     color: '#fff',
     fontFamily: 'Silkscreen',
   },

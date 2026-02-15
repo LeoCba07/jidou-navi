@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES } from '../../theme/constants';
 
 export type LeaderboardType = 'global' | 'friends';
 
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e0e0',
   },
   buttonText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
   },

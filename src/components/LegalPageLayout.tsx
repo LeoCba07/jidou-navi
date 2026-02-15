@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES } from '../theme/constants';
 
 type Props = {
   title: string;
@@ -73,12 +74,12 @@ const styles = StyleSheet.create({
     minWidth: 80,
   },
   backText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#FF4B4B',
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#333',
     flex: 1,
@@ -91,13 +92,13 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   lastUpdated: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-Bold',
     color: '#333',
     marginTop: 20,
@@ -106,14 +107,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   paragraph: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#555',
     lineHeight: 22,
     marginBottom: 8,
   },
   bulletPoint: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#555',
     lineHeight: 22,

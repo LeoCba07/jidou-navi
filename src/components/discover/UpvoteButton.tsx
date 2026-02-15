@@ -1,5 +1,6 @@
 import { useRef, useImperativeHandle, forwardRef } from 'react';
 import { Pressable, Text, Image, ActivityIndicator, StyleSheet, Animated } from 'react-native';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 const HEART_ICON = require('../../../assets/pixel-ui-heart.png');
 
@@ -24,8 +25,8 @@ const UpvoteButton = forwardRef<UpvoteButtonRef, UpvoteButtonProps>(({
   onPress,
   size = 'medium',
 }, ref) => {
-  const iconSize = size === 'small' ? 22 : 26;
-  const fontSize = size === 'small' ? 12 : 14;
+  const iconSize = size === 'small' ? ICON_SIZES.sm : ICON_SIZES.md;
+  const fontSize = size === 'small' ? FONT_SIZES.xs : FONT_SIZES.md;
 
   const shakeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;

@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { Badge } from '../../lib/badges';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
@@ -51,7 +52,7 @@ export default function StatProgressCard({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Ionicons name={icon} size={18} color={color} />
+        <Ionicons name={icon} size={ICON_SIZES.sm} color={color} />
         <Text style={[styles.label, { color }]}>{label}</Text>
       </View>
 
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   label: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-Bold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -126,14 +127,14 @@ const styles = StyleSheet.create({
     borderRadius: 0,
   },
   countText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
     minWidth: 50,
     textAlign: 'right',
   },
   nextMilestone: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#666',
     marginTop: 8,

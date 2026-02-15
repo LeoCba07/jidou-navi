@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import type { MachineVisitor } from '../../lib/machines';
 import UserAvatar from '../UserAvatar';
-import { COLORS, SPACING, FONTS } from '../../theme/constants';
+import { COLORS, SPACING, FONTS, FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 type RecentVisitorsModalProps = {
   visitors: MachineVisitor[];
@@ -31,7 +31,7 @@ export default function RecentVisitorsModal({ visitors, onClose }: RecentVisitor
           accessibilityRole="button"
           accessibilityLabel={t('common.close')}
         >
-          <Ionicons name="close" size={24} color={COLORS.text} />
+          <Ionicons name="close" size={ICON_SIZES.md} color={COLORS.text} />
         </Pressable>
       </View>
       
@@ -55,7 +55,7 @@ export default function RecentVisitorsModal({ visitors, onClose }: RecentVisitor
                   <Text style={styles.username}>@{visitor.username}</Text>
                 )}
               </View>
-              <Ionicons name="chevron-forward" size={18} color={COLORS.textLight} />
+              <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color={COLORS.textLight} />
             </Pressable>
           );
         })}
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'Inter-SemiBold',
     color: COLORS.text,
   },
@@ -99,12 +99,12 @@ const styles = StyleSheet.create({
     marginLeft: SPACING.md,
   },
   displayName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-Medium',
     color: COLORS.text,
   },
   username: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: COLORS.textMuted,
   },

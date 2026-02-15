@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES } from '../../theme/constants';
 import type { FriendRequest } from '../../store/friendsStore';
 
 const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   displayName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   levelText: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   declineText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
   },
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   acceptText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },

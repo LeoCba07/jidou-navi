@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { Friend } from '../../store/friendsStore';
 
 const DEFAULT_AVATAR = require('../../../assets/default-avatar.jpg');
@@ -43,7 +44,7 @@ export default function FriendCard({ friend, onRemove }: FriendCardProps) {
         accessibilityRole="button"
         accessibilityLabel={t('friends.remove')}
       >
-        <Ionicons name="person-remove-outline" size={18} color="#999" />
+        <Ionicons name="person-remove-outline" size={ICON_SIZES.sm} color="#999" />
       </Pressable>
     </View>
   );
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   displayName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   levelText: {
-    fontSize: 9,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },

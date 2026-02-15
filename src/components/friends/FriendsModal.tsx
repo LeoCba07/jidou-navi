@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import { useFriendsStore } from '../../store/friendsStore';
 import FriendRequestCard from './FriendRequestCard';
 import UserSearchResult from './UserSearchResult';
@@ -78,14 +79,14 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
           <View style={styles.header}>
             <Text style={styles.title}>{t('friends.addFriend')}</Text>
             <Pressable onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#666" />
+              <Ionicons name="close" size={ICON_SIZES.md} color="#666" />
             </Pressable>
           </View>
 
           {/* Search */}
           <View style={styles.searchContainer}>
             <View style={styles.searchInputContainer}>
-              <Ionicons name="search" size={18} color="#999" style={styles.searchIcon} />
+              <Ionicons name="search" size={ICON_SIZES.sm} color="#999" style={styles.searchIcon} />
               <TextInput
                 style={styles.searchInput}
                 placeholder={t('friends.searchPlaceholder')}
@@ -104,7 +105,7 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
                   }}
                   hitSlop={8}
                 >
-                  <Ionicons name="close-circle" size={18} color="#999" />
+                  <Ionicons name="close-circle" size={ICON_SIZES.sm} color="#999" />
                 </Pressable>
               )}
             </View>
@@ -134,7 +135,7 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
                   </View>
                 ) : (
                   <View style={styles.noResultsState}>
-                    <Ionicons name="search-outline" size={32} color="#ccc" />
+                    <Ionicons name="search-outline" size={ICON_SIZES.lg} color="#ccc" />
                     <Text style={styles.noResultsText}>
                       {t('friends.noUsersFound', { query: searchQuery })}
                     </Text>
@@ -165,7 +166,7 @@ export default function FriendsModal({ visible, onClose }: FriendsModalProps) {
             {/* Empty state when no search and no pending */}
             {!searchQuery.trim() && pendingRequests.length === 0 && (
               <View style={styles.emptyState}>
-                <Ionicons name="person-add-outline" size={48} color="#ccc" />
+                <Ionicons name="person-add-outline" size={ICON_SIZES.xxl} color="#ccc" />
                 <Text style={styles.emptyText}>{t('friends.searchToAdd')}</Text>
               </View>
             )}
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 40,
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#2B2B2B',
   },
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-Bold',
     color: '#666',
     marginBottom: 10,
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 12,
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   searchingText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#666',
   },
@@ -299,7 +300,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noResultsText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
     marginTop: 8,

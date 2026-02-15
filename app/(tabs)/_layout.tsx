@@ -2,6 +2,8 @@
 import { Tabs } from 'expo-router';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, FONTS } from '../../src/theme/constants';
+
 
 const TAB_ICONS = {
   map: require('../../assets/pixel-tab-map.png'),
@@ -13,7 +15,7 @@ export default function TabLayout() {
   const { t } = useTranslation();
 
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs screenOptions={{ headerShown: false, tabBarLabelStyle: { fontSize: FONT_SIZES.xxs, fontFamily: FONTS.button } }}>
       <Tabs.Screen
         name="index"
         options={{

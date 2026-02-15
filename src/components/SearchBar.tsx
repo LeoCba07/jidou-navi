@@ -14,6 +14,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { searchMachines, SearchResult } from "../lib/machines";
+import { FONT_SIZES, ICON_SIZES } from "../theme/constants";
 
 type SearchBarProps = {
   onResultSelect?: (result: SearchResult) => void;
@@ -162,7 +163,12 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
       <View style={[styles.container, { top: topInset + 10 }]}>
         {/* Search input */}
         <View style={[styles.inputContainer, isFocused && styles.inputContainerFocused]}>
-          <Ionicons name="search" size={20} color={isFocused ? "#FF4B4B" : "#999"} style={styles.icon} />
+          <Ionicons 
+            name="search" 
+            size={ICON_SIZES.sm} 
+            color={isFocused ? "#FF4B4B" : "#999"} 
+            style={styles.icon} 
+          />
           <TextInput
             ref={inputRef}
             style={styles.input}
@@ -189,7 +195,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
               accessibilityLabel={t('map.clearSearch')}
               accessibilityRole="button"
             >
-              <Ionicons name="close-circle" size={20} color="#999" />
+              <Ionicons name="close-circle" size={ICON_SIZES.sm} color="#999" />
             </Pressable>
           )}
         </View>
@@ -220,7 +226,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
                       {item.address}
                     </Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                  <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
                 </Pressable>
               )}
             />
@@ -231,7 +237,7 @@ export function SearchBar({ onResultSelect }: SearchBarProps) {
         {showResults && searchError && !isSearching && (
           <View style={styles.resultsContainer}>
             <View style={styles.errorContainer}>
-              <Ionicons name="warning-outline" size={18} color="#EF4444" />
+              <Ionicons name="warning-outline" size={ICON_SIZES.sm} color="#EF4444" />
               <Text style={styles.errorText}>{t('map.searchError')}</Text>
             </View>
           </View>
@@ -289,7 +295,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     paddingVertical: 12,
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: "Inter",
     color: "#333",
   },
@@ -320,13 +326,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   resultName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: "Inter-Medium",
     color: "#333",
     marginBottom: 2,
   },
   resultAddress: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: "Inter",
     color: "#666",
   },
@@ -335,7 +341,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Inter",
     color: "#999",
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
   },
   errorContainer: {
     flexDirection: "row",
@@ -347,6 +353,6 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: "Inter",
     color: "#EF4444",
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
   },
 });

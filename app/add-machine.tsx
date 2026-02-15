@@ -26,7 +26,7 @@ import { useAppModal } from '../src/hooks/useAppModal';
 import { tryRequestAppReview } from '../src/lib/review';
 import { extractGpsFromExif, GpsCoordinates } from '../src/lib/exif';
 import { LocationVerificationModal } from '../src/components/LocationVerificationModal';
-import { COLORS, SHADOWS, FONTS, SPACING, BORDER_RADIUS, CATEGORY_COLORS } from '../src/theme/constants';
+import { COLORS, SHADOWS, FONTS, SPACING, BORDER_RADIUS, CATEGORY_COLORS, FONT_SIZES, ICON_SIZES } from '../src/theme/constants';
 
 // Image quality setting for compression (0.5 = ~50% quality, good balance)
 const IMAGE_QUALITY = 0.5;
@@ -667,12 +667,12 @@ const styles = StyleSheet.create({
     width: 100,
   },
   backText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.button,
     color: COLORS.primary,
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: FONTS.title,
     color: COLORS.text,
   },
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.body,
     color: COLORS.textLight,
     marginTop: SPACING.sm,
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
   },
   photoButtons: {
     gap: SPACING.md,
@@ -707,7 +707,7 @@ const styles = StyleSheet.create({
   },
   compressingText: {
     marginTop: SPACING.md,
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
@@ -721,7 +721,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.pixel,
   },
   photoButtonText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.button,
     color: COLORS.text,
   },
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   label: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
     marginBottom: SPACING.sm,
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.md,
     paddingHorizontal: SPACING.md,
     paddingVertical: 10,
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.body,
     color: COLORS.text,
     backgroundColor: COLORS.surface,
@@ -767,11 +767,11 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderLight,
   },
   categoryIcon: {
-    width: 16,
-    height: 16,
+    width: ICON_SIZES.xs,
+    height: ICON_SIZES.xs,
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.button,
     color: COLORS.text,
   },
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   manualLabel: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.button,
     color: COLORS.primary,
   },
@@ -809,29 +809,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputLabel: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
     marginBottom: SPACING.xs,
   },
   locationLabel: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
   },
   locationText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
   locationSourceText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.body,
     color: COLORS.secondary,
     marginTop: SPACING.xs,
   },
   charCount: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
     textAlign: 'right',
@@ -851,7 +851,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   submitText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     color: 'white',
     fontFamily: FONTS.button,
   },

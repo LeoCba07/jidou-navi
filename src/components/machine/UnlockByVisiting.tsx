@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SectionHeader } from '../SectionHeader';
 import { getUnlockableBadgesForMachine, type BadgeOpportunity } from '../../lib/badges';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS } from '../../theme/constants';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, FONT_SIZES } from '../../theme/constants';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
 type UnlockByVisitingProps = {
@@ -131,12 +131,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   badgeName: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
   },
   badgeProgress: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
     marginTop: 2,
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   motivationalText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },

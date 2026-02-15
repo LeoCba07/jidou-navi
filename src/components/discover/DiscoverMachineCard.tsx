@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import type { EngagedMachine, MachineVisitor } from '../../lib/machines';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import { fetchMachineVisitors, fetchMachineVisitorCount } from '../../lib/machines';
 import { useVisitedMachinesStore } from '../../store/visitedMachinesStore';
 import UpvoteButton, { type UpvoteButtonRef } from './UpvoteButton';
@@ -100,12 +101,12 @@ export default function DiscoverMachineCard({
           <Image source={{ uri: machine.primary_photo_url }} style={styles.photo} />
         ) : (
           <View style={[styles.photo, styles.photoPlaceholder]}>
-            <Ionicons name="image-outline" size={40} color="#ccc" />
+            <Ionicons name="image-outline" size={ICON_SIZES.xl} color="#ccc" />
           </View>
         )}
         {formattedDistance && (
           <View style={styles.distanceBadge}>
-            <Image source={require('../../../assets/pixel-ui-location.png')} style={{ width: 12, height: 12 }} />
+            <Image source={require('../../../assets/pixel-ui-location.png')} style={{ width: ICON_SIZES.xs, height: ICON_SIZES.xs }} />
             <Text style={styles.distanceText}>{formattedDistance}</Text>
           </View>
         )}
@@ -125,11 +126,11 @@ export default function DiscoverMachineCard({
         {/* Stats Row */}
         <View style={styles.statsRow}>
           <View style={styles.stat}>
-            <Ionicons name="footsteps-outline" size={14} color="#666" />
+            <Ionicons name="footsteps-outline" size={ICON_SIZES.xs} color="#666" />
             <Text style={styles.statText}>{machine.visit_count || 0}</Text>
           </View>
           <View style={styles.stat}>
-            <Image source={require('../../../assets/pixel-ui-heart.png')} style={{ width: 18, height: 18 }} />
+            <Image source={require('../../../assets/pixel-ui-heart.png')} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }} />
             <Text style={styles.statText}>{machine.upvote_count || 0}</Text>
           </View>
         </View>
@@ -176,7 +177,7 @@ export default function DiscoverMachineCard({
             ) : (
               <Image
                 source={require('../../../assets/pixel-ui-bookmark.png')}
-                style={{ width: 18, height: 18, opacity: isSaved ? 1 : 0.4 }}
+                style={{ width: ICON_SIZES.md, height: ICON_SIZES.md, opacity: isSaved ? 1 : 0.4 }}
               />
             )}
           </Pressable>
@@ -187,7 +188,7 @@ export default function DiscoverMachineCard({
             accessibilityRole="button"
             accessibilityLabel={t('discover.showOnMap')}
           >
-            <Image source={require('../../../assets/pixel-tab-map.png')} style={{ width: 18, height: 18 }} />
+            <Image source={require('../../../assets/pixel-tab-map.png')} style={{ width: ICON_SIZES.md, height: ICON_SIZES.md }} />
           </Pressable>
         </View>
       </View>
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   distanceText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
@@ -241,13 +242,13 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   name: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
   },
   address: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#666',
     marginBottom: 8,
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#666',
   },
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   visitorsLabel: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#999',
   },

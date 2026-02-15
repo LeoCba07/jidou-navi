@@ -19,6 +19,7 @@ import { useAppModal } from '../../src/hooks/useAppModal';
 import UserAvatar from '../../src/components/UserAvatar';
 import EarnedBadgeRow from '../../src/components/profile/EarnedBadgeRow';
 import type { UserBadge } from '../../src/components/profile/EarnedBadgeRow';
+import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 const pixelEmptyBadges = require('../../assets/pixel-empty-badges.png');
 const pixelStatAdded = require('../../assets/pixel-stat-added.png');
@@ -119,7 +120,7 @@ export default function UserProfileScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#2B2B2B" />
+            <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#2B2B2B" />
           </Pressable>
           <Text style={styles.title}>{t('profile.title')}</Text>
           <View style={styles.headerSpacer} />
@@ -143,7 +144,7 @@ export default function UserProfileScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#2B2B2B" />
+          <Ionicons name="arrow-back" size={ICON_SIZES.md} color="#2B2B2B" />
         </Pressable>
         <Text style={styles.title}>{t('userProfile.title')}</Text>
         <View style={styles.headerSpacer} />
@@ -205,7 +206,7 @@ export default function UserProfileScreen() {
         {/* Badges Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleRow}>
-            <Ionicons name="trophy-outline" size={16} color="#D97706" style={styles.sectionTitleIcon} />
+            <Ionicons name="trophy-outline" size={ICON_SIZES.sm} color="#D97706" style={styles.sectionTitleIcon} />
             <Text style={styles.sectionTitle}>
               {t('profile.badges')} ({badges.length})
             </Text>
@@ -255,7 +256,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   title: {
-    fontSize: 20,
+    fontSize: FONT_SIZES.xl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
   },
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
     padding: 40,
   },
   errorText: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter',
     color: '#666',
     marginTop: 16,
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
   },
   displayName: {
-    fontSize: 22,
+    fontSize: FONT_SIZES.xxl,
     fontFamily: 'DotGothic16',
     color: '#2B2B2B',
     marginBottom: 4,
@@ -328,7 +329,7 @@ const styles = StyleSheet.create({
   },
   levelText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Silkscreen',
   },
   xpBarContainer: {
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     textAlign: 'center',
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: '#2B2B2B',
     lineHeight: 20,
@@ -374,11 +375,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   statsBannerIcon: {
-    width: 36,
-    height: 36,
+    width: ICON_SIZES.xl,
+    height: ICON_SIZES.xl,
   },
   statsBannerLabel: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: 'rgba(255, 255, 255, 0.85)',
     textTransform: 'uppercase',
@@ -402,7 +403,7 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter-Bold',
     color: '#2B2B2B',
     textTransform: 'uppercase',

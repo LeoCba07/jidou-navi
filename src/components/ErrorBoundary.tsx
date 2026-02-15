@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Sentry } from '../lib/sentry';
+import { FONT_SIZES } from '../theme/constants';
 import Button from './Button';
 
 interface Props {
@@ -73,14 +74,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Silkscreen',
-    fontSize: 20,
+    fontSize: FONT_SIZES.xl,
     color: '#1a1a2e',
     marginBottom: 12,
     textAlign: 'center',
   },
   message: {
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     color: '#666',
     textAlign: 'center',
     marginBottom: 24,

@@ -2,6 +2,7 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { PendingMachine } from '../../lib/admin';
 
 interface PendingMachineCardProps {
@@ -34,7 +35,7 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
         <Image source={{ uri: machine.primary_photo_url }} style={styles.photo} />
       ) : (
         <View style={[styles.photo, styles.photoPlaceholder]}>
-          <Ionicons name="image-outline" size={32} color="#ccc" />
+          <Ionicons name="image-outline" size={ICON_SIZES.lg} color="#ccc" />
         </View>
       )}
 
@@ -61,20 +62,20 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
         )}
 
         <View style={styles.metaRow}>
-          <Ionicons name="person-outline" size={14} color="#666" />
+          <Ionicons name="person-outline" size={ICON_SIZES.xs} color="#666" />
           <Text style={styles.metaText} numberOfLines={1}>
             {machine.contributor_display_name || machine.contributor_username || t('common.user')}
           </Text>
         </View>
 
         <View style={styles.metaRow}>
-          <Ionicons name="time-outline" size={14} color="#666" />
+          <Ionicons name="time-outline" size={ICON_SIZES.xs} color="#666" />
           <Text style={styles.metaText}>{timeSinceSubmission()}</Text>
         </View>
 
         {machine.nearby_count > 0 && (
           <View style={styles.warningRow}>
-            <Ionicons name="warning-outline" size={14} color="#D97706" />
+            <Ionicons name="warning-outline" size={ICON_SIZES.xs} color="#D97706" />
             <Text style={styles.warningText}>
               {t('admin.nearbyMachines', { count: machine.nearby_count })}
             </Text>
@@ -82,7 +83,7 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
         )}
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color="#ccc" />
+      <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
     </Pressable>
   );
 }
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   name: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'Inter-SemiBold',
     color: '#2B2B2B',
     marginBottom: 4,
@@ -138,12 +139,12 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   categoryText: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter-SemiBold',
     color: '#fff',
   },
   moreCategories: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Inter',
     color: '#999',
   },
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   metaText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#666',
   },
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   warningText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter-SemiBold',
     color: '#D97706',
   },

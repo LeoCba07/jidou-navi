@@ -105,5 +105,24 @@ export const CATEGORY_COLORS = {
   'local-gems': '#2ECC71',
 } as const;
 
+export const FONT_SIZES = {
+  xxs: 10,   // tab bar labels, tiny annotations
+  xs: 12,    // timestamps, helper text, small badges
+  sm: 13,    // secondary labels, addresses, captions
+  md: 15,    // body text, descriptions, names
+  lg: 17,    // buttons, emphasis, card titles
+  xl: 20,    // page titles, headings
+  xxl: 24,   // hero titles, display names
+} as const;
+
+export const ICON_SIZES = {
+  xs: 16,    // inline tiny icons, stat icons
+  sm: 20,    // chip icons, small UI icons
+  md: 24,    // standard nav/action icons
+  lg: 32,    // featured icons, avatars
+  xl: 40,    // stat banners, large decorative
+  xxl: 48,   // empty state, hero decorative
+} as const;
+
 export const VERIFICATION_THRESHOLD = 2;
 export const MODAL_SEQUENCE_DELAY_MS = 500;

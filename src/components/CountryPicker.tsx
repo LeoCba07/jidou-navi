@@ -13,7 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { countries, Country } from '../lib/countries';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS } from '../theme/constants';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, FONT_SIZES, ICON_SIZES } from '../theme/constants';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.6;
@@ -95,7 +95,7 @@ export default function CountryPicker({
           </Text>
         </View>
         {isSelected && (
-          <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} />
+          <Ionicons name="checkmark-circle" size={ICON_SIZES.md} color={COLORS.primary} />
         )}
       </Pressable>
     );
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     ...SHADOWS.pixelLarge,
   },
   title: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.xl,
     fontFamily: FONTS.title,
     color: COLORS.text,
     marginBottom: SPACING.md,
@@ -192,10 +192,10 @@ const styles = StyleSheet.create({
     gap: SPACING.md,
   },
   countryFlag: {
-    fontSize: 24,
+    fontSize: FONT_SIZES.xxl,
   },
   countryName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.body,
     color: COLORS.text,
   },
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.15)',
   },
   cancelText: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.button,
     color: COLORS.textMuted,
   },

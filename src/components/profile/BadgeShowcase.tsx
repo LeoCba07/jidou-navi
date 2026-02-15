@@ -1,6 +1,7 @@
 // BadgeShowcase - displays unlocked and locked badges
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { FONT_SIZES } from '../../theme/constants';
 import type { Badge } from '../../lib/badges';
 import LockedBadgeCard from './LockedBadgeCard';
 import EarnedBadgeRow from './EarnedBadgeRow';
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sectionLabel: {
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
     color: '#666',
     textTransform: 'uppercase',
@@ -152,14 +153,14 @@ const styles = StyleSheet.create({
     height: 120,
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
     color: '#666',
     marginTop: 8,
     textAlign: 'center',
   },
   emptySubtext: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#999',
     textAlign: 'center',
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptySectionText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#999',
   },

@@ -42,7 +42,7 @@ import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geoco
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
-import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS } from '../../src/theme/constants';
+import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS, FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
 import UserAvatar from '../../src/components/UserAvatar';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
@@ -1009,7 +1009,7 @@ export default function MachineDetailScreen() {
               accessibilityLabel={t('report.title')}
               accessibilityRole="button"
             >
-              <Ionicons name="flag-outline" size={14} color={COLORS.primary} />
+              <Ionicons name="flag-outline" size={ICON_SIZES.xs} color={COLORS.primary} />
             </Pressable>
           </View>
 
@@ -1032,7 +1032,7 @@ export default function MachineDetailScreen() {
 
           {/* Distance pill */}
           <View style={styles.distancePill}>
-            <Image source={pixelLocation} style={{ width: 14, height: 14 }} />
+            <Image source={pixelLocation} style={{ width: ICON_SIZES.xs, height: ICON_SIZES.xs }} />
             <Text style={styles.distanceText}>{t('machine.away', { distance })}</Text>
           </View>
 
@@ -1048,7 +1048,7 @@ export default function MachineDetailScreen() {
             <View style={styles.locationCardColumn}>
               <View style={styles.locationCardRow}>
                 <View style={styles.addressContent}>
-                  <Image source={pixelLocation} style={{ width: 18, height: 18, opacity: 0.6 }} />
+                  <Image source={pixelLocation} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, opacity: 0.6 }} />
                   <View style={styles.addressTextContainer}>
                     <Text style={styles.address}>{params.address || geocodedAddress}</Text>
                     {!params.address && geocodedAddress && (
@@ -1071,7 +1071,7 @@ export default function MachineDetailScreen() {
               <View style={styles.locationDivider} />
               <View style={styles.visitCountRow}>
                 <View style={styles.statusItem}>
-                  <Ionicons name="eye-outline" size={14} color={COLORS.textMuted} />
+                  <Ionicons name="eye-outline" size={ICON_SIZES.xs} color={COLORS.textMuted} />
                   <Text style={styles.statusText}>
                     {t(displayVisitCount === 1 ? 'machine.visit' : 'machine.visits', { count: displayVisitCount })}
                   </Text>
@@ -1096,7 +1096,7 @@ export default function MachineDetailScreen() {
         {!loadingVisitors && visitors.length > 0 && (
           <View style={styles.section}>
             <View style={styles.activityHeader}>
-              <Image source={pixelDiscover} style={{ width: 16, height: 16, opacity: 0.5 }} />
+              <Image source={pixelDiscover} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, opacity: 0.5 }} />
               <Text style={styles.activityTitle}>{t('machine.recentActivity')}</Text>
             </View>
             <View style={styles.activityCard}>
@@ -1111,7 +1111,7 @@ export default function MachineDetailScreen() {
                   >
                     <UserAvatar
                       url={visitor.avatar_url}
-                      size={28}
+                      size={ICON_SIZES.lg}
                       borderWidth={2}
                       borderColor={COLORS.primary}
                     />
@@ -1157,7 +1157,7 @@ export default function MachineDetailScreen() {
               <View style={styles.primaryButtonContent}>
                 <Ionicons
                   name={hasCheckedIn ? 'checkmark-circle' : 'checkmark-circle-outline'}
-                  size={18}
+                  size={ICON_SIZES.sm}
                   color="#fff"
                 />
                 <Text style={styles.primaryButtonText}>
@@ -1188,7 +1188,7 @@ export default function MachineDetailScreen() {
                 <ActivityIndicator size="small" color={COLORS.primary} />
               ) : (
                 <View style={styles.buttonContent}>
-                  <Image source={pixelBookmark} style={{ width: 18, height: 18, opacity: isSaved ? 1 : 0.4 }} />
+                  <Image source={pixelBookmark} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, opacity: isSaved ? 1 : 0.4 }} />
                   <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]} numberOfLines={1}>
                     {isSaved ? t('common.saved') : t('common.save')}
                   </Text>
@@ -1210,7 +1210,7 @@ export default function MachineDetailScreen() {
                   <ActivityIndicator size="small" color={COLORS.text} />
                 ) : (
                   <View style={styles.buttonContent}>
-                    <Ionicons name="camera-outline" size={18} color={COLORS.text} />
+                    <Ionicons name="camera-outline" size={ICON_SIZES.sm} color={COLORS.text} />
                     <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.addPhoto')}</Text>
                   </View>
                 )}
@@ -1223,7 +1223,7 @@ export default function MachineDetailScreen() {
               accessibilityLabel={t('machine.getDirections')}
             >
               <View style={styles.buttonContent}>
-                <Image source={pixelShare} style={{ width: 18, height: 18 }} />
+                <Image source={pixelShare} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }} />
                 <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.getDirections')}</Text>
               </View>
             </Pressable>
@@ -1310,7 +1310,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
   },
   backText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.button,
     color: COLORS.primary,
   },
@@ -1373,7 +1373,7 @@ const styles = StyleSheet.create({
   },
   photoCountText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.button,
   },
   noPhoto: {
@@ -1384,7 +1384,7 @@ const styles = StyleSheet.create({
   },
   noPhotoText: {
     color: COLORS.textLight,
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.button,
   },
   // Title Card
@@ -1408,7 +1408,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   name: {
-    fontSize: 24,
+    fontSize: FONT_SIZES.xxl,
     fontFamily: FONTS.title,
     color: COLORS.text,
     lineHeight: 32,
@@ -1423,17 +1423,17 @@ const styles = StyleSheet.create({
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: SPACING.xs,
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
     borderRadius: BORDER_RADIUS.pixel,
   },
   categoryIcon: {
-    width: 14,
-    height: 14,
+    width: ICON_SIZES.xs,
+    height: ICON_SIZES.xs,
   },
   categoryText: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.button,
     color: '#fff',
     textTransform: 'uppercase',
@@ -1449,12 +1449,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   distanceText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.primary,
   },
   titleDescription: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
     lineHeight: 22,
@@ -1466,18 +1466,18 @@ const styles = StyleSheet.create({
     gap: SPACING.xs,
   },
   statusText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },
   statusDivider: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.md,
     color: COLORS.textLight,
     marginHorizontal: SPACING.sm,
   },
   freshnessDot: {
-    width: 8,
-    height: 8,
+    width: 12,
+    height: 12,
     borderRadius: BORDER_RADIUS.pixel,
   },
   // Sections
@@ -1520,13 +1520,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   address: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
     lineHeight: 20,
   },
   estimatedLabel: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.body,
     color: COLORS.primary,
     marginTop: 4,
@@ -1541,7 +1541,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.borderLight,
   },
   copyButtonText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.button,
     color: COLORS.text,
   },
@@ -1568,7 +1568,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.button,
   },
   primaryButtonContent: {
@@ -1596,7 +1596,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: COLORS.text,
-    fontSize: 10,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.button,
     textAlign: 'center',
   },
@@ -1659,7 +1659,7 @@ const styles = StyleSheet.create({
   },
   fullScreenPaginationText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.button,
   },
   activityHeader: {
@@ -1669,7 +1669,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
   },
   activityTitle: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.textMuted,
     textTransform: 'uppercase',
@@ -1693,12 +1693,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   activityName: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.bodySemiBold,
     color: COLORS.text,
   },
   activityTime: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     fontFamily: FONTS.body,
     color: COLORS.textLight,
   },
@@ -1710,7 +1710,7 @@ const styles = StyleSheet.create({
     gap: SPACING.md,
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: FONTS.body,
     color: COLORS.textMuted,
   },

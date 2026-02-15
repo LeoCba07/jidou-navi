@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Mapbox, { Camera, MapView, PointAnnotation } from '@rnmapbox/maps';
+import { FONT_SIZES } from '../theme/constants';
 
 const { width } = Dimensions.get('window');
 
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   title: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.lg,
     fontFamily: 'DotGothic16',
     color: '#333',
     marginBottom: 16,
@@ -214,14 +215,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   coordinates: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
     color: '#666',
     textAlign: 'center',
     marginBottom: 12,
   },
   question: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
     color: '#333',
     textAlign: 'center',
@@ -255,12 +256,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
   },
   confirmButtonText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Silkscreen',
     color: '#fff',
   },
   rejectButtonText: {
-    fontSize: 13,
+    fontSize: FONT_SIZES.sm,
     fontFamily: 'Silkscreen',
     color: '#666',
   },

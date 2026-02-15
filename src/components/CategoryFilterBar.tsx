@@ -3,6 +3,7 @@ import { View, ScrollView, Pressable, Text, Image, StyleSheet } from "react-nati
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUIStore } from "../store";
+import { FONT_SIZES, ICON_SIZES } from "../theme/constants";
 
 const CATEGORY_ICONS: Record<string, any> = {
   eats: require('../../assets/pixel-cat-eats.png'),
@@ -100,8 +101,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
     borderRadius: 2,
     backgroundColor: "white",
     borderWidth: 2,
@@ -113,15 +114,15 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   chipIcon: {
-    width: 16,
-    height: 16,
+    width: ICON_SIZES.sm,
+    height: ICON_SIZES.sm,
   },
   chipSelected: {
     backgroundColor: "#FF4B4B",
     borderColor: "#CC3C3C",
   },
   chipText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontFamily: "Silkscreen",
     color: "#333",
   },
