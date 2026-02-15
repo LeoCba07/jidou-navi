@@ -6,11 +6,14 @@ import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { Badge } from '../../lib/badges';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 
+import { getBadgeImage } from '../../lib/badge-images';
+
 interface BadgeRequirementModalProps {
   badge: Badge | null;
   userProgress: { current: number; required: number };
   visible: boolean;
   onClose: () => void;
+  isEarned?: boolean;
 }
 
 export default function BadgeRequirementModal({
@@ -18,6 +21,7 @@ export default function BadgeRequirementModal({
   userProgress,
   visible,
   onClose,
+  isEarned = false,
 }: BadgeRequirementModalProps) {
   const { t } = useTranslation();
   const { getBadgeTranslation } = useBadgeTranslation();
@@ -25,6 +29,7 @@ export default function BadgeRequirementModal({
   if (!badge) return null;
 
   const translation = getBadgeTranslation(badge.slug, badge.name, badge.description);
+  const badgeImage = getBadgeImage(badge.slug);
 
   const progressPercent = userProgress.required > 0
     ? Math.min((userProgress.current / userProgress.required) * 100, 100)
@@ -38,17 +43,20 @@ export default function BadgeRequirementModal({
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.container}>
+        <View style={[styles.container, isEarned && styles.containerEarned]}>
           {/* Lock icon and badge name */}
           <View style={styles.header}>
-            <Ionicons name="lock-closed" size={ICON_SIZES.sm} color="#999" />
+            {!isEarned && <Ionicons name="lock-closed" size={ICON_SIZES.sm} color="#999" />}
+            {isEarned && <Ionicons name="trophy" size={ICON_SIZES.sm} color="#F59E0B" />}
             <Text style={styles.badgeName}>{translation.name}</Text>
           </View>
 
           {/* Badge icon */}
           <View style={styles.iconContainer}>
             {badge.icon_url ? (
-              <Image source={{ uri: badge.icon_url }} style={styles.badgeIcon} />
+              <Image source={{ uri: badge.icon_url }} style={[styles.badgeIcon, !isEarned && styles.badgeIconLocked]} />
+            ) : badgeImage ? (
+              <Image source={badgeImage} style={[styles.badgeIcon, !isEarned && styles.badgeIconLocked]} />
             ) : (
               <View style={styles.badgeIconPlaceholder}>
                 <Ionicons name="trophy" size={ICON_SIZES.xl} color="#ccc" />
@@ -59,23 +67,33 @@ export default function BadgeRequirementModal({
           {/* Description / Requirement */}
           <Text style={styles.description}>{translation.description}</Text>
 
-          {/* Progress section */}
-          <View style={styles.progressSection}>
-            <Text style={styles.progressLabel}>
-              {t('profile.progress')}: {userProgress.current}/{userProgress.required} ({Math.round(progressPercent)}%)
-            </Text>
-            <View style={styles.progressBarBackground}>
-              <View
-                style={[
-                  styles.progressBarFill,
-                  { width: `${progressPercent}%` },
-                ]}
-              />
-            </View>
-          </View>
+          {/* Progress section - only if not earned */}
+          {!isEarned && (
+            <>
+              <View style={styles.progressSection}>
+                <Text style={styles.progressLabel}>
+                  {t('profile.progress')}: {userProgress.current}/{userProgress.required} ({Math.round(progressPercent)}%)
+                </Text>
+                <View style={styles.progressBarBackground}>
+                  <View
+                    style={[
+                      styles.progressBarFill,
+                      { width: `${progressPercent}%` },
+                    ]}
+                  />
+                </View>
+              </View>
 
-          {/* Encouragement text */}
-          <Text style={styles.encouragement}>{t('profile.keepExploring')}</Text>
+              {/* Encouragement text */}
+              <Text style={styles.encouragement}>{t('profile.keepExploring')}</Text>
+            </>
+          )}
+
+          {isEarned && (
+            <Text style={styles.earnedLabel}>
+              {t('profile.unlockedBadges')}
+            </Text>
+          )}
 
           {/* Close button */}
           <Pressable style={styles.closeButton} onPress={onClose}>
@@ -110,6 +128,9 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 5,
   },
+  containerEarned: {
+    borderColor: '#F59E0B',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -125,17 +146,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   badgeIcon: {
-    width: 64,
-    height: 64,
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
+  },
+  badgeIconLocked: {
     opacity: 0.5,
   },
   badgeIconPlaceholder: {
-    width: 64,
-    height: 64,
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-    borderRadius: 32,
+    borderRadius: 40,
+  },
+  earnedLabel: {
+    fontSize: FONT_SIZES.sm,
+    fontFamily: 'Silkscreen',
+    color: '#F59E0B',
+    marginBottom: 20,
+    textTransform: 'uppercase',
   },
   description: {
     fontSize: FONT_SIZES.md,
