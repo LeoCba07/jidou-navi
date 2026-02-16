@@ -144,9 +144,15 @@ export default function CountryPicker({
               placeholderTextColor={COLORS.textLight}
               autoCapitalize="none"
               autoCorrect={false}
+              accessibilityLabel={t('auth.searchCountry')}
             />
             {searchQuery.length > 0 && (
-              <Pressable onPress={() => setSearchQuery('')} hitSlop={8}>
+              <Pressable 
+                onPress={() => setSearchQuery('')} 
+                hitSlop={8}
+                accessibilityLabel={t('map.clearSearch')}
+                accessibilityRole="button"
+              >
                 <Ionicons name="close-circle" size={ICON_SIZES.sm} color={COLORS.textLight} />
               </Pressable>
             )}
