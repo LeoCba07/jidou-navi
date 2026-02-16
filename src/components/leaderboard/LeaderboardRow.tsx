@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { LeaderboardEntry } from '../../store/friendsStore';
 import UserAvatar from '../UserAvatar';
+import { getCountryByCode } from '../../lib/countries';
 
 const MEDAL_ICONS: Record<number, any> = {
   1: require('../../../assets/pixel-medal-gold.png'),
@@ -60,7 +61,7 @@ export default function LeaderboardRow({ entry, showWeeklyXp = false }: Leaderbo
       />
       <View style={styles.info}>
         <Text style={[styles.name, entry.is_current_user && styles.currentUserName]} numberOfLines={1}>
-          {entry.display_name || entry.username}
+          {entry.country ? `${getCountryByCode(entry.country)?.flag ?? ''} ` : ''}{entry.display_name || entry.username}
         </Text>
         <View style={styles.statsRow}>
           <View style={styles.levelBadge}>

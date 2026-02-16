@@ -47,6 +47,7 @@ export interface LeaderboardEntry {
   xp: number;
   xp_this_week: number;
   is_current_user: boolean;
+  country: string | null;
 }
 
 interface FriendsState {
