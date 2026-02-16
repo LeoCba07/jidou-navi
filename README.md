@@ -141,6 +141,10 @@ supabase/
 scripts/                  # Seed and backup scripts
 ```
 
+## License
+
+All rights reserved. This source code and its associated data are proprietary. No permission is granted to use, copy, modify, or distribute this software without explicit written consent from the authors.
+
 ---
 
 Built by [Leandro T.](https://github.com/LeoCba07) and [Matias Fernandez](https://github.com/matiifernandez)
