@@ -34,6 +34,8 @@
     "usernameHelper": "This is how other explorers will see you.",
     "country": "Country",
     "selectCountry": "Select Country",
+    "searchCountry": "Search for a country...",
+    "noCountryFound": "No countries found",
     "countryHelper": "Represent your country on the global leaderboard!",
     "newsletter": {
       "label": "Receive newsletters and promotions via email",
