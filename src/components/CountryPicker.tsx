@@ -1,5 +1,5 @@
 // Country picker modal component
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Animated,
   Dimensions,
   FlatList,
+  TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +17,7 @@ import { countries, Country } from '../lib/countries';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, FONT_SIZES, ICON_SIZES } from '../theme/constants';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const MODAL_HEIGHT = SCREEN_HEIGHT * 0.6;
+const MODAL_HEIGHT = SCREEN_HEIGHT * 0.7; // Slightly taller to accommodate search box
 
 interface CountryPickerProps {
   visible: boolean;
@@ -32,12 +33,15 @@ export default function CountryPicker({
   onClose,
 }: CountryPickerProps) {
   const { t } = useTranslation();
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<TextInput>(null);
 
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
+      setSearchQuery(''); // Reset search when opened
       scaleAnim.setValue(0.9);
       opacityAnim.setValue(0);
 
@@ -58,6 +62,7 @@ export default function CountryPicker({
   }, [visible]);
 
   function handleClose() {
+    searchInputRef.current?.blur(); // Blur input on close
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 0.9,
@@ -78,6 +83,16 @@ export default function CountryPicker({
     onSelect(country);
     handleClose();
   }
+
+  const filteredCountries = useMemo(() => {
+    if (!searchQuery.trim()) return countries;
+    const query = searchQuery.toLowerCase().trim();
+    return countries.filter(
+      (c) =>
+        c.name.toLowerCase().includes(query) ||
+        c.code.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
 
   const renderCountryItem = ({ item: country }: { item: Country }) => {
     const isSelected = selectedCountry === country.code;
@@ -118,8 +133,33 @@ export default function CountryPicker({
         >
           <Text style={styles.title}>{t('auth.selectCountry')}</Text>
 
+          <View style={styles.searchContainer}>
+            <Ionicons name="search-outline" size={ICON_SIZES.sm} color={COLORS.textLight} />
+            <TextInput
+              ref={searchInputRef}
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder={t('auth.searchCountry')}
+              placeholderTextColor={COLORS.textLight}
+              autoCapitalize="none"
+              autoCorrect={false}
+              accessibilityLabel={t('auth.searchCountry')}
+            />
+            {searchQuery.length > 0 && (
+              <Pressable 
+                onPress={() => setSearchQuery('')} 
+                hitSlop={8}
+                accessibilityLabel={t('map.clearSearch')}
+                accessibilityRole="button"
+              >
+                <Ionicons name="close-circle" size={ICON_SIZES.sm} color={COLORS.textLight} />
+              </Pressable>
+            )}
+          </View>
+
           <FlatList
-            data={countries}
+            data={filteredCountries}
             keyExtractor={(item) => item.code}
             renderItem={renderCountryItem}
             style={styles.list}
@@ -127,6 +167,11 @@ export default function CountryPicker({
             showsVerticalScrollIndicator={true}
             initialNumToRender={15}
             maxToRenderPerBatch={20}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>{t('auth.noCountryFound')}</Text>
+              </View>
+            }
           />
 
           <Pressable style={styles.cancelButton} onPress={handleClose}>
@@ -163,6 +208,24 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     marginBottom: SPACING.md,
     textAlign: 'center',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+    borderWidth: 2,
+    borderColor: COLORS.backgroundDark,
+    borderRadius: BORDER_RADIUS.pixel,
+    paddingHorizontal: SPACING.md,
+    marginBottom: SPACING.md,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 10,
+    marginLeft: SPACING.sm,
+    fontSize: FONT_SIZES.md,
+    fontFamily: FONTS.body,
+    color: COLORS.text,
   },
   list: {
     flex: 1,
@@ -215,5 +278,14 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.lg,
     fontFamily: FONTS.button,
     color: COLORS.textMuted,
+  },
+  emptyContainer: {
+    paddingVertical: SPACING.xxl,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: FONT_SIZES.md,
+    fontFamily: FONTS.body,
+    color: COLORS.textLight,
   },
 });
