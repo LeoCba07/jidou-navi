@@ -476,25 +476,25 @@ export default function ProfileScreen() {
               <View style={styles.statsBannerColumn}>
                 <Image source={pixelStatAdded} style={styles.statsBannerIcon} />
                 <View style={styles.statsBannerLabelContainer}>
-                  <Text style={styles.statsBannerLabel}>{t('profile.machinesAdded')}</Text>
+                  <Text style={styles.statsBannerLabel} includeFontPadding={false}>{t('profile.machinesAdded')}</Text>
                 </View>
-                <Text style={styles.statsBannerNumber}>{profile?.contribution_count || 0}</Text>
+                <Text style={styles.statsBannerNumber} includeFontPadding={false}>{profile?.contribution_count || 0}</Text>
               </View>
               <View style={styles.statsBannerDivider} />
               <View style={styles.statsBannerColumn}>
                 <Image source={pixelStatBadges} style={styles.statsBannerIcon} />
                 <View style={styles.statsBannerLabelContainer}>
-                  <Text style={styles.statsBannerLabel}>{t('profile.badges')}</Text>
+                  <Text style={styles.statsBannerLabel} includeFontPadding={false}>{t('profile.badges')}</Text>
                 </View>
-                <Text style={styles.statsBannerNumber}>{profile?.badge_count || 0}</Text>
+                <Text style={styles.statsBannerNumber} includeFontPadding={false}>{profile?.badge_count || 0}</Text>
               </View>
               <View style={styles.statsBannerDivider} />
               <View style={styles.statsBannerColumn}>
                 <Image source={pixelStatVisits} style={styles.statsBannerIcon} />
                 <View style={styles.statsBannerLabelContainer}>
-                  <Text style={styles.statsBannerLabel}>{t('profile.machinesVisited')}</Text>
+                  <Text style={styles.statsBannerLabel} includeFontPadding={false}>{t('profile.machinesVisited')}</Text>
                 </View>
-                <Text style={styles.statsBannerNumber}>{profile?.visit_count || 0}</Text>
+                <Text style={styles.statsBannerNumber} includeFontPadding={false}>{profile?.visit_count || 0}</Text>
               </View>
             </View>
           </View>
@@ -924,7 +924,7 @@ const styles = StyleSheet.create({
     height: ICON_SIZES.xl,
   },
   statsBannerLabelContainer: {
-    height: 32,
+    height: SPACING.xxxl,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -934,13 +934,11 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.85)',
     textTransform: 'uppercase',
     textAlign: 'center',
-    includeFontPadding: false,
   },
   statsBannerNumber: {
     fontSize: 28,
     fontFamily: 'DotGothic16',
     color: '#fff',
-    includeFontPadding: false,
   },
   statsRow: {
     flexDirection: 'row',
