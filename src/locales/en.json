@@ -315,6 +315,14 @@
     "earnedPlural": "Badges Earned!",
     "viewAll": "View All Badges",
     "awesome": "Awesome!",
+    "requirement": {
+      "visit_count": "Visit {{count}} machines",
+      "contribution_count": "Add {{count}} machines to the map",
+      "category_visit": "Visit {{count}} {{category}} machines",
+      "verification_count": "Verify {{count}} machines",
+      "referral_count": "Refer {{count}} friends",
+      "special": "Complete a special challenge"
+    },
     "items": {
       "explorer_1": { "name": "Fresh Change", "description": "Your very first vending machine visit." },
       "explorer_5": { "name": "Daily Route", "description": "You are making this a habit." },

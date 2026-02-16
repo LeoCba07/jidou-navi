@@ -16,6 +16,33 @@ interface BadgeRequirementModalProps {
   isEarned?: boolean;
 }
 
+function getBadgeRequirement(
+  badge: Badge,
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string | null {
+  const trigger = badge.trigger_value;
+  const count = trigger?.count;
+
+  switch (badge.trigger_type) {
+    case 'visit_count':
+      return count ? t('badges.requirement.visit_count', { count }) : null;
+    case 'contribution_count':
+      return count ? t('badges.requirement.contribution_count', { count }) : null;
+    case 'category_visit':
+      return count && trigger?.category
+        ? t('badges.requirement.category_visit', { count, category: t(`categories.${trigger.category}`) })
+        : null;
+    case 'verification_count':
+      return count ? t('badges.requirement.verification_count', { count }) : null;
+    case 'referral_count':
+      return count ? t('badges.requirement.referral_count', { count }) : null;
+    case 'special':
+      return t('badges.requirement.special');
+    default:
+      return null;
+  }
+}
+
 export default function BadgeRequirementModal({
   badge,
   userProgress,
@@ -30,6 +57,7 @@ export default function BadgeRequirementModal({
 
   const translation = getBadgeTranslation(badge.slug, badge.name, badge.description);
   const badgeImage = getBadgeImage(badge.slug);
+  const requirement = isEarned ? getBadgeRequirement(badge, t) : null;
 
   const progressPercent = userProgress.required > 0
     ? Math.min((userProgress.current / userProgress.required) * 100, 100)
@@ -87,6 +115,13 @@ export default function BadgeRequirementModal({
               {/* Encouragement text */}
               <Text style={styles.encouragement}>{t('profile.keepExploring')}</Text>
             </>
+          )}
+
+          {isEarned && requirement && (
+            <View style={styles.requirementRow}>
+              <Ionicons name="checkmark-circle" size={ICON_SIZES.xs} color="#999" />
+              <Text style={styles.requirementText}>{requirement}</Text>
+            </View>
           )}
 
           {isEarned && (
@@ -160,6 +195,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
     borderRadius: 40,
+  },
+  requirementRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 12,
+  },
+  requirementText: {
+    fontSize: FONT_SIZES.sm,
+    fontFamily: 'Inter',
+    color: '#999',
   },
   earnedLabel: {
     fontSize: FONT_SIZES.sm,

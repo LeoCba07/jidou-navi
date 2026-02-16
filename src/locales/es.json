@@ -315,6 +315,14 @@
     "earnedPlural": "¡Insignias Ganadas!",
     "viewAll": "Ver Todas las Insignias",
     "awesome": "¡Genial!",
+    "requirement": {
+      "visit_count": "Visita {{count}} máquinas",
+      "contribution_count": "Añade {{count}} máquinas al mapa",
+      "category_visit": "Visita {{count}} máquinas de {{category}}",
+      "verification_count": "Verifica {{count}} máquinas",
+      "referral_count": "Invita a {{count}} amigos",
+      "special": "Completa un desafío especial"
+    },
     "items": {
       "explorer_1": { "name": "Primer Cambio", "description": "Tu primera visita a una máquina." },
       "explorer_5": { "name": "Ruta Diaria", "description": "Estás creando un hábito." },
