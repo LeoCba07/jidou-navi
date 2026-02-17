@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 import type { LeaderboardEntry } from '../../store/friendsStore';
 import UserAvatar from '../UserAvatar';
+import { getCountryByCode } from '../../lib/countries';
 
 const MEDAL_ICONS: Record<number, any> = {
   1: require('../../../assets/pixel-medal-gold.png'),
@@ -34,6 +35,7 @@ function getRankColor(rank: number): string {
 export default function LeaderboardRow({ entry, showWeeklyXp = false }: LeaderboardRowProps) {
   const isTopThree = entry.rank <= 3;
   const rankColor = getRankColor(entry.rank);
+  const flag = entry.country ? getCountryByCode(entry.country)?.flag : undefined;
 
   function handlePress() {
     router.push(`/profile/${entry.user_id}`);
@@ -60,7 +62,7 @@ export default function LeaderboardRow({ entry, showWeeklyXp = false }: Leaderbo
       />
       <View style={styles.info}>
         <Text style={[styles.name, entry.is_current_user && styles.currentUserName]} numberOfLines={1}>
-          {entry.display_name || entry.username}
+          {flag ? `${flag} ` : ''}{entry.display_name || entry.username}
         </Text>
         <View style={styles.statsRow}>
           <View style={styles.levelBadge}>
