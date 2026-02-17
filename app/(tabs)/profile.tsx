@@ -27,7 +27,8 @@ import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine, calculateDistance } from '../../src/lib/machines';
 import { uploadAvatar } from '../../src/lib/storage';
-import { getLevelProgress, XP_VALUES } from '../../src/lib/xp';
+import { XP_VALUES } from '../../src/lib/xp';
+import XPProgressBar from '../../src/components/profile/XPProgressBar';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import SettingsModal from '../../src/components/profile/SettingsModal';
 import StatProgressCard from '../../src/components/profile/StatProgressCard';
@@ -445,29 +446,7 @@ export default function ProfileScreen() {
             </Text>
             
             {/* XP and Level Bar */}
-            <View style={styles.xpSection}>
-              {(() => {
-                const progress = getLevelProgress(profile?.xp || 0);
-                const rawPercentage = Number(progress?.percentage);
-                const safePercentage = Number.isFinite(rawPercentage)
-                  ? Math.min(100, Math.max(0, rawPercentage))
-                  : 0;
-                
-                return (
-                  <>
-                    <View style={styles.levelBadge}>
-                      <Text style={styles.levelText}>{t('profile.level')} {progress.currentLevel}</Text>
-                    </View>
-                    <View style={styles.xpBarContainer}>
-                      <View style={[styles.xpBarFill, { width: `${safePercentage}%` }]} />
-                      <Text style={styles.xpText}>
-                        {Math.floor(progress.currentXP)} / {Math.floor(progress.xpForNextLevel)} XP
-                      </Text>
-                    </View>
-                  </>
-                );
-              })()}
-            </View>
+            <XPProgressBar xp={profile?.xp || 0} />
 
             {profile?.bio && <Text style={styles.bio} numberOfLines={2}>{profile.bio}</Text>}
 
@@ -845,49 +824,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     color: '#999',
     marginBottom: 12,
-  },
-  xpSection: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 12,
-  },
-  levelBadge: {
-    backgroundColor: '#2B2B2B',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 2,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#444',
-  },
-  levelText: {
-    color: '#fff',
-    fontSize: FONT_SIZES.sm,
-    fontFamily: 'Silkscreen',
-  },
-  xpBarContainer: {
-    width: '100%',
-    height: 20,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 2,
-    borderColor: '#2B2B2B',
-    borderRadius: 2,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  xpBarFill: {
-    height: '100%',
-    backgroundColor: '#22C55E', // Pixel green
-  },
-  xpText: {
-    position: 'absolute',
-    width: '100%',
-    textAlign: 'center',
-    fontSize: FONT_SIZES.xs,
-    fontFamily: 'Silkscreen',
-    color: '#2B2B2B',
-    lineHeight: 20,
   },
   bio: {
     fontSize: FONT_SIZES.md,

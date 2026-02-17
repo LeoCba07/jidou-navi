@@ -668,9 +668,13 @@ export default function MachineDetailScreen() {
       };
 
       // Show success message, then badge popup if earned, then share card
-      const successMessage = stillExists
+      let successMessage = stillExists
         ? t('machine.checkIn.success.stillHere')
         : t('machine.checkIn.success.gone');
+
+      if (xpResult.leveledUp) {
+        successMessage = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${successMessage}`;
+      }
 
       showSuccess(
         t('machine.checkIn.success.title'),
@@ -844,7 +848,12 @@ export default function MachineDetailScreen() {
         machine_id: params.id,
       });
 
-      showSuccess(t('common.success'), t('machine.photoAdded'), () => {
+      let photoSuccessMsg = t('machine.photoAdded');
+      if (xpResult.leveledUp) {
+        photoSuccessMsg = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${photoSuccessMsg}`;
+      }
+
+      showSuccess(t('common.success'), photoSuccessMsg, () => {
         tryRequestAppReview();
       }, 'OK', XP_VALUES.PHOTO_UPLOAD);
 
