@@ -16,7 +16,8 @@
     "unsave": "Unsave",
     "remove": "Remove",
     "back": "Back",
-    "user": "User"
+    "user": "User",
+    "dismiss": "Dismiss"
   },
   "auth": {
     "login": "Log In",
