@@ -129,7 +129,7 @@ export default function BadgeRequirementModal({
 
           {isEarned && requirement && (
             <View style={styles.requirementRow}>
-              <Ionicons name="checkmark-circle" size={ICON_SIZES.xs} color="#999" />
+              <Ionicons name="checkmark-circle" size={ICON_SIZES.xs} color="#22C55E" />
               <Text style={styles.requirementText}>{requirement}</Text>
             </View>
           )}
@@ -211,11 +211,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     marginBottom: 12,
+    backgroundColor: '#F0FDF4',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
   },
   requirementText: {
     fontSize: FONT_SIZES.sm,
-    fontFamily: 'Inter',
-    color: '#999',
+    fontFamily: 'Inter-SemiBold',
+    color: '#15803D',
   },
   earnedLabel: {
     fontSize: FONT_SIZES.sm,
