@@ -27,6 +27,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
+import * as Manipulator from 'expo-image-manipulator';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
@@ -66,6 +67,27 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Helper for modal sequences
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Image quality setting for compression (0.7 = ~70% quality, good balance for JPG)
+const IMAGE_QUALITY = 0.7;
+const MAX_IMAGE_DIMENSION = 1200; // Max width or height
+
+/**
+ * Processes an image to limit resolution and compress it.
+ */
+async function processImage(uri: string): Promise<string> {
+  try {
+    const result = await Manipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: MAX_IMAGE_DIMENSION } }],
+      { compress: IMAGE_QUALITY, format: Manipulator.SaveFormat.JPEG }
+    );
+    return result.uri;
+  } catch (error) {
+    console.warn('Image processing failed, falling back to original:', error);
+    return uri;
+  }
+}
 
 export default function MachineDetailScreen() {
   const { t } = useTranslation();
@@ -793,7 +815,7 @@ export default function MachineDetailScreen() {
     try {
       const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ['images'],
-        quality: 0.5,
+        quality: 1, // Get full quality for processing
         allowsEditing: true,
         aspect: [4, 3],
       };
@@ -803,7 +825,9 @@ export default function MachineDetailScreen() {
         : await ImagePicker.launchImageLibraryAsync(options);
 
       if (!result.canceled && result.assets[0]) {
-        await uploadPhotoAction(result.assets[0].uri);
+        // Process image before upload
+        const processedUri = await processImage(result.assets[0].uri);
+        await uploadPhotoAction(processedUri);
       }
     } catch (error) {
       console.error('Image picker error:', error);

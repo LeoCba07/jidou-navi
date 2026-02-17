@@ -15,6 +15,7 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import * as FileSystem from 'expo-file-system';
+import * as Manipulator from 'expo-image-manipulator';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../src/lib/supabase';
 import { Sentry } from '../src/lib/sentry';
@@ -22,14 +23,34 @@ import { useAuthStore } from '../src/store/authStore';
 import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
 import { addXP, XP_VALUES } from '../src/lib/xp';
+import { uploadPhoto } from '../src/lib/storage';
 import { useAppModal } from '../src/hooks/useAppModal';
 import { tryRequestAppReview } from '../src/lib/review';
 import { extractGpsFromExif, GpsCoordinates } from '../src/lib/exif';
 import { LocationVerificationModal } from '../src/components/LocationVerificationModal';
 import { COLORS, SHADOWS, FONTS, SPACING, BORDER_RADIUS, CATEGORY_COLORS, FONT_SIZES, ICON_SIZES } from '../src/theme/constants';
 
-// Image quality setting for compression (0.5 = ~50% quality, good balance)
-const IMAGE_QUALITY = 0.5;
+// Image quality setting for compression (0.7 = ~70% quality, good balance for JPG)
+const IMAGE_QUALITY = 0.7;
+const MAX_IMAGE_DIMENSION = 1200; // Max width or height
+
+/**
+ * Processes an image to limit resolution and compress it.
+ * This saves storage space and improves upload speed.
+ */
+async function processImage(uri: string): Promise<string> {
+  try {
+    const result = await Manipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: MAX_IMAGE_DIMENSION } }], // Manipulator maintains aspect ratio if only width is provided
+      { compress: IMAGE_QUALITY, format: Manipulator.SaveFormat.JPEG }
+    );
+    return result.uri;
+  } catch (error) {
+    console.warn('Image processing failed, falling back to original:', error);
+    return uri;
+  }
+}
 
 const CATEGORY_ICONS: Record<string, any> = {
   eats: require('../assets/pixel-cat-eats.png'),
@@ -177,13 +198,13 @@ export default function AddMachineScreen() {
       const result = useCamera 
         ? await ImagePicker.launchCameraAsync({
             mediaTypes: ['images'],
-            quality: IMAGE_QUALITY,
+            quality: 1, // Get high quality for processing
             allowsEditing: true,
             aspect: [4, 3],
           })
         : await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
-            quality: 1, // Full quality for EXIF preservation
+            quality: 1, // Full quality for EXIF preservation and processing
             allowsMultipleSelection: true,
             selectionLimit: MAX_PHOTOS - photos.length,
             exif: true,
@@ -198,23 +219,22 @@ export default function AddMachineScreen() {
       const newPhotos: PhotoData[] = [];
 
       for (const asset of result.assets) {
-        const uri = asset.uri;
+        // Try to extract GPS from EXIF before processing (processing strips EXIF)
+        const gpsData = await extractGpsFromExif(asset.uri);
+        
+        // Process image (resize and compress)
+        const processedUri = await processImage(asset.uri);
 
-        // Get file size without loading full blob into memory
-        let size = asset.fileSize || 0;
-        if (!size) {
-          try {
-            const fileInfo = await FileSystem.getInfoAsync(uri);
-            if (fileInfo.exists) {
-              size = fileInfo.size;
-            }
-          } catch (e) {
-            console.warn('Failed to get file size via FileSystem:', e);
+        // Get file size of processed image
+        let size = 0;
+        try {
+          const fileInfo = await FileSystem.getInfoAsync(processedUri);
+          if (fileInfo.exists) {
+            size = fileInfo.size;
           }
+        } catch (e) {
+          console.warn('Failed to get file size via FileSystem:', e);
         }
-
-        // Try to extract GPS from EXIF
-        const gpsData = await extractGpsFromExif(uri);
 
         // Logic for EXIF: only ask/use for the first valid GPS found if we don't have one
         if (gpsData && !isManualLocation && locationSource === 'gps') {
@@ -222,7 +242,7 @@ export default function AddMachineScreen() {
           setShowLocationVerification(true);
         }
 
-        newPhotos.push({ uri, size, exifLocation: gpsData || undefined });
+        newPhotos.push({ uri: processedUri, size, exifLocation: gpsData || undefined });
       }
 
       // If no EXIF was found in any of the new photos and it's the first set of photos
@@ -314,31 +334,21 @@ export default function AddMachineScreen() {
     try {
       // 1. Upload all photos first
       const photoUploadPromises = photos.map(async (photoData, index) => {
-        // Use a temporary name with a timestamp/random to avoid collisions before we have the machine ID
-        const tempName = `pending_${user?.id}_${index}_${Date.now()}.jpg`;
+        if (!user) throw new Error('User not authenticated');
+
+        const fileName = `machine_${index}_${Date.now()}.jpg`;
         
-        const formData = new FormData();
-        formData.append('file', {
-          uri: photoData.uri,
-          name: tempName,
-          type: 'image/jpeg',
-        } as any);
-
-        const { error: uploadError } = await supabase.storage
-          .from('machine-photos')
-          .upload(tempName, formData, { contentType: 'multipart/form-data' });
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from('machine-photos')
-          .getPublicUrl(tempName);
+        const publicUrl = await uploadPhoto(
+          user.id,
+          null, // No machine ID yet
+          { uri: photoData.uri, type: 'image/jpeg', name: fileName, size: photoData.size }
+        );
 
         return {
-          photo_url: urlData.publicUrl,
+          photo_url: publicUrl,
           is_primary: index === 0,
           status: 'active' as const,
-          uploaded_by: user?.id,
+          uploaded_by: user.id,
         };
       });
 
