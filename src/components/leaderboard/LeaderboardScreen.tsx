@@ -90,7 +90,11 @@ export default function LeaderboardScreen() {
             ))}
             {currentUserEntry && (
               <>
-                <View style={styles.separator}>
+                <View
+                  style={styles.separator}
+                  accessible={false}
+                  importantForAccessibility="no-hide-descendants"
+                >
                   <Text style={styles.separatorText}>•••</Text>
                 </View>
                 <LeaderboardRow entry={currentUserEntry} showWeeklyXp />

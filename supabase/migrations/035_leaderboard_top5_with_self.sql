@@ -42,12 +42,12 @@ BEGIN
             p.country::TEXT
         FROM profiles p
         LEFT JOIN weekly_xp wx ON wx.user_id = p.id
-        WHERE p.username IS NOT NULL
+        WHERE p.username IS NOT NULL OR p.id = auth.uid()
     )
-    -- Top N rows
-    SELECT r.* FROM ranked r WHERE r.rank <= limit_count
+    -- Top N rows (only named users)
+    SELECT r.* FROM ranked r WHERE r.rank <= limit_count AND r.username IS NOT NULL
     UNION
-    -- Current user's row (deduplicated by UNION if already in top N)
+    -- Current user's row (always included, deduplicated by UNION if already in top N)
     SELECT r.* FROM ranked r WHERE r.is_current_user = true
     ORDER BY rank;
 END;
