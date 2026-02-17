@@ -47,7 +47,7 @@ BEGIN
     ORDER BY p.xp DESC NULLS LAST, p.created_at ASC
     LIMIT limit_count;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Re-grant after drop
 GRANT EXECUTE ON FUNCTION global_leaderboard(INT) TO authenticated;
@@ -107,6 +107,6 @@ BEGIN
     ORDER BY p.xp DESC NULLS LAST, p.created_at ASC
     LIMIT limit_count;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION friends_leaderboard(INT) TO authenticated;
