@@ -273,7 +273,7 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
     set({ isLoadingLeaderboard: true });
     try {
       // @ts-ignore - RPC function added in migration 011
-      const { data, error } = await supabase.rpc('global_leaderboard', { limit_count: 10 });
+      const { data, error } = await supabase.rpc('global_leaderboard', { limit_count: 5 });
       if (error) throw error;
       set({ globalLeaderboard: (data as unknown as LeaderboardEntry[]) || [] });
     } catch (error) {
@@ -287,7 +287,7 @@ export const useFriendsStore = create<FriendsState>((set, get) => ({
     set({ isLoadingLeaderboard: true });
     try {
       // @ts-ignore - RPC function added in migration 011
-      const { data, error } = await supabase.rpc('friends_leaderboard', { limit_count: 10 });
+      const { data, error } = await supabase.rpc('friends_leaderboard', { limit_count: 5 });
       if (error) throw error;
       set({ friendsLeaderboard: (data as unknown as LeaderboardEntry[]) || [] });
     } catch (error) {

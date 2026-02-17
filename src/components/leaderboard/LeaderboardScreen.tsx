@@ -49,6 +49,10 @@ export default function LeaderboardScreen() {
 
   const currentLeaderboard = activeType === 'global' ? globalLeaderboard : friendsLeaderboard;
 
+  // Split into top 5 and current user (if outside top 5)
+  const topEntries = currentLeaderboard.filter((e) => e.rank <= 5);
+  const currentUserEntry = currentLeaderboard.find((e) => e.is_current_user && e.rank > 5);
+
   // Show empty state for friends leaderboard if only user or empty
   const showNoFriendsState = activeType === 'friends' && currentLeaderboard.length <= 1;
 
@@ -81,9 +85,17 @@ export default function LeaderboardScreen() {
           </View>
         ) : (
           <View style={styles.list}>
-            {currentLeaderboard.map((entry) => (
+            {topEntries.map((entry) => (
               <LeaderboardRow key={entry.user_id} entry={entry} showWeeklyXp />
             ))}
+            {currentUserEntry && (
+              <>
+                <View style={styles.separator}>
+                  <Text style={styles.separatorText}>•••</Text>
+                </View>
+                <LeaderboardRow entry={currentUserEntry} showWeeklyXp />
+              </>
+            )}
           </View>
         )}
       </View>
@@ -135,6 +147,18 @@ const styles = StyleSheet.create({
   list: {
     gap: 1,
     backgroundColor: '#eee',
+  },
+  separator: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 6,
+    backgroundColor: '#fff',
+  },
+  separatorText: {
+    fontSize: FONT_SIZES.sm,
+    fontFamily: 'Inter',
+    color: '#999',
+    letterSpacing: 4,
   },
   emptyState: {
     padding: 24,
