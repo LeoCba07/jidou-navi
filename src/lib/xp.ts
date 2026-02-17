@@ -26,10 +26,13 @@ export async function addXP(amount: number, reason: string) {
     // Update local store if we got data back
     // The RPC returns an array of objects (even though it's single row)
     const { profile, setProfile } = useAuthStore.getState();
-    
+    const oldLevel = profile?.level || 1;
+    let newLevel = oldLevel;
+
     if (data && Array.isArray(data) && data.length > 0) {
       const { new_xp, new_level } = data[0];
-      
+      newLevel = new_level;
+
       if (profile) {
         setProfile({
           ...profile,
@@ -41,6 +44,7 @@ export async function addXP(amount: number, reason: string) {
       // Handle case where it might return a single object
       const result = data as any;
       const { new_xp, new_level } = result;
+      newLevel = new_level;
       if (profile) {
         setProfile({
           ...profile,
@@ -50,13 +54,15 @@ export async function addXP(amount: number, reason: string) {
       }
     }
 
+    const leveledUp = newLevel > oldLevel;
+
     // Track analytics for XP gain
     Analytics.track('xp_gain', {
       amount,
       reason,
     });
 
-    return { success: true, data };
+    return { success: true, data, leveledUp, newLevel };
   } catch (err) {
     console.error('[XP] Unexpected error:', err);
     return { success: false, error: err };
@@ -68,19 +74,22 @@ export async function addXP(amount: number, reason: string) {
  * Use this when the backend XP update happens via a separate RPC (like upvotes).
  * @param amount XP amount to add (can be negative)
  */
-export function updateLocalXP(amount: number) {
+export function updateLocalXP(amount: number): { leveledUp: boolean; newLevel: number } | undefined {
   const { profile, setProfile } = useAuthStore.getState();
   if (!profile) return;
-  
+
+  const oldLevel = profile.level || 1;
   const newXP = Math.max(0, (profile.xp || 0) + amount);
   // Recalculate level locally
   const newLevel = Math.floor(0.1 * Math.sqrt(newXP)) + 1;
-  
+
   setProfile({
     ...profile,
     xp: newXP,
     level: newLevel
   });
+
+  return { leveledUp: newLevel > oldLevel, newLevel };
 }
 
 /**

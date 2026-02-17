@@ -14,7 +14,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
-import { getLevelProgress } from '../../src/lib/xp';
+import XPProgressBar from '../../src/components/profile/XPProgressBar';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import UserAvatar from '../../src/components/UserAvatar';
 import EarnedBadgeRow from '../../src/components/profile/EarnedBadgeRow';
@@ -133,12 +133,6 @@ export default function UserProfileScreen() {
     );
   }
 
-  const levelProgress = getLevelProgress(profile.xp || 0);
-  const rawPercentage = Number(levelProgress?.percentage);
-  const safePercentage = Number.isFinite(rawPercentage)
-    ? Math.min(100, Math.max(0, rawPercentage))
-    : 0;
-
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -167,19 +161,7 @@ export default function UserProfileScreen() {
           </Text>
 
           {/* XP and Level Bar */}
-          <View style={styles.xpSection}>
-            <View style={styles.levelBadge}>
-              <Text style={styles.levelText}>
-                {t('profile.level')} {levelProgress.currentLevel}
-              </Text>
-            </View>
-            <View style={styles.xpBarContainer}>
-              <View style={[styles.xpBarFill, { width: `${safePercentage}%` }]} />
-              <Text style={styles.xpText}>
-                {Math.floor(levelProgress.currentXP)} / {Math.floor(levelProgress.xpForNextLevel)} XP
-              </Text>
-            </View>
-          </View>
+          <XPProgressBar xp={profile.xp || 0} />
 
           {/* Stats Banner */}
           <View style={styles.statsBanner}>
@@ -311,49 +293,6 @@ const styles = StyleSheet.create({
     color: '#2B2B2B',
     marginBottom: 4,
     textAlign: 'center',
-  },
-  xpSection: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 12,
-  },
-  levelBadge: {
-    backgroundColor: '#2B2B2B',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 2,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#444',
-  },
-  levelText: {
-    color: '#fff',
-    fontSize: FONT_SIZES.sm,
-    fontFamily: 'Silkscreen',
-  },
-  xpBarContainer: {
-    width: '100%',
-    height: 20,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 2,
-    borderColor: '#2B2B2B',
-    borderRadius: 2,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  xpBarFill: {
-    height: '100%',
-    backgroundColor: '#22C55E',
-  },
-  xpText: {
-    position: 'absolute',
-    width: '100%',
-    textAlign: 'center',
-    fontSize: FONT_SIZES.xs,
-    fontFamily: 'Silkscreen',
-    color: '#2B2B2B',
-    lineHeight: 20,
   },
   statsBanner: {
     flexDirection: 'row',

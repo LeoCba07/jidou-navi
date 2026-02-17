@@ -148,7 +148,9 @@
     "inviteDescription": "Invite your friends to JidouNavi and earn 100 XP when they sign up!",
     "inviteMessage": "Your friend invited you to JidouNavi! Join to discover Japan's most unique vending machines.",
     "inviteButton": "Share Invite Link",
-    "inviteLinkCopied": "Invite link copied to clipboard!"
+    "inviteLinkCopied": "Invite link copied to clipboard!",
+    "xpToNext": "{{xp}} XP to next level",
+    "levelUp": "Level Up! You're now Level {{level}}"
   },
   "map": {
     "searchPlaceholder": "Search machines...",

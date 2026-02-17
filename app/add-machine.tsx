@@ -408,9 +408,14 @@ export default function AddMachineScreen() {
       // Check for badge unlocks (contributor badges)
       const newBadges = await checkAndAwardBadges(machine.id);
 
+      let addSuccessMsg = t('addMachine.successPending');
+      if (xpResult.success && xpResult.leveledUp) {
+        addSuccessMsg = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${addSuccessMsg}`;
+      }
+
       if (newBadges.length > 0) {
         // Show success alert, then badge popup, then navigate back
-        showSuccess(t('common.success'), t('addMachine.successPending'), () => {
+        showSuccess(t('common.success'), addSuccessMsg, () => {
           showBadgePopup(newBadges, () => {
             tryRequestAppReview();
             router.back();
@@ -418,7 +423,7 @@ export default function AddMachineScreen() {
         }, 'OK', XP_VALUES.ADD_MACHINE);
       } else {
         // No badges - just show success and go back
-        showSuccess(t('common.success'), t('addMachine.successPending'), () => {
+        showSuccess(t('common.success'), addSuccessMsg, () => {
           tryRequestAppReview();
           router.back();
         }, 'OK', XP_VALUES.ADD_MACHINE);
