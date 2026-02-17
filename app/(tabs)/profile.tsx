@@ -697,7 +697,7 @@ export default function ProfileScreen() {
             <Pressable
               style={styles.supportButton}
               onPress={() => {
-                const supportUrl = 'https://buymeacoffee.com/jidounavi';
+                const supportUrl = 'https://buymeacoffee.com/jidou.navi';
                 Linking.openURL(supportUrl).catch(() => {
                   showInfo(t('profile.supportUs'), t('profile.supportLinkError'));
                 });
