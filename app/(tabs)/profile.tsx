@@ -18,7 +18,6 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import * as Clipboard from 'expo-clipboard';
-import * as Manipulator from 'expo-image-manipulator';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { unregisterPushNotificationsAsync } from '../../src/lib/notifications';
@@ -28,6 +27,7 @@ import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine, calculateDistance } from '../../src/lib/machines';
 import { uploadAvatar } from '../../src/lib/storage';
+import { processImage, IMAGE_LIMITS } from '../../src/lib/images';
 import { XP_VALUES } from '../../src/lib/xp';
 import XPProgressBar from '../../src/components/profile/XPProgressBar';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -41,27 +41,6 @@ import type { Friend } from '../../src/store/friendsStore';
 import type { Badge } from '../../src/lib/badges';
 import VisitedStamp from '../../src/components/machine/VisitedStamp';
 import { BORDER_RADIUS, COLORS, FONTS, SHADOWS, SPACING, FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
-
-// Image quality setting for avatars (smaller size needed)
-const AVATAR_QUALITY = 0.7;
-const MAX_AVATAR_DIMENSION = 400;
-
-/**
- * Processes an avatar image to limit resolution and compress it.
- */
-async function processAvatar(uri: string): Promise<string> {
-  try {
-    const result = await Manipulator.manipulateAsync(
-      uri,
-      [{ resize: { width: MAX_AVATAR_DIMENSION, height: MAX_AVATAR_DIMENSION } }],
-      { compress: AVATAR_QUALITY, format: Manipulator.SaveFormat.JPEG }
-    );
-    return result.uri;
-  } catch (error) {
-    console.warn('Avatar processing failed, falling back to original:', error);
-    return uri;
-  }
-}
 
 // Pixel art assets for empty states and icons
 const pixelEmptyQuest = require('../../assets/pixel-empty-quest.png');
@@ -181,7 +160,7 @@ export default function ProfileScreen() {
         const fileName = `avatar_${Date.now()}.jpg`;
         
         // Process avatar (resize and compress)
-        const processedUri = await processAvatar(asset.uri);
+        const processedUri = await processImage(asset.uri, { maxDimension: IMAGE_LIMITS.AVATAR });
 
         const publicUrl = await uploadAvatar(user.id, {
           uri: processedUri,

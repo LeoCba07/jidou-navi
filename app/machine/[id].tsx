@@ -27,7 +27,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
-import * as Manipulator from 'expo-image-manipulator';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
@@ -39,6 +38,7 @@ import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById, fetchMachineVisitors, type MachineVisitor } from '../../src/lib/machines';
 import type { NearbyMachine, ReportReason } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
+import { processImage } from '../../src/lib/images';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -67,27 +67,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Helper for modal sequences
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Image quality setting for compression (0.7 = ~70% quality, good balance for JPG)
-const IMAGE_QUALITY = 0.7;
-const MAX_IMAGE_DIMENSION = 1200; // Max width or height
-
-/**
- * Processes an image to limit resolution and compress it.
- */
-async function processImage(uri: string): Promise<string> {
-  try {
-    const result = await Manipulator.manipulateAsync(
-      uri,
-      [{ resize: { width: MAX_IMAGE_DIMENSION } }],
-      { compress: IMAGE_QUALITY, format: Manipulator.SaveFormat.JPEG }
-    );
-    return result.uri;
-  } catch (error) {
-    console.warn('Image processing failed, falling back to original:', error);
-    return uri;
-  }
-}
 
 export default function MachineDetailScreen() {
   const { t } = useTranslation();

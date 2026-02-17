@@ -23,9 +23,10 @@ export async function uploadPhoto(
     throw new Error('Invalid file type. Only JPG, PNG and WebP are allowed.');
   }
 
+  const randomId = Math.random().toString(36).slice(2, 10);
   const path = machineId 
-    ? `${userId}/${machineId}/${Date.now()}-${file.name}`
-    : `${userId}/pending/${Date.now()}-${file.name}`;
+    ? `${userId}/${machineId}/${Date.now()}-${randomId}-${file.name}`
+    : `${userId}/pending/${Date.now()}-${randomId}-${file.name}`;
 
   // Read file as base64 and convert to ArrayBuffer
   const base64 = await FileSystem.readAsStringAsync(file.uri, {

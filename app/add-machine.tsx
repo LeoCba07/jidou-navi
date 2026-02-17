@@ -15,7 +15,6 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import * as FileSystem from 'expo-file-system';
-import * as Manipulator from 'expo-image-manipulator';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../src/lib/supabase';
 import { Sentry } from '../src/lib/sentry';
@@ -24,33 +23,12 @@ import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
 import { addXP, XP_VALUES } from '../src/lib/xp';
 import { uploadPhoto } from '../src/lib/storage';
+import { processImage, IMAGE_LIMITS } from '../src/lib/images';
 import { useAppModal } from '../src/hooks/useAppModal';
 import { tryRequestAppReview } from '../src/lib/review';
 import { extractGpsFromExif, GpsCoordinates } from '../src/lib/exif';
 import { LocationVerificationModal } from '../src/components/LocationVerificationModal';
 import { COLORS, SHADOWS, FONTS, SPACING, BORDER_RADIUS, CATEGORY_COLORS, FONT_SIZES, ICON_SIZES } from '../src/theme/constants';
-
-// Image quality setting for compression (0.7 = ~70% quality, good balance for JPG)
-const IMAGE_QUALITY = 0.7;
-const MAX_IMAGE_DIMENSION = 1200; // Max width or height
-
-/**
- * Processes an image to limit resolution and compress it.
- * This saves storage space and improves upload speed.
- */
-async function processImage(uri: string): Promise<string> {
-  try {
-    const result = await Manipulator.manipulateAsync(
-      uri,
-      [{ resize: { width: MAX_IMAGE_DIMENSION } }], // Manipulator maintains aspect ratio if only width is provided
-      { compress: IMAGE_QUALITY, format: Manipulator.SaveFormat.JPEG }
-    );
-    return result.uri;
-  } catch (error) {
-    console.warn('Image processing failed, falling back to original:', error);
-    return uri;
-  }
-}
 
 const CATEGORY_ICONS: Record<string, any> = {
   eats: require('../assets/pixel-cat-eats.png'),
