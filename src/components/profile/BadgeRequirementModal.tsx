@@ -16,6 +16,14 @@ interface BadgeRequirementModalProps {
   isEarned?: boolean;
 }
 
+const CATEGORY_SLUG_TO_KEY: Record<string, string> = {
+  eats: 'categories.eats',
+  gachapon: 'categories.gachapon',
+  weird: 'categories.weird',
+  retro: 'categories.retro',
+  'local-gems': 'categories.localGems',
+};
+
 function getBadgeRequirement(
   badge: Badge,
   t: (key: string, options?: Record<string, unknown>) => string,
@@ -28,10 +36,12 @@ function getBadgeRequirement(
       return count ? t('badges.requirement.visit_count', { count }) : null;
     case 'contribution_count':
       return count ? t('badges.requirement.contribution_count', { count }) : null;
-    case 'category_visit':
-      return count && trigger?.category
-        ? t('badges.requirement.category_visit', { count, category: t(`categories.${trigger.category}`) })
-        : null;
+    case 'category_visit': {
+      if (!count || !trigger?.category) return null;
+      const categoryKey = CATEGORY_SLUG_TO_KEY[trigger.category];
+      const categoryLabel = categoryKey ? t(categoryKey) : trigger.category;
+      return t('badges.requirement.category_visit', { count, category: categoryLabel });
+    }
     case 'verification_count':
       return count ? t('badges.requirement.verification_count', { count }) : null;
     case 'referral_count':
