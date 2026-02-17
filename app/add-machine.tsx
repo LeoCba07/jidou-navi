@@ -409,7 +409,7 @@ export default function AddMachineScreen() {
       const newBadges = await checkAndAwardBadges(machine.id);
 
       let addSuccessMsg = t('addMachine.successPending');
-      if (xpResult.leveledUp) {
+      if (xpResult.success && xpResult.leveledUp) {
         addSuccessMsg = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${addSuccessMsg}`;
       }
 

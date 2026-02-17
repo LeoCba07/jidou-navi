@@ -672,7 +672,7 @@ export default function MachineDetailScreen() {
         ? t('machine.checkIn.success.stillHere')
         : t('machine.checkIn.success.gone');
 
-      if (xpResult.leveledUp) {
+      if (xpResult.success && xpResult.leveledUp) {
         successMessage = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${successMessage}`;
       }
 
@@ -849,7 +849,7 @@ export default function MachineDetailScreen() {
       });
 
       let photoSuccessMsg = t('machine.photoAdded');
-      if (xpResult.leveledUp) {
+      if (xpResult.success && xpResult.leveledUp) {
         photoSuccessMsg = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${photoSuccessMsg}`;
       }
 

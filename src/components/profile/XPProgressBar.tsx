@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, Animated, StyleSheet } from 'react-native';
+import { View, Text, Animated, Easing, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { getLevelProgress } from '../../lib/xp';
 import { FONT_SIZES } from '../../theme/constants';
@@ -33,14 +33,26 @@ export default function XPProgressBar({ xp }: XPProgressBarProps) {
     : 0;
 
   const fillAnim = useRef(new Animated.Value(0)).current;
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    fillAnim.setValue(0);
-    Animated.timing(fillAnim, {
-      toValue: safePercentage,
-      duration: 600,
-      useNativeDriver: false,
-    }).start();
+    if (!hasAnimated.current) {
+      hasAnimated.current = true;
+      fillAnim.setValue(0);
+      Animated.timing(fillAnim, {
+        toValue: safePercentage,
+        duration: 600,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(fillAnim, {
+        toValue: safePercentage,
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: false,
+      }).start();
+    }
   }, [safePercentage]);
 
   const tierColor = getLevelTierColor(progress.currentLevel);
