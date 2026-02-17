@@ -27,6 +27,7 @@ import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine, calculateDistance } from '../../src/lib/machines';
 import { uploadAvatar } from '../../src/lib/storage';
+import { processImage, IMAGE_LIMITS } from '../../src/lib/images';
 import { XP_VALUES } from '../../src/lib/xp';
 import XPProgressBar from '../../src/components/profile/XPProgressBar';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -148,7 +149,7 @@ export default function ProfileScreen() {
         mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.5,
+        quality: 1, // Get full quality for processing
       });
 
       if (!result.canceled && result.assets[0]) {
@@ -158,8 +159,11 @@ export default function ProfileScreen() {
         const asset = result.assets[0];
         const fileName = `avatar_${Date.now()}.jpg`;
         
+        // Process avatar (resize and compress)
+        const processedUri = await processImage(asset.uri, { maxDimension: IMAGE_LIMITS.AVATAR });
+
         const publicUrl = await uploadAvatar(user.id, {
-          uri: asset.uri,
+          uri: processedUri,
           type: 'image/jpeg',
           name: fileName,
         });

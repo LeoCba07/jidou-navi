@@ -1,7 +1,7 @@
 // Storage helpers for machine photos
 // Bucket must be created first - already ran supabase/storage.sql in Supabase
 import { supabase } from './supabase';
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from 'expo-file-system';
 
 const BUCKET = 'machine-photos';
 const AVATAR_BUCKET = 'avatars';
@@ -9,7 +9,7 @@ const AVATAR_BUCKET = 'avatars';
 // Upload a photo, returns the public URL
 export async function uploadPhoto(
   userId: string,
-  machineId: string,
+  machineId: string | null,
   file: { uri: string; type: string; name: string; size?: number }
 ): Promise<string> {
   // Validation
@@ -23,7 +23,10 @@ export async function uploadPhoto(
     throw new Error('Invalid file type. Only JPG, PNG and WebP are allowed.');
   }
 
-  const path = `${userId}/${machineId}/${Date.now()}-${file.name}`;
+  const randomId = Math.random().toString(36).slice(2, 10);
+  const path = machineId 
+    ? `${userId}/${machineId}/${Date.now()}-${randomId}-${file.name}`
+    : `${userId}/pending/${Date.now()}-${randomId}-${file.name}`;
 
   // Read file as base64 and convert to ArrayBuffer
   const base64 = await FileSystem.readAsStringAsync(file.uri, {

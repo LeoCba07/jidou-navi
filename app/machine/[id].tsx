@@ -38,6 +38,7 @@ import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById, fetchMachineVisitors, type MachineVisitor } from '../../src/lib/machines';
 import type { NearbyMachine, ReportReason } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
+import { processImage } from '../../src/lib/images';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -793,7 +794,7 @@ export default function MachineDetailScreen() {
     try {
       const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ['images'],
-        quality: 0.5,
+        quality: 1, // Get full quality for processing
         allowsEditing: true,
         aspect: [4, 3],
       };
@@ -803,7 +804,9 @@ export default function MachineDetailScreen() {
         : await ImagePicker.launchImageLibraryAsync(options);
 
       if (!result.canceled && result.assets[0]) {
-        await uploadPhotoAction(result.assets[0].uri);
+        // Process image before upload
+        const processedUri = await processImage(result.assets[0].uri);
+        await uploadPhotoAction(processedUri);
       }
     } catch (error) {
       console.error('Image picker error:', error);
