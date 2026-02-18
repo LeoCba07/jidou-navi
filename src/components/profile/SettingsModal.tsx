@@ -37,6 +37,11 @@ interface SettingsModalProps {
   onProfileUpdate: (newProfile: Profile) => void;
 }
 
+// Pixel art assets for icons
+const pixelGiftInvite = require('../../../assets/pixel-gift-invite.png');
+const pixelShare = require('../../../assets/pixel-ui-share.png');
+const feedbackIcon = require('../../../assets/feedback-icon.png');
+
 export default function SettingsModal({
   visible,
   onClose,
@@ -49,12 +54,16 @@ export default function SettingsModal({
   const { t } = useTranslation();
   const { showError, showSuccess } = useAppModal();
   const { currentLanguage, setCurrentLanguage } = useLanguageStore();
-  const [currentScreen, setCurrentScreen] = useState<'main' | 'language' | 'edit_profile' | 'my_submissions'>('main');
+  const [currentScreen, setCurrentScreen] = useState<'main' | 'language' | 'edit_profile' | 'my_submissions' | 'feedback'>('main');
   
   // Profile edit state
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
   const [receiveNewsletter, setReceiveNewsletter] = useState(profile?.receive_newsletter || false);
   const [saving, setSaving] = useState(false);
+
+  // Feedback state
+  const [feedbackContent, setFeedbackContent] = useState('');
+  const [sendingFeedback, setSendingFeedback] = useState(false);
 
   // My Submissions state
   const [pendingMachines, setPendingMachines] = useState<UserPendingMachine[]>([]);
@@ -204,6 +213,43 @@ export default function SettingsModal({
     setCurrentScreen('main');
   }
 
+  async function handleSendFeedback() {
+    if (!feedbackContent.trim()) return;
+
+    setSendingFeedback(true);
+    try {
+      const { data, error } = await supabase.rpc('submit_feedback', {
+        p_content: feedbackContent.trim(),
+        p_category: 'general',
+      });
+
+      if (error) throw error;
+
+      const result = data as { success: boolean; error?: string };
+      if (!result.success) {
+        if (result.error === 'rate_limit_exceeded') {
+          showError(t('common.error'), t('report.errors.rateLimited'));
+        } else {
+          showError(t('common.error'), t('profile.feedbackError'));
+        }
+        return;
+      }
+
+      // Close settings modal first, then show success
+      handleClose();
+      // Use a small timeout to ensure the settings modal is dismissed before showing the success modal
+      setTimeout(() => {
+        showSuccess(t('common.success'), t('profile.feedbackSuccess'));
+      }, 300);
+      setFeedbackContent('');
+    } catch (err) {
+      console.error('[Feedback] Error sending feedback:', err);
+      showError(t('common.error'), t('profile.feedbackError'));
+    } finally {
+      setSendingFeedback(false);
+    }
+  }
+
   return (
     <Modal
       transparent
@@ -227,6 +273,8 @@ export default function SettingsModal({
                 ? t('profile.editProfile')
                 : currentScreen === 'my_submissions'
                 ? t('profile.mySubmissions')
+                : currentScreen === 'feedback'
+                ? t('profile.feedbackTitle')
                 : t('profile.accountSettings')}
             </Text>
             <Pressable onPress={handleClose} style={styles.closeButton} disabled={saving}>
@@ -353,6 +401,25 @@ export default function SettingsModal({
                   <Text style={styles.itemValue}>{t('profile.inviteDescription')}</Text>
                 </View>
                 <Image source={require('../../../assets/pixel-ui-share.png')} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }} />
+              </Pressable>
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Feedback */}
+            <View style={styles.section}>
+              <Pressable
+                style={styles.itemRow}
+                onPress={() => setCurrentScreen('feedback')}
+                accessibilityRole="button"
+                accessibilityLabel={t('profile.feedbackTitle')}
+              >
+                <Image source={feedbackIcon} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }} />
+                <View style={styles.itemContent}>
+                  <Text style={styles.itemLabel}>{t('profile.feedbackTitle')}</Text>
+                  <Text style={styles.itemValue}>{t('profile.feedbackDescription')}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
               </Pressable>
             </View>
 
@@ -515,6 +582,40 @@ export default function SettingsModal({
                     ))}
                   </View>
                 )}
+              </View>
+            ) : currentScreen === 'feedback' ? (
+              /* Feedback Screen */
+              <View style={styles.feedbackScreen}>
+                <View style={styles.field}>
+                  <Text style={styles.label}>{t('profile.feedbackDescription')}</Text>
+                  
+                  <TextInput
+                    style={[styles.input, styles.textArea]}
+                    value={feedbackContent}
+                    onChangeText={setFeedbackContent}
+                    placeholder={t('profile.feedbackPlaceholder')}
+                    placeholderTextColor="#999"
+                    multiline
+                    numberOfLines={6}
+                    textAlignVertical="top"
+                    autoFocus
+                    maxLength={2000}
+                  />
+                </View>
+                <Pressable
+                  style={[
+                    styles.saveButton,
+                    (!feedbackContent.trim() || sendingFeedback) && styles.saveButtonDisabled
+                  ]}
+                  onPress={handleSendFeedback}
+                  disabled={!feedbackContent.trim() || sendingFeedback}
+                >
+                  {sendingFeedback ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.saveButtonText}>{t('profile.feedbackSubmit')}</Text>
+                  )}
+                </Pressable>
               </View>
             ) : (
               /* Edit Profile Screen */
@@ -923,5 +1024,13 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.lg,
     fontFamily: 'Silkscreen',
     color: '#fff',
+  },
+  feedbackScreen: {
+    padding: 20,
+    gap: 16,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
   },
 });

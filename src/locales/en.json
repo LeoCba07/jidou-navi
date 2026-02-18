@@ -149,6 +149,12 @@
     "inviteMessage": "Your friend invited you to JidouNavi! Join to discover Japan's most unique vending machines.",
     "inviteButton": "Share Invite Link",
     "inviteLinkCopied": "Invite link copied to clipboard!",
+    "feedbackTitle": "Send Feedback",
+    "feedbackDescription": "We'd love to hear your thoughts!",
+    "feedbackPlaceholder": "Tell us what you think, report a bug, or suggest a feature...",
+    "feedbackSubmit": "Send Feedback",
+    "feedbackSuccess": "Thank you for your feedback! We really appreciate it.",
+    "feedbackError": "Failed to send feedback. Please try again.",
     "xpToNext": "{{xp}} XP to next level",
     "levelUp": "Level Up! You're now Level {{level}}"
   },
