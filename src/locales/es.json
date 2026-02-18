@@ -149,6 +149,12 @@
     "inviteMessage": "¡Tu amigo te invitó a JidouNavi! Únete para descubrir las máquinas expendedoras más únicas de Japón.",
     "inviteButton": "Compartir link de invitación",
     "inviteLinkCopied": "¡Link de invitación copiado al portapapeles!",
+    "feedbackTitle": "Enviar Comentarios",
+    "feedbackDescription": "¡Nos encantaría saber qué piensas!",
+    "feedbackPlaceholder": "Cuéntanos qué te parece, reporta un error o sugiere una función...",
+    "feedbackSubmit": "Enviar Comentarios",
+    "feedbackSuccess": "¡Gracias por tus comentarios! Lo apreciamos mucho.",
+    "feedbackError": "Error al enviar comentarios. Por favor intenta de nuevo.",
     "xpToNext": "{{xp}} XP para el siguiente nivel",
     "levelUp": "¡Subiste al Nivel {{level}}!"
   },
