@@ -218,17 +218,30 @@ export default function SettingsModal({
 
     setSendingFeedback(true);
     try {
-      const { error } = await supabase.from('feedback').insert({
-        user_id: user?.id,
-        content: feedbackContent.trim(),
-        category: 'general',
+      const { data, error } = await supabase.rpc('submit_feedback', {
+        p_content: feedbackContent.trim(),
+        p_category: 'general',
       });
 
       if (error) throw error;
 
-      showSuccess(t('common.success'), t('profile.feedbackSuccess'));
+      const result = data as { success: boolean; error?: string };
+      if (!result.success) {
+        if (result.error === 'rate_limit_exceeded') {
+          showError(t('common.error'), t('report.errors.rateLimited'));
+        } else {
+          showError(t('common.error'), t('profile.feedbackError'));
+        }
+        return;
+      }
+
+      // Close settings modal first, then show success
+      handleClose();
+      // Use a small timeout to ensure the settings modal is dismissed before showing the success modal
+      setTimeout(() => {
+        showSuccess(t('common.success'), t('profile.feedbackSuccess'));
+      }, 300);
       setFeedbackContent('');
-      setCurrentScreen('main');
     } catch (err) {
       console.error('[Feedback] Error sending feedback:', err);
       showError(t('common.error'), t('profile.feedbackError'));
@@ -586,6 +599,7 @@ export default function SettingsModal({
                     numberOfLines={6}
                     textAlignVertical="top"
                     autoFocus
+                    maxLength={2000}
                   />
                 </View>
                 <Pressable
