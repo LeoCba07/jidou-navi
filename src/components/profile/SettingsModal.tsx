@@ -23,6 +23,7 @@ import { supportedLanguages, LanguageCode } from '../../lib/i18n';
 import { Profile } from '../../store/authStore';
 import { supabase } from '../../lib/supabase';
 import { useAppModal } from '../../hooks/useAppModal';
+import PixelLoader from '../PixelLoader';
 import { fetchUserPendingMachines, dismissRejectedMachine, UserPendingMachine } from '../../lib/admin';
 
 type UpdateProfileResult = { success: boolean; error?: string };
@@ -529,7 +530,7 @@ export default function SettingsModal({
               /* My Submissions Screen */
               <View style={styles.submissionsScreen}>
                 {loadingPending ? (
-                  <ActivityIndicator color="#FF4B4B" style={styles.loader} />
+                  <PixelLoader size={40} />
                 ) : pendingMachines.length === 0 ? (
                   <View style={styles.emptyState}>
                     <Ionicons name="cube-outline" size={ICON_SIZES.xxl} color="#ccc" />

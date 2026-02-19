@@ -37,6 +37,7 @@ import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import { LeaderboardScreen } from '../../src/components/leaderboard';
 import { DiscoverMachineCard } from '../../src/components/discover';
+import PixelLoader from '../../src/components/PixelLoader';
 import RecentVisitorsModal from '../../src/components/discover/RecentVisitorsModal';
 import DailyVotesIndicator, { type DailyVotesIndicatorRef } from '../../src/components/discover/DailyVotesIndicator';
 const EMPTY_TRENDING = require('../../assets/pixel-empty-trending.png');
@@ -338,11 +339,7 @@ export default function DiscoverScreen() {
   }
 
   if (loading) {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" color="#FF4B4B" />
-      </View>
-    );
+    return <PixelLoader fullScreen />;
   }
 
   const canUpvote = remainingVotes > 0;
