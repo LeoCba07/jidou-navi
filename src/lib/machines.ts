@@ -69,7 +69,7 @@ export async function fetchMachineById(machineId: string): Promise<NearbyMachine
       .single();
 
     if (error) {
-      console.error('Error fetching machine by ID:', error);
+      console.warn(`[API] fetchMachineById failed for ID: ${id}:`, error.message || 'Unknown error');
       return null;
     }
 
@@ -96,7 +96,7 @@ export async function fetchNearbyMachines(
     });
 
     if (error) {
-      console.error('Error fetching nearby machines:', error);
+      console.warn('[API] fetchNearbyMachines failed:', error.message || 'Unknown error');
       return null; // Return null so caller keeps cached data
     }
 
@@ -132,7 +132,7 @@ export async function fetchMachinesInBounds(
     });
 
     if (error) {
-      console.error('Error fetching machines in bounds:', error);
+      console.warn('[API] fetchMachinesInBounds failed:', error.message || 'Unknown error');
       return null;
     }
 
@@ -549,7 +549,7 @@ export async function fetchMachineVisitors(
     });
 
     if (error) {
-      console.error('Error fetching machine visitors:', error);
+      console.warn(`[API] fetchMachineVisitors failed for ID: ${machineId}:`, error.message || 'Unknown error');
       return [];
     }
 
@@ -568,7 +568,7 @@ export async function fetchMachineVisitorCount(machineId: string): Promise<numbe
     });
 
     if (error) {
-      console.error('Error fetching machine visitor count:', error);
+      console.warn(`[API] fetchMachineVisitorCount failed for ID: ${machineId}:`, error.message || 'Unknown error');
       return 0;
     }
 

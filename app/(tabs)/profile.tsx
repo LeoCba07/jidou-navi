@@ -30,6 +30,7 @@ import { uploadAvatar } from '../../src/lib/storage';
 import { processImage, IMAGE_LIMITS } from '../../src/lib/images';
 import { XP_VALUES } from '../../src/lib/xp';
 import XPProgressBar from '../../src/components/profile/XPProgressBar';
+import PixelLoader from '../../src/components/PixelLoader';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import SettingsModal from '../../src/components/profile/SettingsModal';
 import StatProgressCard from '../../src/components/profile/StatProgressCard';
@@ -527,7 +528,7 @@ export default function ProfileScreen() {
             )}
           </View>
           {loadingSaved ? (
-            <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
+            <PixelLoader size={40} />
           ) : savedMachines.length === 0 ? (
             <View style={styles.emptyBadges}>
               <Image source={pixelEmptyQuest} style={styles.emptyImage} />
@@ -624,7 +625,7 @@ export default function ProfileScreen() {
             <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           </View>
           {loadingBadges ? (
-            <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
+            <PixelLoader size={40} />
           ) : (
             <BadgeShowcase
               earnedBadges={badges}
