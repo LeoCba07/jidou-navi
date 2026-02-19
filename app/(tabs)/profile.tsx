@@ -1,6 +1,6 @@
 // Profile screen - user info, stats, badges, and logout
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { useFocusEffect, useScrollToTop } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -76,6 +76,10 @@ export default function ProfileScreen() {
   const { visitedMachineIds } = useVisitedMachinesStore();
   const { friends, pendingRequestCount, loadFriends, loadPendingRequestCount, removeFriend } = useFriendsStore();
   const { showError, showConfirm, showInfo, showSuccess } = useAppModal();
+  const scrollRef = useRef<ScrollView>(null);
+
+  useScrollToTop(scrollRef);
+
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
@@ -412,6 +416,7 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         refreshControl={

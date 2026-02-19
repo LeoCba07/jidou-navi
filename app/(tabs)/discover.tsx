@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useScrollToTop } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 import {
@@ -49,6 +50,9 @@ export default function DiscoverScreen() {
   const { show, showError, showSuccess, hide } = useAppModal();
   const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
+  const scrollRef = React.useRef<ScrollView>(null);
+
+  useScrollToTop(scrollRef);
 
   // Data state
   const [popularMachines, setPopularMachines] = React.useState<EngagedMachine[]>([]);
@@ -353,6 +357,7 @@ export default function DiscoverScreen() {
       </View>
 
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
