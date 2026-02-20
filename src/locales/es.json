@@ -204,6 +204,8 @@
     "loginRequired": "Inicio de sesión requerido",
     "loginToSave": "Por favor inicia sesión para guardar máquinas.",
     "loginToCheckIn": "Por favor inicia sesión para registrar tu visita.",
+    "saveSuccess": "¡Máquina guardada!",
+    "unsaveSuccess": "Eliminada de guardados",
     "saveError": "Error al guardar la máquina.",
     "unsaveError": "Error al eliminar la máquina de guardados.",
     "addPhoto": "Añadir Foto",
