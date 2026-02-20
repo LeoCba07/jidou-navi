@@ -472,6 +472,8 @@ export default function SettingsModal({
               </Pressable>
             </View>
 
+            <View style={styles.divider} />
+
             <View style={styles.section}>
               <Pressable
                 style={styles.deleteButton}
