@@ -156,7 +156,11 @@
     "feedbackSuccess": "Thank you for your feedback! We really appreciate it.",
     "feedbackError": "Failed to send feedback. Please try again.",
     "xpToNext": "{{xp}} XP to next level",
-    "levelUp": "Level Up! You're now Level {{level}}"
+    "levelUp": "Level Up! You're now Level {{level}}",
+    "sectionAccount": "Account",
+    "sectionContent": "Content",
+    "sectionCommunity": "Community",
+    "sectionLegal": "Legal"
   },
   "map": {
     "searchPlaceholder": "Search machines...",

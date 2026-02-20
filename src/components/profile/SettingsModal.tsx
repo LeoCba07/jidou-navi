@@ -291,7 +291,9 @@ export default function SettingsModal({
           >
             {currentScreen === 'main' ? (
               <>
-            {/* Edit Profile */}
+            {/* ── ACCOUNT ── */}
+            <Text style={styles.sectionHeader}>{t('profile.sectionAccount')}</Text>
+
             <View style={styles.section}>
               <Pressable
                 style={styles.itemRow}
@@ -312,7 +314,26 @@ export default function SettingsModal({
 
             <View style={styles.divider} />
 
-            {/* My Submissions */}
+            <View style={styles.section}>
+              <Pressable
+                style={styles.itemRow}
+                onPress={() => setCurrentScreen('language')}
+                accessibilityRole="button"
+                accessibilityLabel={t('profile.language')}
+              >
+                <Ionicons name="language-outline" size={ICON_SIZES.sm} color="#666" />
+                <View style={styles.itemContent}>
+                  <Text style={styles.itemLabel}>{t('profile.language')}</Text>
+                  <Text style={styles.itemValue}>{currentLanguageName}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
+              </Pressable>
+            </View>
+
+            {/* ── CONTENT ── */}
+            <View style={styles.sectionDivider} />
+            <Text style={styles.sectionHeader}>{t('profile.sectionContent')}</Text>
+
             <View style={styles.section}>
               <Pressable
                 style={styles.itemRow}
@@ -329,11 +350,9 @@ export default function SettingsModal({
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
-
-            {/* Admin Dashboard Link (only for admins) */}
             {isAdmin && (
               <>
+                <View style={styles.divider} />
                 <View style={styles.section}>
                   <Pressable
                     style={styles.itemRow}
@@ -352,43 +371,13 @@ export default function SettingsModal({
                     <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#FF4B4B" />
                   </Pressable>
                 </View>
-                <View style={styles.divider} />
               </>
             )}
 
-            {/* Email */}
-            <View style={styles.section}>
-              <View style={styles.itemRow}>
-                <Ionicons name="mail-outline" size={ICON_SIZES.sm} color="#666" />
-                <View style={styles.itemContent}>
-                  <Text style={styles.itemLabel}>{t('auth.email')}</Text>
-                  <Text style={styles.itemValue}>{user?.email}</Text>
-                </View>
-              </View>
-            </View>
+            {/* ── COMMUNITY ── */}
+            <View style={styles.sectionDivider} />
+            <Text style={styles.sectionHeader}>{t('profile.sectionCommunity')}</Text>
 
-            <View style={styles.divider} />
-
-            {/* Language */}
-            <View style={styles.section}>
-              <Pressable
-                style={styles.itemRow}
-                onPress={() => setCurrentScreen('language')}
-                accessibilityRole="button"
-                accessibilityLabel={t('profile.language')}
-              >
-                <Ionicons name="language-outline" size={ICON_SIZES.sm} color="#666" />
-                <View style={styles.itemContent}>
-                  <Text style={styles.itemLabel}>{t('profile.language')}</Text>
-                  <Text style={styles.itemValue}>{currentLanguageName}</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#ccc" />
-              </Pressable>
-            </View>
-
-            <View style={styles.divider} />
-
-            {/* Invite a Friend */}
             <View style={styles.section}>
               <Pressable
                 style={styles.itemRow}
@@ -407,7 +396,6 @@ export default function SettingsModal({
 
             <View style={styles.divider} />
 
-            {/* Feedback */}
             <View style={styles.section}>
               <Pressable
                 style={styles.itemRow}
@@ -424,9 +412,10 @@ export default function SettingsModal({
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
+            {/* ── LEGAL ── */}
+            <View style={styles.sectionDivider} />
+            <Text style={styles.sectionHeader}>{t('profile.sectionLegal')}</Text>
 
-            {/* Legal */}
             <View style={styles.section}>
               <Pressable
                 style={styles.itemRow}
@@ -445,7 +434,7 @@ export default function SettingsModal({
               </Pressable>
             </View>
 
-            <View style={styles.sectionDivider} />
+            <View style={styles.divider} />
 
             <View style={styles.section}>
               <Pressable
@@ -465,9 +454,9 @@ export default function SettingsModal({
               </Pressable>
             </View>
 
-            <View style={styles.divider} />
+            {/* ── DESTRUCTIVE ACTIONS ── */}
+            <View style={styles.sectionDivider} />
 
-            {/* Logout */}
             <View style={styles.section}>
               <Pressable
                 style={styles.logoutButton}
@@ -483,7 +472,8 @@ export default function SettingsModal({
               </Pressable>
             </View>
 
-            {/* Delete Account */}
+            <View style={styles.divider} />
+
             <View style={styles.section}>
               <Pressable
                 style={styles.deleteButton}
@@ -621,6 +611,16 @@ export default function SettingsModal({
             ) : (
               /* Edit Profile Screen */
               <View style={styles.editProfileScreen}>
+                <View style={styles.field}>
+                  <Text style={styles.label}>{t('auth.email')}</Text>
+                  <TextInput
+                    style={[styles.input, styles.inputDisabled]}
+                    value={user?.email || ''}
+                    editable={false}
+                    selectTextOnFocus={false}
+                  />
+                </View>
+
                 <View style={styles.field}>
                   <Text style={styles.label}>{t('profile.displayName')}</Text>
                   <TextInput
@@ -771,6 +771,16 @@ const styles = StyleSheet.create({
   sectionDivider: {
     height: 1,
     backgroundColor: '#eee',
+  },
+  sectionHeader: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter-Bold',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 4,
   },
   logoutButton: {
     flexDirection: 'row',
