@@ -42,6 +42,7 @@ import { processImage } from '../../src/lib/images';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { useToast } from '../../src/hooks/useToast';
 import { ImageSkeleton } from '../../src/components/ImageSkeleton';
 import { COLORS, FONTS, SPACING, BORDER_RADIUS, SHADOWS, MODAL_SEQUENCE_DELAY_MS, FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 import type { ShareCardData } from '../../src/components/ShareableCard';
@@ -76,6 +77,7 @@ export default function MachineDetailScreen() {
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const showShareCard = useUIStore((state) => state.showShareCard);
   const { showError, showSuccess, showConfirm } = useAppModal();
+  const toast = useToast();
   const clearCache = useMachinesCacheStore((state) => state.clearCache);
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
@@ -514,6 +516,8 @@ export default function MachineDetailScreen() {
           // Revert on failure
           addSaved(params.id);
           showError(t('common.error'), t('machine.unsaveError'));
+        } else {
+          toast.showInfo(t('machine.unsaveSuccess'));
         }
       } else {
         // Optimistic update - add to store immediately
@@ -523,6 +527,8 @@ export default function MachineDetailScreen() {
           // Revert on failure
           removeSaved(params.id);
           showError(t('common.error'), t('machine.saveError'));
+        } else {
+          toast.showSuccess(t('machine.saveSuccess'));
         }
       }
     } catch (err) {
@@ -677,14 +683,15 @@ export default function MachineDetailScreen() {
         successMessage = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${successMessage}`;
       }
 
-      showSuccess(
-        t('machine.checkIn.success.title'),
-        successMessage,
-        async () => {
-          await sleep(MODAL_SEQUENCE_DELAY_MS);
+      if (newBadges.length > 0) {
+        // Show success alert, then badge popup if earned, then share card
+        showSuccess(
+          t('machine.checkIn.success.title'),
+          successMessage,
+          async () => {
+            await sleep(MODAL_SEQUENCE_DELAY_MS);
 
-          if (stillExists) {
-            if (newBadges.length > 0) {
+            if (stillExists) {
               showBadgePopup(newBadges, async () => {
                 await sleep(MODAL_SEQUENCE_DELAY_MS);
                 showShareCard({
@@ -693,21 +700,27 @@ export default function MachineDetailScreen() {
                 });
               });
             } else {
-              showShareCard({
-                ...shareData,
-                onDismiss: () => tryRequestAppReview(),
-              });
+              // Machine reported gone - no share card
+              showBadgePopup(newBadges, () => tryRequestAppReview());
             }
-          } else if (newBadges.length > 0) {
-            // Machine reported gone - no share card, but show badge popup if earned
-            showBadgePopup(newBadges, () => tryRequestAppReview());
-          } else {
-            tryRequestAppReview();
-          }
-        },
-        'OK',
-        earnedXP
-      );
+          },
+          'OK',
+          earnedXP
+        );
+      } else {
+        // No badges - use toast and proceed with share card or review
+        toast.showSuccess(successMessage);
+        
+        if (stillExists) {
+          await sleep(MODAL_SEQUENCE_DELAY_MS);
+          showShareCard({
+            ...shareData,
+            onDismiss: () => tryRequestAppReview(),
+          });
+        } else {
+          tryRequestAppReview();
+        }
+      }
     } catch (err) {
       showError(t('common.error'), t('common.error'));
     } finally {
@@ -879,7 +892,7 @@ export default function MachineDetailScreen() {
       
       if (result.success) {
         setReportModalVisible(false);
-        showSuccess(t('common.success'), t('report.success'));
+        toast.showSuccess(t('report.success'));
         Analytics.track('machine_reported', {
           machine_id: params.id,
           reason,

@@ -28,6 +28,7 @@ import { useLanguageStore } from '../src/store/languageStore';
 import { fetchSavedMachineIds, fetchVisitedMachineIds } from '../src/lib/machines';
 import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
 import AppModal from '../src/components/AppModal';
+import Toast from '../src/components/Toast';
 import LanguageSelector from '../src/components/LanguageSelector';
 import ShareableCard from '../src/components/ShareableCard';
 import ErrorBoundary from '../src/components/ErrorBoundary';
@@ -208,6 +209,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }} />
         <BadgeUnlockModal />
         <AppModal />
+        <Toast />
         <LanguageSelector />
         <ShareableCard />
       </I18nextProvider>

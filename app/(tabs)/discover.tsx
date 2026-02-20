@@ -35,6 +35,7 @@ import { updateLocalXP } from '../../src/lib/xp';
 import { useAuthStore } from '../../src/store/authStore';
 import { useSavedMachinesStore } from '../../src/store/savedMachinesStore';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { useToast } from '../../src/hooks/useToast';
 import { LeaderboardScreen } from '../../src/components/leaderboard';
 import { DiscoverMachineCard } from '../../src/components/discover';
 import PixelLoader from '../../src/components/PixelLoader';
@@ -49,6 +50,7 @@ export default function DiscoverScreen() {
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
   const { show, showError, showSuccess, hide } = useAppModal();
+  const toast = useToast();
   const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const scrollRef = React.useRef<ScrollView>(null);
@@ -313,6 +315,8 @@ export default function DiscoverScreen() {
         if (!success) {
           addSaved(machineId);
           showError(t('common.error'), t('machine.unsaveError'));
+        } else {
+          toast.showInfo(t('machine.unsaveSuccess'));
         }
       } else {
         addSaved(machineId);
@@ -320,6 +324,8 @@ export default function DiscoverScreen() {
         if (!success) {
           removeSaved(machineId);
           showError(t('common.error'), t('machine.saveError'));
+        } else {
+          toast.showSuccess(t('machine.saveSuccess'));
         }
       }
     } catch {

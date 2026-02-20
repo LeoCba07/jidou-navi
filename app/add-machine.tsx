@@ -25,6 +25,7 @@ import { addXP, XP_VALUES } from '../src/lib/xp';
 import { uploadPhoto } from '../src/lib/storage';
 import { processImage, IMAGE_LIMITS } from '../src/lib/images';
 import { useAppModal } from '../src/hooks/useAppModal';
+import { useToast } from '../src/hooks/useToast';
 import { tryRequestAppReview } from '../src/lib/review';
 import { extractGpsFromExif, GpsCoordinates } from '../src/lib/exif';
 import { LocationVerificationModal } from '../src/components/LocationVerificationModal';
@@ -64,6 +65,7 @@ export default function AddMachineScreen() {
   const { user, profile } = useAuthStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const { showError, showSuccess, showConfirm, showInfo } = useAppModal();
+  const toast = useToast();
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [photos, setPhotos] = useState<PhotoData[]>([]);
   const [compressing, setCompressing] = useState(false);
@@ -410,11 +412,10 @@ export default function AddMachineScreen() {
           });
         }, 'OK', XP_VALUES.ADD_MACHINE);
       } else {
-        // No badges - just show success and go back
-        showSuccess(t('common.success'), addSuccessMsg, () => {
-          tryRequestAppReview();
-          router.back();
-        }, 'OK', XP_VALUES.ADD_MACHINE);
+        // No badges - use toast and go back
+        toast.showSuccess(addSuccessMsg);
+        tryRequestAppReview();
+        router.back();
       }
     } catch (error: any) {
       console.error('Submit error:', error);

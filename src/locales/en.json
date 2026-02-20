@@ -204,6 +204,8 @@
     "loginRequired": "Login Required",
     "loginToSave": "Please log in to save machines.",
     "loginToCheckIn": "Please log in to check in.",
+    "saveSuccess": "Machine saved!",
+    "unsaveSuccess": "Removed from saved",
     "saveError": "Failed to save machine.",
     "unsaveError": "Failed to unsave machine.",
     "addPhoto": "Add Photo",
