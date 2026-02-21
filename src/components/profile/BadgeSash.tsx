@@ -5,11 +5,10 @@ import {
   StyleSheet, 
   Pressable, 
   Image, 
-  useWindowDimensions, 
-  TouchableWithoutFeedback 
+  useWindowDimensions 
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { FONT_SIZES, COLORS, SPACING } from '../../theme/constants';
+import { COLORS, SPACING } from '../../theme/constants';
 import { useBadgeTranslation } from '../../hooks/useBadgeTranslation';
 import { getBadgeImage } from '../../lib/badge-images';
 import type { UserBadge } from './EarnedBadgeRow';
@@ -36,62 +35,60 @@ export default function BadgeSash({ badges, onBadgePress, onSashPress }: BadgeSa
       <View style={[styles.sashWrapper, { width: SASH_WIDTH }]}>
         <View style={styles.ribbonTailLeft} />
         
-        {/* Use TouchableWithoutFeedback for the main body to allow inner Pressables to work better */}
-        <TouchableWithoutFeedback 
-          onPress={onSashPress}
+        <Pressable 
+          onPress={onSashPress} 
+          style={styles.sashBody}
           accessibilityRole="button"
           accessibilityLabel={t('profile.badges')}
           accessibilityHint={t('profile.badgeSashHint')}
         >
-          <View style={styles.sashBody}>
-            <View style={styles.patternOverlay}>
-              {[...Array(15)].map((_, i) => (
-                <View key={i} style={styles.patternStripe} />
-              ))}
-            </View>
-
-            <View style={styles.badgeContainer}>
-              {displayBadges.length === 0 ? (
-                <Text style={styles.emptyText}>{t('profile.noBadgesYet')}</Text>
-              ) : (
-                displayBadges.map((userBadge) => {
-                  const translation = getBadgeTranslation(
-                    userBadge.badge.slug,
-                    userBadge.badge.name,
-                    userBadge.badge.description
-                  );
-                  
-                  return (
-                    <Pressable 
-                      key={userBadge.id} 
-                      style={styles.badgeItem}
-                      onPress={() => onBadgePress({ ...userBadge.badge, name: translation.name, description: translation.description })}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${translation.name}, ${t('machine.verified')}`}
-                    >
-                      <Image
-                        source={getBadgeImage(userBadge.badge.slug) || require('../../../assets/pixel-stat-badges.png')}
-                        style={styles.badgeIcon}
-                      />
-                      <View style={styles.badgeGloss} />
-                    </Pressable>
-                  );
-                })
-              )}
-              
-              {badges.length > displayBadges.length && (
-                <Pressable 
-                  onPress={onSashPress} 
-                  style={styles.moreBadge}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('badges.viewAll')}
-                >
-                  <Text style={styles.moreText}>...</Text>
-                </Pressable>
-              )}
-            </View>
+          <View style={[styles.patternOverlay, { width: width * 2 }]}>
+            {[...Array(20)].map((_, i) => (
+              <View key={i} style={styles.patternStripe} />
+            ))}
           </View>
-        </TouchableWithoutFeedback>
+
+          <View style={styles.badgeContainer}>
+            {displayBadges.length === 0 ? (
+              <Text style={styles.emptyText}>{t('profile.noBadgesYet')}</Text>
+            ) : (
+              displayBadges.map((userBadge) => {
+                const translation = getBadgeTranslation(
+                  userBadge.badge.slug,
+                  userBadge.badge.name,
+                  userBadge.badge.description
+                );
+                
+                return (
+                  <Pressable 
+                    key={userBadge.id} 
+                    style={styles.badgeItem}
+                    onPress={() => onBadgePress({ ...userBadge.badge, name: translation.name, description: translation.description })}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${translation.name}, ${t('machine.verified')}`}
+                  >
+                    <Image
+                      source={getBadgeImage(userBadge.badge.slug) || require('../../../assets/pixel-stat-badges.png')}
+                      style={styles.badgeIcon}
+                    />
+                    <View style={styles.badgeGloss} />
+                  </Pressable>
+                );
+              })
+            )}
+            
+            {badges.length > displayBadges.length && (
+              <Pressable 
+                onPress={onSashPress} 
+                style={styles.moreBadge}
+                accessibilityRole="button"
+                accessibilityLabel={t('badges.viewAll')}
+              >
+                <Text style={styles.moreText}>...</Text>
+              </Pressable>
+            )}
+          </View>
+        </Pressable>
 
         <View style={styles.ribbonTailRight} />
       </View>
@@ -133,7 +130,7 @@ const styles = StyleSheet.create({
   ribbonTailLeft: {
     width: 28,
     height: 65,
-    backgroundColor: COLORS.primaryDark || '#CC3D3D',
+    backgroundColor: COLORS.primaryDark,
     borderWidth: 4,
     borderColor: COLORS.text,
     marginRight: -10,
@@ -143,7 +140,7 @@ const styles = StyleSheet.create({
   ribbonTailRight: {
     width: 28,
     height: 65,
-    backgroundColor: COLORS.primaryDark || '#CC3D3D',
+    backgroundColor: COLORS.primaryDark,
     borderWidth: 4,
     borderColor: COLORS.text,
     marginLeft: -10,
@@ -154,8 +151,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     flexDirection: 'row',
     opacity: 0.15,
-    left: -50,
-    width: 500, // Extra wide to cover most screens
+    left: -100,
   },
   patternStripe: {
     width: 15,

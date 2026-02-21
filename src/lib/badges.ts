@@ -370,7 +370,12 @@ export async function getUnlockableBadgesForMachine(
  */
 export function calculateBadgeProgress(
   badge: Badge,
-  userStats: { visit_count: number; contribution_count: number; verification_count?: number }
+  userStats: { 
+    visit_count: number; 
+    contribution_count: number; 
+    verification_count?: number;
+    category_visit_counts?: Record<string, number>;
+  }
 ): { current: number; required: number; percent: number } {
   const trigger = badge.trigger_value as Badge['trigger_value'];
   const required = trigger?.count || 0;
@@ -387,9 +392,9 @@ export function calculateBadgeProgress(
       current = userStats.verification_count || 0;
       break;
     case 'category_visit':
-      // Note: Full category progress requires fetching from getCategoryVisitCounts
-      // This is a simplified version for UI progress bars
-      current = 0; 
+      if (trigger?.category && userStats.category_visit_counts) {
+        current = userStats.category_visit_counts[trigger.category] || 0;
+      }
       break;
     default:
       current = 0;

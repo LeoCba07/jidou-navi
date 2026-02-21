@@ -27,8 +27,12 @@ interface BadgeCollectionModalProps {
     visit_count: number;
     contribution_count: number;
     verification_count?: number;
+    category_visit_counts?: Record<string, number>;
   };
 }
+
+const COLUMN_COUNT = 3;
+const GRID_GAP = SPACING.md;
 
 export default function BadgeCollectionModal({
   visible,
@@ -42,8 +46,7 @@ export default function BadgeCollectionModal({
   const { getBadgeTranslation } = useBadgeTranslation();
   const earnedBadgeIds = new Set(earnedBadges.map((ub) => ub.badge.id));
 
-  const COLUMN_COUNT = 3;
-  const ITEM_SIZE = (width - (SPACING.lg * 2) - (SPACING.md * (COLUMN_COUNT - 1))) / COLUMN_COUNT;
+  const ITEM_SIZE = (width - (SPACING.lg * 2) - (GRID_GAP * (COLUMN_COUNT - 1))) / COLUMN_COUNT;
 
   // State for the nested detail modal
   const [selectedBadge, setSelectedBadge] = useState<{
@@ -58,7 +61,10 @@ export default function BadgeCollectionModal({
     
     setSelectedBadge({ 
       badge: { ...badge, name: translation.name, description: translation.description }, 
-      progress: { current: isEarned ? 0 : progress.current, required: isEarned ? 0 : progress.required }, 
+      progress: { 
+        current: isEarned ? progress.required : progress.current, 
+        required: progress.required 
+      }, 
       isEarned 
     });
   }
@@ -110,7 +116,7 @@ export default function BadgeCollectionModal({
                   ]}
                   onPress={() => handleBadgePress(badge, isEarned)}
                   accessibilityRole="button"
-                  accessibilityLabel={`${translation.name}, ${isEarned ? t('machine.verified') : t('profile.pendingReview')}`}
+                  accessibilityLabel={`${translation.name}, ${isEarned ? t('machine.verified') : t('profile.lockedBadge')}`}
                   accessibilityHint={t('profile.badgeSashHint')}
                 >
                   <View style={styles.iconWrapper}>
@@ -207,7 +213,7 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACING.md,
+    gap: GRID_GAP,
   },
   badgeItem: {
     backgroundColor: '#fff',
