@@ -482,7 +482,10 @@ export default function ProfileScreen() {
                 <View style={styles.statsBannerLabelContainer}>
                   <Text style={styles.statsBannerLabel} includeFontPadding={false}>{t('profile.badges')}</Text>
                 </View>
-                <Text style={styles.statsBannerNumber} includeFontPadding={false}>{profile?.badge_count || 0}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={styles.statsBannerNumber} includeFontPadding={false}>{profile?.badge_count || 0}</Text>
+                  <Ionicons name="chevron-forward" size={ICON_SIZES.xs} color="rgba(255,255,255,0.6)" style={{ marginLeft: 2 }} />
+                </View>
               </Pressable>
               <View style={styles.statsBannerDivider} />
               <View style={styles.statsBannerColumn}>
@@ -640,6 +643,7 @@ export default function ProfileScreen() {
               userStats={{
                 visit_count: profile?.visit_count || 0,
                 contribution_count: profile?.contribution_count || 0,
+                verification_count: profile?.verification_count || 0,
               }}
               onLockedBadgePress={(badge, progress) => {
                 setSelectedBadge({ badge, progress, isEarned: false });
