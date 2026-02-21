@@ -35,6 +35,7 @@ import { useAppModal } from '../../src/hooks/useAppModal';
 import SettingsModal from '../../src/components/profile/SettingsModal';
 import StatProgressCard from '../../src/components/profile/StatProgressCard';
 import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
+import BadgeCollectionModal from '../../src/components/profile/BadgeCollectionModal';
 import BadgeRequirementModal from '../../src/components/profile/BadgeRequirementModal';
 import { FriendsModal, FriendCard } from '../../src/components/friends';
 import UserAvatar from '../../src/components/UserAvatar';
@@ -89,6 +90,7 @@ export default function ProfileScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [isCollectionVisible, setIsCollectionVisible] = useState(false);
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
   const [selectedBadge, setSelectedBadge] = useState<{
     badge: Badge;
@@ -470,13 +472,18 @@ export default function ProfileScreen() {
                 <Text style={styles.statsBannerNumber} includeFontPadding={false}>{profile?.contribution_count || 0}</Text>
               </View>
               <View style={styles.statsBannerDivider} />
-              <View style={styles.statsBannerColumn}>
+              <Pressable 
+                style={styles.statsBannerColumn}
+                onPress={() => setIsCollectionVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t('profile.badges')}
+              >
                 <Image source={pixelStatBadges} style={styles.statsBannerIcon} />
                 <View style={styles.statsBannerLabelContainer}>
                   <Text style={styles.statsBannerLabel} includeFontPadding={false}>{t('profile.badges')}</Text>
                 </View>
                 <Text style={styles.statsBannerNumber} includeFontPadding={false}>{profile?.badge_count || 0}</Text>
-              </View>
+              </Pressable>
               <View style={styles.statsBannerDivider} />
               <View style={styles.statsBannerColumn}>
                 <Image source={pixelStatVisits} style={styles.statsBannerIcon} />
@@ -647,6 +654,7 @@ export default function ProfileScreen() {
                   isEarned: true 
                 });
               }}
+              onViewAll={() => setIsCollectionVisible(true)}
             />
           )}
         </View>
@@ -747,6 +755,18 @@ export default function ProfileScreen() {
       <FriendsModal
         visible={friendsModalVisible}
         onClose={() => setFriendsModalVisible(false)}
+      />
+
+      {/* Badge Collection Grid Modal */}
+      <BadgeCollectionModal
+        visible={isCollectionVisible}
+        onClose={() => setIsCollectionVisible(false)}
+        allBadges={allBadges}
+        earnedBadges={badges}
+        userStats={{
+          visit_count: profile?.visit_count || 0,
+          contribution_count: profile?.contribution_count || 0,
+        }}
       />
     </View>
   );

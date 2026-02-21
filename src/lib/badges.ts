@@ -364,3 +364,37 @@ export async function getUnlockableBadgesForMachine(
   // Return max 3 badges
   return opportunities.slice(0, 3);
 }
+
+/**
+ * Calculates current progress for a given badge based on user stats.
+ */
+export function calculateBadgeProgress(
+  badge: Badge,
+  userStats: { visit_count: number; contribution_count: number; verification_count?: number }
+): { current: number; required: number; percent: number } {
+  const trigger = badge.trigger_value as Badge['trigger_value'];
+  const required = trigger?.count || 0;
+  let current = 0;
+
+  switch (badge.trigger_type) {
+    case 'visit_count':
+      current = userStats.visit_count || 0;
+      break;
+    case 'contribution_count':
+      current = userStats.contribution_count || 0;
+      break;
+    case 'verification_count':
+      current = userStats.verification_count || 0;
+      break;
+    case 'category_visit':
+      // Note: Full category progress requires fetching from getCategoryVisitCounts
+      // This is a simplified version for UI progress bars
+      current = 0; 
+      break;
+    default:
+      current = 0;
+  }
+
+  const percent = required > 0 ? Math.min((current / required) * 100, 100) : 0;
+  return { current, required, percent };
+}

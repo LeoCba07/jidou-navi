@@ -46,7 +46,7 @@ export default function LockedBadgeCard({ badge, progress, onPress }: LockedBadg
 
 const styles = StyleSheet.create({
   container: {
-    width: 100,
+    width: 85,
     backgroundColor: '#fff',
     borderRadius: 2,
     padding: 12,

@@ -1,10 +1,10 @@
 // BadgeShowcase - displays unlocked and locked badges
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { FONT_SIZES } from '../../theme/constants';
-import type { Badge } from '../../lib/badges';
+import { FONT_SIZES, COLORS } from '../../theme/constants';
+import { Badge, calculateBadgeProgress } from '../../lib/badges';
 import LockedBadgeCard from './LockedBadgeCard';
-import EarnedBadgeRow from './EarnedBadgeRow';
+import BadgeSash from './BadgeSash';
 import type { UserBadge } from './EarnedBadgeRow';
 
 const pixelEmptyBadges = require('../../../assets/pixel-empty-badges.png');
@@ -18,28 +18,7 @@ interface BadgeShowcaseProps {
   };
   onLockedBadgePress: (badge: Badge, progress: { current: number; required: number }) => void;
   onEarnedBadgePress: (badge: UserBadge['badge']) => void;
-}
-
-function calculateBadgeProgress(
-  badge: Badge,
-  userStats: { visit_count: number; contribution_count: number }
-): { current: number; required: number; percent: number } {
-  const required = badge.trigger_value?.count || 0;
-  let current = 0;
-
-  switch (badge.trigger_type) {
-    case 'visit_count':
-      current = userStats.visit_count;
-      break;
-    case 'contribution_count':
-      current = userStats.contribution_count;
-      break;
-    default:
-      current = 0;
-  }
-
-  const percent = required > 0 ? Math.min((current / required) * 100, 100) : 0;
-  return { current, required, percent };
+  onViewAll: () => void;
 }
 
 export default function BadgeShowcase({
@@ -48,6 +27,7 @@ export default function BadgeShowcase({
   userStats,
   onLockedBadgePress,
   onEarnedBadgePress,
+  onViewAll,
 }: BadgeShowcaseProps) {
   const { t } = useTranslation();
 
@@ -56,6 +36,7 @@ export default function BadgeShowcase({
 
   // Separate locked badges
   const lockedBadges = allBadges.filter((b) => !earnedBadgeIds.has(b.id));
+  const lockedPreview = lockedBadges.slice(0, 3);
 
   // No badges exist at all
   if (allBadges.length === 0) {
@@ -72,15 +53,21 @@ export default function BadgeShowcase({
     <View style={styles.container}>
       {/* Unlocked badges section */}
       <View style={styles.section}>
-        <Text style={styles.sectionLabel}>
-          {t('profile.unlockedBadges')} ({earnedBadges.length})
-        </Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionLabel}>
+            {t('profile.unlockedBadges')} ({earnedBadges.length})
+          </Text>
+        </View>
         {earnedBadges.length === 0 ? (
           <View style={styles.emptySection}>
             <Text style={styles.emptySectionText}>{t('profile.noBadgesYet')}</Text>
           </View>
         ) : (
-          <EarnedBadgeRow badges={earnedBadges} onBadgePress={onEarnedBadgePress} />
+          <BadgeSash 
+            badges={earnedBadges} 
+            onBadgePress={onEarnedBadgePress} 
+            onSashPress={onViewAll} 
+          />
         )}
       </View>
 
@@ -90,12 +77,8 @@ export default function BadgeShowcase({
           <Text style={styles.sectionLabel}>
             {t('profile.lockedBadges')} ({lockedBadges.length})
           </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.badgesScroll}
-          >
-            {lockedBadges.map((badge) => {
+          <View style={styles.lockedPreviewGrid}>
+            {lockedPreview.map((badge) => {
               const progress = calculateBadgeProgress(badge, userStats);
               return (
                 <LockedBadgeCard
@@ -111,7 +94,17 @@ export default function BadgeShowcase({
                 />
               );
             })}
-          </ScrollView>
+            {lockedBadges.length > 3 && (
+              <Pressable 
+                style={styles.moreLockedButton} 
+                onPress={onViewAll}
+                accessibilityRole="button"
+                accessibilityLabel={t('badges.viewAll')}
+              >
+                <Text style={styles.moreLockedText}>...</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -123,17 +116,46 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   section: {
-    gap: 10,
+    gap: 4,
   },
   sectionLabel: {
     fontSize: FONT_SIZES.xs,
     fontFamily: 'Silkscreen',
-    color: '#666',
+    color: COLORS.textMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   badgesScroll: {
     gap: 12,
+  },
+  lockedPreviewGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  moreLockedButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: COLORS.surface,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: COLORS.backgroundDark,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.6,
+  },
+  moreLockedText: {
+    fontSize: 16,
+    fontFamily: 'Silkscreen',
+    color: COLORS.textLight,
+    marginTop: -8, // Vertical alignment for dots
   },
   emptyState: {
     backgroundColor: '#fff',
@@ -155,19 +177,19 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: FONT_SIZES.md,
     fontFamily: 'Silkscreen',
-    color: '#666',
+    color: COLORS.textMuted,
     marginTop: 8,
     textAlign: 'center',
   },
   emptySubtext: {
     fontSize: FONT_SIZES.md,
     fontFamily: 'Inter',
-    color: '#999',
+    color: COLORS.textLight,
     textAlign: 'center',
     marginTop: 4,
   },
   emptySection: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.surface,
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
@@ -175,6 +197,6 @@ const styles = StyleSheet.create({
   emptySectionText: {
     fontSize: FONT_SIZES.sm,
     fontFamily: 'Inter',
-    color: '#999',
+    color: COLORS.textLight,
   },
 });
