@@ -155,6 +155,7 @@
     "feedbackSubmit": "Enviar Comentarios",
     "feedbackSuccess": "¡Gracias por tus comentarios! Lo apreciamos mucho.",
     "feedbackError": "Error al enviar comentarios. Por favor intenta de nuevo.",
+    "badgeSashHint": "Toca una insignia para ver detalles",
     "xpToNext": "{{xp}} XP para el siguiente nivel",
     "levelUp": "¡Subiste al Nivel {{level}}!",
     "sectionAccount": "Cuenta",
