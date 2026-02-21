@@ -10,14 +10,13 @@ def remove_white_bg(directory):
         if filename.endswith(".png"):
             filepath = os.path.join(directory, filename)
             
-            # Using context manager to ensure file handles are closed (Copilot suggestion)
             with Image.open(filepath) as img:
                 img = img.convert("RGBA")
                 datas = img.getdata()
 
                 newData = []
                 for item in datas:
-                    # Si el pixel es blanco (o muy cercano al blanco), hacerlo transparente
+                    # Pure white background removal (Safe version)
                     if item[0] > 245 and item[1] > 245 and item[2] > 245:
                         newData.append((255, 255, 255, 0))
                     else:
@@ -28,7 +27,6 @@ def remove_white_bg(directory):
                 print(f"Cleaned: {filename}")
 
 if __name__ == "__main__":
-    # Resolve path relative to the script location (Copilot suggestion)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(script_dir)
     badges_dir = os.path.join(project_root, "assets", "badges")
