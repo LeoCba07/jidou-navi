@@ -187,6 +187,8 @@
     "localGems": "Local Gems"
   },
   "machine": {
+    "loginRequired": "Login Required",
+    "loginToViewDetails": "Login to see all machine details and recent activity.",
     "unnamed": "Unnamed Machine",
     "noAddress": "No address",
     "noPhoto": "No photo",
@@ -211,7 +213,6 @@
     "photoCarousel": "Photo carousel",
     "photoLabel": "Machine photo {{current}} of {{total}}",
     "viewPhotoFullScreen": "View photo in full screen",
-    "loginRequired": "Login Required",
     "loginToSave": "Please log in to save machines.",
     "loginToCheckIn": "Please log in to check in.",
     "saveSuccess": "Machine saved!",

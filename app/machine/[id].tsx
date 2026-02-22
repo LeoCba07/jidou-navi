@@ -136,11 +136,28 @@ export default function MachineDetailScreen() {
         if (data) {
           setMachineData(data);
         } else {
-          showError(t('common.error'), t('map.fetchError'));
-          router.replace('/(tabs)');
+          // If fetch fails and user is not logged in, it's likely due to the new RLS policy (Issue #269)
+          if (!user) {
+            showError(
+              t('machine.loginRequired'),
+              t('machine.loginToViewDetails'),
+              () => router.replace('/(auth)/login')
+            );
+          } else {
+            showError(
+              t('common.error'), 
+              t('map.fetchError'),
+              () => router.replace('/(tabs)')
+            );
+          }
         }
       } catch (err) {
-        console.error('[DeepLink] Error loading deep linked machine:', err);
+        console.error('[DeepLink] Unexpected error loading deep linked machine:', err);
+        showError(
+          t('common.error'), 
+          t('map.fetchError'),
+          () => router.replace('/(tabs)')
+        );
       } finally {
         setIsLoadingData(false);
       }
