@@ -182,6 +182,8 @@
     "localGems": "Gemas Locales"
   },
   "machine": {
+    "loginRequired": "Inicio de sesión requerido",
+    "loginToViewDetails": "Inicia sesión para ver todos los detalles y actividad reciente.",
     "unnamed": "Máquina sin nombre",
     "noAddress": "Sin dirección",
     "noPhoto": "Sin foto",
