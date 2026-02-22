@@ -65,6 +65,7 @@ export default function SettingsModal({
   // Feedback state
   const [feedbackContent, setFeedbackContent] = useState('');
   const [sendingFeedback, setSendingFeedback] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
 
   // My Submissions state
   const [pendingMachines, setPendingMachines] = useState<UserPendingMachine[]>([]);
@@ -236,13 +237,12 @@ export default function SettingsModal({
         return;
       }
 
-      // Close settings modal first, then show success
-      handleClose();
-      // Use a small timeout to ensure the settings modal is dismissed before showing the success modal
-      setTimeout(() => {
-        showSuccess(t('common.success'), t('profile.feedbackSuccess'));
-      }, 300);
       setFeedbackContent('');
+      setFeedbackSent(true);
+      setTimeout(() => {
+        setFeedbackSent(false);
+        handleClose();
+      }, 2000);
     } catch (err) {
       console.error('[Feedback] Error sending feedback:', err);
       showError(t('common.error'), t('profile.feedbackError'));
@@ -577,36 +577,52 @@ export default function SettingsModal({
             ) : currentScreen === 'feedback' ? (
               /* Feedback Screen */
               <View style={styles.feedbackScreen}>
-                <View style={styles.field}>
-                  <Text style={styles.label}>{t('profile.feedbackDescription')}</Text>
-                  
-                  <TextInput
-                    style={[styles.input, styles.textArea]}
-                    value={feedbackContent}
-                    onChangeText={setFeedbackContent}
-                    placeholder={t('profile.feedbackPlaceholder')}
-                    placeholderTextColor="#999"
-                    multiline
-                    numberOfLines={6}
-                    textAlignVertical="top"
-                    autoFocus
-                    maxLength={2000}
-                  />
-                </View>
-                <Pressable
-                  style={[
-                    styles.saveButton,
-                    (!feedbackContent.trim() || sendingFeedback) && styles.saveButtonDisabled
-                  ]}
-                  onPress={handleSendFeedback}
-                  disabled={!feedbackContent.trim() || sendingFeedback}
-                >
-                  {sendingFeedback ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text style={styles.saveButtonText}>{t('profile.feedbackSubmit')}</Text>
-                  )}
-                </Pressable>
+                {feedbackSent ? (
+                  <View style={styles.feedbackSuccessState}>
+                    <Ionicons name="checkmark-circle" size={ICON_SIZES.xxl} color="#22C55E" />
+                    <Text style={styles.feedbackSentText}>{t('profile.feedbackSentInline')}</Text>
+                  </View>
+                ) : (
+                  <>
+                    <View style={styles.field}>
+                      <Text style={styles.label}>{t('profile.feedbackDescription')}</Text>
+                      <Text style={styles.feedbackRateInfo}>{t('profile.feedbackRateInfo')}</Text>
+
+                      <TextInput
+                        style={[styles.input, styles.textArea]}
+                        value={feedbackContent}
+                        onChangeText={setFeedbackContent}
+                        placeholder={t('profile.feedbackPlaceholder')}
+                        placeholderTextColor="#999"
+                        multiline
+                        numberOfLines={6}
+                        textAlignVertical="top"
+                        autoFocus
+                        maxLength={2000}
+                      />
+                      <Text style={[
+                        styles.charCounter,
+                        feedbackContent.length > 1800 && styles.charCounterWarning,
+                      ]}>
+                        {feedbackContent.length}/2000
+                      </Text>
+                    </View>
+                    <Pressable
+                      style={[
+                        styles.saveButton,
+                        (!feedbackContent.trim() || sendingFeedback) && styles.saveButtonDisabled
+                      ]}
+                      onPress={handleSendFeedback}
+                      disabled={!feedbackContent.trim() || sendingFeedback}
+                    >
+                      {sendingFeedback ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <Text style={styles.saveButtonText}>{t('profile.feedbackSubmit')}</Text>
+                      )}
+                    </Pressable>
+                  </>
+                )}
               </View>
             ) : (
               /* Edit Profile Screen */
@@ -1043,5 +1059,32 @@ const styles = StyleSheet.create({
   textArea: {
     height: 120,
     textAlignVertical: 'top',
+  },
+  charCounter: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter',
+    color: '#999',
+    textAlign: 'right',
+    marginTop: 4,
+  },
+  charCounterWarning: {
+    color: '#FF4B4B',
+  },
+  feedbackRateInfo: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter',
+    color: '#999',
+    marginBottom: 4,
+  },
+  feedbackSuccessState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    gap: 12,
+  },
+  feedbackSentText: {
+    fontSize: FONT_SIZES.lg,
+    fontFamily: 'Inter-SemiBold',
+    color: '#22C55E',
   },
 });
