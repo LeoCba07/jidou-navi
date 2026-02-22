@@ -144,23 +144,20 @@ export default function MachineDetailScreen() {
               () => router.replace('/(auth)/login')
             );
           } else {
-            showError(t('common.error'), t('map.fetchError'));
-            router.replace('/(tabs)');
+            showError(
+              t('common.error'), 
+              t('map.fetchError'),
+              () => router.replace('/(tabs)')
+            );
           }
         }
       } catch (err) {
-        console.error('[DeepLink] Error loading deep linked machine:', err);
-        // Even on error, if not logged in, redirect to login as it might be an RLS block (Issue #269)
-        if (!user) {
-          showError(
-            t('machine.loginRequired'),
-            t('machine.loginToViewDetails'),
-            () => router.replace('/(auth)/login')
-          );
-        } else {
-          showError(t('common.error'), t('map.fetchError'));
-          router.replace('/(tabs)');
-        }
+        console.error('[DeepLink] Unexpected error loading deep linked machine:', err);
+        showError(
+          t('common.error'), 
+          t('map.fetchError'),
+          () => router.replace('/(tabs)')
+        );
       } finally {
         setIsLoadingData(false);
       }
