@@ -208,7 +208,6 @@
     "photoCarousel": "Photo carousel",
     "photoLabel": "Machine photo {{current}} of {{total}}",
     "viewPhotoFullScreen": "View photo in full screen",
-    "loginRequired": "Login Required",
     "loginToSave": "Please log in to save machines.",
     "loginToCheckIn": "Please log in to check in.",
     "saveSuccess": "Machine saved!",
