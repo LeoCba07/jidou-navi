@@ -8,6 +8,7 @@
 -- Machines table: Drop existing public policies and replace with authenticated only
 DROP POLICY IF EXISTS "Machines are viewable by everyone" ON machines;
 DROP POLICY IF EXISTS "Active machines are viewable by everyone" ON machines;
+DROP POLICY IF EXISTS "Active machines are viewable by authenticated users" ON machines;
 
 CREATE POLICY "Active machines are viewable by authenticated users"
     ON machines FOR SELECT
@@ -15,6 +16,8 @@ CREATE POLICY "Active machines are viewable by authenticated users"
 
 -- Profiles table
 DROP POLICY IF EXISTS "Profiles are viewable by everyone" ON profiles;
+DROP POLICY IF EXISTS "Profiles are viewable by authenticated users" ON profiles;
+
 CREATE POLICY "Profiles are viewable by authenticated users"
     ON profiles FOR SELECT
     USING (auth.role() = 'authenticated');
@@ -26,6 +29,7 @@ GRANT SELECT ON machines_with_details TO authenticated;
 -- ============================================
 -- 2. DYNAMIC REVOKE FOR SENSITIVE FUNCTIONS
 -- Copilot suggestion: Auto-revoke any function reading machines_with_details
+-- Refined to skip aggregate functions (prokind = 'f')
 -- ============================================
 DO $$
 DECLARE
@@ -36,6 +40,7 @@ BEGIN
         FROM pg_proc p
         JOIN pg_namespace n ON n.oid = p.pronamespace
         WHERE n.nspname = 'public'
+          AND p.prokind = 'f' 
           AND pg_get_functiondef(p.oid) ILIKE '%machines_with_details%'
     LOOP
         EXECUTE format(
@@ -229,6 +234,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 -- ================================
 
 -- 4a. nearby_machines_with_engagement
+DROP FUNCTION IF EXISTS nearby_machines_with_engagement(double precision, double precision, integer, integer);
+
 CREATE OR REPLACE FUNCTION nearby_machines_with_engagement(
     lat DOUBLE PRECISION,
     lng DOUBLE PRECISION,
@@ -259,9 +266,16 @@ BEGIN
 
     RETURN QUERY
     SELECT
-        m.id, m.name, m.description, m.address, m.latitude, m.longitude,
+        m.id,
+        m.name,
+        m.description,
+        m.address,
+        m.latitude,
+        m.longitude,
         ST_Distance(m.location, ST_MakePoint(lng, lat)::geography) as distance_meters,
-        m.status, m.visit_count, m.upvote_count,
+        m.status,
+        m.visit_count,
+        m.upvote_count,
         (SELECT COUNT(*) FROM visits v WHERE v.machine_id = m.id AND v.visited_at >= NOW() - INTERVAL '7 days') as weekly_activity,
         mp.photo_url as primary_photo_url,
         COALESCE(
@@ -282,6 +296,8 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 4b. popular_machines_this_week
+DROP FUNCTION IF EXISTS popular_machines_this_week(integer);
+
 CREATE OR REPLACE FUNCTION popular_machines_this_week(
     limit_count INTEGER DEFAULT 10
 )
@@ -314,8 +330,15 @@ BEGIN
         GROUP BY machine_id
     )
     SELECT
-        m.id, m.name, m.description, m.address, m.latitude, m.longitude,
-        m.status, m.visit_count, m.upvote_count,
+        m.id,
+        m.name,
+        m.description,
+        m.address,
+        m.latitude,
+        m.longitude,
+        m.status,
+        m.visit_count,
+        m.upvote_count,
         COALESCE(wv.visit_count, 0) as weekly_activity,
         mp.photo_url as primary_photo_url,
         COALESCE(
@@ -336,6 +359,8 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 4c. get_machine_visitors
+DROP FUNCTION IF EXISTS get_machine_visitors(uuid, integer);
+
 CREATE OR REPLACE FUNCTION get_machine_visitors(
     p_machine_id UUID,
     limit_count INTEGER DEFAULT 5
