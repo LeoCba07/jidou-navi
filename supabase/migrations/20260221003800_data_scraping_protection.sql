@@ -252,7 +252,7 @@ RETURNS TABLE (
     distance_meters DOUBLE PRECISION,
     status machine_status,
     visit_count INTEGER,
-    upvote_count INTEGER,
+    upvote_count BIGINT,
     weekly_activity BIGINT,
     primary_photo_url TEXT,
     categories JSON,
@@ -265,6 +265,11 @@ BEGIN
     v_safe_limit := GREATEST(1, LEAST(COALESCE(limit_count, 50), 50));
 
     RETURN QUERY
+    WITH machine_upvote_counts AS (
+        SELECT u.machine_id, COUNT(*)::BIGINT as upvote_count
+        FROM machine_upvotes u
+        GROUP BY u.machine_id
+    )
     SELECT
         m.id,
         m.name,
@@ -275,7 +280,7 @@ BEGIN
         ST_Distance(m.location, ST_MakePoint(lng, lat)::geography) as distance_meters,
         m.status,
         m.visit_count,
-        m.upvote_count,
+        COALESCE(muc.upvote_count, 0)::BIGINT,
         (SELECT COUNT(*) FROM visits v WHERE v.machine_id = m.id AND v.visited_at >= NOW() - INTERVAL '7 days') as weekly_activity,
         mp.photo_url as primary_photo_url,
         COALESCE(
@@ -287,6 +292,7 @@ BEGIN
         ) as categories,
         m.last_verified_at
     FROM machines m
+    LEFT JOIN machine_upvote_counts muc ON muc.machine_id = m.id
     LEFT JOIN machine_photos mp ON mp.machine_id = m.id AND mp.is_primary = TRUE AND mp.status = 'active'
     WHERE m.status = 'active'
         AND ST_DWithin(m.location, ST_MakePoint(lng, lat)::geography, radius_meters)
@@ -310,7 +316,7 @@ RETURNS TABLE (
     longitude DOUBLE PRECISION,
     status machine_status,
     visit_count INTEGER,
-    upvote_count INTEGER,
+    upvote_count BIGINT,
     weekly_activity BIGINT,
     primary_photo_url TEXT,
     categories JSON,
@@ -328,6 +334,11 @@ BEGIN
         FROM visits
         WHERE visited_at >= NOW() - INTERVAL '7 days'
         GROUP BY machine_id
+    ),
+    machine_upvote_counts AS (
+        SELECT u.machine_id, COUNT(*)::BIGINT as upvote_count
+        FROM machine_upvotes u
+        GROUP BY u.machine_id
     )
     SELECT
         m.id,
@@ -338,8 +349,8 @@ BEGIN
         m.longitude,
         m.status,
         m.visit_count,
-        m.upvote_count,
-        COALESCE(wv.visit_count, 0) as weekly_activity,
+        COALESCE(muc.upvote_count, 0)::BIGINT,
+        COALESCE(wv.visit_count, 0)::BIGINT as weekly_activity,
         mp.photo_url as primary_photo_url,
         COALESCE(
             (SELECT json_agg(json_build_object('id', c.id, 'slug', c.slug, 'name', c.name, 'color', c.color))
@@ -350,10 +361,11 @@ BEGIN
         ) as categories,
         m.last_verified_at
     FROM machines m
+    LEFT JOIN machine_upvote_counts muc ON muc.machine_id = m.id
     LEFT JOIN weekly_visits wv ON wv.machine_id = m.id
     LEFT JOIN machine_photos mp ON mp.machine_id = m.id AND mp.is_primary = TRUE AND mp.status = 'active'
     WHERE m.status = 'active'
-    ORDER BY (COALESCE(wv.visit_count, 0) + m.upvote_count) DESC, m.visit_count DESC
+    ORDER BY (COALESCE(wv.visit_count, 0) + COALESCE(muc.upvote_count, 0)) DESC, m.visit_count DESC
     LIMIT v_safe_limit;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
