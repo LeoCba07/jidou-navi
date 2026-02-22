@@ -159,6 +159,8 @@
     "feedbackSubmit": "Send Feedback",
     "feedbackSuccess": "Thank you for your feedback! We really appreciate it.",
     "feedbackError": "Failed to send feedback. Please try again.",
+    "feedbackRateInfo": "You can submit feedback once every 24 hours",
+    "feedbackSentInline": "Feedback sent!",
     "xpToNext": "{{xp}} XP to next level",
     "levelUp": "Level Up! You're now Level {{level}}",
     "sectionAccount": "Account",
