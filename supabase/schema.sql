@@ -320,7 +320,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Search machines by text
+-- Search machines by text (ILIKE + trigram for broad matching)
 CREATE OR REPLACE FUNCTION search_machines(
     search_term TEXT,
     limit_count INTEGER DEFAULT 20
@@ -336,7 +336,13 @@ RETURNS TABLE (
     visit_count INTEGER,
     similarity_score REAL
 ) AS $$
+DECLARE
+    v_safe_limit INTEGER;
+    v_pattern TEXT;
 BEGIN
+    v_safe_limit := GREATEST(1, LEAST(COALESCE(limit_count, 20), 20));
+    v_pattern := '%' || search_term || '%';
+
     RETURN QUERY
     SELECT
         m.id,
@@ -349,16 +355,22 @@ BEGIN
         m.visit_count,
         GREATEST(
             COALESCE(similarity(m.name, search_term), 0),
-            COALESCE(similarity(m.description, search_term), 0)
-        ) as similarity_score
+            COALESCE(similarity(m.address, search_term), 0),
+            COALESCE(similarity(m.description, search_term), 0),
+            CASE WHEN m.name ILIKE v_pattern THEN 0.5 ELSE 0.0 END,
+            CASE WHEN m.address ILIKE v_pattern THEN 0.4 ELSE 0.0 END
+        )::REAL as similarity_score
     FROM machines m
     WHERE m.status = 'active'
         AND (
-            m.name % search_term
+            m.name ILIKE v_pattern
+            OR m.address ILIKE v_pattern
+            OR m.description ILIKE v_pattern
+            OR m.name % search_term
             OR m.description % search_term
         )
     ORDER BY similarity_score DESC
-    LIMIT limit_count;
+    LIMIT v_safe_limit;
 END;
 $$ LANGUAGE plpgsql;
 
