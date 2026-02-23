@@ -85,7 +85,8 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { 
+    console.error('Push notification error:', error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       headers: { "Content-Type": "application/json" },
       status: 500 
     });

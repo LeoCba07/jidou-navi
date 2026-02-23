@@ -110,11 +110,17 @@ export default function RootLayout() {
     let notificationListener: any;
     try {
       const Notifications = require('expo-notifications');
+      const ALLOWED_ROUTE_PREFIXES = ['/machine/', '/(tabs)', '/profile/'];
+
       notificationListener = Notifications.addNotificationResponseReceivedListener((response: any) => {
-        console.log('Notification tapped!', response.notification.request.content.data);
         const url = response.notification.request.content.data?.url;
-        if (url) {
-          router.push(url);
+        if (url && typeof url === 'string') {
+          const isAllowed = ALLOWED_ROUTE_PREFIXES.some(prefix => url.startsWith(prefix));
+          if (isAllowed) {
+            router.push(url);
+          } else {
+            console.warn('Blocked deep link with unrecognized route:', url);
+          }
         }
       });
     } catch (e) {
