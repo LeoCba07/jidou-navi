@@ -87,21 +87,25 @@ export default function RootLayout() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchProfile(session.user.id, session.user.email);
-          loadSavedMachines();
-          loadVisitedMachines();
-          // Register for push notifications on login
-          registerForPushNotificationsAsync();
-          // Track app_open when user logs in if they weren't before
-          if (event === 'SIGNED_IN') {
-            Analytics.track('app_open');
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+
+        if (currentUser) {
+          // If email is confirmed, proceed with profile and data loading
+          if (currentUser.email_confirmed_at) {
+            fetchProfile(currentUser.id, currentUser.email);
+            loadSavedMachines();
+            loadVisitedMachines();
+            registerForPushNotificationsAsync();
+            
+            if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+              Analytics.track('app_open');
+            }
           }
         } else {
           setProfile(null);
-          setSavedMachineIds([]); // Clear saved machines on logout
-          setVisitedMachineIds([]); // Clear visited machines on logout
+          setSavedMachineIds([]);
+          setVisitedMachineIds([]);
         }
       }
     );
@@ -183,12 +187,19 @@ export default function RootLayout() {
     if (!isReady) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const isVerifyingEmail = segments[1] === 'verify-email';
 
-    if (!user && !inAuthGroup) {
-      // Not logged in, redirect to welcome
-      router.replace('/(auth)');
-    } else if (user && inAuthGroup) {
-      // Logged in, redirect to main app
+    if (!user) {
+      if (!inAuthGroup) {
+        router.replace('/(auth)');
+      }
+    } else if (!user.email_confirmed_at) {
+      // Logged in but not verified
+      if (!isVerifyingEmail) {
+        router.replace('/(auth)/verify-email');
+      }
+    } else if (inAuthGroup || isVerifyingEmail) {
+      // Logged in and verified, but still in auth group
       router.replace('/(tabs)');
     }
   }, [user, segments, isReady]);
