@@ -110,11 +110,27 @@ export default function RootLayout() {
     let notificationListener: any;
     try {
       const Notifications = require('expo-notifications');
+      const ALLOWED_ROUTE_PREFIXES = ['/machine/', '/(tabs)', '/profile/'];
+
       notificationListener = Notifications.addNotificationResponseReceivedListener((response: any) => {
-        console.log('Notification tapped!', response.notification.request.content.data);
-        const url = response.notification.request.content.data?.url;
-        if (url) {
-          router.push(url);
+        const rawUrl = response.notification.request.content.data?.url;
+        if (rawUrl && typeof rawUrl === 'string') {
+          // Normalize URL: ensure it starts with /, remove query/hash, prevent path traversal
+          let url = rawUrl.split(/[?#]/)[0];
+          if (!url.startsWith('/')) url = '/' + url;
+          
+          const isAllowed = 
+            url.startsWith('/machine/') || 
+            url.startsWith('/profile/') || 
+            ['/(tabs)', '/(tabs)/', '/(auth)', '/(auth)/'].includes(url);
+
+          const hasTraversal = url.includes('..') || url.includes('%2e');
+
+          if (isAllowed && !hasTraversal) {
+            router.push(url as any);
+          } else {
+            console.warn('Blocked deep link with unrecognized or unsafe route:', rawUrl);
+          }
         }
       });
     } catch (e) {

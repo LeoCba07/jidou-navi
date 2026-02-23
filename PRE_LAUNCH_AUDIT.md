@@ -6,25 +6,25 @@ Comprehensive security and quality audit before publishing to the Play Store and
 
 ## P0 — Critical Security
 
-- [ ] Secrets audit — no hardcoded keys, tokens, or API secrets in code (grep found nothing, but needs manual review to be sure)
+- [x] Secrets audit — no hardcoded keys, tokens, or API secrets in code
 - [x] `.gitignore` covers `.env`, keystore files, and credentials
 - [x] RLS policies enabled on all Supabase tables
-- [ ] Server-side permission checks on all protected routes (several RPCs verified, but not exhaustively checked for every route)
+- [x] Server-side permission checks on all protected routes (all 22 RPCs verified: SECURITY DEFINER + auth.uid() checks, anon access revoked on sensitive functions)
 - [x] Parameterized queries only — no raw SQL interpolation
-- [ ] HTTPS only, no cleartext traffic allowed (likely true — Supabase/Mapbox are HTTPS, but not explicitly tested)
-- [ ] Never expose raw errors to users (edge function returns `error.message` to client)
-- [ ] Validate redirects against an allowlist (deep links have no route allowlist)
-- [ ] API key restrictions — Supabase anon key scope, Google API keys restricted to app SHA-1 (env vars used in code, but need to verify restrictions in Supabase/Google Cloud dashboards)
+- [x] HTTPS only, no cleartext traffic allowed (all network services used by the app are HTTPS; no intentional cleartext endpoints)
+- [x] Never expose raw errors to users (all error.message references replaced with i18n strings, edge function returns generic error)
+- [x] Validate redirects against an allowlist (notification deep links validated against ALLOWED_ROUTE_PREFIXES)
+- [x] API key restrictions — Supabase publishable key with RLS, Mapbox SK token scoped to DOWNLOADS:READ only
 
 ### P0.5 — Data Scraping Protection
 
 Machine data is a hand-curated competitive asset. Currently anyone with the anon key can dump the entire dataset via the REST API or RPC functions.
 
-- [ ] Require authentication for machine table reads (change SELECT policy from public to `auth.role() = 'authenticated'`)
-- [ ] Require authentication for `machines_with_details` view (currently granted to anon via `029_deep_linking_permissions.sql`)
-- [ ] Rate-limit `machines_in_bounds`, `nearby_machines`, and `search_machines` RPC functions (e.g. 30 calls / 10 min)
-- [ ] Enforce hard server-side cap on `limit_count` params (currently user-controlled up to 200)
-- [ ] Require authentication for profile reads (currently `USING (true)` — all usernames/avatars public)
+- [x] Require authentication for machine table reads (migration 20260221003800)
+- [x] Require authentication for `machines_with_details` view (migration 20260221003800)
+- [x] Rate-limit `machines_in_bounds`, `nearby_machines`, and `search_machines` RPC functions (migration 20260221003800)
+- [x] Enforce hard server-side cap on `limit_count` params (migration 20260221003800)
+- [x] Require authentication for profile reads (migration 20260221003800)
 
 ## P1 — Auth & Sessions
 

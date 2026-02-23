@@ -129,7 +129,7 @@ export default function SignupScreen() {
 
     if (error) {
       setLoading(false);
-      showError(t('auth.errors.signupFailed'), error.message);
+      showError(t('auth.errors.signupFailed'), t('common.genericError'));
       return;
     }
 

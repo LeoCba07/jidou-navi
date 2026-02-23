@@ -70,7 +70,7 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (error) {
-      showError(t('auth.errors.loginFailed'), error.message);
+      showError(t('auth.errors.loginFailed'), t('common.genericError'));
     }
     // On success, the auth listener in _layout.tsx will redirect
   }

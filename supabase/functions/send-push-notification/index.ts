@@ -21,9 +21,13 @@ serve(async (req) => {
     // 2. Simple Authentication (Comment 3)
     // For now, we ensure the request comes from an authorized source
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader || !authHeader.includes(supabaseServiceRoleKey)) {
+    const expectedAuth = `Bearer ${supabaseServiceRoleKey}`;
+    if (!authHeader || authHeader !== expectedAuth) {
        // Only allow calls with service role key or implement specific admin check
-       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+       return new Response(JSON.stringify({ error: "Unauthorized" }), { 
+         status: 401,
+         headers: { "Content-Type": "application/json" } 
+       });
     }
 
     const { user_ids, title, body, data } = await req.json();
@@ -85,7 +89,8 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { 
+    console.error('Push notification error:', error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       headers: { "Content-Type": "application/json" },
       status: 500 
     });
