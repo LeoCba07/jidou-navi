@@ -83,7 +83,8 @@
             "sentAgain": "¡Enlace enviado de nuevo!",
             "stillNotVerified": "La cuenta aún no está verificada. Revisa tu correo."
           }
-        },  "profile": {
+    },
+  "profile": {
     "title": "Perfil",
     "accountSettings": "Configuración de Cuenta",
     "level": "NVL",

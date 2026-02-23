@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
@@ -12,9 +12,20 @@ export default function VerifyEmailScreen() {
   const { user, setUser, setSession, setProfile } = useAuthStore();
   const [isResending, setIsResending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+  const [cooldown, setCooldown] = useState(0);
+
+  // Handle cooldown timer
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (cooldown > 0) {
+      timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   async function handleResendEmail() {
-    if (!user?.email) return;
+    if (!user?.email || cooldown > 0) return;
     
     setIsResending(true);
     setMessage(null);
@@ -26,8 +37,11 @@ export default function VerifyEmailScreen() {
       });
 
       if (error) throw error;
+      setMessageType('success');
       setMessage(t('auth.verifyEmail.sentAgain'));
+      setCooldown(60); // 60 seconds cooldown
     } catch (error: any) {
+      setMessageType('error');
       setMessage(error.message || t('common.error'));
     } finally {
       setIsResending(false);
@@ -42,14 +56,25 @@ export default function VerifyEmailScreen() {
     router.replace('/(auth)');
   }
 
-  // Poll for confirmation status (optional, users usually click the link and the app refreshes via listener)
+  // Poll for confirmation status
   async function checkStatus() {
-    const { data: { user: updatedUser } } = await supabase.auth.getUser();
-    if (updatedUser?.email_confirmed_at) {
-      setUser(updatedUser);
-      router.replace('/(tabs)');
-    } else {
-      setMessage(t('auth.verifyEmail.stillNotVerified'));
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) throw error;
+
+      const updatedUser = data?.user;
+      if (updatedUser?.email_confirmed_at) {
+        // Use refreshSession to trigger global auth listener in RootLayout
+        // which loads profile, saved machines, etc.
+        await supabase.auth.refreshSession();
+        router.replace('/(tabs)');
+      } else {
+        setMessageType('error');
+        setMessage(t('auth.verifyEmail.stillNotVerified'));
+      }
+    } catch (error: any) {
+      setMessageType('error');
+      setMessage(error.message || t('common.error'));
     }
   }
 
@@ -73,8 +98,14 @@ export default function VerifyEmailScreen() {
         </View>
 
         {message && (
-          <View style={styles.messageBanner}>
-            <Text style={styles.messageText}>{message}</Text>
+          <View style={[
+            styles.messageBanner,
+            messageType === 'error' && styles.messageBannerError
+          ]}>
+            <Text style={[
+              styles.messageText,
+              messageType === 'error' && styles.messageTextError
+            ]}>{message}</Text>
           </View>
         )}
 
@@ -86,14 +117,21 @@ export default function VerifyEmailScreen() {
         </Pressable>
 
         <Pressable 
-          style={[styles.secondaryButton, isResending && styles.disabledButton]} 
+          style={[
+            styles.secondaryButton, 
+            (isResending || cooldown > 0) && styles.disabledButton
+          ]} 
           onPress={handleResendEmail}
-          disabled={isResending}
+          disabled={isResending || cooldown > 0}
         >
           {isResending ? (
             <ActivityIndicator size="small" color={COLORS.primary} />
           ) : (
-            <Text style={styles.secondaryButtonText}>{t('auth.verifyEmail.resend', 'Resend link')}</Text>
+            <Text style={styles.secondaryButtonText}>
+              {cooldown > 0 
+                ? `${t('auth.verifyEmail.resend')} (${cooldown}s)` 
+                : t('auth.verifyEmail.resend')}
+            </Text>
           )}
         </Pressable>
 
@@ -108,7 +146,7 @@ export default function VerifyEmailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF3E7', // Match app theme
+    backgroundColor: '#FDF3E7',
     justifyContent: 'center',
     padding: SPACING.xl,
   },
@@ -161,10 +199,16 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     width: '100%',
   },
+  messageBannerError: {
+    backgroundColor: '#FEE2E2',
+  },
   messageText: {
     color: '#166534',
     textAlign: 'center',
     fontFamily: FONTS.bodyMedium,
+  },
+  messageTextError: {
+    color: '#991B1B',
   },
   primaryButton: {
     backgroundColor: COLORS.primary,

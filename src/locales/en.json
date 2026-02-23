@@ -83,7 +83,8 @@
             "sentAgain": "Confirmation link sent again!",
             "stillNotVerified": "Account still not verified. Please check your email."
           }
-        },  "profile": {
+    },
+  "profile": {
     "title": "Profile",
     "accountSettings": "Account Settings",
     "level": "LVL",
