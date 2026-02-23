@@ -11,7 +11,7 @@ Comprehensive security and quality audit before publishing to the Play Store and
 - [x] RLS policies enabled on all Supabase tables
 - [x] Server-side permission checks on all protected routes (all 22 RPCs verified: SECURITY DEFINER + auth.uid() checks, anon access revoked on sensitive functions)
 - [x] Parameterized queries only — no raw SQL interpolation
-- [x] HTTPS only, no cleartext traffic allowed (iOS NSAllowsArbitraryLoads=false, Android no cleartext config, all services use HTTPS)
+- [x] HTTPS only, no cleartext traffic allowed (all network services used by the app are HTTPS; no intentional cleartext endpoints)
 - [x] Never expose raw errors to users (all error.message references replaced with i18n strings, edge function returns generic error)
 - [x] Validate redirects against an allowlist (notification deep links validated against ALLOWED_ROUTE_PREFIXES)
 - [x] API key restrictions — Supabase publishable key with RLS, Mapbox SK token scoped to DOWNLOADS:READ only

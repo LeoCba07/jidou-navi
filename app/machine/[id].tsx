@@ -739,7 +739,7 @@ export default function MachineDetailScreen() {
         }
       }
     } catch (err) {
-      showError(t('common.error'), t('common.error'));
+      showError(t('common.error'), t('common.genericError'));
     } finally {
       setCheckingIn(false);
     }

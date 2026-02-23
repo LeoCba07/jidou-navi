@@ -113,13 +113,23 @@ export default function RootLayout() {
       const ALLOWED_ROUTE_PREFIXES = ['/machine/', '/(tabs)', '/profile/'];
 
       notificationListener = Notifications.addNotificationResponseReceivedListener((response: any) => {
-        const url = response.notification.request.content.data?.url;
-        if (url && typeof url === 'string') {
-          const isAllowed = ALLOWED_ROUTE_PREFIXES.some(prefix => url.startsWith(prefix));
-          if (isAllowed) {
-            router.push(url);
+        const rawUrl = response.notification.request.content.data?.url;
+        if (rawUrl && typeof rawUrl === 'string') {
+          // Normalize URL: ensure it starts with /, remove query/hash, prevent path traversal
+          let url = rawUrl.split(/[?#]/)[0];
+          if (!url.startsWith('/')) url = '/' + url;
+          
+          const isAllowed = 
+            url.startsWith('/machine/') || 
+            url.startsWith('/profile/') || 
+            ['/(tabs)', '/(tabs)/', '/(auth)', '/(auth)/'].includes(url);
+
+          const hasTraversal = url.includes('..') || url.includes('%2e');
+
+          if (isAllowed && !hasTraversal) {
+            router.push(url as any);
           } else {
-            console.warn('Blocked deep link with unrecognized route:', url);
+            console.warn('Blocked deep link with unrecognized or unsafe route:', rawUrl);
           }
         }
       });
