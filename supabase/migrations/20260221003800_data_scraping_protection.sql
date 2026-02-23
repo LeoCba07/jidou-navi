@@ -228,7 +228,8 @@ BEGIN
             COALESCE(similarity(m.address, search_term), 0),
             COALESCE(similarity(m.description, search_term), 0),
             CASE WHEN m.name ILIKE v_pattern THEN 0.5 ELSE 0.0 END,
-            CASE WHEN m.address ILIKE v_pattern THEN 0.4 ELSE 0.0 END
+            CASE WHEN m.address ILIKE v_pattern THEN 0.4 ELSE 0.0 END,
+            CASE WHEN m.description ILIKE v_pattern THEN 0.3 ELSE 0.0 END
         )::REAL as similarity_score
     FROM machines m
     WHERE m.status = 'active'
@@ -237,6 +238,7 @@ BEGIN
             OR m.address ILIKE v_pattern
             OR m.description ILIKE v_pattern
             OR m.name % search_term
+            OR m.address % search_term
             OR m.description % search_term
         )
     ORDER BY similarity_score DESC
