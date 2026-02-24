@@ -335,13 +335,13 @@ export default function AddMachineScreen() {
       const uploadedPhotosData = await Promise.all(photoUploadPromises);
 
       // 2. Insert machine record via rate-limited RPC
-      const { data: machineData, error: insertError } = await supabase.rpc('submit_machine', {
+      const { data: machine, error: insertError } = await supabase.rpc('submit_machine', {
         p_name: name,
         p_description: description,
         p_latitude: finalLat,
         p_longitude: finalLng,
         p_directions_hint: directionsHint.trim() || null,
-      });
+      }).single();
 
       if (insertError) {
         // Handle rate limit error specifically
@@ -354,10 +354,16 @@ export default function AddMachineScreen() {
         return;
       }
 
+      if (!machine || !machine.id) {
+        throw new Error('Failed to retrieve machine ID');
+      }
+
+      const machineId = machine.id;
+
       // 3. Link photos to the machine
       const photoRecords = uploadedPhotosData.map(p => ({
         ...p,
-        machine_id: machineData[0].id,
+        machine_id: machineId,
       }));
 
       const { error: photosError } = await supabase.from('machine_photos').insert(photoRecords);
@@ -374,7 +380,7 @@ export default function AddMachineScreen() {
         if (!categoryFetchError && categoryData && categoryData.length > 0) {
           // Insert into junction table
           const categoryInserts = categoryData.map((cat) => ({
-            machine_id: machine.id,
+            machine_id: machineId,
             category_id: cat.id,
           }));
 
@@ -398,7 +404,7 @@ export default function AddMachineScreen() {
       }
 
       // Check for badge unlocks (contributor badges)
-      const newBadges = await checkAndAwardBadges(machine.id);
+      const newBadges = await checkAndAwardBadges(machineId);
 
       let addSuccessMsg = t('addMachine.successPending');
       if (xpResult.success && xpResult.leveledUp) {
