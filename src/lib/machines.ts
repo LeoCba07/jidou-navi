@@ -69,7 +69,7 @@ export async function fetchMachineById(machineId: string): Promise<NearbyMachine
       .single();
 
     if (error) {
-      console.warn(`[API] fetchMachineById failed for ID: ${id}:`, error.message || 'Unknown error');
+      console.warn(`[API] fetchMachineById failed for ID: ${machineId}:`, error.message || 'Unknown error');
       return null;
     }
 

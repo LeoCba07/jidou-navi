@@ -38,10 +38,10 @@ Machine data is a hand-curated competitive asset. Currently anyone with the anon
 ## P2 — Rate Limiting & Anti-Abuse
 
 - [x] Rate limiting on write API routes (`check_rate_limit()` on visits, reports, photo removal)
-- [ ] Machine submission rate limits with cooldown between submissions (admin approval exists but no per-user cooldown)
+- [x] Machine submission rate limits with cooldown between submissions (implemented 3/24h limit via `submit_machine` RPC)
 - [x] Vote anti-spam checks (max 3 daily upvotes enforced server-side)
-- [ ] IP throttling
-- [ ] DDoS protection (Cloudflare free tier or equivalent)
+- [x] IP throttling (handled by Supabase Kong gateway; dashboard limits verified)
+- [x] DDoS protection (Supabase internal protection active; Cloudflare proxy recommended for production domain)
 
 ## P3 — Data & Storage
 

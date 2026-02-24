@@ -334,28 +334,36 @@ export default function AddMachineScreen() {
 
       const uploadedPhotosData = await Promise.all(photoUploadPromises);
 
-      // 2. Insert machine record
-      const { data: machine, error: insertError } = await supabase.from('machines').insert({
-        name: name,
-        description: description,
-        latitude: finalLat,
-        longitude: finalLng,
-        location: `POINT(${finalLng} ${finalLat})`,
-        status: 'pending',
-        contributor_id: user?.id,
-        directions_hint: directionsHint.trim() || null,
-      }).select('id').single();
+      // 2. Insert machine record via rate-limited RPC
+      const { data: machine, error: insertError } = await supabase.rpc('submit_machine', {
+        p_name: name,
+        p_description: description,
+        p_latitude: finalLat,
+        p_longitude: finalLng,
+        p_directions_hint: directionsHint.trim() || null,
+      }).single();
 
       if (insertError) {
-        // Optional: Cleanup uploaded photos if machine insert fails
-        // For now, we'll just throw and let the user retry
-        throw insertError;
+        // Handle rate limit error specifically
+        if (insertError.message.includes('Rate limit exceeded')) {
+          showError(t('common.error'), t('addMachine.rateLimitExceeded', 'Submission limit reached. Please try again tomorrow.'));
+        } else {
+          showError(t('common.error'), insertError.message);
+        }
+        setSubmitting(false);
+        return;
       }
+
+      if (!machine || !machine.id) {
+        throw new Error('Failed to retrieve machine ID');
+      }
+
+      const machineId = machine.id;
 
       // 3. Link photos to the machine
       const photoRecords = uploadedPhotosData.map(p => ({
         ...p,
-        machine_id: machine.id,
+        machine_id: machineId,
       }));
 
       const { error: photosError } = await supabase.from('machine_photos').insert(photoRecords);
@@ -372,7 +380,7 @@ export default function AddMachineScreen() {
         if (!categoryFetchError && categoryData && categoryData.length > 0) {
           // Insert into junction table
           const categoryInserts = categoryData.map((cat) => ({
-            machine_id: machine.id,
+            machine_id: machineId,
             category_id: cat.id,
           }));
 
@@ -396,7 +404,7 @@ export default function AddMachineScreen() {
       }
 
       // Check for badge unlocks (contributor badges)
-      const newBadges = await checkAndAwardBadges(machine.id);
+      const newBadges = await checkAndAwardBadges(machineId);
 
       let addSuccessMsg = t('addMachine.successPending');
       if (xpResult.success && xpResult.leveledUp) {
