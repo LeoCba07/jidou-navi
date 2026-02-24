@@ -324,6 +324,7 @@
       "locationRequired": "Please wait for GPS location or enable location services.",
       "invalidCoordinates": "Invalid coordinates"
     },
+    "rateLimitExceeded": "Submission limit reached. Please try again tomorrow.",
     "locationVerification": {
       "title": "Photo Location Found",
       "question": "We found GPS data in your photo. Is this the correct location for the vending machine?",

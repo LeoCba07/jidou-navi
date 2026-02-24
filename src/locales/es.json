@@ -324,6 +324,7 @@
       "locationRequired": "Por favor espera la ubicación GPS o habilita los servicios de ubicación.",
       "invalidCoordinates": "Coordenadas inválidas"
     },
+    "rateLimitExceeded": "Límite de envíos alcanzado. Por favor, intenta de nuevo mañana.",
     "locationVerification": {
       "title": "Ubicación de Foto Encontrada",
       "question": "Encontramos datos GPS en tu foto. ¿Es esta la ubicación correcta de la máquina expendedora?",
