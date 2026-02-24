@@ -17,7 +17,8 @@
     "remove": "Eliminar",
     "back": "Volver",
     "user": "Usuario",
-    "dismiss": "Cerrar"
+    "dismiss": "Cerrar",
+    "genericError": "Algo salió mal. Por favor intenta de nuevo."
   },
   "auth": {
     "login": "Iniciar Sesión",

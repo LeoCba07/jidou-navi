@@ -62,7 +62,7 @@ export default function ForgotPasswordScreen() {
     setLoading(false);
 
     if (error) {
-      showError(t('common.error'), error.message);
+      showError(t('common.error'), t('common.genericError'));
       return;
     }
 

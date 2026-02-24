@@ -17,7 +17,8 @@
     "remove": "Remove",
     "back": "Back",
     "user": "User",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "genericError": "Something went wrong. Please try again."
   },
   "auth": {
     "login": "Log In",

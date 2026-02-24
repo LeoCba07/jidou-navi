@@ -213,17 +213,34 @@ RETURNS TABLE (
 ) AS $$
 DECLARE
     v_safe_limit INTEGER;
+    v_pattern TEXT;
 BEGIN
     PERFORM check_rate_limit('search_machines', 30, 10);
     v_safe_limit := GREATEST(1, LEAST(COALESCE(limit_count, 20), 20));
+    v_pattern := '%' || search_term || '%';
 
     RETURN QUERY
     SELECT
         m.id, m.name, m.description, m.address, m.latitude, m.longitude,
         m.status, m.visit_count,
-        GREATEST(COALESCE(similarity(m.name, search_term), 0), COALESCE(similarity(m.description, search_term), 0)) as similarity_score
+        GREATEST(
+            COALESCE(similarity(m.name, search_term), 0),
+            COALESCE(similarity(m.address, search_term), 0),
+            COALESCE(similarity(m.description, search_term), 0),
+            CASE WHEN m.name ILIKE v_pattern THEN 0.5 ELSE 0.0 END,
+            CASE WHEN m.address ILIKE v_pattern THEN 0.4 ELSE 0.0 END,
+            CASE WHEN m.description ILIKE v_pattern THEN 0.3 ELSE 0.0 END
+        )::REAL as similarity_score
     FROM machines m
-    WHERE m.status = 'active' AND (m.name % search_term OR m.description % search_term)
+    WHERE m.status = 'active'
+        AND (
+            m.name ILIKE v_pattern
+            OR m.address ILIKE v_pattern
+            OR m.description ILIKE v_pattern
+            OR m.name % search_term
+            OR m.address % search_term
+            OR m.description % search_term
+        )
     ORDER BY similarity_score DESC
     LIMIT v_safe_limit;
 END;

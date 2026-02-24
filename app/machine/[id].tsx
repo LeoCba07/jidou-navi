@@ -636,7 +636,7 @@ export default function MachineDetailScreen() {
           showError(t('machine.checkIn.alreadyVisited.title'), t('machine.checkIn.alreadyVisited.message'));
           setHasCheckedIn(true); // Disable button since already visited
         } else {
-          showError(t('common.error'), error.message);
+          showError(t('common.error'), t('common.genericError'));
         }
         setCheckingIn(false);
         return;
@@ -739,7 +739,7 @@ export default function MachineDetailScreen() {
         }
       }
     } catch (err) {
-      showError(t('common.error'), t('common.error'));
+      showError(t('common.error'), t('common.genericError'));
     } finally {
       setCheckingIn(false);
     }

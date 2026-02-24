@@ -420,7 +420,7 @@ export default function AddMachineScreen() {
     } catch (error: any) {
       console.error('Submit error:', error);
       Sentry.captureException(error, { tags: { context: 'add_machine_submit' } });
-      showError(t('common.error'), error?.message || t('addMachine.submitError'));
+      showError(t('common.error'), t('addMachine.submitError'));
     } finally {
       setSubmitting(false);
     }
