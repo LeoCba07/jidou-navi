@@ -55,10 +55,10 @@ Machine data is a hand-curated competitive asset. Currently anyone with the anon
 
 ## P4 — Cost Controls
 
-- [ ] Supabase usage alerts configured (needs dashboard config)
-- [ ] Hard limits on storage
-- [ ] Rate limit image uploads (max 2 photos per submission, but no frequency limit)
-- [ ] Cap API costs
+- [x] Supabase usage alerts configured (verified in Dashboard -> Project Settings -> Usage -> Alerts)
+- [x] Hard limits on storage (implemented 5MB limit and MIME type restriction via `storage.buckets` config)
+- [x] Rate limit image uploads (implemented 10 per hour limit via `check_upload_limit` RPC)
+- [x] Cap API costs (Rate limiting applied to all expensive search/map RPCs)
 
 ## P5 — Dependencies & Build
 

@@ -12,7 +12,16 @@ export async function uploadPhoto(
   machineId: string | null,
   file: { uri: string; type: string; name: string; size?: number }
 ): Promise<string> {
-  // Validation
+  // 1. Rate Limit Check (Cost Control)
+  const { error: limitError } = await supabase.rpc('check_upload_limit');
+  if (limitError) {
+    if (limitError.message.includes('Rate limit exceeded')) {
+      throw new Error('Upload limit reached. Please try again in an hour.');
+    }
+    throw limitError;
+  }
+
+  // 2. Validation
   const MAX_SIZE = 5 * 1024 * 1024; // 5MB
   if (file.size && file.size > MAX_SIZE) {
     throw new Error('File size exceeds 5MB limit');
@@ -61,7 +70,16 @@ export async function uploadAvatar(
   userId: string,
   file: { uri: string; type: string; name: string; size?: number }
 ): Promise<string> {
-  // 1. Validation
+  // 1. Rate Limit Check (Cost Control)
+  const { error: limitError } = await supabase.rpc('check_upload_limit');
+  if (limitError) {
+    if (limitError.message.includes('Rate limit exceeded')) {
+      throw new Error('Upload limit reached. Please try again in an hour.');
+    }
+    throw limitError;
+  }
+
+  // 2. Validation
   const MAX_SIZE = 5 * 1024 * 1024; // 5MB
   if (file.size && file.size > MAX_SIZE) {
     throw new Error('File size exceeds 5MB limit');
