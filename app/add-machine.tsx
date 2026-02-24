@@ -312,6 +312,18 @@ export default function AddMachineScreen() {
     setSubmitting(true);
 
     try {
+      // 0. Check submission rate limit BEFORE uploading photos (Cost Control)
+      const { error: limitError } = await supabase.rpc('check_submission_limit');
+      if (limitError) {
+        if (limitError.message.includes('Rate limit exceeded')) {
+          showError(t('common.error'), t('addMachine.rateLimitExceeded', 'Submission limit reached. Please try again tomorrow.'));
+        } else {
+          showError(t('common.error'), limitError.message);
+        }
+        setSubmitting(false);
+        return;
+      }
+
       // 1. Upload all photos first
       const photoUploadPromises = photos.map(async (photoData, index) => {
         if (!user) throw new Error('User not authenticated');
