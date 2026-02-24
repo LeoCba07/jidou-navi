@@ -69,6 +69,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Endurecer seguridad: revocar ejecución de roles anónimos y públicos
+-- PostgreSQL por defecto otorga EXECUTE a PUBLIC en funciones nuevas.
 REVOKE EXECUTE ON FUNCTION submit_machine(VARCHAR, TEXT, DOUBLE PRECISION, DOUBLE PRECISION, TEXT) FROM anon, public;
 REVOKE EXECUTE ON FUNCTION check_submission_limit() FROM anon, public;
 
