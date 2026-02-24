@@ -12,16 +12,7 @@ export async function uploadPhoto(
   machineId: string | null,
   file: { uri: string; type: string; name: string; size?: number }
 ): Promise<string> {
-  // 1. Rate Limit Check (Cost Control)
-  const { error: limitError } = await supabase.rpc('check_upload_limit');
-  if (limitError) {
-    if (limitError.message.includes('Rate limit exceeded')) {
-      throw new Error('Upload limit reached. Please try again in an hour.');
-    }
-    throw limitError;
-  }
-
-  // 2. Validation
+  // 1. Validation First (Don't consume rate limit for invalid files)
   const MAX_SIZE = 5 * 1024 * 1024; // 5MB
   if (file.size && file.size > MAX_SIZE) {
     throw new Error('File size exceeds 5MB limit');
@@ -30,6 +21,15 @@ export async function uploadPhoto(
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
   if (!allowedTypes.includes(file.type)) {
     throw new Error('Invalid file type. Only JPG, PNG and WebP are allowed.');
+  }
+
+  // 2. Rate Limit Check (Cost Control)
+  const { error: limitError } = await supabase.rpc('check_upload_limit');
+  if (limitError) {
+    if (limitError.message.includes('Rate limit exceeded')) {
+      throw new Error('Upload limit reached. Please try again in an hour.');
+    }
+    throw limitError;
   }
 
   const randomId = Math.random().toString(36).slice(2, 10);
@@ -70,24 +70,24 @@ export async function uploadAvatar(
   userId: string,
   file: { uri: string; type: string; name: string; size?: number }
 ): Promise<string> {
-  // 1. Rate Limit Check (Cost Control)
+  // 1. Validation First (2MB for avatars, before rate limit)
+  const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+  if (file.size && file.size > MAX_SIZE) {
+    throw new Error('File size exceeds 2MB limit');
+  }
+
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Invalid file type. Only JPG, PNG and WebP are allowed.');
+  }
+
+  // 2. Rate Limit Check (Cost Control)
   const { error: limitError } = await supabase.rpc('check_upload_limit');
   if (limitError) {
     if (limitError.message.includes('Rate limit exceeded')) {
       throw new Error('Upload limit reached. Please try again in an hour.');
     }
     throw limitError;
-  }
-
-  // 2. Validation
-  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-  if (file.size && file.size > MAX_SIZE) {
-    throw new Error('File size exceeds 5MB limit');
-  }
-
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-  if (!allowedTypes.includes(file.type)) {
-    throw new Error('Invalid file type. Only JPG, PNG and WebP are allowed.');
   }
 
   // 2. Preserve extension
