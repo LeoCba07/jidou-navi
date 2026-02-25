@@ -255,6 +255,7 @@
     "progressCount": "{{current}}/{{required}} visitas",
     "recentActivity": "Actividad Reciente",
     "visitedTimeAgo": "visitó {{time}}",
+    "reportedGoneTimeAgo": "reportó ausencia {{time}}",
     "copyAddress": "Copiar",
     "addressCopied": "¡Copiado!",
     "estimatedAddress": "Estimado desde coordenadas",
@@ -285,7 +286,8 @@
       "success": {
         "title": "¡Visita Registrada!",
         "stillHere": "¡Gracias por confirmar que esta máquina sigue aquí! +25 XP ganados.",
-        "gone": "Gracias por avisarnos. Verificaremos esta máquina. +25 XP ganados."
+        "goneRecorded": "Reporte registrado ({{count}} hasta ahora). Lo investigaremos. +25 XP ganados.",
+        "goneFlagged": "Esta máquina ha sido marcada para eliminación por múltiples reportes. ¡Gracias por ayudar a mantener el mapa actualizado! +25 XP ganados."
       },
       "locationRequired": "Por favor habilita la ubicación para registrar tu visita."
     }

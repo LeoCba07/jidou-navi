@@ -76,7 +76,7 @@ export default function MachineDetailScreen() {
   const { addVisited } = useVisitedMachinesStore();
   const showBadgePopup = useUIStore((state) => state.showBadgePopup);
   const showShareCard = useUIStore((state) => state.showShareCard);
-  const { showError, showSuccess, showConfirm } = useAppModal();
+  const { showError, showSuccess, showConfirm, showInfo } = useAppModal();
   const toast = useToast();
   const clearCache = useMachinesCacheStore((state) => state.clearCache);
   const [checkingIn, setCheckingIn] = useState(false);
@@ -624,15 +624,17 @@ export default function MachineDetailScreen() {
 
       if (error) {
         // Check for specific error messages
-        if (error.message.includes('too far')) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes('too far')) {
           showError(
             t('machine.checkIn.tooFar.title'),
             t('machine.checkIn.tooFar.message')
           );
-        } else if (error.message.includes('already visited')) {
+        } else if (msg.includes('already visited')) {
           showError(t('machine.checkIn.alreadyVisited.title'), t('machine.checkIn.alreadyVisited.message'));
           setHasCheckedIn(true); // Disable button since already visited
         } else {
+          console.error('[CheckIn] RPC error:', error.message, error);
           showError(t('common.error'), t('common.genericError'));
         }
         setCheckingIn(false);
@@ -649,11 +651,15 @@ export default function MachineDetailScreen() {
       fetchMachineVisitors(params.id, 5).then(setVisitors);
 
       // If user reported machine as gone, record it for auto-flagging
+      let goneReportResult: { gone_reports?: number; flagged?: boolean } = {};
       if (!stillExists) {
         // @ts-ignore - RPC exists in DB but not in generated types
-        await supabase.rpc('record_machine_gone_report', {
+        const { data: goneData } = await supabase.rpc('record_machine_gone_report', {
           p_machine_id: params.id,
         });
+        if (goneData) {
+          goneReportResult = goneData as { gone_reports?: number; flagged?: boolean };
+        }
       }
 
       // Add XP - both YES and NO are considered verifications (+25 XP)
@@ -689,42 +695,57 @@ export default function MachineDetailScreen() {
       };
 
       // Show success message, then badge popup if earned, then share card
-      let successMessage = stillExists
-        ? t('machine.checkIn.success.stillHere')
-        : t('machine.checkIn.success.gone');
+      let successMessage: string;
+      let useInfoModal = false;
+      if (stillExists) {
+        successMessage = t('machine.checkIn.success.stillHere');
+      } else if (goneReportResult.flagged) {
+        successMessage = t('machine.checkIn.success.goneFlagged');
+        useInfoModal = true;
+      } else {
+        successMessage = t('machine.checkIn.success.goneRecorded', { count: goneReportResult.gone_reports ?? 1 });
+      }
 
       if (xpResult.success && xpResult.leveledUp) {
         successMessage = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${successMessage}`;
       }
 
       if (newBadges.length > 0) {
-        // Show success alert, then badge popup if earned, then share card
-        showSuccess(
+        // Show success/info alert, then badge popup if earned, then share card
+        const badgeCallback = async () => {
+          await sleep(MODAL_SEQUENCE_DELAY_MS);
+
+          if (stillExists) {
+            showBadgePopup(newBadges, async () => {
+              await sleep(MODAL_SEQUENCE_DELAY_MS);
+              showShareCard({
+                ...shareData,
+                onDismiss: () => tryRequestAppReview(),
+              });
+            });
+          } else {
+            // Machine reported gone - no share card
+            showBadgePopup(newBadges, () => tryRequestAppReview());
+          }
+        };
+
+        if (useInfoModal) {
+          showInfo(t('machine.checkIn.success.title'), successMessage, badgeCallback, earnedXP);
+        } else {
+          showSuccess(t('machine.checkIn.success.title'), successMessage, badgeCallback, 'OK', earnedXP);
+        }
+      } else if (useInfoModal) {
+        // Flagged gone report - show info modal
+        showInfo(
           t('machine.checkIn.success.title'),
           successMessage,
-          async () => {
-            await sleep(MODAL_SEQUENCE_DELAY_MS);
-
-            if (stillExists) {
-              showBadgePopup(newBadges, async () => {
-                await sleep(MODAL_SEQUENCE_DELAY_MS);
-                showShareCard({
-                  ...shareData,
-                  onDismiss: () => tryRequestAppReview(),
-                });
-              });
-            } else {
-              // Machine reported gone - no share card
-              showBadgePopup(newBadges, () => tryRequestAppReview());
-            }
-          },
-          'OK',
+          () => tryRequestAppReview(),
           earnedXP
         );
       } else {
         // No badges - use toast and proceed with share card or review
         toast.showSuccess(successMessage);
-        
+
         if (stillExists) {
           await sleep(MODAL_SEQUENCE_DELAY_MS);
           showShareCard({
@@ -736,6 +757,7 @@ export default function MachineDetailScreen() {
         }
       }
     } catch (err) {
+      console.error('[CheckIn] Unexpected error:', err);
       showError(t('common.error'), t('common.genericError'));
     } finally {
       setCheckingIn(false);
@@ -1141,6 +1163,7 @@ export default function MachineDetailScreen() {
             <View style={styles.activityCard}>
               {visitors.map((visitor) => {
                 const time = formatRelativeDate(visitor.visited_at);
+                const isGoneReport = visitor.still_exists === false;
                 return (
                   <Pressable
                     key={visitor.user_id}
@@ -1152,15 +1175,17 @@ export default function MachineDetailScreen() {
                       url={visitor.avatar_url}
                       size={ICON_SIZES.lg}
                       borderWidth={2}
-                      borderColor={COLORS.primary}
+                      borderColor={isGoneReport ? COLORS.warning : COLORS.primary}
                     />
                     <View style={styles.activityInfo}>
                       <Text style={styles.activityName} numberOfLines={1}>
                         {visitor.display_name || visitor.username || 'Anonymous'}
                       </Text>
                       {time && (
-                        <Text style={styles.activityTime}>
-                          {t('machine.visitedTimeAgo', { time })}
+                        <Text style={[styles.activityTime, isGoneReport && { color: COLORS.warning }]}>
+                          {isGoneReport
+                            ? t('machine.reportedGoneTimeAgo', { time })
+                            : t('machine.visitedTimeAgo', { time })}
                         </Text>
                       )}
                     </View>

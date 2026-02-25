@@ -255,6 +255,7 @@
     "progressCount": "{{current}}/{{required}} visits",
     "recentActivity": "Recent Activity",
     "visitedTimeAgo": "visited {{time}}",
+    "reportedGoneTimeAgo": "reported gone {{time}}",
     "copyAddress": "Copy",
     "addressCopied": "Copied!",
     "estimatedAddress": "Estimated from coordinates",
@@ -285,7 +286,8 @@
       "success": {
         "title": "Checked In!",
         "stillHere": "Thanks for confirming this machine is still here! +25 XP earned.",
-        "gone": "Thanks for letting us know. We'll verify this machine. +25 XP earned."
+        "goneRecorded": "Report recorded ({{count}} so far). We'll investigate. +25 XP earned.",
+        "goneFlagged": "This machine has been flagged for removal based on multiple reports. Thanks for helping keep the map accurate! +25 XP earned."
       },
       "locationRequired": "Please enable location to check in."
     }

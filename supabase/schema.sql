@@ -11,6 +11,59 @@ $$ LANGUAGE plpgsql;
 GRANT EXECUTE ON FUNCTION record_machine_gone_report(UUID) TO authenticated;
 GRANT EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) TO authenticated;
 
+-- HELPER FUNCTIONS
+-- ================================
+
+-- Rate limit tracking table
+CREATE TABLE IF NOT EXISTS rate_limit_log (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    action VARCHAR NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_rate_limit_log_user_action ON rate_limit_log (user_id, action, created_at);
+ALTER TABLE rate_limit_log ENABLE ROW LEVEL SECURITY;
+
+-- Email verification helper
+CREATE OR REPLACE FUNCTION require_verified_email()
+RETURNS VOID AS $$
+BEGIN
+    IF auth.uid() IS NULL THEN
+        RAISE EXCEPTION 'Authentication required';
+    END IF;
+    IF (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NULL THEN
+        RAISE EXCEPTION 'Email verification required';
+    END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- Rate limit helper
+CREATE OR REPLACE FUNCTION check_rate_limit(
+    p_action VARCHAR,
+    p_max_calls INT,
+    p_window_minutes INT
+)
+RETURNS BOOLEAN AS $$
+DECLARE
+    recent_count INT;
+BEGIN
+    SELECT COUNT(*) INTO recent_count
+    FROM rate_limit_log
+    WHERE user_id = auth.uid()
+        AND action = p_action
+        AND created_at > NOW() - (p_window_minutes || ' minutes')::INTERVAL;
+
+    IF recent_count >= p_max_calls THEN
+        RAISE EXCEPTION 'Rate limit exceeded for %. Try again later.', p_action;
+    END IF;
+
+    INSERT INTO rate_limit_log (user_id, action)
+    VALUES (auth.uid(), p_action);
+
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- SERVER-SIDE VISIT CREATION
 -- Prevents cheating by calculating distance on server
 -- ================================
@@ -27,6 +80,12 @@ DECLARE
     v_visit visits;
     v_max_distance INTEGER;
 BEGIN
+    -- Email verification check
+    PERFORM require_verified_email();
+
+    -- Rate limit: 20 visits per hour
+    PERFORM check_rate_limit('create_visit', 20, 60);
+
     -- Cap max distance to 200m to prevent client-side bypass
     v_max_distance := LEAST(COALESCE(p_max_distance_meters, 100), 200);
 
@@ -66,7 +125,7 @@ BEGIN
 
     RETURN v_visit;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 6. TRIGGERS
 -- ================================
