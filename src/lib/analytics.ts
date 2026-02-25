@@ -23,11 +23,7 @@ export const Analytics = {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        // Option: Log anonymous events or skip
-        console.log('[Analytics] Skipping event (no user):', event);
-        return;
-      }
+      if (!user) return;
 
       const payload: Database['public']['Tables']['analytics_events']['Insert'] = {
         user_id: user.id,
@@ -40,18 +36,12 @@ export const Analytics = {
         .insert(payload);
 
       if (error) {
-        console.error('[Analytics] Error logging event:', error);
         Sentry.captureException(error, {
           tags: { context: 'analytics' },
           extra: { event, properties }
         });
-      } else {
-        if (__DEV__) {
-          console.log('[Analytics] Tracked:', event, properties);
-        }
       }
     } catch (err) {
-      console.error('[Analytics] Unexpected error:', err);
       Sentry.captureException(err, {
         tags: { context: 'analytics' },
         extra: { event, properties }

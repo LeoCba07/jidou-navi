@@ -1,5 +1,6 @@
 // Upvote system functions for machines
 import { supabase } from './supabase';
+import { Sentry } from './sentry';
 
 export const MAX_DAILY_UPVOTES = 3;
 export const XP_PER_UPVOTE = 5;
@@ -22,7 +23,7 @@ export async function getDailyUpvoteCount(): Promise<number> {
   const { data, error } = await supabase.rpc('get_user_daily_upvote_count');
 
   if (error) {
-    console.error('Error fetching daily upvote count:', error);
+    Sentry.captureException(error, { tags: { context: 'upvotes' } });
     return 0;
   }
 
@@ -36,7 +37,7 @@ export async function hasUpvotedMachine(machineId: string): Promise<boolean> {
   });
 
   if (error) {
-    console.error('Error checking upvote status:', error);
+    Sentry.captureException(error, { tags: { context: 'upvotes' }, extra: { machineId } });
     return false;
   }
 
@@ -50,7 +51,7 @@ export async function upvoteMachine(machineId: string): Promise<UpvoteResult> {
   });
 
   if (error) {
-    console.error('Error upvoting machine:', error);
+    Sentry.captureException(error, { tags: { context: 'upvotes' }, extra: { machineId } });
     return { success: false, error: 'network_error' };
   }
 
@@ -65,7 +66,7 @@ export async function removeUpvote(machineId: string): Promise<RemoveUpvoteResul
   });
 
   if (error) {
-    console.error('Error removing upvote:', error);
+    Sentry.captureException(error, { tags: { context: 'upvotes' }, extra: { machineId } });
     return { success: false, error: 'network_error' };
   }
 
@@ -80,7 +81,7 @@ export async function getMachineUpvoteCount(machineId: string): Promise<number> 
   });
 
   if (error) {
-    console.error('Error fetching machine upvote count:', error);
+    Sentry.captureException(error, { tags: { context: 'upvotes' }, extra: { machineId } });
     return 0;
   }
 
@@ -92,7 +93,7 @@ export async function getUserUpvotedMachineIds(): Promise<string[]> {
   const { data, error } = await supabase.rpc('get_user_upvoted_machine_ids');
 
   if (error) {
-    console.error('Error fetching upvoted machine IDs:', error);
+    Sentry.captureException(error, { tags: { context: 'upvotes' } });
     return [];
   }
 

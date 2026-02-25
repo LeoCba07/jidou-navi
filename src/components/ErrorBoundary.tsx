@@ -31,7 +31,6 @@ export default class ErrorBoundary extends Component<Props, State> {
         componentStack: errorInfo.componentStack,
       },
     });
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
   handleRetry = () => {
