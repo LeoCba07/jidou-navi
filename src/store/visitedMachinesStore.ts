@@ -9,6 +9,7 @@ interface VisitedMachinesState {
   addVisited: (machineId: string) => void;
   setLoading: (isLoading: boolean) => void;
   isVisited: (machineId: string) => boolean;
+  reset: () => void;
 }
 
 export const useVisitedMachinesStore = create<VisitedMachinesState>((set, get) => ({
@@ -23,4 +24,5 @@ export const useVisitedMachinesStore = create<VisitedMachinesState>((set, get) =
     }),
   setLoading: (isLoading) => set({ isLoading }),
   isVisited: (machineId) => get().visitedMachineIds.has(machineId),
+  reset: () => set({ visitedMachineIds: new Set(), isLoading: false }),
 }));

@@ -12,6 +12,7 @@ interface MachinesState {
   setMachines: (machines: Machine[]) => void;
   setSelectedMachine: (machine: Machine | null) => void;
   setLoading: (isLoading: boolean) => void;
+  reset: () => void;
 }
 
 export const useMachinesStore = create<MachinesState>((set) => ({
@@ -21,4 +22,5 @@ export const useMachinesStore = create<MachinesState>((set) => ({
   setMachines: (machines) => set({ machines }),
   setSelectedMachine: (selectedMachine) => set({ selectedMachine }),
   setLoading: (isLoading) => set({ isLoading }),
+  reset: () => set({ machines: [], selectedMachine: null, isLoading: false }),
 }));

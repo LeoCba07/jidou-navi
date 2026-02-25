@@ -28,6 +28,7 @@ interface MachinesCacheState {
   clearCache: () => void;
   setVisibleMachines: (machines: NearbyMachine[]) => void;
   clearError: () => void;
+  reset: () => void;
 }
 
 // Convert lat/lng to tile key
@@ -203,5 +204,15 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
 
   clearError: () => {
     set({ fetchError: null });
+  },
+
+  reset: () => {
+    set({
+      tileCache: new Map(),
+      visibleMachines: [],
+      lastFetchBounds: null,
+      isFetching: false,
+      fetchError: null,
+    });
   },
 }));
