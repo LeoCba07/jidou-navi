@@ -624,15 +624,17 @@ export default function MachineDetailScreen() {
 
       if (error) {
         // Check for specific error messages
-        if (error.message.includes('too far')) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes('too far')) {
           showError(
             t('machine.checkIn.tooFar.title'),
             t('machine.checkIn.tooFar.message')
           );
-        } else if (error.message.includes('already visited')) {
+        } else if (msg.includes('already visited')) {
           showError(t('machine.checkIn.alreadyVisited.title'), t('machine.checkIn.alreadyVisited.message'));
           setHasCheckedIn(true); // Disable button since already visited
         } else {
+          console.error('[CheckIn] RPC error:', error.message, error);
           showError(t('common.error'), t('common.genericError'));
         }
         setCheckingIn(false);
@@ -736,6 +738,7 @@ export default function MachineDetailScreen() {
         }
       }
     } catch (err) {
+      console.error('[CheckIn] Unexpected error:', err);
       showError(t('common.error'), t('common.genericError'));
     } finally {
       setCheckingIn(false);
