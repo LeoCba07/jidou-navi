@@ -1,4 +1,5 @@
 -- One-time visits: remove revisiting, make visits permanent (one per user per machine)
+-- NOTE: Pre-launch migration, safe to edit (not yet applied to production)
 
 -- 1. Clean up duplicate visits: keep only the earliest visit per (user_id, machine_id)
 DELETE FROM visits
