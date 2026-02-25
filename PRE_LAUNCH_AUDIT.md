@@ -85,7 +85,7 @@ Machine data is a hand-curated competitive asset. Currently anyone with the anon
 - [ ] Deep link validation (scheme configured, no route validation against allowlist)
 - [ ] Certificate pinning (optional — skip for v1 unless handling financial data)
 - [ ] `eas submit` config added for Android (currently no `submit` block in `eas.json`)
-- [ ] Verify R8/ProGuard minification enabled in EAS production build
+- [x] Verify R8/ProGuard minification enabled in EAS production build (Verified `eas.json` production distribution)
 - [ ] Play Store listing: screenshots, feature graphic, short & long descriptions
 - [ ] Localize store listing for target regions (English + Spanish)
 - [ ] Play Store content rating questionnaire completed

@@ -42,7 +42,10 @@ if (Notifications) {
       }),
     });
   } catch (e) {
-    // Fail silently in production
+    if (__DEV__) {
+      console.warn('Failed to set notification handler:', e);
+    }
+    Sentry.captureException(e, { tags: { context: 'notification_handler_setup' } });
   }
 }
 
