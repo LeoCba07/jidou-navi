@@ -357,6 +357,7 @@ export type MachineVisitor = {
   display_name: string | null;
   avatar_url: string | null;
   visited_at: string;
+  still_exists: boolean | null;
 };
 
 // Fetch popular machines (sorted by visit count)
@@ -553,7 +554,7 @@ export async function fetchMachineVisitors(
       return [];
     }
 
-    return data || [];
+    return (data || []) as MachineVisitor[];
   } catch (e) {
     console.error('Network error fetching machine visitors:', e);
     return [];
