@@ -70,12 +70,14 @@ export async function fetchMachineById(machineId: string): Promise<NearbyMachine
       .single();
 
     if (error) {
+      if (__DEV__) console.warn(`[API] fetchMachineById failed for ID: ${machineId}:`, error.message);
       Sentry.captureException(error, { tags: { context: 'fetch_machine_by_id' }, extra: { machineId } });
       return null;
     }
 
     return data as unknown as NearbyMachine;
   } catch (e) {
+    if (__DEV__) console.error('Network error fetching machine by ID:', e);
     Sentry.captureException(e, { tags: { context: 'fetch_machine_by_id' }, extra: { machineId } });
     return null;
   }
@@ -97,6 +99,7 @@ export async function fetchNearbyMachines(
     });
 
     if (error) {
+      if (__DEV__) console.warn('[API] fetchNearbyMachines failed:', error.message);
       Sentry.captureException(error, { tags: { context: 'fetch_nearby_machines' }, extra: { lat, lng } });
       return null; // Return null so caller keeps cached data
     }
@@ -104,6 +107,7 @@ export async function fetchNearbyMachines(
     return (data || []) as NearbyMachine[];
   } catch (e) {
     // Network error - request failed entirely
+    if (__DEV__) console.error('Network error fetching machines:', e);
     Sentry.captureException(e, { tags: { context: 'fetch_nearby_machines' }, extra: { lat, lng } });
     return null;
   }
@@ -166,12 +170,14 @@ export async function searchMachines(
     });
 
     if (error) {
+      if (__DEV__) console.error('Error searching machines:', error);
       Sentry.captureException(error, { tags: { context: 'search_machines' }, extra: { searchTerm } });
       return { data: [], error: 'search_failed' };
     }
 
     return { data: data || [], error: null };
   } catch (e) {
+    if (__DEV__) console.error('Network error searching machines:', e);
     Sentry.captureException(e, { tags: { context: 'search_machines' }, extra: { searchTerm } });
     return { data: [], error: 'search_failed' };
   }

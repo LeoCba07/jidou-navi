@@ -9,6 +9,9 @@ function getNotificationsModule() {
   try {
     return require('expo-notifications');
   } catch (e) {
+    if (__DEV__) {
+      console.error('expo-notifications module not found');
+    }
     return null;
   }
 }
@@ -20,6 +23,9 @@ function getDeviceModule() {
   try {
     return require('expo-device');
   } catch (e) {
+    if (__DEV__) {
+      console.error('expo-device module not found');
+    }
     return null;
   }
 }
@@ -48,6 +54,9 @@ export async function registerForPushNotificationsAsync() {
   const Device = getDeviceModule();
 
   if (!Notifications || !Device) {
+    if (__DEV__) {
+      console.warn('Notification or Device modules are missing. Registration skipped.');
+    }
     return null;
   }
 
@@ -64,6 +73,9 @@ export async function registerForPushNotificationsAsync() {
       }
 
       if (finalStatus !== 'granted') {
+        if (__DEV__) {
+          console.log('Failed to get push token for push notification!');
+        }
         return null;
       }
 
