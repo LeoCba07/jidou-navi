@@ -1,5 +1,6 @@
 // API functions for fetching machines from Supabase
 import { supabase } from './supabase';
+import { Sentry } from './sentry';
 
 // Calculate distance between two coordinates using Haversine formula
 export function calculateDistance(
@@ -69,13 +70,13 @@ export async function fetchMachineById(machineId: string): Promise<NearbyMachine
       .single();
 
     if (error) {
-      console.warn(`[API] fetchMachineById failed for ID: ${machineId}:`, error.message || 'Unknown error');
+      Sentry.captureException(error, { tags: { context: 'fetch_machine_by_id' }, extra: { machineId } });
       return null;
     }
 
     return data as unknown as NearbyMachine;
   } catch (e) {
-    console.error('Network error fetching machine by ID:', e);
+    Sentry.captureException(e, { tags: { context: 'fetch_machine_by_id' }, extra: { machineId } });
     return null;
   }
 }
@@ -96,14 +97,14 @@ export async function fetchNearbyMachines(
     });
 
     if (error) {
-      console.warn('[API] fetchNearbyMachines failed:', error.message || 'Unknown error');
+      Sentry.captureException(error, { tags: { context: 'fetch_nearby_machines' }, extra: { lat, lng } });
       return null; // Return null so caller keeps cached data
     }
 
     return (data || []) as NearbyMachine[];
   } catch (e) {
     // Network error - request failed entirely
-    console.error('Network error fetching machines:', e);
+    Sentry.captureException(e, { tags: { context: 'fetch_nearby_machines' }, extra: { lat, lng } });
     return null;
   }
 }
@@ -132,13 +133,13 @@ export async function fetchMachinesInBounds(
     });
 
     if (error) {
-      console.warn('[API] fetchMachinesInBounds failed:', error.message || 'Unknown error');
+      Sentry.captureException(error, { tags: { context: 'fetch_machines_in_bounds' }, extra: { bounds } });
       return null;
     }
 
     return (data || []) as NearbyMachine[];
   } catch (e) {
-    console.error('Network error fetching machines in bounds:', e);
+    Sentry.captureException(e, { tags: { context: 'fetch_machines_in_bounds' }, extra: { bounds } });
     return null;
   }
 }
@@ -165,13 +166,13 @@ export async function searchMachines(
     });
 
     if (error) {
-      console.error('Error searching machines:', error);
+      Sentry.captureException(error, { tags: { context: 'search_machines' }, extra: { searchTerm } });
       return { data: [], error: 'search_failed' };
     }
 
     return { data: data || [], error: null };
   } catch (e) {
-    console.error('Network error searching machines:', e);
+    Sentry.captureException(e, { tags: { context: 'search_machines' }, extra: { searchTerm } });
     return { data: [], error: 'search_failed' };
   }
 }
@@ -215,7 +216,6 @@ export async function saveMachine(machineId: string): Promise<boolean> {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    console.error('Error saving machine: No authenticated user');
     return false;
   }
 
@@ -224,7 +224,7 @@ export async function saveMachine(machineId: string): Promise<boolean> {
     .insert({ machine_id: machineId, user_id: user.id });
 
   if (error) {
-    console.error('Error saving machine:', error);
+    Sentry.captureException(error, { tags: { context: 'save_machine' }, extra: { machineId } });
     return false;
   }
 
@@ -236,7 +236,6 @@ export async function unsaveMachine(machineId: string): Promise<boolean> {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    console.error('Error unsaving machine: No authenticated user');
     return false;
   }
 
@@ -247,7 +246,7 @@ export async function unsaveMachine(machineId: string): Promise<boolean> {
     .eq('user_id', user.id);
 
   if (error) {
-    console.error('Error unsaving machine:', error);
+    Sentry.captureException(error, { tags: { context: 'unsave_machine' }, extra: { machineId } });
     return false;
   }
 
@@ -265,7 +264,7 @@ export async function fetchMachinePhotos(machineId: string): Promise<string[]> {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching machine photos:', error);
+    Sentry.captureException(error, { tags: { context: 'fetch_machine_photos' }, extra: { machineId } });
     return [];
   }
 
@@ -286,7 +285,7 @@ export async function fetchSavedMachineIds(): Promise<string[]> {
     .eq('user_id', user.id);
 
   if (error) {
-    console.error('Error fetching saved machine IDs:', error);
+    Sentry.captureException(error, { tags: { context: 'fetch_saved_machine_ids' } });
     return [];
   }
 
@@ -307,7 +306,7 @@ export async function fetchVisitedMachineIds(): Promise<string[]> {
     .eq('user_id', user.id);
 
   if (error) {
-    console.error('Error fetching visited machine IDs:', error);
+    Sentry.captureException(error, { tags: { context: 'fetch_visited_machine_ids' } });
     return [];
   }
 
@@ -383,7 +382,7 @@ export async function fetchPopularMachines(limit: number = 20): Promise<Discover
     .limit(limit);
 
   if (error) {
-    console.error('Error fetching popular machines:', error);
+    Sentry.captureException(error, { tags: { context: 'fetch_popular_machines' } });
     return [];
   }
 
@@ -416,7 +415,7 @@ export async function fetchRecentMachines(limit: number = 20): Promise<DiscoverM
     .limit(limit);
 
   if (error) {
-    console.error('Error fetching recent machines:', error);
+    Sentry.captureException(error, { tags: { context: 'fetch_recent_machines' } });
     return [];
   }
 
@@ -449,7 +448,7 @@ export async function fetchSavedMachines(): Promise<SavedMachine[]> {
     .order('saved_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching saved machines:', error);
+    Sentry.captureException(error, { tags: { context: 'fetch_saved_machines' } });
     return [];
   }
 
@@ -502,7 +501,7 @@ export async function fetchNearbyMachinesWithEngagement(
     });
 
     if (error) {
-      console.error('Error fetching nearby machines with engagement:', error);
+      Sentry.captureException(error, { tags: { context: 'fetch_nearby_machines_engagement' }, extra: { lat, lng } });
       return [];
     }
 
@@ -511,7 +510,7 @@ export async function fetchNearbyMachinesWithEngagement(
       categories: m.categories as MachineCategory[] | null,
     })) as EngagedMachine[];
   } catch (e) {
-    console.error('Network error fetching nearby machines with engagement:', e);
+    Sentry.captureException(e, { tags: { context: 'fetch_nearby_machines_engagement' }, extra: { lat, lng } });
     return [];
   }
 }
@@ -524,7 +523,7 @@ export async function fetchPopularThisWeek(limit: number = 10): Promise<EngagedM
     });
 
     if (error) {
-      console.error('Error fetching popular machines this week:', error);
+      Sentry.captureException(error, { tags: { context: 'fetch_popular_this_week' } });
       return [];
     }
 
@@ -533,7 +532,7 @@ export async function fetchPopularThisWeek(limit: number = 10): Promise<EngagedM
       categories: m.categories as MachineCategory[] | null,
     })) as EngagedMachine[];
   } catch (e) {
-    console.error('Network error fetching popular machines this week:', e);
+    Sentry.captureException(e, { tags: { context: 'fetch_popular_this_week' } });
     return [];
   }
 }
@@ -550,13 +549,13 @@ export async function fetchMachineVisitors(
     });
 
     if (error) {
-      console.warn(`[API] fetchMachineVisitors failed for ID: ${machineId}:`, error.message || 'Unknown error');
+      Sentry.captureException(error, { tags: { context: 'fetch_machine_visitors' }, extra: { machineId } });
       return [];
     }
 
     return (data || []) as MachineVisitor[];
   } catch (e) {
-    console.error('Network error fetching machine visitors:', e);
+    Sentry.captureException(e, { tags: { context: 'fetch_machine_visitors' }, extra: { machineId } });
     return [];
   }
 }
@@ -569,13 +568,13 @@ export async function fetchMachineVisitorCount(machineId: string): Promise<numbe
     });
 
     if (error) {
-      console.warn(`[API] fetchMachineVisitorCount failed for ID: ${machineId}:`, error.message || 'Unknown error');
+      Sentry.captureException(error, { tags: { context: 'fetch_machine_visitor_count' }, extra: { machineId } });
       return 0;
     }
 
     return data || 0;
   } catch (e) {
-    console.error('Network error fetching machine visitor count:', e);
+    Sentry.captureException(e, { tags: { context: 'fetch_machine_visitor_count' }, extra: { machineId } });
     return 0;
   }
 }
@@ -604,13 +603,13 @@ export async function reportMachine(
     });
 
     if (error) {
-      console.error('Error reporting machine:', error);
+      Sentry.captureException(error, { tags: { context: 'report_machine' }, extra: { machineId, reason } });
       return { success: false, error: 'network_error' };
     }
 
     return data as unknown as ReportResult;
   } catch (e) {
-    console.error('Network error reporting machine:', e);
+    Sentry.captureException(e, { tags: { context: 'report_machine' }, extra: { machineId, reason } });
     return { success: false, error: 'network_error' };
   }
 }

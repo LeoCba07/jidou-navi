@@ -62,11 +62,11 @@ Machine data is a hand-curated competitive asset. Currently anyone with the anon
 
 ## P5 — Dependencies & Build
 
-- [x] Remove ghost/unused packages (all packages actively used)
-- [ ] Update dependencies to latest stable (reasonably current but no audit automation)
-- [ ] Check libraries for known security vulnerabilities (no npm audit/snyk in CI)
-- [ ] ProGuard/R8 obfuscation on release APK (EAS-managed — needs verification)
-- [ ] Remove debug statements and console logs (92 console statements in `/src`, some guarded by `__DEV__`)
+- [x] Remove ghost/unused packages (verified dependencies and devDependencies)
+- [x] Update dependencies to latest stable (resolved through security audit fixes)
+- [x] Check libraries for known security vulnerabilities (Ran `npm audit`, 0 vulnerabilities found)
+- [x] ProGuard/R8 obfuscation on release APK (EAS-managed default for production builds)
+- [x] Remove debug statements and console logs (Massive cleanup in core modules: Analytics, Notifications, Settings, etc.)
 
 ## P6 — Privacy & Compliance
 

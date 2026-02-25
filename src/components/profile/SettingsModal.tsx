@@ -25,6 +25,7 @@ import { supabase } from '../../lib/supabase';
 import { useAppModal } from '../../hooks/useAppModal';
 import PixelLoader from '../PixelLoader';
 import { fetchUserPendingMachines, dismissRejectedMachine, UserPendingMachine } from '../../lib/admin';
+import { Sentry } from '../../lib/sentry';
 
 type UpdateProfileResult = { success: boolean; error?: string };
 
@@ -91,7 +92,7 @@ export default function SettingsModal({
         await Clipboard.setStringAsync(inviteLink);
         showSuccess(t('common.success'), t('profile.inviteLinkCopied'));
       } catch (e) {
-        console.warn('Clipboard failed', e);
+        Sentry.captureException(e, { tags: { context: 'settings_invite' } });
       }
     }
   }
@@ -128,7 +129,7 @@ export default function SettingsModal({
       const data = await fetchUserPendingMachines();
       setPendingMachines(data);
     } catch (err) {
-      console.error('[Settings] Error loading pending machines:', err);
+      Sentry.captureException(err, { tags: { context: 'settings_load_pending' } });
     } finally {
       setLoadingPending(false);
     }
@@ -202,7 +203,7 @@ export default function SettingsModal({
         showError(t('common.error'), result.error || t('profile.updateError'));
       }
     } catch (err) {
-      console.error('[Settings] Error updating profile:', err);
+      Sentry.captureException(err, { tags: { context: 'settings_update_profile' } });
       showError(t('common.error'), t('profile.updateError'));
     } finally {
       setSaving(false);
@@ -244,7 +245,7 @@ export default function SettingsModal({
         handleClose();
       }, 2000);
     } catch (err) {
-      console.error('[Feedback] Error sending feedback:', err);
+      Sentry.captureException(err, { tags: { context: 'settings_feedback' } });
       showError(t('common.error'), t('profile.feedbackError'));
     } finally {
       setSendingFeedback(false);

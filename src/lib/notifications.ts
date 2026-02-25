@@ -9,7 +9,6 @@ function getNotificationsModule() {
   try {
     return require('expo-notifications');
   } catch (e) {
-    console.error('expo-notifications module not found');
     return null;
   }
 }
@@ -21,7 +20,6 @@ function getDeviceModule() {
   try {
     return require('expo-device');
   } catch (e) {
-    console.error('expo-device module not found');
     return null;
   }
 }
@@ -38,7 +36,7 @@ if (Notifications) {
       }),
     });
   } catch (e) {
-    console.warn('Failed to set notification handler:', e);
+    // Fail silently in production
   }
 }
 
@@ -50,7 +48,6 @@ export async function registerForPushNotificationsAsync() {
   const Device = getDeviceModule();
 
   if (!Notifications || !Device) {
-    console.warn('Notification or Device modules are missing. Registration skipped.');
     return null;
   }
 
@@ -67,7 +64,6 @@ export async function registerForPushNotificationsAsync() {
       }
 
       if (finalStatus !== 'granted') {
-        console.log('Failed to get push token for push notification!');
         return null;
       }
 
@@ -98,13 +94,12 @@ export async function registerForPushNotificationsAsync() {
     });
 
     if (error) {
-      console.error('Error storing push token:', error);
       Sentry.captureException(error, { tags: { context: 'push_token_registration' } });
     }
 
     return token;
   } catch (error) {
-    console.error('Push notification registration failed:', error);
+    Sentry.captureException(error, { tags: { context: 'push_token_registration' } });
     return null;
   }
 }
@@ -128,7 +123,7 @@ export async function unregisterPushNotificationsAsync() {
       .eq('token', token);
 
     if (error) {
-      console.error('Error removing push token:', error);
+      Sentry.captureException(error, { tags: { context: 'push_token_unregistration' } });
     }
   } catch (error) {
     // Ignore errors on unregister
