@@ -18,6 +18,7 @@ DROP TRIGGER IF EXISTS trigger_enforce_visit_cooldown ON visits;
 DROP FUNCTION IF EXISTS enforce_visit_cooldown();
 
 -- 5. Update create_visit to use ON CONFLICT instead of letting it fail
+-- Preserves email verification and rate limiting from earlier migrations
 CREATE OR REPLACE FUNCTION create_visit(
     p_machine_id UUID,
     p_user_lat DOUBLE PRECISION,
@@ -31,6 +32,12 @@ DECLARE
     v_visit visits;
     v_max_distance INTEGER;
 BEGIN
+    -- Email verification check
+    PERFORM require_verified_email();
+
+    -- Rate limit: 20 visits per hour
+    PERFORM check_rate_limit('create_visit', 20, 60);
+
     -- Cap max distance to 200m to prevent client-side bypass
     v_max_distance := LEAST(COALESCE(p_max_distance_meters, 100), 200);
 
@@ -70,4 +77,4 @@ BEGIN
 
     RETURN v_visit;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;

@@ -27,6 +27,12 @@ DECLARE
     v_visit visits;
     v_max_distance INTEGER;
 BEGIN
+    -- Email verification check
+    PERFORM require_verified_email();
+
+    -- Rate limit: 20 visits per hour
+    PERFORM check_rate_limit('create_visit', 20, 60);
+
     -- Cap max distance to 200m to prevent client-side bypass
     v_max_distance := LEAST(COALESCE(p_max_distance_meters, 100), 200);
 
@@ -66,7 +72,7 @@ BEGIN
 
     RETURN v_visit;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 6. TRIGGERS
 -- ================================
