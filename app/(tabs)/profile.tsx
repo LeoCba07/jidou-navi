@@ -156,7 +156,7 @@ export default function ProfileScreen() {
         mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
-        quality: COMPRESSION_QUALITY, // Get full quality for processing
+        quality: COMPRESSION_QUALITY,
       });
 
       if (!result.canceled && result.assets[0]) {

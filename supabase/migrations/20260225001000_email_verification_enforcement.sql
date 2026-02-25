@@ -304,7 +304,7 @@ BEGIN
         'remaining_votes', max_daily_upvotes - daily_count - 1
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 2h. remove_upvote (from 20260221001510_change_weekly_to_daily_upvotes.sql)
 CREATE OR REPLACE FUNCTION remove_upvote(p_machine_id UUID)
@@ -339,7 +339,7 @@ BEGIN
         'remaining_votes', max_daily_upvotes - daily_count
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 2i. report_machine (from 20260221002510_manual_report_machine.sql)
 CREATE OR REPLACE FUNCTION report_machine(

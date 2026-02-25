@@ -827,7 +827,7 @@ export default function MachineDetailScreen() {
     try {
       const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ['images'],
-        quality: COMPRESSION_QUALITY, // Get full quality for processing
+        quality: COMPRESSION_QUALITY,
         allowsEditing: true,
         aspect: [4, 3],
       };

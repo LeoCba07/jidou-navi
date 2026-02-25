@@ -184,7 +184,7 @@ export default function AddMachineScreen() {
           })
         : await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
-            quality: COMPRESSION_QUALITY, // Full quality for EXIF preservation and processing
+            quality: COMPRESSION_QUALITY,
             allowsMultipleSelection: true,
             selectionLimit: MAX_PHOTOS - photos.length,
             exif: true,
