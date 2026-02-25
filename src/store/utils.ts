@@ -6,6 +6,7 @@ import { useVisitedMachinesStore } from './visitedMachinesStore';
 import { useFriendsStore } from './friendsStore';
 import { useNotificationsStore } from './notificationsStore';
 import { useAdminStore } from './adminStore';
+import { useUIStore } from './uiStore';
 
 /**
  * Clear all Zustand stores to ensure no sensitive user data remains offline
@@ -20,4 +21,5 @@ export const clearAllStores = () => {
   useFriendsStore.getState().reset();
   useNotificationsStore.getState().reset();
   useAdminStore.getState().reset();
+  useUIStore.getState().reset();
 };

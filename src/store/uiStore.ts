@@ -36,6 +36,7 @@ interface UIState {
   closeShareCard: () => void;
   showToast: (config: ToastConfig) => void;
   hideToast: () => void;
+  reset: () => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -62,4 +63,13 @@ export const useUIStore = create<UIState>((set) => ({
   closeShareCard: () => set({ shareCard: null }),
   showToast: (config) => set({ toast: config }),
   hideToast: () => set({ toast: null }),
+  reset: () =>
+    set({
+      selectedCategories: [],
+      isAddMachineModalOpen: false,
+      badgePopup: null,
+      appModal: null,
+      shareCard: null,
+      toast: null,
+    }),
 }));
