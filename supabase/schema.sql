@@ -25,7 +25,11 @@ RETURNS visits AS $$
 DECLARE
     v_distance DOUBLE PRECISION;
     v_visit visits;
+    v_max_distance INTEGER;
 BEGIN
+    -- Cap max distance to 200m to prevent client-side bypass
+    v_max_distance := LEAST(COALESCE(p_max_distance_meters, 100), 200);
+
     -- Calculate real distance server-side
     SELECT ST_Distance(
         location,
@@ -39,7 +43,7 @@ BEGIN
     END IF;
 
     -- Reject if too far
-    IF v_distance > p_max_distance_meters THEN
+    IF v_distance > v_max_distance THEN
         RAISE EXCEPTION 'Too far from machine to check in (% meters)', ROUND(v_distance::numeric, 1);
     END IF;
 
