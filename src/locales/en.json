@@ -220,8 +220,6 @@
     "tapForDetails": "Tap for details",
     "getDirections": "Directions",
     "iVisited": "I Visited",
-    "visitAgain": "Visit Again",
-    "weeklyVisitHint": "Visit once a week to earn XP",
     "visited": "Visited",
     "photoCarousel": "Photo carousel",
     "photoLabel": "Machine photo {{current}} of {{total}}",
@@ -282,7 +280,7 @@
       },
       "alreadyVisited": {
         "title": "Already Checked In",
-        "message": "You've already checked in to this machine recently."
+        "message": "You've already checked in to this machine."
       },
       "success": {
         "title": "Checked In!",

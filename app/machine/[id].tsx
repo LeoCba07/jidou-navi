@@ -419,7 +419,7 @@ export default function MachineDetailScreen() {
   // Check if machine is saved
   const isSaved = savedMachineIds.has(params.id);
 
-  // Check if user already visited this machine recently
+  // Check if user has already visited this machine (one-time visits)
   useEffect(() => {
     async function checkUserVisit() {
       if (!user) {
@@ -427,21 +427,15 @@ export default function MachineDetailScreen() {
         return;
       }
 
-      // Get user's most recent visit to this machine
       const { data: visitData } = await supabase
         .from('visits')
-        .select('visited_at')
+        .select('id')
         .eq('user_id', user.id)
         .eq('machine_id', params.id)
-        .order('visited_at', { ascending: false })
         .limit(1);
 
-      if (visitData && visitData.length > 0 && visitData[0].visited_at) {
-        // Check if visit was within the last 7 days (exact 168 hours to match backend)
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        if (new Date(visitData[0].visited_at) >= sevenDaysAgo) {
-          setHasCheckedIn(true);
-        }
+      if (visitData && visitData.length > 0) {
+        setHasCheckedIn(true);
       }
       setVisitCheckDone(true);
     }
@@ -1180,27 +1174,20 @@ export default function MachineDetailScreen() {
         {/* Action buttons */}
         <View style={styles.actions}>
           {/* Primary action - Check-In / Verify */}
-          {(hasCheckedIn || isVisited) && (
-            <Text style={styles.weeklyVisitHint}>
-              {t('machine.weeklyVisitHint')}
-            </Text>
-          )}
           <Pressable
             style={[
               styles.checkInButton,
-              hasCheckedIn && styles.checkInButtonVisited,
+              (hasCheckedIn || isVisited) && styles.checkInButtonVisited,
             ]}
             onPress={handleCheckIn}
-            disabled={checkingIn || hasCheckedIn || !visitCheckDone}
+            disabled={checkingIn || hasCheckedIn || isVisited || !visitCheckDone}
             accessibilityRole="button"
             accessibilityLabel={
-              hasCheckedIn
+              hasCheckedIn || isVisited
                 ? t('machine.visited')
                 : shouldShowVerifyPrompt()
                   ? (!lastVerifiedAt ? t('machine.beFirstToVerify') : t('machine.verifyNow'))
-                  : isVisited
-                    ? t('machine.visitAgain')
-                    : t('machine.iVisited')
+                  : t('machine.iVisited')
             }
           >
             {checkingIn ? (
@@ -1213,13 +1200,11 @@ export default function MachineDetailScreen() {
                   color="#fff"
                 />
                 <Text style={styles.primaryButtonText}>
-                  {hasCheckedIn
+                  {hasCheckedIn || isVisited
                     ? t('machine.visited')
                     : shouldShowVerifyPrompt()
                       ? (!lastVerifiedAt ? t('machine.beFirstToVerify') : t('machine.verifyNow'))
-                      : isVisited
-                        ? t('machine.visitAgain')
-                        : t('machine.iVisited')}
+                      : t('machine.iVisited')}
                 </Text>
               </View>
             )}
@@ -1619,12 +1604,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#16A34A',
     borderColor: '#15803D',
     opacity: 0.7,
-  },
-  weeklyVisitHint: {
-    color: '#9CA3AF',
-    fontSize: FONT_SIZES.xs,
-    fontFamily: FONTS.body,
-    textAlign: 'center',
   },
   primaryButtonText: {
     color: '#fff',
