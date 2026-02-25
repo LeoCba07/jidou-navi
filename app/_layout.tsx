@@ -25,6 +25,7 @@ import { useAuthStore } from '../src/store/authStore';
 import { useSavedMachinesStore } from '../src/store/savedMachinesStore';
 import { useVisitedMachinesStore } from '../src/store/visitedMachinesStore';
 import { useLanguageStore } from '../src/store/languageStore';
+import { clearAllStores } from '../src/store/utils';
 import { fetchSavedMachineIds, fetchVisitedMachineIds } from '../src/lib/machines';
 import BadgeUnlockModal from '../src/components/BadgeUnlockModal';
 import AppModal from '../src/components/AppModal';
@@ -103,9 +104,7 @@ export default function RootLayout() {
             }
           }
         } else {
-          setProfile(null);
-          setSavedMachineIds([]);
-          setVisitedMachineIds([]);
+          clearAllStores();
         }
       }
     );

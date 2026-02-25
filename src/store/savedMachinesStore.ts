@@ -10,6 +10,7 @@ interface SavedMachinesState {
   removeSaved: (machineId: string) => void;
   setLoading: (isLoading: boolean) => void;
   isSaved: (machineId: string) => boolean;
+  reset: () => void;
 }
 
 export const useSavedMachinesStore = create<SavedMachinesState>((set, get) => ({
@@ -30,4 +31,5 @@ export const useSavedMachinesStore = create<SavedMachinesState>((set, get) => ({
     }),
   setLoading: (isLoading) => set({ isLoading }),
   isSaved: (machineId) => get().savedMachineIds.has(machineId),
+  reset: () => set({ savedMachineIds: new Set(), isLoading: false }),
 }));
