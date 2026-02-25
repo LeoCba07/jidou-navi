@@ -3,27 +3,8 @@ ORDER BY m.created_at DESC
 END;
 $$ LANGUAGE plpgsql;
 
--- ================================================
--- VISIT COOLDOWN ENFORCEMENT
--- ================================================
-CREATE OR REPLACE FUNCTION enforce_visit_cooldown()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM visits
-        WHERE user_id = NEW.user_id
-          AND machine_id = NEW.machine_id
-          AND visited_at >= NOW() - INTERVAL '7 days'
-    ) THEN
-        RAISE EXCEPTION 'already visited';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_enforce_visit_cooldown
-    BEFORE INSERT ON visits
-    FOR EACH ROW EXECUTE FUNCTION enforce_visit_cooldown();
+-- NOTE: visits table has a UNIQUE constraint on (user_id, machine_id)
+-- enforcing one-time-only visits. See migration 20260225002000_one_time_visits.sql
 
 -- 11. GRANTS
 -- ================================
@@ -44,7 +25,11 @@ RETURNS visits AS $$
 DECLARE
     v_distance DOUBLE PRECISION;
     v_visit visits;
+    v_max_distance INTEGER;
 BEGIN
+    -- Cap max distance to 200m to prevent client-side bypass
+    v_max_distance := LEAST(COALESCE(p_max_distance_meters, 100), 200);
+
     -- Calculate real distance server-side
     SELECT ST_Distance(
         location,
@@ -58,11 +43,11 @@ BEGIN
     END IF;
 
     -- Reject if too far
-    IF v_distance > p_max_distance_meters THEN
+    IF v_distance > v_max_distance THEN
         RAISE EXCEPTION 'Too far from machine to check in (% meters)', ROUND(v_distance::numeric, 1);
     END IF;
 
-    -- Create the visit
+    -- Create the visit (ON CONFLICT = already visited)
     INSERT INTO visits (user_id, machine_id, checkin_location, distance_meters, still_exists)
     VALUES (
         auth.uid(),
@@ -71,7 +56,13 @@ BEGIN
         v_distance,
         p_still_exists
     )
+    ON CONFLICT (user_id, machine_id) DO NOTHING
     RETURNING * INTO v_visit;
+
+    -- If no row was inserted, user already visited
+    IF v_visit.id IS NULL THEN
+        RAISE EXCEPTION 'already visited';
+    END IF;
 
     RETURN v_visit;
 END;
