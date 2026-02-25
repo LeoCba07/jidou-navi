@@ -69,7 +69,8 @@
     },
     "errors": {
       "loginFailed": "Error al iniciar sesión",
-      "signupFailed": "Error al registrarse"
+      "signupFailed": "Error al registrarse",
+      "rateLimitExceeded": "Demasiados intentos. Por favor espera unos minutos e intenta de nuevo."
     },
           "accountCreated": {
             "title": "¡Cuenta creada!",
@@ -219,6 +220,8 @@
     "tapForDetails": "Toca para más detalles",
     "getDirections": "Direcciones",
     "iVisited": "Visité",
+    "visitAgain": "Visitar de Nuevo",
+    "weeklyVisitHint": "Visita una vez por semana para ganar XP",
     "visited": "Visitada",
     "photoCarousel": "Carrusel de fotos",
     "photoLabel": "Foto de máquina {{current}} de {{total}}",

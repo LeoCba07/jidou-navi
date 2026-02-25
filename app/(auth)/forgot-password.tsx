@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { checkAuthRateLimit } from '../../src/lib/authRateLimit';
 import Button from '../../src/components/Button';
 import { COLORS, FONTS, SHADOWS, SPACING, BORDER_RADIUS, FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
@@ -46,6 +47,10 @@ export default function ForgotPasswordScreen() {
   }, []);
 
   async function handleReset() {
+    if (!checkAuthRateLimit('forgotPassword')) {
+      showError(t('common.error'), t('auth.errors.rateLimitExceeded'));
+      return;
+    }
     if (!email.trim()) {
       showError(t('common.error'), t('auth.validation.enterEmail'));
       return;

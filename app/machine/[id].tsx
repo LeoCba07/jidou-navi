@@ -38,7 +38,7 @@ import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById, fetchMachineVisitors, type MachineVisitor } from '../../src/lib/machines';
 import type { NearbyMachine, ReportReason } from '../../src/lib/machines';
 import { uploadPhoto } from '../../src/lib/storage';
-import { processImage } from '../../src/lib/images';
+import { processImage, COMPRESSION_QUALITY } from '../../src/lib/images';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -380,9 +380,12 @@ export default function MachineDetailScreen() {
     if (diffDays === 0) return 'today';
     if (diffDays === 1) return '1 day ago';
     if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-    return `${Math.floor(diffDays / 365)} years ago`;
+    const weeks = Math.floor(diffDays / 7);
+    if (diffDays < 30) return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    const months = Math.floor(diffDays / 30);
+    if (diffDays < 365) return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+    const years = Math.floor(diffDays / 365);
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
   };
 
   const lastVerifiedText = formatRelativeDate(lastVerifiedAt);
@@ -824,7 +827,7 @@ export default function MachineDetailScreen() {
     try {
       const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ['images'],
-        quality: 1, // Get full quality for processing
+        quality: COMPRESSION_QUALITY,
         allowsEditing: true,
         aspect: [4, 3],
       };
@@ -1177,6 +1180,11 @@ export default function MachineDetailScreen() {
         {/* Action buttons */}
         <View style={styles.actions}>
           {/* Primary action - Check-In / Verify */}
+          {(hasCheckedIn || isVisited) && (
+            <Text style={styles.weeklyVisitHint}>
+              {t('machine.weeklyVisitHint')}
+            </Text>
+          )}
           <Pressable
             style={[
               styles.checkInButton,
@@ -1190,7 +1198,9 @@ export default function MachineDetailScreen() {
                 ? t('machine.visited')
                 : shouldShowVerifyPrompt()
                   ? (!lastVerifiedAt ? t('machine.beFirstToVerify') : t('machine.verifyNow'))
-                  : t('machine.iVisited')
+                  : isVisited
+                    ? t('machine.visitAgain')
+                    : t('machine.iVisited')
             }
           >
             {checkingIn ? (
@@ -1207,7 +1217,9 @@ export default function MachineDetailScreen() {
                     ? t('machine.visited')
                     : shouldShowVerifyPrompt()
                       ? (!lastVerifiedAt ? t('machine.beFirstToVerify') : t('machine.verifyNow'))
-                      : t('machine.iVisited')}
+                      : isVisited
+                        ? t('machine.visitAgain')
+                        : t('machine.iVisited')}
                 </Text>
               </View>
             )}
@@ -1607,6 +1619,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#16A34A',
     borderColor: '#15803D',
     opacity: 0.7,
+  },
+  weeklyVisitHint: {
+    color: '#9CA3AF',
+    fontSize: FONT_SIZES.xs,
+    fontFamily: FONTS.body,
+    textAlign: 'center',
   },
   primaryButtonText: {
     color: '#fff',

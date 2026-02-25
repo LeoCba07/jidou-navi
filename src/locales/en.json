@@ -69,7 +69,8 @@
     },
     "errors": {
       "loginFailed": "Login failed",
-      "signupFailed": "Sign up failed"
+      "signupFailed": "Sign up failed",
+      "rateLimitExceeded": "Too many attempts. Please wait a few minutes and try again."
     },
           "accountCreated": {
             "title": "Account created!",
@@ -217,8 +218,10 @@
     "calculating": "Calculating...",
     "verifiedAgo": "Verified {{time}}",
     "tapForDetails": "Tap for details",
-    "getDirections": "Get Directions",
+    "getDirections": "Directions",
     "iVisited": "I Visited",
+    "visitAgain": "Visit Again",
+    "weeklyVisitHint": "Visit once a week to earn XP",
     "visited": "Visited",
     "photoCarousel": "Photo carousel",
     "photoLabel": "Machine photo {{current}} of {{total}}",

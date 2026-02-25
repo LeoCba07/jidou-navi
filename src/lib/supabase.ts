@@ -17,6 +17,11 @@ const getEnv = (name: string): string => {
 const supabaseUrl = getEnv('EXPO_PUBLIC_SUPABASE_URL');
 const supabaseAnonKey = getEnv('EXPO_PUBLIC_SUPABASE_ANON_KEY');
 
+// Session expiry: JWT lifetime is configured server-side in Supabase Dashboard
+// (Settings → Auth → JWT expiry). autoRefreshToken handles silent renewal.
+// When refresh fails (e.g. account deleted, token revoked), Supabase emits
+// SIGNED_OUT which is caught by the auth listener in _layout.tsx to clear
+// state and redirect to the auth screen.
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,

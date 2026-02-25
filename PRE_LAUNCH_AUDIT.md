@@ -28,10 +28,10 @@ Machine data is a hand-curated competitive asset. Currently anyone with the anon
 
 ## P1 — Auth & Sessions
 
-- [ ] Session expiration configured (currently relies on Supabase 1hr default — no custom config)
-- [ ] Expired session triggers graceful logout (auth listener exists, but actual expired token flow not tested)
+- [x] Session expiration configured (Supabase JWT expiry + autoRefreshToken; documented in supabase.ts)
+- [x] Expired session triggers graceful logout (auth listener emits SIGNED_OUT on refresh failure → state cleared)
 - [ ] Deleted account cannot log in (deletion RPC deletes auth.users record, but full flow not tested)
-- [ ] Email verification required before login (signup allows login without confirmation)
+- [x] Email verification required before write operations (require_verified_email() on all RPCs + RLS email check on INSERT policies)
 - [x] Rate limit password/username changes (display name has 14-day cooldown)
 - ~~[ ] Webhook signature verification~~ N/A — no webhooks in use
 
@@ -47,8 +47,8 @@ Machine data is a hand-curated competitive asset. Currently anyone with the anon
 
 - [x] Lock down Supabase storage buckets (RLS on buckets, ownership-based delete)
 - [x] File size upload limits enforced (5MB limit)
-- [ ] Compress images before upload (camera quality=0.5, but library picker uses quality=1)
-- [ ] Limit max image resolution client-side (no dimension limits enforced)
+- [x] Compress images before upload (all pickers use COMPRESSION_QUALITY=0.7 + processImage())
+- [x] Limit max image resolution client-side (processImage() caps at 1200px for machines, 400px for avatars)
 - [x] XSS prevention and secure data handling (React Native — no HTML injection surface)
 - [x] DB constraints: NOT NULL, unique indexes, foreign keys, check constraints
 - [x] Don't trust frontend validation alone — enforce server-side (distance, coordinate bounds, name format)

@@ -18,6 +18,7 @@ import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { checkAuthRateLimit } from '../../src/lib/authRateLimit';
 import CountryPicker from '../../src/components/CountryPicker';
 import Button from '../../src/components/Button';
 import { Country, getCountryByCode } from '../../src/lib/countries';
@@ -58,6 +59,10 @@ export default function SignupScreen() {
   }, []);
 
   async function handleSignup() {
+    if (!checkAuthRateLimit('signup')) {
+      showError(t('common.error'), t('auth.errors.rateLimitExceeded'));
+      return;
+    }
     // Validation
     if (!email.trim()) {
       showError(t('common.error'), t('auth.validation.enterEmail'));

@@ -23,7 +23,7 @@ import { useUIStore } from '../src/store/uiStore';
 import { checkAndAwardBadges } from '../src/lib/badges';
 import { addXP, XP_VALUES } from '../src/lib/xp';
 import { uploadPhoto } from '../src/lib/storage';
-import { processImage, IMAGE_LIMITS } from '../src/lib/images';
+import { processImage, IMAGE_LIMITS, COMPRESSION_QUALITY } from '../src/lib/images';
 import { useAppModal } from '../src/hooks/useAppModal';
 import { useToast } from '../src/hooks/useToast';
 import { tryRequestAppReview } from '../src/lib/review';
@@ -178,13 +178,13 @@ export default function AddMachineScreen() {
       const result = useCamera 
         ? await ImagePicker.launchCameraAsync({
             mediaTypes: ['images'],
-            quality: 1, // Get high quality for processing
+            quality: COMPRESSION_QUALITY, // Get high quality for processing
             allowsEditing: true,
             aspect: [4, 3],
           })
         : await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
-            quality: 1, // Full quality for EXIF preservation and processing
+            quality: COMPRESSION_QUALITY,
             allowsMultipleSelection: true,
             selectionLimit: MAX_PHOTOS - photos.length,
             exif: true,
