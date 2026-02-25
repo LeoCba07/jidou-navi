@@ -145,37 +145,37 @@ CREATE POLICY "Categories are viewable by everyone" ON categories FOR SELECT USI
 -- Machines
 CREATE POLICY "Active machines are viewable by everyone" ON machines FOR SELECT USING (status = 'active');
 CREATE POLICY "Contributors can view own pending machines" ON machines FOR SELECT USING (auth.uid() = contributor_id);
-CREATE POLICY "Authenticated users can create machines" ON machines FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can create machines" ON machines FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
 CREATE POLICY "Contributors can update own machines" ON machines FOR UPDATE USING (auth.uid() = contributor_id);
 
 -- Machine Categories
 CREATE POLICY "Machine categories viewable by everyone" ON machine_categories FOR SELECT USING (true);
-CREATE POLICY "Auth users can add categories" ON machine_categories FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Auth users can add categories" ON machine_categories FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
 
 -- Machine Photos (updated for soft delete)
 CREATE POLICY "Active photos are viewable by everyone" ON machine_photos FOR SELECT USING (status = 'active');
-CREATE POLICY "Authenticated users can upload photos" ON machine_photos FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can upload photos" ON machine_photos FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
 CREATE POLICY "Uploaders can update own photos" ON machine_photos FOR UPDATE USING (auth.uid() = uploaded_by);
 
 -- Visits
 CREATE POLICY "Visits are viewable by authenticated users" ON visits FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Users can create own visits" ON visits FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can create own visits" ON visits FOR INSERT WITH CHECK (auth.uid() = user_id AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
 
 -- Saved Machines
 CREATE POLICY "Users can view own saved" ON saved_machines FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can save machines" ON saved_machines FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can unsave machines" ON saved_machines FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Users can save machines" ON saved_machines FOR INSERT WITH CHECK (auth.uid() = user_id AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
+CREATE POLICY "Users can unsave machines" ON saved_machines FOR DELETE USING (auth.uid() = user_id AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
 
 -- Badges
 CREATE POLICY "Badges are viewable by everyone" ON badges FOR SELECT USING (true);
 
 -- User Badges
 CREATE POLICY "User badges are viewable by everyone" ON user_badges FOR SELECT USING (true);
-CREATE POLICY "Users can earn badges" ON user_badges FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can earn badges" ON user_badges FOR INSERT WITH CHECK (auth.uid() = user_id AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
 
 -- Flags
 CREATE POLICY "Users can view own flags" ON flags FOR SELECT USING (auth.uid() = reported_by);
-CREATE POLICY "Users can create flags" ON flags FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Users can create flags" ON flags FOR INSERT WITH CHECK (auth.role() = 'authenticated' AND (SELECT email_confirmed_at FROM auth.users WHERE id = auth.uid()) IS NOT NULL);
 CREATE POLICY "Admins can view all flags" ON flags FOR SELECT USING (EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'));
 CREATE POLICY "Admins can update flags" ON flags FOR UPDATE USING (EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin'));
 

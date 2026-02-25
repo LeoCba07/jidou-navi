@@ -69,7 +69,8 @@
     },
     "errors": {
       "loginFailed": "Login failed",
-      "signupFailed": "Sign up failed"
+      "signupFailed": "Sign up failed",
+      "rateLimitExceeded": "Too many attempts. Please wait a few minutes and try again."
     },
           "accountCreated": {
             "title": "Account created!",

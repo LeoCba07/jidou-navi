@@ -69,7 +69,8 @@
     },
     "errors": {
       "loginFailed": "Error al iniciar sesión",
-      "signupFailed": "Error al registrarse"
+      "signupFailed": "Error al registrarse",
+      "rateLimitExceeded": "Demasiados intentos. Por favor espera unos minutos e intenta de nuevo."
     },
           "accountCreated": {
             "title": "¡Cuenta creada!",

@@ -27,7 +27,7 @@ import { useFriendsStore } from '../../src/store/friendsStore';
 import { supabase } from '../../src/lib/supabase';
 import { fetchSavedMachines, unsaveMachine, SavedMachine, calculateDistance } from '../../src/lib/machines';
 import { uploadAvatar } from '../../src/lib/storage';
-import { processImage, IMAGE_LIMITS } from '../../src/lib/images';
+import { processImage, IMAGE_LIMITS, COMPRESSION_QUALITY } from '../../src/lib/images';
 import { XP_VALUES } from '../../src/lib/xp';
 import XPProgressBar from '../../src/components/profile/XPProgressBar';
 import PixelLoader from '../../src/components/PixelLoader';
@@ -156,7 +156,7 @@ export default function ProfileScreen() {
         mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 1, // Get full quality for processing
+        quality: COMPRESSION_QUALITY, // Get full quality for processing
       });
 
       if (!result.canceled && result.assets[0]) {
