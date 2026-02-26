@@ -606,6 +606,7 @@
     "photosQueueEmpty": "No hay fotos pendientes",
     "approvePhoto": "Aprobar foto",
     "rejectPhoto": "Rechazar foto",
+    "photoOf": "Foto de",
     "photoApproveSuccess": "Foto aprobada y ahora visible en la máquina.",
     "photoApproveError": "Error al aprobar la foto. Inténtalo de nuevo.",
     "photoRejectSuccess": "Foto rechazada.",

@@ -46,7 +46,12 @@ export default function PendingPhotoCard({ photo, onApprove, onReject }: Pending
   return (
     <View style={styles.card}>
       {/* Photo */}
-      <Image source={{ uri: photo.photo_url }} style={styles.photo} />
+      <Image
+        source={{ uri: photo.photo_url }}
+        style={styles.photo}
+        accessibilityRole="image"
+        accessibilityLabel={`${t('admin.photoOf')} ${photo.machine_name || t('machine.unnamed')}`}
+      />
 
       {/* Info */}
       <View style={styles.content}>

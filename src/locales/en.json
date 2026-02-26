@@ -606,6 +606,7 @@
     "photosQueueEmpty": "No pending photos",
     "approvePhoto": "Approve photo",
     "rejectPhoto": "Reject photo",
+    "photoOf": "Photo of",
     "photoApproveSuccess": "Photo approved and now visible on the machine.",
     "photoApproveError": "Failed to approve photo. Please try again.",
     "photoRejectSuccess": "Photo rejected.",
