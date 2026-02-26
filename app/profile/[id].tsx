@@ -15,10 +15,11 @@ import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
 import { useUserBadges } from '../../src/hooks/useUserBadges';
 import { useAppModal } from '../../src/hooks/useAppModal';
+import { useFriendshipStatus } from '../../src/hooks/useFriendshipStatus';
 import ProfileHeroCard from '../../src/components/profile/ProfileHeroCard';
 import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
 import PixelLoader from '../../src/components/PixelLoader';
-import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
+import { FONT_SIZES, ICON_SIZES, COLORS } from '../../src/theme/constants';
 
 type PublicProfile = {
   id: string;
@@ -47,6 +48,7 @@ export default function UserProfileScreen() {
     userId: id,
     fetchAllBadges: true,
   });
+  const { status: friendshipStatus, sendRequest, acceptRequest } = useFriendshipStatus(id);
 
   useEffect(() => {
     if (user && id === user.id) {
@@ -125,6 +127,7 @@ export default function UserProfileScreen() {
               badgeCount: profile.badge_count || 0,
               visitCount: profile.visit_count || 0,
             }}
+            settingsButton={<FriendActionButton status={friendshipStatus} onSendRequest={sendRequest} onAccept={acceptRequest} />}
           />
         </View>
 
@@ -144,9 +147,7 @@ export default function UserProfileScreen() {
                 visit_count: profile.visit_count || 0,
                 contribution_count: profile.contribution_count || 0,
               }}
-              onLockedBadgePress={(badge) => {
-                showInfo(badge.name, badge.description);
-              }}
+              showLockedBadges={false}
               onEarnedBadgePress={(earnedBadge) => {
                 showInfo(earnedBadge.name, earnedBadge.description);
               }}
@@ -158,6 +159,92 @@ export default function UserProfileScreen() {
     </View>
   );
 }
+
+function FriendActionButton({
+  status,
+  onSendRequest,
+  onAccept,
+}: {
+  status: string;
+  onSendRequest: () => void;
+  onAccept: () => void;
+}) {
+  const { t } = useTranslation();
+
+  if (status === 'loading') {
+    return (
+      <View style={friendStyles.button}>
+        <ActivityIndicator size="small" color={COLORS.textMuted} />
+      </View>
+    );
+  }
+
+  if (status === 'accepted') {
+    return (
+      <View style={[friendStyles.button, friendStyles.accepted]}>
+        <Ionicons name="checkmark-circle" size={ICON_SIZES.xs} color="#16A34A" />
+        <Text style={[friendStyles.label, { color: '#16A34A' }]}>{t('friends.friend')}</Text>
+      </View>
+    );
+  }
+
+  if (status === 'pending_sent') {
+    return (
+      <View style={[friendStyles.button, friendStyles.pending]}>
+        <Ionicons name="time-outline" size={ICON_SIZES.xs} color={COLORS.textMuted} />
+        <Text style={[friendStyles.label, { color: COLORS.textMuted }]}>{t('friends.requestSent')}</Text>
+      </View>
+    );
+  }
+
+  if (status === 'pending_received') {
+    return (
+      <Pressable style={[friendStyles.button, friendStyles.accept]} onPress={onAccept}>
+        <Ionicons name="person-add" size={ICON_SIZES.xs} color="#fff" />
+        <Text style={[friendStyles.label, { color: '#fff' }]}>{t('friends.accept')}</Text>
+      </Pressable>
+    );
+  }
+
+  // status === 'none'
+  return (
+    <Pressable style={[friendStyles.button, friendStyles.add]} onPress={onSendRequest}>
+      <Ionicons name="person-add-outline" size={ICON_SIZES.xs} color="#fff" />
+      <Text style={[friendStyles.label, { color: '#fff' }]}>{t('friends.addFriend')}</Text>
+    </Pressable>
+  );
+}
+
+const friendStyles = StyleSheet.create({
+  button: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    zIndex: 1,
+  },
+  add: {
+    backgroundColor: '#3B82F6',
+  },
+  pending: {
+    backgroundColor: '#F3F4F6',
+  },
+  accept: {
+    backgroundColor: '#16A34A',
+  },
+  accepted: {
+    backgroundColor: '#F0FDF4',
+  },
+  label: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter-Bold',
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
