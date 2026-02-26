@@ -2279,7 +2279,7 @@ export type Database = {
         | "other"
       flag_status: "pending" | "resolved" | "dismissed"
       machine_status: "pending" | "active" | "flagged" | "removed" | "rejected"
-      photo_status: "active" | "flagged" | "removed"
+      photo_status: "active" | "flagged" | "pending" | "removed"
     }
     CompositeTypes: {
       geometry_dump: {
@@ -2424,7 +2424,7 @@ export const Constants = {
       ],
       flag_status: ["pending", "resolved", "dismissed"],
       machine_status: ["pending", "active", "flagged", "removed", "rejected"],
-      photo_status: ["active", "flagged", "removed"],
+      photo_status: ["active", "flagged", "pending", "removed"],
     },
   },
 } as const
