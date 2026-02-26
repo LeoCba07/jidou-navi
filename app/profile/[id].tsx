@@ -5,7 +5,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   ActivityIndicator,
   Pressable,
 } from 'react-native';
@@ -17,10 +16,9 @@ import { supabase } from '../../src/lib/supabase';
 import { useUserBadges } from '../../src/hooks/useUserBadges';
 import { useAppModal } from '../../src/hooks/useAppModal';
 import ProfileHeroCard from '../../src/components/profile/ProfileHeroCard';
-import EarnedBadgeRow from '../../src/components/profile/EarnedBadgeRow';
+import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
+import PixelLoader from '../../src/components/PixelLoader';
 import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
-
-const pixelEmptyBadges = require('../../assets/pixel-empty-badges.png');
 
 type PublicProfile = {
   id: string;
@@ -45,7 +43,10 @@ export default function UserProfileScreen() {
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { badges, loadingBadges, fetchBadges } = useUserBadges({ userId: id });
+  const { badges, allBadges, loadingBadges, fetchBadges, fetchAllBadges } = useUserBadges({
+    userId: id,
+    fetchAllBadges: true,
+  });
 
   useEffect(() => {
     if (user && id === user.id) {
@@ -56,6 +57,7 @@ export default function UserProfileScreen() {
     if (id) {
       loadProfile();
       fetchBadges();
+      fetchAllBadges();
     }
   }, [id, user]);
 
@@ -130,21 +132,25 @@ export default function UserProfileScreen() {
         <View style={styles.section}>
           <View style={styles.sectionTitleRow}>
             <Ionicons name="trophy-outline" size={ICON_SIZES.sm} color="#D97706" style={styles.sectionTitleIcon} />
-            <Text style={styles.sectionTitle}>
-              {t('profile.badges')} ({badges.length})
-            </Text>
+            <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           </View>
           {loadingBadges ? (
-            <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
-          ) : badges.length === 0 ? (
-            <View style={styles.emptyBadges}>
-              <Image source={pixelEmptyBadges} style={styles.emptyImage} />
-              <Text style={styles.emptyBadgesText}>{t('profile.noBadgesYet')}</Text>
-            </View>
+            <PixelLoader size={40} />
           ) : (
-            <EarnedBadgeRow
-              badges={badges}
-              onBadgePress={(badge) => showInfo(badge.name, badge.description)}
+            <BadgeShowcase
+              earnedBadges={badges}
+              allBadges={allBadges}
+              userStats={{
+                visit_count: profile.visit_count || 0,
+                contribution_count: profile.contribution_count || 0,
+              }}
+              onLockedBadgePress={(badge) => {
+                showInfo(badge.name, badge.description);
+              }}
+              onEarnedBadgePress={(earnedBadge) => {
+                showInfo(earnedBadge.name, earnedBadge.description);
+              }}
+              onViewAll={() => {}}
             />
           )}
         </View>
@@ -226,31 +232,5 @@ const styles = StyleSheet.create({
     color: '#2B2B2B',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-  },
-  badgeLoader: {
-    padding: 20,
-  },
-  emptyBadges: {
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 0,
-    elevation: 2,
-  },
-  emptyImage: {
-    width: 120,
-    height: 120,
-  },
-  emptyBadgesText: {
-    fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#999',
-    marginTop: 8,
   },
 });
