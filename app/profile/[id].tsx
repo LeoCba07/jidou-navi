@@ -15,7 +15,7 @@ import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
 import { useUserBadges } from '../../src/hooks/useUserBadges';
 import { useAppModal } from '../../src/hooks/useAppModal';
-import { useFriendshipStatus } from '../../src/hooks/useFriendshipStatus';
+import { useFriendshipStatus, type FriendshipStatus } from '../../src/hooks/useFriendshipStatus';
 import ProfileHeroCard from '../../src/components/profile/ProfileHeroCard';
 import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
 import PixelLoader from '../../src/components/PixelLoader';
@@ -44,7 +44,7 @@ export default function UserProfileScreen() {
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { badges, allBadges, loadingBadges, fetchBadges, fetchAllBadges } = useUserBadges({
+  const { badges, allBadges, loadingBadges, loadingAllBadges, fetchBadges, fetchAllBadges } = useUserBadges({
     userId: id,
     fetchAllBadges: true,
   });
@@ -137,7 +137,7 @@ export default function UserProfileScreen() {
             <Ionicons name="trophy-outline" size={ICON_SIZES.sm} color="#D97706" style={styles.sectionTitleIcon} />
             <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           </View>
-          {loadingBadges ? (
+          {loadingBadges || loadingAllBadges ? (
             <PixelLoader size={40} />
           ) : (
             <BadgeShowcase
@@ -165,7 +165,7 @@ function FriendActionButton({
   onSendRequest,
   onAccept,
 }: {
-  status: string;
+  status: FriendshipStatus;
   onSendRequest: () => void;
   onAccept: () => void;
 }) {

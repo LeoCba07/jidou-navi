@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
 import UserAvatar from '../UserAvatar';
 import XPProgressBar from './XPProgressBar';
 import StatsBanner from './StatsBanner';
@@ -32,8 +31,6 @@ export default function ProfileHeroCard({
   uploadingAvatar,
   settingsButton,
 }: ProfileHeroCardProps) {
-  const { t } = useTranslation();
-
   const resolvedAvatarUrl = avatarUrl && avatarTimestamp
     ? `${avatarUrl.split('?')[0]}?t=${avatarTimestamp}`
     : avatarUrl;

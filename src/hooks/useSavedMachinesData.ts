@@ -49,7 +49,7 @@ export function useSavedMachinesData() {
 
   const refreshSavedMachines = useCallback(async () => {
     await Promise.all([loadSavedMachines(), getUserLocation()]);
-  }, [loadSavedMachines]);
+  }, [loadSavedMachines, getUserLocation]);
 
   const handleUnsave = useCallback(async (machineId: string) => {
     try {

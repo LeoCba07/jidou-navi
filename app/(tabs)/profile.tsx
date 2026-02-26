@@ -39,7 +39,7 @@ export default function ProfileScreen() {
   useScrollToTop(scrollRef);
 
   // Hooks
-  const { badges, allBadges, loadingBadges, fetchBadges, fetchAllBadges } = useUserBadges({
+  const { badges, allBadges, loadingBadges, loadingAllBadges, fetchBadges, fetchAllBadges } = useUserBadges({
     userId: user?.id,
     fetchAllBadges: true,
   });
@@ -147,7 +147,7 @@ export default function ProfileScreen() {
             <Ionicons name="trophy-outline" size={ICON_SIZES.sm} color="#D97706" style={styles.sectionTitleIcon} />
             <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           </View>
-          {loadingBadges ? (
+          {loadingBadges || loadingAllBadges ? (
             <PixelLoader size={40} />
           ) : (
             <BadgeShowcase

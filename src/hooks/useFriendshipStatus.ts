@@ -17,8 +17,13 @@ export function useFriendshipStatus(targetUserId: string | undefined) {
   useEffect(() => {
     if (!targetUserId || !user) {
       setStatus('none');
+      setFriendshipId(null);
       return;
     }
+
+    // Reset before checking new user
+    setStatus('loading');
+    setFriendshipId(null);
 
     // Check friends store first (instant for accepted)
     const isFriend = friends.some((f) => f.id === targetUserId);

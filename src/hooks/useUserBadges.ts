@@ -12,10 +12,15 @@ export function useUserBadges({ userId, fetchAllBadges: shouldFetchAll = false }
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [allBadges, setAllBadges] = useState<Badge[]>([]);
   const [loadingBadges, setLoadingBadges] = useState(true);
+  const [loadingAllBadges, setLoadingAllBadges] = useState(shouldFetchAll);
 
   const fetchBadges = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) {
+      setLoadingBadges(false);
+      return;
+    }
 
+    setLoadingBadges(true);
     const { data, error } = await supabase
       .from('user_badges')
       .select(`
@@ -40,6 +45,7 @@ export function useUserBadges({ userId, fetchAllBadges: shouldFetchAll = false }
   }, [userId]);
 
   const fetchAll = useCallback(async () => {
+    setLoadingAllBadges(true);
     const { data, error } = await supabase
       .from('badges')
       .select('*')
@@ -48,6 +54,7 @@ export function useUserBadges({ userId, fetchAllBadges: shouldFetchAll = false }
     if (!error && data) {
       setAllBadges(data as Badge[]);
     }
+    setLoadingAllBadges(false);
   }, []);
 
   const refreshBadges = useCallback(async () => {
@@ -57,5 +64,5 @@ export function useUserBadges({ userId, fetchAllBadges: shouldFetchAll = false }
     }
   }, [fetchBadges, fetchAll, shouldFetchAll]);
 
-  return { badges, allBadges, loadingBadges, refreshBadges, fetchBadges, fetchAllBadges: fetchAll };
+  return { badges, allBadges, loadingBadges, loadingAllBadges, refreshBadges, fetchBadges, fetchAllBadges: fetchAll };
 }

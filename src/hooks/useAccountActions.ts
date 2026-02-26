@@ -5,7 +5,6 @@ import { unregisterPushNotificationsAsync } from '../lib/notifications';
 import { useAuthStore } from '../store/authStore';
 import { useFriendsStore } from '../store/friendsStore';
 import { useAppModal } from './useAppModal';
-import type { Friend } from '../store/friendsStore';
 
 export function useAccountActions() {
   const { t } = useTranslation();
