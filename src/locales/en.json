@@ -18,7 +18,8 @@
     "back": "Back",
     "user": "User",
     "dismiss": "Dismiss",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "invalidCredentials": "Invalid email or password"
   },
   "auth": {
     "login": "Log In",

@@ -18,7 +18,8 @@
     "back": "Volver",
     "user": "Usuario",
     "dismiss": "Cerrar",
-    "genericError": "Algo salió mal. Por favor intenta de nuevo."
+    "genericError": "Algo salió mal. Por favor intenta de nuevo.",
+    "invalidCredentials": "Correo o contraseña inválidos"
   },
   "auth": {
     "login": "Iniciar Sesión",
