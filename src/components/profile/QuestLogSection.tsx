@@ -3,7 +3,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { SavedMachine } from '../../lib/machines';
 import PixelLoader from '../PixelLoader';
-import VisitedStamp from '../machine/VisitedStamp';
 import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
 
 const pixelEmptyQuest = require('../../../assets/pixel-empty-quest.png');
@@ -14,9 +13,6 @@ const pixelTabMap = require('../../../assets/pixel-tab-map.png');
 interface QuestLogSectionProps {
   sortedMachines: Array<{ saved: SavedMachine; distance: number | null; xp: number }>;
   loading: boolean;
-  sortMode: 'distance' | 'xp';
-  onSortModeChange: (mode: 'distance' | 'xp') => void;
-  visitedMachineIds: Set<string>;
   onMachinePress: (saved: SavedMachine) => void;
   onUnsave: (machineId: string) => void;
   onShowOnMap: (machine: SavedMachine['machine']) => void;
@@ -33,9 +29,6 @@ function formatDistance(meters: number): string {
 export default function QuestLogSection({
   sortedMachines,
   loading,
-  sortMode,
-  onSortModeChange,
-  visitedMachineIds,
   onMachinePress,
   onUnsave,
   onShowOnMap,
@@ -50,36 +43,6 @@ export default function QuestLogSection({
           <Image source={pixelBookmark} style={[{ width: ICON_SIZES.sm, height: ICON_SIZES.sm }, styles.sectionTitleIcon]} />
           <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('profile.questLog')}</Text>
         </View>
-        {totalCount > 0 && (
-          <View style={styles.sortToggle}>
-            <Pressable
-              style={[styles.sortButton, sortMode === 'distance' && styles.sortButtonActive]}
-              onPress={() => onSortModeChange('distance')}
-            >
-              <Ionicons
-                name="navigate-outline"
-                size={ICON_SIZES.xs}
-                color={sortMode === 'distance' ? '#fff' : '#666'}
-              />
-              <Text style={[styles.sortButtonText, sortMode === 'distance' && styles.sortButtonTextActive]}>
-                {t('profile.sortDistance')}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.sortButton, sortMode === 'xp' && styles.sortButtonActive]}
-              onPress={() => onSortModeChange('xp')}
-            >
-              <Ionicons
-                name="flash-outline"
-                size={ICON_SIZES.xs}
-                color={sortMode === 'xp' ? '#fff' : '#666'}
-              />
-              <Text style={[styles.sortButtonText, sortMode === 'xp' && styles.sortButtonTextActive]}>
-                {t('profile.sortXP')}
-              </Text>
-            </Pressable>
-          </View>
-        )}
       </View>
       {loading ? (
         <PixelLoader size={40} />
@@ -109,9 +72,6 @@ export default function QuestLogSection({
                   </View>
                 )}
               </View>
-              {visitedMachineIds.has(saved.machine_id) && (
-                <VisitedStamp size="small" />
-              )}
               <View style={styles.savedInfo}>
                 <View style={styles.savedNameRow}>
                   <Text style={styles.savedName} numberOfLines={1}>
@@ -196,30 +156,6 @@ const styles = StyleSheet.create({
     color: '#2B2B2B',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-  },
-  sortToggle: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  sortButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: '#f0f0f0',
-  },
-  sortButtonActive: {
-    backgroundColor: '#FF4B4B',
-  },
-  sortButtonText: {
-    fontSize: FONT_SIZES.xs,
-    fontFamily: 'Inter-SemiBold',
-    color: '#666',
-  },
-  sortButtonTextActive: {
-    color: '#fff',
   },
   emptyContainer: {
     backgroundColor: '#fff',
