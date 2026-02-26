@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { unregisterPushNotificationsAsync } from '../lib/notifications';
@@ -12,7 +13,7 @@ export function useAccountActions() {
   const { friends, removeFriend } = useFriendsStore();
   const { showConfirm, showError, showSuccess } = useAppModal();
 
-  function handleLogout() {
+  const handleLogout = useCallback(() => {
     showConfirm(t('profile.logoutConfirm.title'), t('profile.logoutConfirm.message'), [
       { text: t('common.cancel'), style: 'cancel' },
       {
@@ -24,9 +25,9 @@ export function useAccountActions() {
         },
       },
     ]);
-  }
+  }, [showConfirm, t]);
 
-  function handleRemoveFriend(friendId: string) {
+  const handleRemoveFriend = useCallback((friendId: string) => {
     const friend = friends.find((f) => f.id === friendId);
     showConfirm(
       t('friends.remove'),
@@ -42,9 +43,9 @@ export function useAccountActions() {
         },
       ]
     );
-  }
+  }, [friends, showConfirm, removeFriend, t]);
 
-  function handleDeleteAccount() {
+  const handleDeleteAccount = useCallback(() => {
     showConfirm(
       t('profile.deleteAccountConfirm.title'),
       t('profile.deleteAccountConfirm.message'),
@@ -78,7 +79,7 @@ export function useAccountActions() {
         },
       ]
     );
-  }
+  }, [user, showConfirm, showError, showSuccess, t]);
 
   return { handleLogout, handleRemoveFriend, handleDeleteAccount };
 }

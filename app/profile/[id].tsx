@@ -1,5 +1,5 @@
 // User profile screen - view another user's public profile
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -50,20 +50,7 @@ export default function UserProfileScreen() {
   });
   const { status: friendshipStatus, sendRequest, acceptRequest } = useFriendshipStatus(id);
 
-  useEffect(() => {
-    if (user && id === user.id) {
-      router.replace('/(tabs)/profile');
-      return;
-    }
-
-    if (id) {
-      loadProfile();
-      fetchBadges();
-      fetchAllBadges();
-    }
-  }, [id, user]);
-
-  async function loadProfile() {
+  const loadProfile = useCallback(async () => {
     if (!id) return;
 
     const { data, error } = await supabase
@@ -76,7 +63,20 @@ export default function UserProfileScreen() {
       setProfile(data as PublicProfile);
     }
     setLoading(false);
-  }
+  }, [id]);
+
+  useEffect(() => {
+    if (user && id === user.id) {
+      router.replace('/(tabs)/profile');
+      return;
+    }
+
+    if (id) {
+      loadProfile();
+      fetchBadges();
+      fetchAllBadges();
+    }
+  }, [id, user, loadProfile, fetchBadges, fetchAllBadges]);
 
   if (loading) {
     return (

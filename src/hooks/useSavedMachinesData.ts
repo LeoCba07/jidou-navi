@@ -21,7 +21,7 @@ export function useSavedMachinesData() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [sortMode, setSortMode] = useState<SortMode>('distance');
 
-  async function getUserLocation() {
+  const getUserLocation = useCallback(async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -39,7 +39,7 @@ export function useSavedMachinesData() {
       console.warn('Failed to get user location:', error);
       setUserLocation(null);
     }
-  }
+  }, []);
 
   const loadSavedMachines = useCallback(async () => {
     const machines = await fetchSavedMachines();
@@ -51,7 +51,7 @@ export function useSavedMachinesData() {
     await Promise.all([loadSavedMachines(), getUserLocation()]);
   }, [loadSavedMachines]);
 
-  async function handleUnsave(machineId: string) {
+  const handleUnsave = useCallback(async (machineId: string) => {
     try {
       await unsaveMachine(machineId);
       removeSaved(machineId);
@@ -59,9 +59,9 @@ export function useSavedMachinesData() {
     } catch (err) {
       showError(t('common.error'), t('machine.unsaveError'));
     }
-  }
+  }, [removeSaved, showError, t]);
 
-  function goToMachine(saved: SavedMachine) {
+  const goToMachine = useCallback((saved: SavedMachine) => {
     router.push({
       pathname: '/machine/[id]',
       params: {
@@ -78,9 +78,9 @@ export function useSavedMachinesData() {
         last_verified_at: saved.machine.last_verified_at || '',
       },
     });
-  }
+  }, []);
 
-  function handleShowOnMap(machine: SavedMachine['machine']) {
+  const handleShowOnMap = useCallback((machine: SavedMachine['machine']) => {
     router.push({
       pathname: '/(tabs)',
       params: {
@@ -89,14 +89,14 @@ export function useSavedMachinesData() {
         focusMachineId: machine.id,
       },
     });
-  }
+  }, []);
 
-  function getEstimatedXP(machineId: string): number {
+  const getEstimatedXP = useCallback((machineId: string): number => {
     if (visitedMachineIds.has(machineId)) {
       return XP_VALUES.PHOTO_UPLOAD;
     }
     return XP_VALUES.PHOTO_UPLOAD + XP_VALUES.VERIFY_MACHINE;
-  }
+  }, [visitedMachineIds]);
 
   const sortedSavedMachines = useMemo(() => {
     const mapped = savedMachines.map((saved) => {
@@ -127,7 +127,7 @@ export function useSavedMachinesData() {
     });
 
     return mapped;
-  }, [savedMachines, userLocation, sortMode, visitedMachineIds]);
+  }, [savedMachines, userLocation, sortMode, getEstimatedXP]);
 
   return {
     sortedSavedMachines,

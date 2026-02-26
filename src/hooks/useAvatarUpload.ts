@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
@@ -14,7 +14,7 @@ export function useAvatarUpload() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
 
-  async function handleEditAvatar() {
+  const handleEditAvatar = useCallback(async () => {
     if (!user) return;
 
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -65,7 +65,7 @@ export function useAvatarUpload() {
     } finally {
       setUploadingAvatar(false);
     }
-  }
+  }, [user, profile, setProfile, showError, showSuccess, t]);
 
   return { handleEditAvatar, uploadingAvatar, avatarTimestamp };
 }

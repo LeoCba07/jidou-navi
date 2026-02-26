@@ -72,7 +72,7 @@ export default function ProfileScreen() {
         loadFriends();
         getUserLocation();
       }
-    }, [user])
+    }, [user, fetchBadges, fetchAllBadges, loadSavedMachines, loadPendingRequestCount, loadFriends, getUserLocation])
   );
 
   const onRefresh = useCallback(async () => {
@@ -82,7 +82,7 @@ export default function ProfileScreen() {
       loadPendingRequestCount(), loadFriends(), getUserLocation(),
     ]);
     setRefreshing(false);
-  }, [user]);
+  }, [fetchBadges, fetchAllBadges, loadSavedMachines, loadPendingRequestCount, loadFriends, getUserLocation]);
 
   return (
     <View style={styles.container}>
