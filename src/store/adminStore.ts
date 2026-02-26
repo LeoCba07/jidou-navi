@@ -2,11 +2,15 @@
 import { create } from 'zustand';
 import {
   PendingMachine,
+  PendingPhoto,
   NearbyMachine,
   fetchPendingMachines,
+  fetchPendingPhotos,
   checkDuplicateMachines,
   approveMachine,
   rejectMachine,
+  approvePhoto,
+  rejectPhoto,
 } from '../lib/admin';
 
 interface AdminState {
@@ -16,6 +20,8 @@ interface AdminState {
   selectedMachine: PendingMachine | null;
   nearbyMachines: NearbyMachine[];
   isLoadingNearby: boolean;
+  pendingPhotos: PendingPhoto[];
+  isLoadingPhotos: boolean;
 
   // Actions
   loadPendingMachines: () => Promise<void>;
@@ -23,6 +29,9 @@ interface AdminState {
   loadNearbyMachines: (machineId: string) => Promise<void>;
   approve: (machineId: string, reviewerId: string) => Promise<boolean>;
   reject: (machineId: string, reviewerId: string, reason: string) => Promise<boolean>;
+  loadPendingPhotos: () => Promise<void>;
+  approvePhoto: (photoId: string) => Promise<boolean>;
+  rejectPhoto: (photoId: string) => Promise<boolean>;
   reset: () => void;
 }
 
@@ -33,6 +42,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   selectedMachine: null,
   nearbyMachines: [],
   isLoadingNearby: false,
+  pendingPhotos: [],
+  isLoadingPhotos: false,
 
   loadPendingMachines: async () => {
     set({ isLoading: true, error: null });
@@ -84,6 +95,34 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     return success;
   },
 
+  loadPendingPhotos: async () => {
+    set({ isLoadingPhotos: true });
+    try {
+      const photos = await fetchPendingPhotos();
+      set({ pendingPhotos: photos, isLoadingPhotos: false });
+    } catch (err) {
+      set({ isLoadingPhotos: false });
+    }
+  },
+
+  approvePhoto: async (photoId: string) => {
+    const success = await approvePhoto(photoId);
+    if (success) {
+      const { pendingPhotos } = get();
+      set({ pendingPhotos: pendingPhotos.filter((p) => p.id !== photoId) });
+    }
+    return success;
+  },
+
+  rejectPhoto: async (photoId: string) => {
+    const success = await rejectPhoto(photoId);
+    if (success) {
+      const { pendingPhotos } = get();
+      set({ pendingPhotos: pendingPhotos.filter((p) => p.id !== photoId) });
+    }
+    return success;
+  },
+
   reset: () => {
     set({
       pendingMachines: [],
@@ -92,6 +131,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       selectedMachine: null,
       nearbyMachines: [],
       isLoadingNearby: false,
+      pendingPhotos: [],
+      isLoadingPhotos: false,
     });
   },
 }));

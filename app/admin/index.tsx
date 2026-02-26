@@ -1,4 +1,4 @@
-// Admin dashboard - pending machines queue
+// Admin dashboard - pending machines queue and pending photos review
 import { useEffect, useCallback } from 'react';
 import {
   View,
@@ -14,18 +14,26 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { useAdminStore } from '../../src/store/adminStore';
+import { useToast } from '../../src/hooks/useToast';
 import PendingMachineCard from '../../src/components/admin/PendingMachineCard';
+import PendingPhotoCard from '../../src/components/admin/PendingPhotoCard';
 import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const { profile } = useAuthStore();
+  const toast = useToast();
   const {
     pendingMachines,
     isLoading,
     error,
     loadPendingMachines,
     selectMachine,
+    pendingPhotos,
+    isLoadingPhotos,
+    loadPendingPhotos,
+    approvePhoto,
+    rejectPhoto,
   } = useAdminStore();
 
   const isAdmin = profile?.role === 'admin';
@@ -33,11 +41,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (isAdmin) {
       loadPendingMachines();
+      loadPendingPhotos();
     }
   }, [isAdmin]);
 
   const onRefresh = useCallback(async () => {
-    await loadPendingMachines();
+    await Promise.all([loadPendingMachines(), loadPendingPhotos()]);
   }, []);
 
   const handleMachinePress = (machine: typeof pendingMachines[0]) => {
@@ -46,6 +55,26 @@ export default function AdminDashboard() {
       pathname: '/admin/review/[id]',
       params: { id: machine.id },
     });
+  };
+
+  const handleApprovePhoto = async (photoId: string) => {
+    const success = await approvePhoto(photoId);
+    if (success) {
+      toast.showSuccess(t('admin.photoApproveSuccess'));
+    } else {
+      toast.showError(t('admin.photoApproveError'));
+    }
+    return success;
+  };
+
+  const handleRejectPhoto = async (photoId: string) => {
+    const success = await rejectPhoto(photoId);
+    if (success) {
+      toast.showInfo(t('admin.photoRejectSuccess'));
+    } else {
+      toast.showError(t('admin.photoRejectError'));
+    }
+    return success;
   };
 
   // Access denied for non-admins
@@ -84,6 +113,11 @@ export default function AdminDashboard() {
           <Text style={styles.statNumber}>{pendingMachines.length}</Text>
           <Text style={styles.statLabel}>{t('admin.pendingReview')}</Text>
         </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>{pendingPhotos.length}</Text>
+          <Text style={styles.statLabel}>{t('admin.pendingPhotos')}</Text>
+        </View>
       </View>
 
       {/* Content */}
@@ -106,21 +140,49 @@ export default function AdminDashboard() {
               <Text style={styles.retryText}>{t('map.retry')}</Text>
             </Pressable>
           </View>
-        ) : pendingMachines.length === 0 ? (
-          <View style={styles.centered}>
-            <Ionicons name="checkmark-circle-outline" size={64} color="#22C55E" />
-            <Text style={styles.emptyTitle}>{t('admin.queueEmpty')}</Text>
-            <Text style={styles.emptyText}>{t('admin.queueEmptySubtext')}</Text>
-          </View>
         ) : (
-          <View style={styles.machineList}>
-            {pendingMachines.map((machine) => (
-              <PendingMachineCard
-                key={machine.id}
-                machine={machine}
-                onPress={() => handleMachinePress(machine)}
-              />
-            ))}
+          <View style={styles.listContainer}>
+            {/* Pending Machines */}
+            <Text style={styles.sectionTitle}>{t('admin.pendingReview')}</Text>
+            {pendingMachines.length === 0 ? (
+              <View style={styles.emptySection}>
+                <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.xl} color="#22C55E" />
+                <Text style={styles.emptyText}>{t('admin.queueEmpty')}</Text>
+              </View>
+            ) : (
+              <View style={styles.itemList}>
+                {pendingMachines.map((machine) => (
+                  <PendingMachineCard
+                    key={machine.id}
+                    machine={machine}
+                    onPress={() => handleMachinePress(machine)}
+                  />
+                ))}
+              </View>
+            )}
+
+            {/* Pending Photos */}
+            <Text style={[styles.sectionTitle, styles.sectionTitleSpaced]}>{t('admin.pendingPhotos')}</Text>
+            <Text style={styles.sectionSubtitle}>{t('admin.pendingPhotosSubtext')}</Text>
+            {isLoadingPhotos ? (
+              <ActivityIndicator color="#FF4B4B" style={{ marginVertical: 16 }} />
+            ) : pendingPhotos.length === 0 ? (
+              <View style={styles.emptySection}>
+                <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.xl} color="#22C55E" />
+                <Text style={styles.emptyText}>{t('admin.photosQueueEmpty')}</Text>
+              </View>
+            ) : (
+              <View style={styles.itemList}>
+                {pendingPhotos.map((photo) => (
+                  <PendingPhotoCard
+                    key={photo.id}
+                    photo={photo}
+                    onApprove={handleApprovePhoto}
+                    onReject={handleRejectPhoto}
+                  />
+                ))}
+              </View>
+            )}
           </View>
         )}
       </ScrollView>
@@ -162,6 +224,12 @@ const styles = StyleSheet.create({
   },
   statItem: {
     alignItems: 'center',
+    flex: 1,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: '#eee',
+    marginVertical: 4,
   },
   statNumber: {
     fontSize: 28,
@@ -227,6 +295,39 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   machineList: {
+    gap: 12,
+  },
+  listContainer: {
+    gap: 0,
+  },
+  sectionTitle: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter-Bold',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 12,
+  },
+  sectionTitleSpaced: {
+    marginTop: 32,
+  },
+  sectionSubtitle: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter',
+    color: '#aaa',
+    marginBottom: 12,
+    marginTop: -8,
+  },
+  emptySection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 16,
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  itemList: {
     gap: 12,
   },
 });

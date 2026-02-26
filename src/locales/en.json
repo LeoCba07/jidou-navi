@@ -600,7 +600,16 @@
     },
     "daysAgo": "{{count}} day(s) ago",
     "hoursAgo": "{{count}} hour(s) ago",
-    "justNow": "Just now"
+    "justNow": "Just now",
+    "pendingPhotos": "Pending Photos",
+    "pendingPhotosSubtext": "User-submitted photos awaiting review",
+    "photosQueueEmpty": "No pending photos",
+    "approvePhoto": "Approve photo",
+    "rejectPhoto": "Reject photo",
+    "photoApproveSuccess": "Photo approved and now visible on the machine.",
+    "photoApproveError": "Failed to approve photo. Please try again.",
+    "photoRejectSuccess": "Photo rejected.",
+    "photoRejectError": "Failed to reject photo. Please try again."
   },
   "report": {
     "title": "Report Issue",
