@@ -88,14 +88,8 @@ export function useSavedMachinesData() {
     });
   }, []);
 
-  const getEstimatedXP = useCallback((machineId: string): number => {
-    if (visitedMachineIds.has(machineId)) {
-      return XP_VALUES.PHOTO_UPLOAD;
-    }
-    return XP_VALUES.PHOTO_UPLOAD + XP_VALUES.VERIFY_MACHINE;
-  }, [visitedMachineIds]);
-
   const sortedSavedMachines = useMemo(() => {
+    const unvisitedXP = XP_VALUES.PHOTO_UPLOAD + XP_VALUES.VERIFY_MACHINE;
     return savedMachines
       .filter((saved) => !visitedMachineIds.has(saved.machine_id))
       .map((saved) => {
@@ -107,8 +101,7 @@ export function useSavedMachinesData() {
               saved.machine.longitude
             )
           : null;
-        const xp = getEstimatedXP(saved.machine_id);
-        return { saved, distance, xp };
+        return { saved, distance, xp: unvisitedXP };
       })
       .sort((a, b) => {
         if (a.distance === null && b.distance === null) return 0;
@@ -116,7 +109,7 @@ export function useSavedMachinesData() {
         if (b.distance === null) return -1;
         return a.distance - b.distance;
       });
-  }, [savedMachines, userLocation, visitedMachineIds, getEstimatedXP]);
+  }, [savedMachines, userLocation, visitedMachineIds]);
 
   return {
     sortedSavedMachines,
