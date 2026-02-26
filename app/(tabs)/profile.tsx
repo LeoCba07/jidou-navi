@@ -45,9 +45,9 @@ export default function ProfileScreen() {
   });
   const { handleEditAvatar, uploadingAvatar, avatarTimestamp } = useAvatarUpload();
   const {
-    sortedSavedMachines, savedMachines, loadingSaved, sortMode, setSortMode,
+    sortedSavedMachines, savedMachines, loadingSaved,
     handleUnsave, goToMachine, handleShowOnMap,
-    loadSavedMachines, getUserLocation, visitedMachineIds,
+    loadSavedMachines, getUserLocation,
   } = useSavedMachinesData();
   const { handleLogout, handleRemoveFriend, handleDeleteAccount } = useAccountActions();
 
@@ -132,13 +132,10 @@ export default function ProfileScreen() {
         <QuestLogSection
           sortedMachines={sortedSavedMachines}
           loading={loadingSaved}
-          sortMode={sortMode}
-          onSortModeChange={setSortMode}
-          visitedMachineIds={visitedMachineIds}
           onMachinePress={goToMachine}
           onUnsave={handleUnsave}
           onShowOnMap={handleShowOnMap}
-          totalCount={savedMachines.length}
+          totalCount={sortedSavedMachines.length}
         />
 
         {/* Badges Section */}

@@ -8,8 +8,6 @@ import { useSavedMachinesStore } from '../store/savedMachinesStore';
 import { useVisitedMachinesStore } from '../store/visitedMachinesStore';
 import { useAppModal } from './useAppModal';
 
-export type SortMode = 'distance' | 'xp';
-
 export function useSavedMachinesData() {
   const { t } = useTranslation();
   const { removeSaved } = useSavedMachinesStore();
@@ -19,7 +17,6 @@ export function useSavedMachinesData() {
   const [savedMachines, setSavedMachines] = useState<SavedMachine[]>([]);
   const [loadingSaved, setLoadingSaved] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [sortMode, setSortMode] = useState<SortMode>('distance');
 
   const getUserLocation = useCallback(async () => {
     try {
@@ -91,56 +88,38 @@ export function useSavedMachinesData() {
     });
   }, []);
 
-  const getEstimatedXP = useCallback((machineId: string): number => {
-    if (visitedMachineIds.has(machineId)) {
-      return XP_VALUES.PHOTO_UPLOAD;
-    }
-    return XP_VALUES.PHOTO_UPLOAD + XP_VALUES.VERIFY_MACHINE;
-  }, [visitedMachineIds]);
-
   const sortedSavedMachines = useMemo(() => {
-    const mapped = savedMachines.map((saved) => {
-      const distance = userLocation
-        ? calculateDistance(
-            userLocation.lat,
-            userLocation.lng,
-            saved.machine.latitude,
-            saved.machine.longitude
-          )
-        : null;
-      const xp = getEstimatedXP(saved.machine_id);
-      return { saved, distance, xp };
-    });
-
-    mapped.sort((a, b) => {
-      if (sortMode === 'distance') {
+    const unvisitedXP = XP_VALUES.PHOTO_UPLOAD + XP_VALUES.VERIFY_MACHINE;
+    return savedMachines
+      .filter((saved) => !visitedMachineIds.has(saved.machine_id))
+      .map((saved) => {
+        const distance = userLocation
+          ? calculateDistance(
+              userLocation.lat,
+              userLocation.lng,
+              saved.machine.latitude,
+              saved.machine.longitude
+            )
+          : null;
+        return { saved, distance, xp: unvisitedXP };
+      })
+      .sort((a, b) => {
         if (a.distance === null && b.distance === null) return 0;
         if (a.distance === null) return 1;
         if (b.distance === null) return -1;
         return a.distance - b.distance;
-      }
-      if (b.xp !== a.xp) return b.xp - a.xp;
-      if (a.distance === null && b.distance === null) return 0;
-      if (a.distance === null) return 1;
-      if (b.distance === null) return -1;
-      return a.distance - b.distance;
-    });
-
-    return mapped;
-  }, [savedMachines, userLocation, sortMode, getEstimatedXP]);
+      });
+  }, [savedMachines, userLocation, visitedMachineIds]);
 
   return {
     sortedSavedMachines,
     savedMachines,
     loadingSaved,
-    sortMode,
-    setSortMode,
     handleUnsave,
     goToMachine,
     handleShowOnMap,
     refreshSavedMachines,
     loadSavedMachines,
     getUserLocation,
-    visitedMachineIds,
   };
 }
