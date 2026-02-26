@@ -882,7 +882,7 @@ export default function MachineDetailScreen() {
         machine_id: params.id,
         photo_url: publicUrl,
         uploaded_by: user.id,
-        status: 'active', // Assuming auto-approve for now or pending if moderation required
+        status: 'pending',
       });
 
       if (insertError) throw insertError;
@@ -893,14 +893,11 @@ export default function MachineDetailScreen() {
         console.warn('Failed to award XP for photo upload:', xpResult.error);
       }
 
-      // Update local photos state
-      setPhotos(prev => [...prev, publicUrl]);
-      
       Analytics.track('photo_upload', {
         machine_id: params.id,
       });
 
-      let photoSuccessMsg = t('machine.photoAdded');
+      let photoSuccessMsg = t('machine.photoSubmittedForReview');
       if (xpResult.success && xpResult.leveledUp) {
         photoSuccessMsg = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${photoSuccessMsg}`;
       }

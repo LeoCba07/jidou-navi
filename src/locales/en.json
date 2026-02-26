@@ -233,6 +233,7 @@
     "unsaveError": "Failed to unsave machine.",
     "addPhoto": "Add Photo",
     "photoAdded": "Photo added successfully!",
+    "photoSubmittedForReview": "Thank you for contributing! Your photo will be visible once our team has reviewed it.",
     "uploadError": "Failed to upload photo.",
     "stalePrompt": "This machine hasn't been verified recently. Can you help confirm it's still here?",
     "verifyNow": "Verify Now",
