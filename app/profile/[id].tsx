@@ -1,11 +1,10 @@
 // User profile screen - view another user's public profile
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   ActivityIndicator,
   Pressable,
 } from 'react-native';
@@ -14,19 +13,14 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
-import XPProgressBar from '../../src/components/profile/XPProgressBar';
+import { useUserBadges } from '../../src/hooks/useUserBadges';
 import { useAppModal } from '../../src/hooks/useAppModal';
-import UserAvatar from '../../src/components/UserAvatar';
-import EarnedBadgeRow from '../../src/components/profile/EarnedBadgeRow';
-import type { UserBadge } from '../../src/components/profile/EarnedBadgeRow';
-import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
+import { useFriendshipStatus, type FriendshipStatus } from '../../src/hooks/useFriendshipStatus';
+import ProfileHeroCard from '../../src/components/profile/ProfileHeroCard';
+import BadgeShowcase from '../../src/components/profile/BadgeShowcase';
+import PixelLoader from '../../src/components/PixelLoader';
+import { FONT_SIZES, ICON_SIZES, COLORS } from '../../src/theme/constants';
 
-const pixelEmptyBadges = require('../../assets/pixel-empty-badges.png');
-const pixelStatAdded = require('../../assets/pixel-stat-added.png');
-const pixelStatBadges = require('../../assets/pixel-stat-badges.png');
-const pixelStatVisits = require('../../assets/pixel-stat-visits.png');
-
-// Public profile data we fetch for other users
 type PublicProfile = {
   id: string;
   username: string;
@@ -48,24 +42,15 @@ export default function UserProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuthStore();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
-  const [badges, setBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingBadges, setLoadingBadges] = useState(true);
 
-  useEffect(() => {
-    // If viewing own profile, redirect to the profile tab
-    if (user && id === user.id) {
-      router.replace('/(tabs)/profile');
-      return;
-    }
+  const { badges, allBadges, loadingBadges, loadingAllBadges, fetchBadges, fetchAllBadges } = useUserBadges({
+    userId: id,
+    fetchAllBadges: true,
+  });
+  const { status: friendshipStatus, sendRequest, acceptRequest } = useFriendshipStatus(id);
 
-    if (id) {
-      loadProfile();
-      loadBadges();
-    }
-  }, [id, user]);
-
-  async function loadProfile() {
+  const loadProfile = useCallback(async () => {
     if (!id) return;
 
     const { data, error } = await supabase
@@ -78,34 +63,20 @@ export default function UserProfileScreen() {
       setProfile(data as PublicProfile);
     }
     setLoading(false);
-  }
+  }, [id]);
 
-  async function loadBadges() {
-    if (!id) return;
-    setLoadingBadges(true);
-
-    const { data, error } = await supabase
-      .from('user_badges')
-      .select(`
-        id,
-        unlocked_at,
-        badge:badges (
-          id,
-          slug,
-          name,
-          description,
-          icon_url,
-          rarity
-        )
-      `)
-      .eq('user_id', id)
-      .order('unlocked_at', { ascending: false });
-
-    if (!error && data) {
-      setBadges(data as unknown as UserBadge[]);
+  useEffect(() => {
+    if (user && id === user.id) {
+      router.replace('/(tabs)/profile');
+      return;
     }
-    setLoadingBadges(false);
-  }
+
+    if (id) {
+      loadProfile();
+      fetchBadges();
+      fetchAllBadges();
+    }
+  }, [id, user, loadProfile, fetchBadges, fetchAllBadges]);
 
   if (loading) {
     return (
@@ -146,64 +117,41 @@ export default function UserProfileScreen() {
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* Hero Card */}
-        <View style={styles.heroCard}>
-          <View style={styles.avatarContainer}>
-            <UserAvatar
-              url={profile.avatar_url}
-              size={120}
-              borderWidth={4}
-              borderColor="#FF4B4B"
-              style={styles.avatar}
-            />
-          </View>
-          <Text style={styles.displayName}>
-            {profile.display_name || profile.username || t('common.user')}
-          </Text>
-
-          {/* XP and Level Bar */}
-          <XPProgressBar xp={profile.xp || 0} />
-
-          {/* Stats Banner */}
-          <View style={styles.statsBanner}>
-            <View style={styles.statsBannerColumn}>
-              <Image source={pixelStatAdded} style={styles.statsBannerIcon} />
-              <Text style={styles.statsBannerLabel}>{t('profile.machinesAdded')}</Text>
-              <Text style={styles.statsBannerNumber}>{profile.contribution_count || 0}</Text>
-            </View>
-            <View style={styles.statsBannerDivider} />
-            <View style={styles.statsBannerColumn}>
-              <Image source={pixelStatBadges} style={styles.statsBannerIcon} />
-              <Text style={styles.statsBannerLabel}>{t('profile.badges')}</Text>
-              <Text style={styles.statsBannerNumber}>{profile.badge_count || 0}</Text>
-            </View>
-            <View style={styles.statsBannerDivider} />
-            <View style={styles.statsBannerColumn}>
-              <Image source={pixelStatVisits} style={styles.statsBannerIcon} />
-              <Text style={styles.statsBannerLabel}>{t('profile.machinesVisited')}</Text>
-              <Text style={styles.statsBannerNumber}>{profile.visit_count || 0}</Text>
-            </View>
-          </View>
+        <View style={styles.heroCardWrapper}>
+          <ProfileHeroCard
+            avatarUrl={profile.avatar_url}
+            displayName={profile.display_name || profile.username || t('common.user')}
+            xp={profile.xp || 0}
+            stats={{
+              contributionCount: profile.contribution_count || 0,
+              badgeCount: profile.badge_count || 0,
+              visitCount: profile.visit_count || 0,
+            }}
+            settingsButton={<FriendActionButton status={friendshipStatus} onSendRequest={sendRequest} onAccept={acceptRequest} />}
+          />
         </View>
 
         {/* Badges Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleRow}>
             <Ionicons name="trophy-outline" size={ICON_SIZES.sm} color="#D97706" style={styles.sectionTitleIcon} />
-            <Text style={styles.sectionTitle}>
-              {t('profile.badges')} ({badges.length})
-            </Text>
+            <Text style={styles.sectionTitle}>{t('profile.badges')}</Text>
           </View>
-          {loadingBadges ? (
-            <ActivityIndicator color="#FF4B4B" style={styles.badgeLoader} />
-          ) : badges.length === 0 ? (
-            <View style={styles.emptyBadges}>
-              <Image source={pixelEmptyBadges} style={styles.emptyImage} />
-              <Text style={styles.emptyBadgesText}>{t('profile.noBadgesYet')}</Text>
-            </View>
+          {loadingBadges || loadingAllBadges ? (
+            <PixelLoader size={40} />
           ) : (
-            <EarnedBadgeRow
-              badges={badges}
-              onBadgePress={(badge) => showInfo(badge.name, badge.description)}
+            <BadgeShowcase
+              earnedBadges={badges}
+              allBadges={allBadges}
+              userStats={{
+                visit_count: profile.visit_count || 0,
+                contribution_count: profile.contribution_count || 0,
+              }}
+              showLockedBadges={false}
+              onEarnedBadgePress={(earnedBadge) => {
+                showInfo(earnedBadge.name, earnedBadge.description);
+              }}
+              onViewAll={() => {}}
             />
           )}
         </View>
@@ -211,6 +159,92 @@ export default function UserProfileScreen() {
     </View>
   );
 }
+
+function FriendActionButton({
+  status,
+  onSendRequest,
+  onAccept,
+}: {
+  status: FriendshipStatus;
+  onSendRequest: () => void;
+  onAccept: () => void;
+}) {
+  const { t } = useTranslation();
+
+  if (status === 'loading') {
+    return (
+      <View style={friendStyles.button}>
+        <ActivityIndicator size="small" color={COLORS.textMuted} />
+      </View>
+    );
+  }
+
+  if (status === 'accepted') {
+    return (
+      <View style={[friendStyles.button, friendStyles.accepted]}>
+        <Ionicons name="checkmark-circle" size={ICON_SIZES.xs} color="#16A34A" />
+        <Text style={[friendStyles.label, { color: '#16A34A' }]}>{t('friends.friend')}</Text>
+      </View>
+    );
+  }
+
+  if (status === 'pending_sent') {
+    return (
+      <View style={[friendStyles.button, friendStyles.pending]}>
+        <Ionicons name="time-outline" size={ICON_SIZES.xs} color={COLORS.textMuted} />
+        <Text style={[friendStyles.label, { color: COLORS.textMuted }]}>{t('friends.requestSent')}</Text>
+      </View>
+    );
+  }
+
+  if (status === 'pending_received') {
+    return (
+      <Pressable style={[friendStyles.button, friendStyles.accept]} onPress={onAccept}>
+        <Ionicons name="person-add" size={ICON_SIZES.xs} color="#fff" />
+        <Text style={[friendStyles.label, { color: '#fff' }]}>{t('friends.accept')}</Text>
+      </Pressable>
+    );
+  }
+
+  // status === 'none'
+  return (
+    <Pressable style={[friendStyles.button, friendStyles.add]} onPress={onSendRequest}>
+      <Ionicons name="person-add-outline" size={ICON_SIZES.xs} color="#fff" />
+      <Text style={[friendStyles.label, { color: '#fff' }]}>{t('friends.addFriend')}</Text>
+    </Pressable>
+  );
+}
+
+const friendStyles = StyleSheet.create({
+  button: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    zIndex: 1,
+  },
+  add: {
+    backgroundColor: '#3B82F6',
+  },
+  pending: {
+    backgroundColor: '#F3F4F6',
+  },
+  accept: {
+    backgroundColor: '#16A34A',
+  },
+  accepted: {
+    backgroundColor: '#F0FDF4',
+  },
+  label: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter-Bold',
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -264,70 +298,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: 'center',
   },
-  heroCard: {
-    backgroundColor: '#fff',
-    borderRadius: 4,
-    padding: 24,
-    borderWidth: 3,
-    borderColor: '#FF4B4B',
-    shadowColor: '#000',
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 0,
-    elevation: 4,
-    alignItems: 'center',
+  heroCardWrapper: {
     marginBottom: 16,
-  },
-  avatarContainer: {
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
-  displayName: {
-    fontSize: FONT_SIZES.xxl,
-    fontFamily: 'DotGothic16',
-    color: '#2B2B2B',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  statsBanner: {
-    flexDirection: 'row',
-    backgroundColor: '#FF4B4B',
-    marginHorizontal: -24,
-    marginBottom: -24,
-    marginTop: 16,
-    paddingVertical: 16,
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2,
-  },
-  statsBannerColumn: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  statsBannerDivider: {
-    width: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  statsBannerIcon: {
-    width: ICON_SIZES.xl,
-    height: ICON_SIZES.xl,
-  },
-  statsBannerLabel: {
-    fontSize: FONT_SIZES.xs,
-    fontFamily: 'Silkscreen',
-    color: 'rgba(255, 255, 255, 0.85)',
-    textTransform: 'uppercase',
-    textAlign: 'center',
-  },
-  statsBannerNumber: {
-    fontSize: 28,
-    fontFamily: 'DotGothic16',
-    color: '#fff',
   },
   section: {
     marginBottom: 24,
@@ -347,31 +319,5 @@ const styles = StyleSheet.create({
     color: '#2B2B2B',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-  },
-  badgeLoader: {
-    padding: 20,
-  },
-  emptyBadges: {
-    backgroundColor: '#fff',
-    borderRadius: 2,
-    borderWidth: 2,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 0,
-    elevation: 2,
-  },
-  emptyImage: {
-    width: 120,
-    height: 120,
-  },
-  emptyBadgesText: {
-    fontSize: 14,
-    fontFamily: 'Inter',
-    color: '#999',
-    marginTop: 8,
   },
 });

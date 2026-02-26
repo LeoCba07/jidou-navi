@@ -15,11 +15,12 @@ interface BadgeShowcaseProps {
   userStats: {
     visit_count: number;
     contribution_count: number;
-    verification_count: number;
+    verification_count?: number;
   };
-  onLockedBadgePress: (badge: Badge, progress: { current: number; required: number }) => void;
+  onLockedBadgePress?: (badge: Badge, progress: { current: number; required: number }) => void;
   onEarnedBadgePress: (badge: UserBadge['badge']) => void;
   onViewAll: () => void;
+  showLockedBadges?: boolean;
 }
 
 export default function BadgeShowcase({
@@ -29,6 +30,7 @@ export default function BadgeShowcase({
   onLockedBadgePress,
   onEarnedBadgePress,
   onViewAll,
+  showLockedBadges = true,
 }: BadgeShowcaseProps) {
   const { t } = useTranslation();
 
@@ -73,7 +75,7 @@ export default function BadgeShowcase({
       </View>
 
       {/* Locked badges section */}
-      {lockedBadges.length > 0 && (
+      {showLockedBadges && lockedBadges.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>
             {t('profile.lockedBadges')} ({lockedBadges.length})
@@ -87,7 +89,7 @@ export default function BadgeShowcase({
                   badge={badge}
                   progress={progress.percent}
                   onPress={() =>
-                    onLockedBadgePress(badge, {
+                    onLockedBadgePress?.(badge, {
                       current: progress.current,
                       required: progress.required,
                     })
