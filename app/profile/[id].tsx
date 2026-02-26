@@ -14,19 +14,14 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../src/store/authStore';
 import { supabase } from '../../src/lib/supabase';
-import XPProgressBar from '../../src/components/profile/XPProgressBar';
+import { useUserBadges } from '../../src/hooks/useUserBadges';
 import { useAppModal } from '../../src/hooks/useAppModal';
-import UserAvatar from '../../src/components/UserAvatar';
+import ProfileHeroCard from '../../src/components/profile/ProfileHeroCard';
 import EarnedBadgeRow from '../../src/components/profile/EarnedBadgeRow';
-import type { UserBadge } from '../../src/components/profile/EarnedBadgeRow';
 import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 const pixelEmptyBadges = require('../../assets/pixel-empty-badges.png');
-const pixelStatAdded = require('../../assets/pixel-stat-added.png');
-const pixelStatBadges = require('../../assets/pixel-stat-badges.png');
-const pixelStatVisits = require('../../assets/pixel-stat-visits.png');
 
-// Public profile data we fetch for other users
 type PublicProfile = {
   id: string;
   username: string;
@@ -48,12 +43,11 @@ export default function UserProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuthStore();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
-  const [badges, setBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingBadges, setLoadingBadges] = useState(true);
+
+  const { badges, loadingBadges, fetchBadges } = useUserBadges({ userId: id });
 
   useEffect(() => {
-    // If viewing own profile, redirect to the profile tab
     if (user && id === user.id) {
       router.replace('/(tabs)/profile');
       return;
@@ -61,7 +55,7 @@ export default function UserProfileScreen() {
 
     if (id) {
       loadProfile();
-      loadBadges();
+      fetchBadges();
     }
   }, [id, user]);
 
@@ -78,33 +72,6 @@ export default function UserProfileScreen() {
       setProfile(data as PublicProfile);
     }
     setLoading(false);
-  }
-
-  async function loadBadges() {
-    if (!id) return;
-    setLoadingBadges(true);
-
-    const { data, error } = await supabase
-      .from('user_badges')
-      .select(`
-        id,
-        unlocked_at,
-        badge:badges (
-          id,
-          slug,
-          name,
-          description,
-          icon_url,
-          rarity
-        )
-      `)
-      .eq('user_id', id)
-      .order('unlocked_at', { ascending: false });
-
-    if (!error && data) {
-      setBadges(data as unknown as UserBadge[]);
-    }
-    setLoadingBadges(false);
   }
 
   if (loading) {
@@ -146,43 +113,17 @@ export default function UserProfileScreen() {
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* Hero Card */}
-        <View style={styles.heroCard}>
-          <View style={styles.avatarContainer}>
-            <UserAvatar
-              url={profile.avatar_url}
-              size={120}
-              borderWidth={4}
-              borderColor="#FF4B4B"
-              style={styles.avatar}
-            />
-          </View>
-          <Text style={styles.displayName}>
-            {profile.display_name || profile.username || t('common.user')}
-          </Text>
-
-          {/* XP and Level Bar */}
-          <XPProgressBar xp={profile.xp || 0} />
-
-          {/* Stats Banner */}
-          <View style={styles.statsBanner}>
-            <View style={styles.statsBannerColumn}>
-              <Image source={pixelStatAdded} style={styles.statsBannerIcon} />
-              <Text style={styles.statsBannerLabel}>{t('profile.machinesAdded')}</Text>
-              <Text style={styles.statsBannerNumber}>{profile.contribution_count || 0}</Text>
-            </View>
-            <View style={styles.statsBannerDivider} />
-            <View style={styles.statsBannerColumn}>
-              <Image source={pixelStatBadges} style={styles.statsBannerIcon} />
-              <Text style={styles.statsBannerLabel}>{t('profile.badges')}</Text>
-              <Text style={styles.statsBannerNumber}>{profile.badge_count || 0}</Text>
-            </View>
-            <View style={styles.statsBannerDivider} />
-            <View style={styles.statsBannerColumn}>
-              <Image source={pixelStatVisits} style={styles.statsBannerIcon} />
-              <Text style={styles.statsBannerLabel}>{t('profile.machinesVisited')}</Text>
-              <Text style={styles.statsBannerNumber}>{profile.visit_count || 0}</Text>
-            </View>
-          </View>
+        <View style={styles.heroCardWrapper}>
+          <ProfileHeroCard
+            avatarUrl={profile.avatar_url}
+            displayName={profile.display_name || profile.username || t('common.user')}
+            xp={profile.xp || 0}
+            stats={{
+              contributionCount: profile.contribution_count || 0,
+              badgeCount: profile.badge_count || 0,
+              visitCount: profile.visit_count || 0,
+            }}
+          />
         </View>
 
         {/* Badges Section */}
@@ -264,70 +205,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: 'center',
   },
-  heroCard: {
-    backgroundColor: '#fff',
-    borderRadius: 4,
-    padding: 24,
-    borderWidth: 3,
-    borderColor: '#FF4B4B',
-    shadowColor: '#000',
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 0,
-    elevation: 4,
-    alignItems: 'center',
+  heroCardWrapper: {
     marginBottom: 16,
-  },
-  avatarContainer: {
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
-  displayName: {
-    fontSize: FONT_SIZES.xxl,
-    fontFamily: 'DotGothic16',
-    color: '#2B2B2B',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  statsBanner: {
-    flexDirection: 'row',
-    backgroundColor: '#FF4B4B',
-    marginHorizontal: -24,
-    marginBottom: -24,
-    marginTop: 16,
-    paddingVertical: 16,
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2,
-  },
-  statsBannerColumn: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  statsBannerDivider: {
-    width: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  statsBannerIcon: {
-    width: ICON_SIZES.xl,
-    height: ICON_SIZES.xl,
-  },
-  statsBannerLabel: {
-    fontSize: FONT_SIZES.xs,
-    fontFamily: 'Silkscreen',
-    color: 'rgba(255, 255, 255, 0.85)',
-    textTransform: 'uppercase',
-    textAlign: 'center',
-  },
-  statsBannerNumber: {
-    fontSize: 28,
-    fontFamily: 'DotGothic16',
-    color: '#fff',
   },
   section: {
     marginBottom: 24,

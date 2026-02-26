@@ -15,7 +15,7 @@ interface BadgeShowcaseProps {
   userStats: {
     visit_count: number;
     contribution_count: number;
-    verification_count: number;
+    verification_count?: number;
   };
   onLockedBadgePress: (badge: Badge, progress: { current: number; required: number }) => void;
   onEarnedBadgePress: (badge: UserBadge['badge']) => void;
