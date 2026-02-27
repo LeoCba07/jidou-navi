@@ -12,8 +12,9 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_banned BOOLEAN NOT NULL DEFAULT
 --    permissive policies allow (Postgres 15+ AS RESTRICTIVE).
 -- ============================================================
 CREATE POLICY "Block banned users from submitting machines"
-ON machines FOR INSERT
+ON machines
 AS RESTRICTIVE
+FOR INSERT
 TO authenticated
 WITH CHECK (
     NOT COALESCE(
@@ -23,8 +24,9 @@ WITH CHECK (
 );
 
 CREATE POLICY "Block banned users from uploading photos"
-ON machine_photos FOR INSERT
+ON machine_photos
 AS RESTRICTIVE
+FOR INSERT
 TO authenticated
 WITH CHECK (
     NOT COALESCE(
@@ -34,8 +36,9 @@ WITH CHECK (
 );
 
 CREATE POLICY "Block banned users from creating visits"
-ON visits FOR INSERT
+ON visits
 AS RESTRICTIVE
+FOR INSERT
 TO authenticated
 WITH CHECK (
     NOT COALESCE(
