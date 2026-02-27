@@ -6,16 +6,19 @@
 -- level 6 instead of the correct level 3.
 --
 -- Fix strategy:
---   1. Rewrite upvote_machine() with the correct formula.
---   2. Add a BEFORE UPDATE trigger on profiles so that any future XP change
+--   1. Rewrite upvote_machine() to only update xp; trigger handles level.
+--   1a. Rewrite remove_upvote() to deduct XP correctly; trigger handles level.
+--   2. Add a BEFORE INSERT OR UPDATE trigger on profiles so any XP change
 --      from any code path automatically recalculates level — prevents drift.
 --   3. One-time backfill: recalculate level for all existing users.
 --   4. Rewrite global_leaderboard / friends_leaderboard to derive level from
 --      xp at query time rather than reading the potentially-stale column
 --      (defense-in-depth).
+--   5. Remove redundant level calculations from increment_xp and
+--      process_referral_signup_reward — trigger makes them obsolete.
 
 -- ============================================================
--- 1. Fix upvote_machine() — correct level formula
+-- 1. Rewrite upvote_machine() — only update xp; trigger handles level
 -- ============================================================
 CREATE OR REPLACE FUNCTION upvote_machine(p_machine_id UUID)
 RETURNS JSON AS $$
@@ -47,8 +50,7 @@ BEGIN
 
     -- Increment XP; BEFORE UPDATE trigger sync_level_from_xp will recalculate level
     UPDATE profiles AS p
-    SET
-        xp    = sub.new_xp
+    SET xp = sub.new_xp
     FROM (
         SELECT id, COALESCE(xp, 0) + xp_per_upvote AS new_xp
         FROM profiles
@@ -56,23 +58,62 @@ BEGIN
     ) AS sub
     WHERE p.id = sub.id;
 
+    -- Re-read daily count after insert for accurate remaining_votes
+    SELECT COUNT(*)::INT INTO daily_count
+    FROM machine_upvotes
+    WHERE user_id = auth.uid()
+      AND created_at >= date_trunc('day', NOW());
+
     RETURN json_build_object(
         'success', true,
         'xp_awarded', xp_per_upvote,
-        'remaining_votes', max_daily_upvotes - daily_count - 1
+        'remaining_votes', max_daily_upvotes - daily_count
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ============================================================
--- 2. Trigger: auto-recalculate level on any XP change
---    This makes all future XP paths self-correcting.
+-- 1a. Rewrite remove_upvote() — deduct XP correctly; trigger handles level
+-- ============================================================
+CREATE OR REPLACE FUNCTION remove_upvote(p_machine_id UUID)
+RETURNS JSON AS $$
+DECLARE
+    xp_per_upvote INT := 5;
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM machine_upvotes
+        WHERE user_id = auth.uid() AND machine_id = p_machine_id
+    ) THEN
+        RETURN json_build_object('success', false, 'error', 'not_upvoted');
+    END IF;
+
+    DELETE FROM machine_upvotes
+    WHERE user_id = auth.uid()
+      AND machine_id = p_machine_id;
+
+    -- Decrement XP (floor at 0); BEFORE UPDATE trigger will recalculate level
+    UPDATE profiles AS p
+    SET xp = GREATEST(sub.new_xp, 0)
+    FROM (
+        SELECT id, COALESCE(xp, 0) - xp_per_upvote AS new_xp
+        FROM profiles
+        WHERE id = auth.uid()
+    ) AS sub
+    WHERE p.id = sub.id;
+
+    RETURN json_build_object('success', true, 'xp_removed', xp_per_upvote);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- ============================================================
+-- 2. Trigger: auto-recalculate level on any XP change (INSERT or UPDATE)
+--    BEFORE INSERT fires for new profiles; BEFORE UPDATE OF xp fires
+--    whenever any function changes the xp column.
 -- ============================================================
 CREATE OR REPLACE FUNCTION sync_level_from_xp()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Only recalculate when xp actually changed
-    IF NEW.xp IS DISTINCT FROM OLD.xp THEN
+    IF TG_OP = 'INSERT' OR NEW.xp IS DISTINCT FROM OLD.xp THEN
         NEW.level := (FLOOR(0.1 * SQRT(COALESCE(NEW.xp, 0))) + 1)::INT;
     END IF;
     RETURN NEW;
@@ -81,17 +122,23 @@ $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS trigger_sync_level_from_xp ON profiles;
 CREATE TRIGGER trigger_sync_level_from_xp
-    BEFORE UPDATE OF xp ON profiles
+    BEFORE INSERT OR UPDATE OF xp ON profiles
     FOR EACH ROW
     EXECUTE FUNCTION sync_level_from_xp();
 
 -- ============================================================
--- 3. Backfill: correct all existing users' levels
+-- 3. Backfill: correct all existing users' levels.
+--    Disable the trigger during backfill to avoid double-calculation
+--    (the SET clause and the trigger would compute the same value twice).
 -- ============================================================
+ALTER TABLE profiles DISABLE TRIGGER trigger_sync_level_from_xp;
+
 UPDATE profiles
 SET level = (FLOOR(0.1 * SQRT(COALESCE(xp, 0))) + 1)::INT
 WHERE level IS DISTINCT FROM (FLOOR(0.1 * SQRT(COALESCE(xp, 0))) + 1)::INT
    OR level IS NULL;
+
+ALTER TABLE profiles ENABLE TRIGGER trigger_sync_level_from_xp;
 
 -- ============================================================
 -- 4. Rewrite leaderboard RPCs to compute level from xp
@@ -208,3 +255,52 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION friends_leaderboard(INT) TO authenticated;
+
+-- ============================================================
+-- 5. Remove redundant level calculation from increment_xp
+--    The trigger now handles level; only xp needs to be set.
+-- ============================================================
+CREATE OR REPLACE FUNCTION increment_xp(xp_to_add INT)
+RETURNS TABLE (new_xp INT, new_level INT) AS $$
+DECLARE
+    current_user_id UUID;
+BEGIN
+    current_user_id := auth.uid();
+
+    IF current_user_id IS NULL THEN
+        RAISE EXCEPTION 'Not authenticated';
+    END IF;
+
+    IF xp_to_add <= 0 THEN
+        RAISE EXCEPTION 'XP amount must be positive';
+    END IF;
+
+    IF xp_to_add > 1000 THEN
+        RAISE EXCEPTION 'XP amount must not exceed 1000 per call';
+    END IF;
+
+    -- Only update xp; BEFORE UPDATE trigger sync_level_from_xp recalculates level
+    RETURN QUERY
+    UPDATE profiles
+    SET xp = COALESCE(xp, 0) + xp_to_add
+    WHERE id = current_user_id
+    RETURNING profiles.xp, profiles.level;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- ============================================================
+-- 6. Remove redundant level calculation from process_referral_signup_reward
+--    The trigger now handles level; only xp needs to be set.
+-- ============================================================
+CREATE OR REPLACE FUNCTION process_referral_signup_reward()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.referred_by_id IS NOT NULL THEN
+        -- Award 100 XP to the referrer; trigger recalculates their level
+        UPDATE profiles
+        SET xp = xp + 100
+        WHERE id = NEW.referred_by_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
