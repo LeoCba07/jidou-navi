@@ -260,10 +260,10 @@ export async function unsaveMachine(machineId: string): Promise<boolean> {
 }
 
 // Fetch all photos for a machine
-export async function fetchMachinePhotos(machineId: string): Promise<string[]> {
+export async function fetchMachinePhotos(machineId: string): Promise<{ id: string; url: string }[]> {
   const { data, error } = await supabase
     .from('machine_photos')
-    .select('photo_url')
+    .select('id, photo_url')
     .eq('machine_id', machineId)
     .eq('status', 'active')
     .order('is_primary', { ascending: false }) // Primary first
@@ -274,7 +274,7 @@ export async function fetchMachinePhotos(machineId: string): Promise<string[]> {
     return [];
   }
 
-  return data.map(p => p.photo_url);
+  return data.map(p => ({ id: p.id, url: p.photo_url }));
 }
 
 // Fetch all saved machine IDs for current user (for quick lookup)

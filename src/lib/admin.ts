@@ -239,3 +239,47 @@ export async function rejectPhoto(photoId: string): Promise<boolean> {
 
   return true;
 }
+
+// Remove an active photo from a machine (admin or owner action via RPC)
+export async function removeActivePhoto(photoId: string): Promise<boolean> {
+  const { data, error } = await supabase.rpc('remove_photo', {
+    p_photo_id: photoId,
+  });
+
+  if (error) {
+    console.error('Error removing photo:', error);
+    return false;
+  }
+
+  return data === true;
+}
+
+// Ban a user — sets is_banned = true on their profile
+export async function banUser(userId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ is_banned: true })
+    .eq('id', userId);
+
+  if (error) {
+    console.error('Error banning user:', error);
+    return false;
+  }
+
+  return true;
+}
+
+// Unban a user — sets is_banned = false on their profile
+export async function unbanUser(userId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ is_banned: false })
+    .eq('id', userId);
+
+  if (error) {
+    console.error('Error unbanning user:', error);
+    return false;
+  }
+
+  return true;
+}

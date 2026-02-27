@@ -11,6 +11,9 @@ import {
   rejectMachine,
   approvePhoto,
   rejectPhoto,
+  banUser,
+  unbanUser,
+  removeActivePhoto,
 } from '../lib/admin';
 
 interface AdminState {
@@ -32,6 +35,9 @@ interface AdminState {
   loadPendingPhotos: () => Promise<void>;
   approvePhoto: (photoId: string) => Promise<boolean>;
   rejectPhoto: (photoId: string) => Promise<boolean>;
+  banUser: (userId: string) => Promise<boolean>;
+  unbanUser: (userId: string) => Promise<boolean>;
+  removeActivePhoto: (photoId: string) => Promise<boolean>;
   reset: () => void;
 }
 
@@ -121,6 +127,18 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       set({ pendingPhotos: pendingPhotos.filter((p) => p.id !== photoId) });
     }
     return success;
+  },
+
+  banUser: async (userId: string) => {
+    return banUser(userId);
+  },
+
+  unbanUser: async (userId: string) => {
+    return unbanUser(userId);
+  },
+
+  removeActivePhoto: async (photoId: string) => {
+    return removeActivePhoto(photoId);
   },
 
   reset: () => {

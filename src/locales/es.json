@@ -610,7 +610,18 @@
     "photoApproveSuccess": "Foto aprobada y ahora visible en la máquina.",
     "photoApproveError": "Error al aprobar la foto. Inténtalo de nuevo.",
     "photoRejectSuccess": "Foto rechazada.",
-    "photoRejectError": "Error al rechazar la foto. Inténtalo de nuevo."
+    "photoRejectError": "Error al rechazar la foto. Inténtalo de nuevo.",
+    "deletePhoto": "Eliminar foto",
+    "deletePhotoHint": "Elimina permanentemente esta foto de la máquina",
+    "deletePhotoSuccess": "Foto eliminada.",
+    "deletePhotoError": "Error al eliminar la foto. Inténtalo de nuevo.",
+    "banUser": "Banear usuario",
+    "banUserHint": "Impide que este usuario envíe máquinas, fotos o registros de visita",
+    "confirmBan": "¿Banear usuario?",
+    "confirmBanMessage": "Esto impedirá que {{name}} envíe máquinas, fotos o registros de visita.",
+    "banningUser": "Baneando a {{name}}...",
+    "banSuccess": "El usuario ha sido baneado.",
+    "banError": "Error al banear al usuario. Inténtalo de nuevo."
   },
   "report": {
     "title": "Reportar Problema",

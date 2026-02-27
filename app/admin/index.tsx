@@ -34,6 +34,7 @@ export default function AdminDashboard() {
     loadPendingPhotos,
     approvePhoto,
     rejectPhoto,
+    banUser,
   } = useAdminStore();
 
   const isAdmin = profile?.role === 'admin';
@@ -75,6 +76,18 @@ export default function AdminDashboard() {
       toast.showError(t('admin.photoRejectError'));
     }
     return success;
+  };
+
+  const handleBanUser = (userId: string, displayName: string) => {
+    // Navigate to review screen is not available from dashboard — use Alert for confirmation
+    toast.showInfo(t('admin.banningUser', { name: displayName }));
+    banUser(userId).then((success) => {
+      if (success) {
+        toast.showSuccess(t('admin.banSuccess'));
+      } else {
+        toast.showError(t('admin.banError'));
+      }
+    });
   };
 
   // Access denied for non-admins
@@ -179,6 +192,7 @@ export default function AdminDashboard() {
                     photo={photo}
                     onApprove={handleApprovePhoto}
                     onReject={handleRejectPhoto}
+                    onBanUser={handleBanUser}
                   />
                 ))}
               </View>

@@ -47,11 +47,13 @@ export default function ReviewMachineScreen() {
     loadNearbyMachines,
     approve,
     reject,
+    banUser,
   } = useAdminStore();
   const { showError, showSuccess, showConfirm } = useAppModal();
 
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isBanning, setIsBanning] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
 
   const isAdmin = profile?.role === 'admin';
@@ -103,6 +105,30 @@ export default function ReviewMachineScreen() {
     } else {
       showError(t('common.error'), t('admin.rejectError'));
     }
+  };
+
+  const handleBanUser = (userId: string, displayName: string) => {
+    showConfirm(
+      t('admin.confirmBan'),
+      t('admin.confirmBanMessage', { name: displayName }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('admin.banUser'),
+          style: 'destructive',
+          onPress: async () => {
+            setIsBanning(true);
+            const success = await banUser(userId);
+            setIsBanning(false);
+            if (success) {
+              showSuccess(t('common.success'), t('admin.banSuccess'));
+            } else {
+              showError(t('common.error'), t('admin.banError'));
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Access denied for non-admins
@@ -226,6 +252,30 @@ export default function ReviewMachineScreen() {
               <Ionicons name="chevron-forward" size={ICON_SIZES.sm} color="#999" />
             )}
           </Pressable>
+          {selectedMachine.contributor_id && (
+            <Pressable
+              style={styles.banUserButton}
+              onPress={() =>
+                handleBanUser(
+                  selectedMachine.contributor_id!,
+                  selectedMachine.contributor_display_name ||
+                    selectedMachine.contributor_username ||
+                    t('common.user')
+                )
+              }
+              disabled={isBanning}
+              accessibilityRole="button"
+              accessibilityLabel={t('admin.banUser')}
+              accessibilityHint={t('admin.banUserHint')}
+            >
+              {isBanning ? (
+                <ActivityIndicator size="small" color="#DC2626" />
+              ) : (
+                <Ionicons name="ban-outline" size={ICON_SIZES.xs} color="#DC2626" />
+              )}
+              <Text style={styles.banUserText}>{t('admin.banUser')}</Text>
+            </Pressable>
+          )}
           <Text style={styles.submittedAt}>
             {new Date(selectedMachine.created_at).toLocaleDateString('en-US', {
               year: 'numeric',
@@ -472,6 +522,25 @@ const styles = StyleSheet.create({
     color: '#999',
     marginTop: 4,
     marginLeft: 32,
+  },
+  banUserButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 8,
+    marginLeft: 32,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#DC2626',
+    alignSelf: 'flex-start',
+    backgroundColor: '#FEF2F2',
+  },
+  banUserText: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter-SemiBold',
+    color: '#DC2626',
   },
   locationRow: {
     flexDirection: 'row',
