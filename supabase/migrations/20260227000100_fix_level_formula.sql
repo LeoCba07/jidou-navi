@@ -45,11 +45,10 @@ BEGIN
     INSERT INTO machine_upvotes (user_id, machine_id)
     VALUES (auth.uid(), p_machine_id);
 
-    -- Use the canonical level formula: FLOOR(0.1 * SQRT(xp)) + 1
+    -- Increment XP; BEFORE UPDATE trigger sync_level_from_xp will recalculate level
     UPDATE profiles AS p
     SET
-        xp    = sub.new_xp,
-        level = (FLOOR(0.1 * SQRT(sub.new_xp)) + 1)::INT
+        xp    = sub.new_xp
     FROM (
         SELECT id, COALESCE(xp, 0) + xp_per_upvote AS new_xp
         FROM profiles
