@@ -1,5 +1,5 @@
 // Admin dashboard - pending machines queue and pending photos review
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Pressable,
   ActivityIndicator,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -78,15 +79,36 @@ export default function AdminDashboard() {
     return success;
   };
 
-  const handleBanUser = (userId: string, displayName: string) => {
-    // Navigate to review screen is not available from dashboard — use Alert for confirmation
-    toast.showInfo(t('admin.banningUser', { name: displayName }));
-    banUser(userId).then((success) => {
-      if (success) {
-        toast.showSuccess(t('admin.banSuccess'));
-      } else {
-        toast.showError(t('admin.banError'));
-      }
+  const [banningUserIds, setBanningUserIds] = useState<Set<string>>(new Set());
+
+  const handleBanUser = (userId: string, displayName: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      Alert.alert(
+        t('admin.confirmBan'),
+        t('admin.confirmBanMessage', { name: displayName }),
+        [
+          { text: t('common.cancel'), style: 'cancel', onPress: () => resolve(false) },
+          {
+            text: t('admin.banUser'),
+            style: 'destructive',
+            onPress: async () => {
+              setBanningUserIds((prev) => new Set(prev).add(userId));
+              const success = await banUser(userId);
+              setBanningUserIds((prev) => {
+                const next = new Set(prev);
+                next.delete(userId);
+                return next;
+              });
+              if (success) {
+                toast.showSuccess(t('admin.banSuccess'));
+              } else {
+                toast.showError(t('admin.banError'));
+              }
+              resolve(success);
+            },
+          },
+        ]
+      );
     });
   };
 

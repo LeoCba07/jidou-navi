@@ -12,13 +12,14 @@ interface PendingPhotoCardProps {
   photo: PendingPhoto;
   onApprove: (photoId: string) => Promise<boolean>;
   onReject: (photoId: string) => Promise<boolean>;
-  onBanUser: (userId: string, displayName: string) => void;
+  onBanUser: (userId: string, displayName: string) => Promise<boolean>;
 }
 
 export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser }: PendingPhotoCardProps) {
   const { t } = useTranslation();
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isBanning, setIsBanning] = useState(false);
 
   const timeSinceSubmission = () => {
     const submitted = new Date(photo.created_at);
@@ -42,7 +43,7 @@ export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser
     setIsRejecting(false);
   };
 
-  const isProcessing = isApproving || isRejecting;
+  const isProcessing = isApproving || isRejecting || isBanning;
 
   return (
     <View style={styles.card}>
@@ -116,18 +117,24 @@ export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser
         {photo.uploaded_by && (
           <Pressable
             style={[styles.banButton, isProcessing && styles.buttonDisabled]}
-            onPress={() =>
-              onBanUser(
+            onPress={async () => {
+              setIsBanning(true);
+              await onBanUser(
                 photo.uploaded_by,
                 photo.uploader_display_name || photo.uploader_username || t('common.user')
-              )
-            }
+              );
+              setIsBanning(false);
+            }}
             disabled={isProcessing}
             accessibilityRole="button"
             accessibilityLabel={t('admin.banUser')}
             accessibilityHint={t('admin.banUserHint')}
           >
-            <Ionicons name="ban-outline" size={ICON_SIZES.xs} color="#DC2626" />
+            {isBanning ? (
+              <ActivityIndicator size="small" color="#DC2626" />
+            ) : (
+              <Ionicons name="ban-outline" size={ICON_SIZES.xs} color="#DC2626" />
+            )}
             <Text style={styles.banText}>{t('admin.banUser')}</Text>
           </Pressable>
         )}

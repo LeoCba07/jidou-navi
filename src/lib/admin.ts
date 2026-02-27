@@ -254,30 +254,34 @@ export async function removeActivePhoto(photoId: string): Promise<boolean> {
   return data === true;
 }
 
-// Ban a user — sets is_banned = true on their profile
+// Ban a user via SECURITY DEFINER RPC — admin role is verified server-side
 export async function banUser(userId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ is_banned: true })
-    .eq('id', userId);
+  const { data, error } = await (supabase as any).rpc('ban_user', { p_user_id: userId });
 
   if (error) {
     console.error('Error banning user:', error);
     return false;
   }
 
+  if (data !== true) {
+    console.error('Error banning user: RPC returned false (invalid userId or permission denied)', { userId });
+    return false;
+  }
+
   return true;
 }
 
-// Unban a user — sets is_banned = false on their profile
+// Unban a user via SECURITY DEFINER RPC — admin role is verified server-side
 export async function unbanUser(userId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from('profiles')
-    .update({ is_banned: false })
-    .eq('id', userId);
+  const { data, error } = await (supabase as any).rpc('unban_user', { p_user_id: userId });
 
   if (error) {
     console.error('Error unbanning user:', error);
+    return false;
+  }
+
+  if (data !== true) {
+    console.error('Error unbanning user: RPC returned false (invalid userId or permission denied)', { userId });
     return false;
   }
 

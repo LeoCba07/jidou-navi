@@ -772,7 +772,7 @@ export default function MachineDetailScreen() {
       return;
     }
 
-    // 1. Check location (unless admin
+    // 1. Check location (unless admin)
     if (!isAdmin) {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
