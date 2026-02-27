@@ -48,15 +48,10 @@ BEGIN
     INSERT INTO machine_upvotes (user_id, machine_id)
     VALUES (auth.uid(), p_machine_id);
 
-    -- Increment XP; BEFORE UPDATE trigger sync_level_from_xp will recalculate level
-    UPDATE profiles AS p
-    SET xp = sub.new_xp
-    FROM (
-        SELECT id, COALESCE(xp, 0) + xp_per_upvote AS new_xp
-        FROM profiles
-        WHERE id = auth.uid()
-    ) AS sub
-    WHERE p.id = sub.id;
+    -- Atomic XP increment — avoids race conditions from subquery pattern
+    UPDATE profiles
+    SET xp = COALESCE(xp, 0) + xp_per_upvote
+    WHERE id = auth.uid();
 
     -- Re-read daily count after insert for accurate remaining_votes
     SELECT COUNT(*)::INT INTO daily_count
@@ -78,8 +73,12 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 CREATE OR REPLACE FUNCTION remove_upvote(p_machine_id UUID)
 RETURNS JSON AS $$
 DECLARE
-    xp_per_upvote INT := 5;
+    xp_per_upvote    INT := 5;
+    max_daily_upvotes INT := 3;
+    daily_count      INT;
 BEGIN
+    PERFORM require_verified_email();
+
     IF NOT EXISTS (
         SELECT 1 FROM machine_upvotes
         WHERE user_id = auth.uid() AND machine_id = p_machine_id
@@ -91,17 +90,22 @@ BEGIN
     WHERE user_id = auth.uid()
       AND machine_id = p_machine_id;
 
-    -- Decrement XP (floor at 0); BEFORE UPDATE trigger will recalculate level
-    UPDATE profiles AS p
-    SET xp = GREATEST(sub.new_xp, 0)
-    FROM (
-        SELECT id, COALESCE(xp, 0) - xp_per_upvote AS new_xp
-        FROM profiles
-        WHERE id = auth.uid()
-    ) AS sub
-    WHERE p.id = sub.id;
+    -- Atomic XP decrement, floored at 0 — avoids race conditions
+    UPDATE profiles
+    SET xp = GREATEST(COALESCE(xp, 0) - xp_per_upvote, 0)
+    WHERE id = auth.uid();
 
-    RETURN json_build_object('success', true, 'xp_removed', xp_per_upvote);
+    -- Re-read daily count after delete for accurate remaining_votes
+    SELECT COUNT(*)::INT INTO daily_count
+    FROM machine_upvotes
+    WHERE user_id = auth.uid()
+      AND created_at >= date_trunc('day', NOW());
+
+    RETURN json_build_object(
+        'success', true,
+        'xp_removed', xp_per_upvote,
+        'remaining_votes', max_daily_upvotes - daily_count
+    );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
@@ -128,17 +132,13 @@ CREATE TRIGGER trigger_sync_level_from_xp
 
 -- ============================================================
 -- 3. Backfill: correct all existing users' levels.
---    Disable the trigger during backfill to avoid double-calculation
---    (the SET clause and the trigger would compute the same value twice).
+--    The trigger fires on UPDATE OF xp; this backfill only sets `level`,
+--    so the trigger won't fire — no need to disable it.
 -- ============================================================
-ALTER TABLE profiles DISABLE TRIGGER trigger_sync_level_from_xp;
-
 UPDATE profiles
 SET level = (FLOOR(0.1 * SQRT(COALESCE(xp, 0))) + 1)::INT
 WHERE level IS DISTINCT FROM (FLOOR(0.1 * SQRT(COALESCE(xp, 0))) + 1)::INT
    OR level IS NULL;
-
-ALTER TABLE profiles ENABLE TRIGGER trigger_sync_level_from_xp;
 
 -- ============================================================
 -- 4. Rewrite leaderboard RPCs to compute level from xp
@@ -298,7 +298,7 @@ BEGIN
     IF NEW.referred_by_id IS NOT NULL THEN
         -- Award 100 XP to the referrer; trigger recalculates their level
         UPDATE profiles
-        SET xp = xp + 100
+        SET xp = COALESCE(xp, 0) + 100
         WHERE id = NEW.referred_by_id;
     END IF;
     RETURN NEW;
