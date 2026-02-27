@@ -136,8 +136,13 @@ BEGIN
     -- Email verification check
     PERFORM require_verified_email();
 
-    -- Rate limit: 10 photo removals per hour
-    PERFORM check_rate_limit('remove_photo', 10, 60);
+    -- Rate limit: 10 photo removals per hour (admins and developers bypass)
+    IF NOT EXISTS (
+        SELECT 1 FROM profiles
+        WHERE id = auth.uid() AND role IN ('admin', 'developer')
+    ) THEN
+        PERFORM check_rate_limit('remove_photo', 10, 60);
+    END IF;
 
     UPDATE machine_photos
     SET status = 'removed'
