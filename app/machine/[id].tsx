@@ -33,6 +33,7 @@ import { Analytics } from '../../src/lib/analytics';
 import { Sentry } from '../../src/lib/sentry';
 import { useAuthStore, useSavedMachinesStore, useVisitedMachinesStore, useUIStore } from '../../src/store';
 import { useMachinesCacheStore } from '../../src/store/machinesCacheStore';
+import { useAdminStore } from '../../src/store/adminStore';
 import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById, fetchMachineVisitors, type MachineVisitor } from '../../src/lib/machines';
@@ -79,13 +80,15 @@ export default function MachineDetailScreen() {
   const { showError, showSuccess, showConfirm, showInfo } = useAppModal();
   const toast = useToast();
   const clearCache = useMachinesCacheStore((state) => state.clearCache);
+  const { removeActivePhoto: adminRemovePhoto } = useAdminStore();
+  const isAdmin = profile?.role === 'admin';
   const [checkingIn, setCheckingIn] = useState(false);
   const [hasCheckedIn, setHasCheckedIn] = useState(false);
   const [visitCheckDone, setVisitCheckDone] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<{ id: string; url: string }[]>([]);
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -314,9 +317,9 @@ export default function MachineDetailScreen() {
     let isMounted = true;
 
     async function loadPhotos() {
-      // Seed with primary photo if available
+      // Seed with primary photo if available to show something while fetching
       if (primaryPhotoUrl) {
-        setPhotos([primaryPhotoUrl]);
+        setPhotos([{ id: 'primary', url: primaryPhotoUrl }]);
       }
 
       const fetchedPhotos = await fetchMachinePhotos(params.id);
@@ -337,9 +340,8 @@ export default function MachineDetailScreen() {
 
       // Ensure primary photo is present and first, without duplication
       if (primaryPhotoUrl) {
-        const primary = primaryPhotoUrl;
-        const withoutPrimary = fetchedPhotos.filter((p) => p !== primary);
-        finalPhotos = [primary, ...withoutPrimary];
+        const withoutPrimary = fetchedPhotos.filter((p) => p.url !== primaryPhotoUrl);
+        finalPhotos = [{ id: fetchedPhotos.find(p => p.url === primaryPhotoUrl)?.id ?? 'primary', url: primaryPhotoUrl }, ...withoutPrimary];
       }
 
       setPhotos(finalPhotos);
@@ -690,7 +692,7 @@ export default function MachineDetailScreen() {
         machineId: params.id,
         machineName: params.name || '',
         machineAddress: params.address || '',
-        machinePhotoUrl: photos[0] || params.primary_photo_url || '',
+        machinePhotoUrl: photos[0]?.url || params.primary_photo_url || '',
         categories: categories,
       };
 
@@ -770,10 +772,8 @@ export default function MachineDetailScreen() {
       return;
     }
 
-    const isDev = profile?.role === 'admin';
-
-    // 1. Check location (unless dev)
-    if (!isDev) {
+    // 1. Check location (unless admin)
+    if (!isAdmin) {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         showError(t('common.error'), t('machine.checkIn.locationRequired'));
@@ -918,6 +918,21 @@ export default function MachineDetailScreen() {
     }
   }
 
+  async function handleAdminDeletePhoto() {
+    const currentPhoto = photos[activePhotoIndex];
+    if (!currentPhoto || currentPhoto.id === 'primary') return;
+
+    const success = await adminRemovePhoto(currentPhoto.id);
+    if (success) {
+      setPhotos((prev) => prev.filter((p) => p.id !== currentPhoto.id));
+      const newIndex = Math.max(0, activePhotoIndex - 1);
+      setActivePhotoIndex(newIndex);
+      toast.showSuccess(t('admin.deletePhotoSuccess'));
+    } else {
+      toast.showError(t('admin.deletePhotoError'));
+    }
+  }
+
   async function handleReport(reason: ReportReason, details?: string) {
     setReportSubmitting(true);
     try {
@@ -997,26 +1012,26 @@ export default function MachineDetailScreen() {
               style={styles.carousel}
               accessibilityLabel={t('machine.photoCarousel')}
             >
-              {photos.map((photoUrl, index) => (
+              {photos.map((photo, index) => (
                 <Pressable
-                  key={photoUrl}
+                  key={photo.id}
                   onPress={() => setIsFullScreen(true)}
                   accessibilityRole="button"
                   accessibilityLabel={t('machine.viewPhotoFullScreen', { current: index + 1, total: photos.length })}
                 >
                   <View style={styles.photoWrapper}>
-                    {!loadedImages.has(photoUrl) && (
+                    {!loadedImages.has(photo.url) && (
                       <ImageSkeleton style={styles.photoSkeleton} />
                     )}
                     <Image
-                      source={{ uri: photoUrl }}
+                      source={{ uri: photo.url }}
                       style={[
                         styles.photo,
-                        !loadedImages.has(photoUrl) && styles.photoHidden,
+                        !loadedImages.has(photo.url) && styles.photoHidden,
                       ]}
                       resizeMode="cover"
                       onLoad={() => {
-                        setLoadedImages(prev => new Set([...prev, photoUrl]));
+                        setLoadedImages(prev => new Set([...prev, photo.url]));
                       }}
                     />
                   </View>
@@ -1032,9 +1047,9 @@ export default function MachineDetailScreen() {
           {/* Pagination Dots */}
           {photos.length > 1 && (
             <View style={styles.pagination}>
-              {photos.map((photoUrl, index) => (
+              {photos.map((photo, index) => (
                 <View
-                  key={photoUrl}
+                  key={photo.id}
                   style={[
                     styles.paginationDot,
                     index === activePhotoIndex && styles.paginationDotActive,
@@ -1055,6 +1070,19 @@ export default function MachineDetailScreen() {
 
           {/* Visited stamp */}
           {(isVisited || hasCheckedIn) && <VisitedStamp />}
+
+          {/* Admin: delete current photo */}
+          {isAdmin && photos.length > 0 && photos[activePhotoIndex]?.id !== 'primary' && (
+            <Pressable
+              style={styles.adminDeletePhotoButton}
+              onPress={handleAdminDeletePhoto}
+              accessibilityRole="button"
+              accessibilityLabel={t('admin.deletePhoto')}
+              accessibilityHint={t('admin.deletePhotoHint')}
+            >
+              <Ionicons name="trash-outline" size={ICON_SIZES.sm} color="#fff" />
+            </Pressable>
+          )}
         </View>
 
         {/* Title Card */}
@@ -1322,10 +1350,10 @@ export default function MachineDetailScreen() {
             scrollEventThrottle={16}
             style={styles.fullScreenCarousel}
           >
-            {photos.map((photoUrl, index) => (
-              <View key={photoUrl} style={styles.fullScreenPhotoContainer}>
+            {photos.map((photo, index) => (
+              <View key={photo.id} style={styles.fullScreenPhotoContainer}>
                 <Image
-                  source={{ uri: photoUrl }}
+                  source={{ uri: photo.url }}
                   style={styles.fullScreenPhoto}
                   resizeMode="contain"
                   accessibilityRole="image"
@@ -1436,6 +1464,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: FONT_SIZES.sm,
     fontFamily: FONTS.button,
+  },
+  adminDeletePhotoButton: {
+    position: 'absolute',
+    top: SPACING.md,
+    right: SPACING.md,
+    backgroundColor: 'rgba(220, 38, 38, 0.85)',
+    padding: SPACING.sm,
+    borderRadius: BORDER_RADIUS.pixel,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
   noPhoto: {
     backgroundColor: COLORS.backgroundDark,

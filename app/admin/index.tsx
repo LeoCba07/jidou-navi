@@ -1,5 +1,5 @@
 // Admin dashboard - pending machines queue and pending photos review
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Pressable,
   ActivityIndicator,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,6 +35,7 @@ export default function AdminDashboard() {
     loadPendingPhotos,
     approvePhoto,
     rejectPhoto,
+    banUser,
   } = useAdminStore();
 
   const isAdmin = profile?.role === 'admin';
@@ -75,6 +77,39 @@ export default function AdminDashboard() {
       toast.showError(t('admin.photoRejectError'));
     }
     return success;
+  };
+
+  const [banningUserIds, setBanningUserIds] = useState<Set<string>>(new Set());
+
+  const handleBanUser = (userId: string, displayName: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      Alert.alert(
+        t('admin.confirmBan'),
+        t('admin.confirmBanMessage', { name: displayName }),
+        [
+          { text: t('common.cancel'), style: 'cancel', onPress: () => resolve(false) },
+          {
+            text: t('admin.banUser'),
+            style: 'destructive',
+            onPress: async () => {
+              setBanningUserIds((prev) => new Set(prev).add(userId));
+              const success = await banUser(userId);
+              setBanningUserIds((prev) => {
+                const next = new Set(prev);
+                next.delete(userId);
+                return next;
+              });
+              if (success) {
+                toast.showSuccess(t('admin.banSuccess'));
+              } else {
+                toast.showError(t('admin.banError'));
+              }
+              resolve(success);
+            },
+          },
+        ]
+      );
+    });
   };
 
   // Access denied for non-admins
@@ -179,6 +214,7 @@ export default function AdminDashboard() {
                     photo={photo}
                     onApprove={handleApprovePhoto}
                     onReject={handleRejectPhoto}
+                    onBanUser={handleBanUser}
                   />
                 ))}
               </View>

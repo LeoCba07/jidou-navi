@@ -1,5 +1,5 @@
 // Card component for displaying a pending photo in the admin review queue.
-// Includes inline approve/reject actions — no separate review screen needed
+// Includes inline approve/reject/ban actions — no separate review screen needed
 // since photos don't require location or duplicate checks.
 import { useState } from 'react';
 import { View, Text, Image, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
@@ -12,12 +12,14 @@ interface PendingPhotoCardProps {
   photo: PendingPhoto;
   onApprove: (photoId: string) => Promise<boolean>;
   onReject: (photoId: string) => Promise<boolean>;
+  onBanUser: (userId: string, displayName: string) => Promise<boolean>;
 }
 
-export default function PendingPhotoCard({ photo, onApprove, onReject }: PendingPhotoCardProps) {
+export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser }: PendingPhotoCardProps) {
   const { t } = useTranslation();
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isBanning, setIsBanning] = useState(false);
 
   const timeSinceSubmission = () => {
     const submitted = new Date(photo.created_at);
@@ -41,7 +43,7 @@ export default function PendingPhotoCard({ photo, onApprove, onReject }: Pending
     setIsRejecting(false);
   };
 
-  const isProcessing = isApproving || isRejecting;
+  const isProcessing = isApproving || isRejecting || isBanning;
 
   return (
     <View style={styles.card}>
@@ -110,6 +112,32 @@ export default function PendingPhotoCard({ photo, onApprove, onReject }: Pending
             <Text style={styles.approveText}>{t('admin.approve')}</Text>
           </Pressable>
         </View>
+
+        {/* Ban uploader */}
+        {photo.uploaded_by && (
+          <Pressable
+            style={[styles.banButton, isProcessing && styles.buttonDisabled]}
+            onPress={async () => {
+              setIsBanning(true);
+              await onBanUser(
+                photo.uploaded_by,
+                photo.uploader_display_name || photo.uploader_username || t('common.user')
+              );
+              setIsBanning(false);
+            }}
+            disabled={isProcessing}
+            accessibilityRole="button"
+            accessibilityLabel={t('admin.banUser')}
+            accessibilityHint={t('admin.banUserHint')}
+          >
+            {isBanning ? (
+              <ActivityIndicator size="small" color="#DC2626" />
+            ) : (
+              <Ionicons name="ban-outline" size={ICON_SIZES.xs} color="#DC2626" />
+            )}
+            <Text style={styles.banText}>{t('admin.banUser')}</Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -197,5 +225,23 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     opacity: 0.5,
+  },
+  banButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 6,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 2,
+    borderWidth: 1.5,
+    borderColor: '#DC2626',
+    alignSelf: 'flex-start',
+    backgroundColor: '#FEF2F2',
+  },
+  banText: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: 'Inter-SemiBold',
+    color: '#DC2626',
   },
 });

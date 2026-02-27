@@ -610,7 +610,18 @@
     "photoApproveSuccess": "Photo approved and now visible on the machine.",
     "photoApproveError": "Failed to approve photo. Please try again.",
     "photoRejectSuccess": "Photo rejected.",
-    "photoRejectError": "Failed to reject photo. Please try again."
+    "photoRejectError": "Failed to reject photo. Please try again.",
+    "deletePhoto": "Delete photo",
+    "deletePhotoHint": "Permanently removes this photo from the machine",
+    "deletePhotoSuccess": "Photo removed.",
+    "deletePhotoError": "Failed to remove photo. Please try again.",
+    "banUser": "Ban user",
+    "banUserHint": "Prevents this user from submitting machines, photos, or check-ins",
+    "confirmBan": "Ban User?",
+    "confirmBanMessage": "This will prevent {{name}} from submitting machines, photos, or check-ins.",
+    "banningUser": "Banning {{name}}...",
+    "banSuccess": "User has been banned.",
+    "banError": "Failed to ban user. Please try again."
   },
   "report": {
     "title": "Report Issue",
