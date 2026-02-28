@@ -36,13 +36,18 @@ export async function uploadPhoto(
     ? `${userId}/${machineId}/${Date.now()}-${randomId}-${file.name}`
     : `${userId}/pending/${Date.now()}-${randomId}-${file.name}`;
 
-  // Read file as blob for Supabase upload
-  const response = await fetch(file.uri);
-  const blob = await response.blob();
+  // Build FormData with RN file URI object — React Native's networking
+  // layer serializes { uri, type, name } as a real multipart file upload.
+  const formData = new FormData();
+  formData.append('', {
+    uri: file.uri,
+    type: file.type,
+    name: file.name,
+  } as unknown as Blob);
 
   const { error } = await supabase.storage
     .from(BUCKET)
-    .upload(path, blob, {
+    .upload(path, formData, {
       contentType: file.type,
     });
 
@@ -83,14 +88,18 @@ export async function uploadAvatar(
   // 4. Path logic - use fixed name to overwrite old avatar
   const path = `${userId}/avatar${extension}`;
 
-  // 5. Read file as blob for Supabase upload
-  const response = await fetch(file.uri);
-  const blob = await response.blob();
+  // 5. Build FormData with RN file URI object
+  const formData = new FormData();
+  formData.append('', {
+    uri: file.uri,
+    type: file.type,
+    name: file.name,
+  } as unknown as Blob);
 
   // 6. Upload with upsert
   const { error } = await supabase.storage
     .from(AVATAR_BUCKET)
-    .upload(path, blob, {
+    .upload(path, formData, {
       contentType: file.type,
       upsert: true,
     });
