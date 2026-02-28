@@ -14,7 +14,7 @@ import {
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import * as FileSystem from 'expo-file-system';
+import { File as ExpoFile } from 'expo-file-system';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../src/lib/supabase';
 import { Sentry } from '../src/lib/sentry';
@@ -208,12 +208,10 @@ export default function AddMachineScreen() {
         // Get file size of processed image
         let size = 0;
         try {
-          const fileInfo = await FileSystem.getInfoAsync(processedUri);
-          if (fileInfo.exists) {
-            size = fileInfo.size;
-          }
+          const expoFile = new ExpoFile(processedUri);
+          size = expoFile.size ?? 0;
         } catch (e) {
-          console.warn('Failed to get file size via FileSystem:', e);
+          console.warn('Failed to get file size:', e);
         }
 
         // Logic for EXIF: only ask/use for the first valid GPS found if we don't have one
