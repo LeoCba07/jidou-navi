@@ -56,6 +56,8 @@ export default function ReviewMachineScreen() {
   const [isBanning, setIsBanning] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
 
+  const isProcessing = isApproving || isRejecting || isBanning;
+
   const isAdmin = profile?.role === 'admin';
 
   useEffect(() => {
@@ -254,7 +256,7 @@ export default function ReviewMachineScreen() {
           </Pressable>
           {selectedMachine.contributor_id && (
             <Pressable
-              style={styles.banUserButton}
+              style={[styles.banUserButton, isProcessing && styles.buttonDisabled]}
               onPress={() =>
                 handleBanUser(
                   selectedMachine.contributor_id!,
@@ -263,7 +265,7 @@ export default function ReviewMachineScreen() {
                     t('common.user')
                 )
               }
-              disabled={isBanning || isApproving || isRejecting}
+              disabled={isProcessing}
               accessibilityRole="button"
               accessibilityLabel={t('admin.banUser')}
               accessibilityHint={t('admin.banUserHint')}
@@ -384,9 +386,9 @@ export default function ReviewMachineScreen() {
       {/* Action Buttons */}
       <View style={styles.actionBar}>
         <Pressable
-          style={[styles.rejectButton, isRejecting && styles.buttonDisabled]}
+          style={[styles.rejectButton, isProcessing && styles.buttonDisabled]}
           onPress={() => setShowRejectModal(true)}
-          disabled={isApproving || isRejecting || isBanning}
+          disabled={isProcessing}
         >
           {isRejecting ? (
             <ActivityIndicator color="#FF4B4B" />
@@ -398,9 +400,9 @@ export default function ReviewMachineScreen() {
           )}
         </Pressable>
         <Pressable
-          style={[styles.approveButton, isApproving && styles.buttonDisabled]}
+          style={[styles.approveButton, isProcessing && styles.buttonDisabled]}
           onPress={handleApprove}
-          disabled={isApproving || isRejecting || isBanning}
+          disabled={isProcessing}
         >
           {isApproving ? (
             <ActivityIndicator color="#fff" />
