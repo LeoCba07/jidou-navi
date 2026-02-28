@@ -91,37 +91,6 @@ export default function ReviewMachineScreen() {
     );
   };
 
-  const handleBan = () => {
-    const contributorName =
-      selectedMachine?.contributor_display_name ||
-      selectedMachine?.contributor_username ||
-      t('common.user');
-    showConfirm(
-      t('admin.confirmBan'),
-      t('admin.confirmBanMessage', { name: contributorName }),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('admin.banUser'),
-          onPress: async () => {
-            if (!selectedMachine?.contributor_id) return;
-            setIsBanning(true);
-            const success = await banUser(selectedMachine.contributor_id);
-            setIsBanning(false);
-
-            if (success) {
-              showSuccess(t('common.success'), t('admin.banSuccess'), () => {
-                router.back();
-              });
-            } else {
-              showError(t('common.error'), t('admin.banError'));
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const handleReject = async (reason: string) => {
     if (!user) return;
     setIsRejecting(true);
@@ -294,7 +263,7 @@ export default function ReviewMachineScreen() {
                     t('common.user')
                 )
               }
-              disabled={isBanning}
+              disabled={isBanning || isApproving || isRejecting}
               accessibilityRole="button"
               accessibilityLabel={t('admin.banUser')}
               accessibilityHint={t('admin.banUserHint')}
@@ -316,29 +285,7 @@ export default function ReviewMachineScreen() {
               minute: '2-digit',
             })}
           </Text>
-          {selectedMachine.contributor_id && (
-            <Pressable
-              style={[styles.banButton, isBanning && styles.buttonDisabled]}
-              onPress={handleBan}
-              disabled={isBanning || isApproving || isRejecting}
-              accessibilityRole="button"
-              accessibilityLabel={t('admin.banUser')}
-              accessibilityHint={t('admin.confirmBanMessage', {
-                name:
-                  selectedMachine.contributor_display_name ||
-                  selectedMachine.contributor_username ||
-                  t('common.user'),
-              })}
-            >
-              {isBanning ? (
-                <ActivityIndicator size="small" color="#DC2626" />
-              ) : (
-                <Ionicons name="ban-outline" size={ICON_SIZES.xs} color="#DC2626" />
-              )}
-              <Text style={styles.banButtonText}>{t('admin.banUser')}</Text>
-            </Pressable>
-          )}
-        </View>
+          </View>
 
         {/* Location Info */}
         <View style={styles.section}>
@@ -741,24 +688,6 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     opacity: 0.5,
-  },
-  banButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 2,
-    borderWidth: 2,
-    borderColor: '#DC2626',
-    backgroundColor: '#FEF2F2',
-    alignSelf: 'flex-start',
-  },
-  banButtonText: {
-    fontSize: FONT_SIZES.xs,
-    fontFamily: 'Silkscreen',
-    color: '#DC2626',
   },
   categoriesRow: {
     flexDirection: 'row',
