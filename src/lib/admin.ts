@@ -255,6 +255,7 @@ export async function removeActivePhoto(photoId: string): Promise<boolean> {
 }
 
 // Ban a user via SECURITY DEFINER RPC — admin role is verified server-side
+// Untyped RPC escape hatch: `ban_user` is not in generated database.types
 export async function banUser(userId: string): Promise<boolean> {
   const { data, error } = await (supabase as any).rpc('ban_user', { p_user_id: userId });
 
@@ -272,6 +273,7 @@ export async function banUser(userId: string): Promise<boolean> {
 }
 
 // Unban a user via SECURITY DEFINER RPC — admin role is verified server-side
+// Untyped RPC escape hatch: `unban_user` is not in generated database.types
 export async function unbanUser(userId: string): Promise<boolean> {
   const { data, error } = await (supabase as any).rpc('unban_user', { p_user_id: userId });
 
