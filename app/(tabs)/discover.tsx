@@ -49,7 +49,7 @@ export default function DiscoverScreen() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
   const { savedMachineIds, addSaved, removeSaved } = useSavedMachinesStore();
-  const { show, showError, showSuccess, hide } = useAppModal();
+  const { show, showError, hide } = useAppModal();
   const toast = useToast();
   const headerIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
   const contentIndicatorRef = React.useRef<DailyVotesIndicatorRef>(null);
