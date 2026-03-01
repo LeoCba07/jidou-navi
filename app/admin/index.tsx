@@ -17,7 +17,6 @@ import { useAuthStore } from '../../src/store/authStore';
 import { useAdminStore } from '../../src/store/adminStore';
 import { useToast } from '../../src/hooks/useToast';
 import PendingMachineCard from '../../src/components/admin/PendingMachineCard';
-import PendingPhotoCard from '../../src/components/admin/PendingPhotoCard';
 import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
 
 export default function AdminDashboard() {
@@ -30,11 +29,6 @@ export default function AdminDashboard() {
     error,
     loadPendingMachines,
     selectMachine,
-    pendingPhotos,
-    isLoadingPhotos,
-    loadPendingPhotos,
-    approvePhoto,
-    rejectPhoto,
     banUser,
   } = useAdminStore();
 
@@ -43,12 +37,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (isAdmin) {
       loadPendingMachines();
-      loadPendingPhotos();
     }
   }, [isAdmin]);
 
   const onRefresh = useCallback(async () => {
-    await Promise.all([loadPendingMachines(), loadPendingPhotos()]);
+    await loadPendingMachines();
   }, []);
 
   const handleMachinePress = (machine: typeof pendingMachines[0]) => {
@@ -57,26 +50,6 @@ export default function AdminDashboard() {
       pathname: '/admin/review/[id]',
       params: { id: machine.id },
     });
-  };
-
-  const handleApprovePhoto = async (photoId: string) => {
-    const success = await approvePhoto(photoId);
-    if (success) {
-      toast.showSuccess(t('admin.photoApproveSuccess'));
-    } else {
-      toast.showError(t('admin.photoApproveError'));
-    }
-    return success;
-  };
-
-  const handleRejectPhoto = async (photoId: string) => {
-    const success = await rejectPhoto(photoId);
-    if (success) {
-      toast.showInfo(t('admin.photoRejectSuccess'));
-    } else {
-      toast.showError(t('admin.photoRejectError'));
-    }
-    return success;
   };
 
   const [banningUserIds, setBanningUserIds] = useState<Set<string>>(new Set());
@@ -93,18 +66,25 @@ export default function AdminDashboard() {
             style: 'destructive',
             onPress: async () => {
               setBanningUserIds((prev) => new Set(prev).add(userId));
-              const success = await banUser(userId);
+              const result = await banUser(userId);
               setBanningUserIds((prev) => {
                 const next = new Set(prev);
                 next.delete(userId);
                 return next;
               });
-              if (success) {
-                toast.showSuccess(t('admin.banSuccess'));
+              if (result) {
+                const message = result.rejected_machines > 0
+                  ? t('admin.banSuccessWithRejections', {
+                      machines: result.rejected_machines,
+                    })
+                  : t('admin.banSuccess');
+                toast.showSuccess(message);
+                // Refresh list since submissions were auto-rejected
+                loadPendingMachines();
               } else {
                 toast.showError(t('admin.banError'));
               }
-              resolve(success);
+              resolve(!!result);
             },
           },
         ]
@@ -148,11 +128,6 @@ export default function AdminDashboard() {
           <Text style={styles.statNumber}>{pendingMachines.length}</Text>
           <Text style={styles.statLabel}>{t('admin.pendingReview')}</Text>
         </View>
-        <View style={styles.statDivider} />
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>{pendingPhotos.length}</Text>
-          <Text style={styles.statLabel}>{t('admin.pendingPhotos')}</Text>
-        </View>
       </View>
 
       {/* Content */}
@@ -178,7 +153,7 @@ export default function AdminDashboard() {
         ) : (
           <View style={styles.listContainer}>
             {/* Pending Machines */}
-            <Text style={styles.sectionTitle}>{t('admin.pendingReview')}</Text>
+            <Text style={styles.sectionTitle}>{t('admin.pendingReview')} ({pendingMachines.length})</Text>
             {pendingMachines.length === 0 ? (
               <View style={styles.emptySection}>
                 <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.xl} color="#22C55E" />
@@ -191,30 +166,6 @@ export default function AdminDashboard() {
                     key={machine.id}
                     machine={machine}
                     onPress={() => handleMachinePress(machine)}
-                  />
-                ))}
-              </View>
-            )}
-
-            {/* Pending Photos */}
-            <Text style={[styles.sectionTitle, styles.sectionTitleSpaced]}>{t('admin.pendingPhotos')}</Text>
-            <Text style={styles.sectionSubtitle}>{t('admin.pendingPhotosSubtext')}</Text>
-            {isLoadingPhotos ? (
-              <ActivityIndicator color="#FF4B4B" style={{ marginVertical: 16 }} />
-            ) : pendingPhotos.length === 0 ? (
-              <View style={styles.emptySection}>
-                <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.xl} color="#22C55E" />
-                <Text style={styles.emptyText}>{t('admin.photosQueueEmpty')}</Text>
-              </View>
-            ) : (
-              <View style={styles.itemList}>
-                {pendingPhotos.map((photo) => (
-                  <PendingPhotoCard
-                    key={photo.id}
-                    photo={photo}
-                    onApprove={handleApprovePhoto}
-                    onReject={handleRejectPhoto}
-                    onBanUser={handleBanUser}
                   />
                 ))}
               </View>

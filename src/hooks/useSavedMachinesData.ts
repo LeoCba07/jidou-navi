@@ -89,7 +89,7 @@ export function useSavedMachinesData() {
   }, []);
 
   const sortedSavedMachines = useMemo(() => {
-    const unvisitedXP = XP_VALUES.PHOTO_UPLOAD + XP_VALUES.VERIFY_MACHINE;
+    const unvisitedXP = XP_VALUES.VERIFY_MACHINE;
     return savedMachines
       .filter((saved) => !visitedMachineIds.has(saved.machine_id))
       .map((saved) => {
