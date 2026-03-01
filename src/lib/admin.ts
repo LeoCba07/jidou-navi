@@ -9,23 +9,14 @@ export type CategoryInfo = {
   icon_name: string | null;
 };
 
-// Map DB icon_name values to valid Ionicons glyph names
-const CATEGORY_ICON_MAP: Record<string, string> = {
-  utensils: 'restaurant-outline',
-  dice: 'dice-outline',
-  ghost: 'skull-outline',
-  gamepad: 'game-controller-outline',
-  sparkles: 'sparkles-outline',
-  cup: 'cafe-outline',
-  restaurant: 'restaurant-outline',
-  time: 'time-outline',
+/** Pixel cat assets keyed by category slug — shared source of truth for admin UI. */
+export const CATEGORY_ICONS: Record<string, any> = {
+  eats: require('../../assets/pixel-cat-eats.png'),
+  gachapon: require('../../assets/pixel-cat-gachapon.png'),
+  weird: require('../../assets/pixel-cat-weird.png'),
+  retro: require('../../assets/pixel-cat-retro.png'),
+  'local-gems': require('../../assets/pixel-cat-local-gems.png'),
 };
-
-/** Resolve a DB icon_name to a valid Ionicons name, or null if unmapped. */
-export function getCategoryIconName(iconName: string | null): string | null {
-  if (!iconName) return null;
-  return CATEGORY_ICON_MAP[iconName] ?? null;
-}
 
 export type PendingMachine = {
   id: string;
@@ -70,19 +61,6 @@ export type UserPendingMachine = {
   primary_photo_url: string | null;
   created_at: string;
   rejection_reason: string | null;
-};
-
-export type PendingPhoto = {
-  id: string;
-  photo_url: string;
-  machine_id: string;
-  uploaded_by: string;
-  created_at: string;
-  machine_name: string | null;
-  machine_address: string | null;
-  uploader_username: string | null;
-  uploader_display_name: string | null;
-  uploader_avatar_url: string | null;
 };
 
 // Fetch pending machines for admin review
@@ -191,74 +169,6 @@ export async function dismissRejectedMachine(
   return data === true;
 }
 
-// Fetch pending photos for admin review
-export async function fetchPendingPhotos(
-  limit: number = 50
-): Promise<PendingPhoto[]> {
-  const { data, error } = await supabase
-    .from('machine_photos')
-    .select(`
-      id,
-      photo_url,
-      machine_id,
-      uploaded_by,
-      created_at,
-      machines!inner ( name, address ),
-      profiles!inner ( username, display_name, avatar_url )
-    `)
-    .eq('status', 'pending')
-    .order('created_at', { ascending: true })
-    .limit(limit);
-
-  if (error) {
-    console.error('Error fetching pending photos:', error);
-    return [];
-  }
-
-  return (data || []).map((row: any) => ({
-    id: row.id,
-    photo_url: row.photo_url,
-    machine_id: row.machine_id,
-    uploaded_by: row.uploaded_by,
-    created_at: row.created_at,
-    machine_name: row.machines?.name ?? null,
-    machine_address: row.machines?.address ?? null,
-    uploader_username: row.profiles?.username ?? null,
-    uploader_display_name: row.profiles?.display_name ?? null,
-    uploader_avatar_url: row.profiles?.avatar_url ?? null,
-  }));
-}
-
-// Approve a pending photo (set status to 'active')
-export async function approvePhoto(photoId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from('machine_photos')
-    .update({ status: 'active' })
-    .eq('id', photoId);
-
-  if (error) {
-    console.error('Error approving photo:', error);
-    return false;
-  }
-
-  return true;
-}
-
-// Reject a pending photo (set status to 'removed')
-export async function rejectPhoto(photoId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from('machine_photos')
-    .update({ status: 'removed' })
-    .eq('id', photoId);
-
-  if (error) {
-    console.error('Error rejecting photo:', error);
-    return false;
-  }
-
-  return true;
-}
-
 // Remove an active photo from a machine (admin or owner action via RPC)
 export async function removeActivePhoto(photoId: string): Promise<boolean> {
   const { data, error } = await supabase.rpc('remove_photo', {
@@ -276,7 +186,6 @@ export async function removeActivePhoto(photoId: string): Promise<boolean> {
 export type BanUserResult = {
   banned: boolean;
   rejected_machines: number;
-  rejected_photos: number;
 };
 
 // Ban a user via SECURITY DEFINER RPC — admin role is verified server-side.

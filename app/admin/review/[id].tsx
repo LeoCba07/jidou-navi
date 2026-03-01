@@ -19,7 +19,7 @@ import { useAuthStore } from '../../../src/store/authStore';
 import { useAdminStore } from '../../../src/store/adminStore';
 import { useAppModal } from '../../../src/hooks/useAppModal';
 import RejectReasonModal from '../../../src/components/admin/RejectReasonModal';
-import { getCategoryIconName } from '../../../src/lib/admin';
+import { CATEGORY_ICONS } from '../../../src/lib/admin';
 import { FONT_SIZES, ICON_SIZES } from '../../../src/theme/constants';
 
 // Open location in native maps app
@@ -52,7 +52,6 @@ export default function ReviewMachineScreen() {
     isLoadingNearby,
     loadNearbyMachines,
     loadPendingMachines,
-    loadPendingPhotos,
     approve,
     reject,
     banUser,
@@ -133,16 +132,13 @@ export default function ReviewMachineScreen() {
             const result = await banUser(userId);
             setIsBanning(false);
             if (result) {
-              const rejectedTotal = result.rejected_machines + result.rejected_photos;
-              const message = rejectedTotal > 0
+              const message = result.rejected_machines > 0
                 ? t('admin.banSuccessWithRejections', {
                     machines: result.rejected_machines,
-                    photos: result.rejected_photos,
                   })
                 : t('admin.banSuccess');
-              // Refresh pending lists since submissions were auto-rejected
+              // Refresh pending list since submissions were auto-rejected
               loadPendingMachines();
-              loadPendingPhotos();
               showSuccess(t('common.success'), message, () => {
                 router.back();
               });
@@ -233,8 +229,8 @@ export default function ReviewMachineScreen() {
                   key={cat.id}
                   style={[styles.categoryChip, { backgroundColor: cat.color }]}
                 >
-                  {getCategoryIconName(cat.icon_name) && (
-                    <Ionicons name={getCategoryIconName(cat.icon_name) as any} size={12} color="#fff" />
+                  {CATEGORY_ICONS[cat.slug] && (
+                    <Image source={CATEGORY_ICONS[cat.slug]} style={styles.categoryIcon} />
                   )}
                   <Text style={styles.categoryText}>{cat.name}</Text>
                 </View>
@@ -381,14 +377,14 @@ export default function ReviewMachineScreen() {
                         <Text style={styles.nearbyName} numberOfLines={1}>
                           {nearby.name || t('machine.unnamed')}
                         </Text>
-                        {nearby.name_similarity > 0.3 && (
+                        {nearby.name_similarity > 0.6 && (
                           <View style={[
                             styles.similarityBadge,
-                            { backgroundColor: nearby.name_similarity > 0.7 ? '#FEE2E2' : '#FEF3C7' }
+                            { backgroundColor: nearby.name_similarity > 0.8 ? '#FEE2E2' : '#FEF3C7' }
                           ]}>
                             <Text style={[
                               styles.similarityText,
-                              { color: nearby.name_similarity > 0.7 ? '#EF4444' : '#D97706' }
+                              { color: nearby.name_similarity > 0.8 ? '#EF4444' : '#D97706' }
                             ]}>
                               {t('admin.nameMatch', { percent: Math.round(nearby.name_similarity * 100) })}
                             </Text>
@@ -728,6 +724,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 2,
+  },
+  categoryIcon: {
+    width: 14,
+    height: 14,
   },
   categoryText: {
     fontSize: FONT_SIZES.xs,

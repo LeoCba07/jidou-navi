@@ -4,7 +4,7 @@ import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
-import { getCategoryIconName } from '../../lib/admin';
+import { CATEGORY_ICONS } from '../../lib/admin';
 import type { PendingMachine } from '../../lib/admin';
 
 interface PendingMachineCardProps {
@@ -60,8 +60,8 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
                 key={cat.id}
                 style={[styles.categoryChip, { backgroundColor: cat.color }]}
               >
-                {getCategoryIconName(cat.icon_name) && (
-                  <Ionicons name={getCategoryIconName(cat.icon_name) as any} size={10} color="#fff" />
+                {CATEGORY_ICONS[cat.slug] && (
+                  <Image source={CATEGORY_ICONS[cat.slug]} style={styles.categoryIcon} />
                 )}
                 <Text style={styles.categoryText}>{cat.name}</Text>
               </View>
@@ -159,6 +159,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 2,
+  },
+  categoryIcon: {
+    width: 12,
+    height: 12,
   },
   contributorAvatar: {
     width: 14,
