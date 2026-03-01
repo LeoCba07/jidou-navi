@@ -189,7 +189,7 @@ export type BanUserResult = {
 };
 
 // Ban a user via SECURITY DEFINER RPC — admin role is verified server-side.
-// Also rejects all their pending submissions (machines + photos).
+// Also rejects all their pending machine submissions.
 // Untyped RPC escape hatch: `ban_user` is not in generated database.types
 export async function banUser(userId: string): Promise<BanUserResult | null> {
   const { data, error } = await (supabase as any).rpc('ban_user', { p_user_id: userId });

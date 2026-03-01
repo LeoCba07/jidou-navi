@@ -60,6 +60,25 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION ban_user(UUID) TO authenticated;
 
--- Note: INSERT policies on machine_photos are kept because
--- the add-machine flow still inserts primary photos from the client.
--- Community photo upload is removed at the UI level only.
+-- ============================================================
+-- 2. Tighten machine_photos INSERT policy
+--    Replace broad INSERT policy with one scoped to pending
+--    machines owned by the current user. This enforces the
+--    removal of community photo upload at the DB level.
+-- ============================================================
+DROP POLICY IF EXISTS "Authenticated users can upload photos" ON machine_photos;
+DROP POLICY IF EXISTS "Block banned users from uploading photos" ON machine_photos;
+
+CREATE POLICY "Contributors can add photos to their pending machines"
+    ON machine_photos
+    FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        EXISTS (
+            SELECT 1
+            FROM machines
+            WHERE machines.id = machine_photos.machine_id
+              AND machines.status = 'pending'
+              AND machines.contributor_id = auth.uid()
+        )
+    );
