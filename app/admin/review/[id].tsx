@@ -27,7 +27,7 @@ const openInMaps = async (lat: number, lng: number) => {
   const url = Platform.select({
     ios: `maps:?q=${lat},${lng}`,
     default: `geo:${lat},${lng}?q=${lat},${lng}`,
-  });
+  }) ?? `https://www.google.com/maps?q=${lat},${lng}`;
   try {
     const canOpen = await Linking.canOpenURL(url);
     if (canOpen) {
