@@ -504,7 +504,7 @@ export default function MachineDetailScreen() {
       try {
         await Clipboard.setStringAsync(addressToCopy);
         setAddressCopied(true);
-        setTimeout(() => setAddressCopied(false), 2000);
+        setTimeout(() => setAddressCopied(false), 4000);
       } catch (error) {
         // Clipboard not available, fail silently
         console.warn('Clipboard not available:', error);
