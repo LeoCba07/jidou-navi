@@ -242,19 +242,8 @@ export default function DiscoverScreen() {
 
       if (result.success) {
         setRemainingVotes(result.remaining_votes ?? remainingVotes - 1);
-        // Only show modal if XP was awarded
-        if (result.xp_awarded && result.xp_awarded > 0) {
-          let upvoteMsg = t('discover.upvoteSuccess', { xp: result.xp_awarded });
-          if (localXPResult?.leveledUp) {
-            upvoteMsg = `${t('profile.levelUp', { level: localXPResult.newLevel })}\n\n${upvoteMsg}`;
-          }
-          showSuccess(
-            t('common.success'),
-            upvoteMsg,
-            undefined,
-            'OK',
-            result.xp_awarded
-          );
+        if (localXPResult?.leveledUp) {
+          toast.showSuccess(t('profile.levelUp', { level: localXPResult.newLevel }));
         }
       } else {
         // Revert on failure
