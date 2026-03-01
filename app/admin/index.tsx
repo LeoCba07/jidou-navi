@@ -93,18 +93,28 @@ export default function AdminDashboard() {
             style: 'destructive',
             onPress: async () => {
               setBanningUserIds((prev) => new Set(prev).add(userId));
-              const success = await banUser(userId);
+              const result = await banUser(userId);
               setBanningUserIds((prev) => {
                 const next = new Set(prev);
                 next.delete(userId);
                 return next;
               });
-              if (success) {
-                toast.showSuccess(t('admin.banSuccess'));
+              if (result) {
+                const rejectedTotal = result.rejected_machines + result.rejected_photos;
+                const message = rejectedTotal > 0
+                  ? t('admin.banSuccessWithRejections', {
+                      machines: result.rejected_machines,
+                      photos: result.rejected_photos,
+                    })
+                  : t('admin.banSuccess');
+                toast.showSuccess(message);
+                // Refresh lists since submissions were auto-rejected
+                loadPendingMachines();
+                loadPendingPhotos();
               } else {
                 toast.showError(t('admin.banError'));
               }
-              resolve(success);
+              resolve(!!result);
             },
           },
         ]
@@ -178,7 +188,7 @@ export default function AdminDashboard() {
         ) : (
           <View style={styles.listContainer}>
             {/* Pending Machines */}
-            <Text style={styles.sectionTitle}>{t('admin.pendingReview')}</Text>
+            <Text style={styles.sectionTitle}>{t('admin.pendingReview')} ({pendingMachines.length})</Text>
             {pendingMachines.length === 0 ? (
               <View style={styles.emptySection}>
                 <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.xl} color="#22C55E" />
@@ -197,7 +207,7 @@ export default function AdminDashboard() {
             )}
 
             {/* Pending Photos */}
-            <Text style={[styles.sectionTitle, styles.sectionTitleSpaced]}>{t('admin.pendingPhotos')}</Text>
+            <Text style={[styles.sectionTitle, styles.sectionTitleSpaced]}>{t('admin.pendingPhotos')} ({pendingPhotos.length})</Text>
             <Text style={styles.sectionSubtitle}>{t('admin.pendingPhotosSubtext')}</Text>
             {isLoadingPhotos ? (
               <ActivityIndicator color="#FF4B4B" style={{ marginVertical: 16 }} />

@@ -4,6 +4,7 @@ import {
   PendingMachine,
   PendingPhoto,
   NearbyMachine,
+  BanUserResult,
   fetchPendingMachines,
   fetchPendingPhotos,
   checkDuplicateMachines,
@@ -35,7 +36,7 @@ interface AdminState {
   loadPendingPhotos: () => Promise<void>;
   approvePhoto: (photoId: string) => Promise<boolean>;
   rejectPhoto: (photoId: string) => Promise<boolean>;
-  banUser: (userId: string) => Promise<boolean>;
+  banUser: (userId: string) => Promise<BanUserResult | null>;
   unbanUser: (userId: string) => Promise<boolean>;
   removeActivePhoto: (photoId: string) => Promise<boolean>;
   reset: () => void;

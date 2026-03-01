@@ -621,6 +621,7 @@
     "confirmBanMessage": "This will prevent {{name}} from submitting machines, photos, or check-ins.",
     "banningUser": "Banning {{name}}...",
     "banSuccess": "User has been banned.",
+    "banSuccessWithRejections": "User has been banned. {{machines}} pending machine(s) and {{photos}} pending photo(s) were auto-rejected.",
     "banError": "Failed to ban user. Please try again."
   },
   "report": {

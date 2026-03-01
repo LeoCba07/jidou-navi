@@ -621,6 +621,7 @@
     "confirmBanMessage": "Esto impedirá que {{name}} envíe máquinas, fotos o registros de visita.",
     "banningUser": "Baneando a {{name}}...",
     "banSuccess": "El usuario ha sido baneado.",
+    "banSuccessWithRejections": "El usuario ha sido baneado. {{machines}} máquina(s) y {{photos}} foto(s) pendientes fueron rechazadas automáticamente.",
     "banError": "Error al banear al usuario. Inténtalo de nuevo."
   },
   "report": {

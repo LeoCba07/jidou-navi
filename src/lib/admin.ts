@@ -6,6 +6,7 @@ export type CategoryInfo = {
   slug: string;
   name: string;
   color: string;
+  icon_name: string | null;
 };
 
 export type PendingMachine = {
@@ -254,22 +255,31 @@ export async function removeActivePhoto(photoId: string): Promise<boolean> {
   return data === true;
 }
 
-// Ban a user via SECURITY DEFINER RPC — admin role is verified server-side
+export type BanUserResult = {
+  banned: boolean;
+  rejected_machines: number;
+  rejected_photos: number;
+};
+
+// Ban a user via SECURITY DEFINER RPC — admin role is verified server-side.
+// Also rejects all their pending submissions (machines + photos).
 // Untyped RPC escape hatch: `ban_user` is not in generated database.types
-export async function banUser(userId: string): Promise<boolean> {
+export async function banUser(userId: string): Promise<BanUserResult | null> {
   const { data, error } = await (supabase as any).rpc('ban_user', { p_user_id: userId });
 
   if (error) {
     console.error('Error banning user:', error);
-    return false;
+    return null;
   }
 
-  if (data !== true) {
-    console.error('Error banning user: RPC returned false (invalid userId or permission denied)', { userId });
-    return false;
+  const result = typeof data === 'string' ? JSON.parse(data) : data;
+
+  if (!result?.banned) {
+    console.error('Error banning user: RPC returned banned=false (invalid userId or permission denied)', { userId });
+    return null;
   }
 
-  return true;
+  return result as BanUserResult;
 }
 
 // Unban a user via SECURITY DEFINER RPC — admin role is verified server-side

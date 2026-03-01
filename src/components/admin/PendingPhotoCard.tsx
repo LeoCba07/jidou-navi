@@ -20,6 +20,7 @@ export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [isBanning, setIsBanning] = useState(false);
+  const [photoError, setPhotoError] = useState(false);
 
   const timeSinceSubmission = () => {
     const submitted = new Date(photo.created_at);
@@ -48,12 +49,19 @@ export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser
   return (
     <View style={styles.card}>
       {/* Photo */}
-      <Image
-        source={{ uri: photo.photo_url }}
-        style={styles.photo}
-        accessibilityRole="image"
-        accessibilityLabel={`${t('admin.photoOf')} ${photo.machine_name || t('machine.unnamed')}`}
-      />
+      {!photoError ? (
+        <Image
+          source={{ uri: photo.photo_url }}
+          style={styles.photo}
+          accessibilityRole="image"
+          accessibilityLabel={`${t('admin.photoOf')} ${photo.machine_name || t('machine.unnamed')}`}
+          onError={() => setPhotoError(true)}
+        />
+      ) : (
+        <View style={[styles.photo, styles.photoPlaceholder]}>
+          <Ionicons name="image-outline" size={ICON_SIZES.lg} color="#ccc" />
+        </View>
+      )}
 
       {/* Info */}
       <View style={styles.content}>
@@ -69,7 +77,14 @@ export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser
         ) : null}
 
         <View style={styles.metaRow}>
-          <Ionicons name="person-outline" size={ICON_SIZES.xs} color="#666" />
+          {photo.uploader_avatar_url ? (
+            <Image
+              source={{ uri: photo.uploader_avatar_url }}
+              style={styles.uploaderAvatar}
+            />
+          ) : (
+            <Ionicons name="person-outline" size={ICON_SIZES.xs} color="#666" />
+          )}
           <Text style={styles.metaText} numberOfLines={1}>
             {photo.uploader_display_name || photo.uploader_username || t('common.user')}
           </Text>
@@ -161,6 +176,16 @@ const styles = StyleSheet.create({
     width: 100,
     height: '100%',
     minHeight: 120,
+  },
+  photoPlaceholder: {
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  uploaderAvatar: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
   },
   content: {
     flex: 1,
