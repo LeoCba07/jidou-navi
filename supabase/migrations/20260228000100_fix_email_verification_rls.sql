@@ -11,10 +11,16 @@ RETURNS boolean
 LANGUAGE sql
 SECURITY DEFINER
 STABLE
+SET search_path = public, auth, pg_catalog
 AS $$
-  SELECT email_confirmed_at IS NOT NULL
-  FROM auth.users
-  WHERE id = auth.uid()
+  SELECT COALESCE(
+    (
+      SELECT email_confirmed_at IS NOT NULL
+      FROM auth.users
+      WHERE id = auth.uid()
+    ),
+    false
+  );
 $$;
 
 -- 2. Fix storage policies
