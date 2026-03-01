@@ -12,6 +12,7 @@ RETURNS JSON AS $$
 DECLARE
     v_rejected_machines INT;
     v_rejected_photos INT;
+    v_machine RECORD;
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'
@@ -25,10 +26,30 @@ BEGIN
         RETURN json_build_object('banned', false, 'rejected_machines', 0, 'rejected_photos', 0);
     END IF;
 
-    -- Reject all pending machine submissions from the banned user
-    UPDATE machines SET status = 'rejected'
-    WHERE contributor_id = p_user_id AND status = 'pending';
-    GET DIAGNOSTICS v_rejected_machines = ROW_COUNT;
+    -- Reject all pending machine submissions with full audit metadata
+    v_rejected_machines := 0;
+    FOR v_machine IN
+        SELECT id, name FROM machines
+        WHERE contributor_id = p_user_id AND status = 'pending'
+    LOOP
+        UPDATE machines SET
+            status = 'rejected',
+            reviewed_at = NOW(),
+            reviewed_by = auth.uid(),
+            rejection_reason = 'Auto-rejected: user banned'
+        WHERE id = v_machine.id;
+
+        INSERT INTO notifications (user_id, type, title, message, data)
+        VALUES (
+            p_user_id,
+            'machine_rejected',
+            'Submission Not Approved',
+            'Your submission "' || COALESCE(v_machine.name, 'Unnamed Machine') || '" was not approved. Reason: Auto-rejected: user banned',
+            jsonb_build_object('machine_id', v_machine.id, 'machine_name', v_machine.name, 'reason', 'Auto-rejected: user banned')
+        );
+
+        v_rejected_machines := v_rejected_machines + 1;
+    END LOOP;
 
     -- Remove all pending photo submissions from the banned user
     UPDATE machine_photos SET status = 'removed'

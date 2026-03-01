@@ -21,6 +21,7 @@ export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser
   const [isRejecting, setIsRejecting] = useState(false);
   const [isBanning, setIsBanning] = useState(false);
   const [photoError, setPhotoError] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   const timeSinceSubmission = () => {
     const submitted = new Date(photo.created_at);
@@ -77,10 +78,11 @@ export default function PendingPhotoCard({ photo, onApprove, onReject, onBanUser
         ) : null}
 
         <View style={styles.metaRow}>
-          {photo.uploader_avatar_url ? (
+          {photo.uploader_avatar_url && !avatarError ? (
             <Image
               source={{ uri: photo.uploader_avatar_url }}
               style={styles.uploaderAvatar}
+              onError={() => setAvatarError(true)}
             />
           ) : (
             <Ionicons name="person-outline" size={ICON_SIZES.xs} color="#666" />

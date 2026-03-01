@@ -9,6 +9,24 @@ export type CategoryInfo = {
   icon_name: string | null;
 };
 
+// Map DB icon_name values to valid Ionicons glyph names
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  utensils: 'restaurant-outline',
+  dice: 'dice-outline',
+  ghost: 'skull-outline',
+  gamepad: 'game-controller-outline',
+  sparkles: 'sparkles-outline',
+  cup: 'cafe-outline',
+  restaurant: 'restaurant-outline',
+  time: 'time-outline',
+};
+
+/** Resolve a DB icon_name to a valid Ionicons name, or null if unmapped. */
+export function getCategoryIconName(iconName: string | null): string | null {
+  if (!iconName) return null;
+  return CATEGORY_ICON_MAP[iconName] ?? null;
+}
+
 export type PendingMachine = {
   id: string;
   name: string | null;

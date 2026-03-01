@@ -4,6 +4,7 @@ import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
+import { getCategoryIconName } from '../../lib/admin';
 import type { PendingMachine } from '../../lib/admin';
 
 interface PendingMachineCardProps {
@@ -14,6 +15,7 @@ interface PendingMachineCardProps {
 export default function PendingMachineCard({ machine, onPress }: PendingMachineCardProps) {
   const { t } = useTranslation();
   const [photoError, setPhotoError] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   const timeSinceSubmission = () => {
     const submitted = new Date(machine.created_at);
@@ -58,8 +60,8 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
                 key={cat.id}
                 style={[styles.categoryChip, { backgroundColor: cat.color }]}
               >
-                {cat.icon_name && (
-                  <Ionicons name={cat.icon_name as any} size={10} color="#fff" />
+                {getCategoryIconName(cat.icon_name) && (
+                  <Ionicons name={getCategoryIconName(cat.icon_name) as any} size={10} color="#fff" />
                 )}
                 <Text style={styles.categoryText}>{cat.name}</Text>
               </View>
@@ -71,10 +73,11 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
         )}
 
         <View style={styles.metaRow}>
-          {machine.contributor_avatar_url ? (
+          {machine.contributor_avatar_url && !avatarError ? (
             <Image
               source={{ uri: machine.contributor_avatar_url }}
               style={styles.contributorAvatar}
+              onError={() => setAvatarError(true)}
             />
           ) : (
             <Ionicons name="person-outline" size={ICON_SIZES.xs} color="#666" />

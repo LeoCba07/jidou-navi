@@ -19,6 +19,7 @@ import { useAuthStore } from '../../../src/store/authStore';
 import { useAdminStore } from '../../../src/store/adminStore';
 import { useAppModal } from '../../../src/hooks/useAppModal';
 import RejectReasonModal from '../../../src/components/admin/RejectReasonModal';
+import { getCategoryIconName } from '../../../src/lib/admin';
 import { FONT_SIZES, ICON_SIZES } from '../../../src/theme/constants';
 
 // Open location in native maps app
@@ -232,8 +233,8 @@ export default function ReviewMachineScreen() {
                   key={cat.id}
                   style={[styles.categoryChip, { backgroundColor: cat.color }]}
                 >
-                  {cat.icon_name && (
-                    <Ionicons name={cat.icon_name as any} size={12} color="#fff" />
+                  {getCategoryIconName(cat.icon_name) && (
+                    <Ionicons name={getCategoryIconName(cat.icon_name) as any} size={12} color="#fff" />
                   )}
                   <Text style={styles.categoryText}>{cat.name}</Text>
                 </View>
