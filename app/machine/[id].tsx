@@ -94,6 +94,7 @@ export default function MachineDetailScreen() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [liveDistance, setLiveDistance] = useState<number | null>(null);
   const fullScreenScrollViewRef = useRef<ScrollView>(null);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [addressCopied, setAddressCopied] = useState(false);
   const [geocodedAddress, setGeocodedAddress] = useState<string | null>(null);
   const [reportModalVisible, setReportModalVisible] = useState(false);
@@ -120,6 +121,12 @@ export default function MachineDetailScreen() {
 
   // Initialize loading state to true if we don't have basic data yet
   const [isLoadingData, setIsLoadingData] = useState(!params.name || params.name === '[id]');
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+    };
+  }, []);
 
   // Load machine data if missing (Deep Linking)
   useEffect(() => {
@@ -504,7 +511,8 @@ export default function MachineDetailScreen() {
       try {
         await Clipboard.setStringAsync(addressToCopy);
         setAddressCopied(true);
-        setTimeout(() => setAddressCopied(false), 2000);
+        if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
+        copyTimeoutRef.current = setTimeout(() => setAddressCopied(false), 4000);
       } catch (error) {
         // Clipboard not available, fail silently
         console.warn('Clipboard not available:', error);
