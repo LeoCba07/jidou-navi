@@ -1,10 +1,20 @@
 // Storage helpers for machine photos
 // Bucket must be created first - already ran supabase/storage.sql in Supabase
-import { supabase } from './supabase';
 import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer';
+
+import { supabase } from './supabase';
 
 const BUCKET = 'machine-photos';
 const AVATAR_BUCKET = 'avatars';
+
+// Read a local file URI as an ArrayBuffer (works reliably on RN native)
+async function readFileAsArrayBuffer(uri: string): Promise<ArrayBuffer> {
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  return decode(base64);
+}
 
 // Upload a photo, returns the public URL
 export async function uploadPhoto(
@@ -33,15 +43,12 @@ export async function uploadPhoto(
   }
 
   const randomId = Math.random().toString(36).slice(2, 10);
-  const path = machineId 
+  const path = machineId
     ? `${userId}/${machineId}/${Date.now()}-${randomId}-${file.name}`
     : `${userId}/pending/${Date.now()}-${randomId}-${file.name}`;
 
-  // Read file as base64 and convert to ArrayBuffer
-  const base64 = await FileSystem.readAsStringAsync(file.uri, {
-    encoding: 'base64',
-  });
-  const arrayBuffer = base64ToArrayBuffer(base64);
+  // Read file as ArrayBuffer — works reliably on both RN native and web
+  const arrayBuffer = await readFileAsArrayBuffer(file.uri);
 
   const { error } = await supabase.storage
     .from(BUCKET)
@@ -52,17 +59,6 @@ export async function uploadPhoto(
   if (error) throw error;
 
   return getPhotoUrl(path);
-}
-
-// Helper to decode base64 to ArrayBuffer (avoids external dependency)
-function base64ToArrayBuffer(base64: string): ArrayBuffer {
-  const binaryString = global.atob ? global.atob(base64) : Buffer.from(base64, 'base64').toString('binary');
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
 }
 
 // Upload an avatar, returns the public URL
@@ -90,20 +86,17 @@ export async function uploadAvatar(
     throw limitError;
   }
 
-  // 2. Preserve extension
+  // 3. Preserve extension
   const extensionMatch = file.name.match(/\.[^./]+$/);
   const extension = extensionMatch ? extensionMatch[0] : '.jpg';
 
-  // 3. Path logic - use fixed name to overwrite old avatar
+  // 4. Path logic - use fixed name to overwrite old avatar
   const path = `${userId}/avatar${extension}`;
 
-  // 4. Read file as base64 and convert to ArrayBuffer
-  const base64 = await FileSystem.readAsStringAsync(file.uri, {
-    encoding: 'base64',
-  });
-  const arrayBuffer = base64ToArrayBuffer(base64);
+  // 5. Read file as ArrayBuffer
+  const arrayBuffer = await readFileAsArrayBuffer(file.uri);
 
-  // 5. Upload with upsert
+  // 6. Upload with upsert
   const { error } = await supabase.storage
     .from(AVATAR_BUCKET)
     .upload(path, arrayBuffer, {
