@@ -189,11 +189,13 @@ export default function SettingsModal({
       const result = data as UpdateProfileResult & { days_remaining?: number };
       if (result.success) {
         if (profile) {
+          const nameChanged = trimmedName !== profile.display_name;
           onProfileUpdate({
             ...profile,
             display_name: trimmedName,
             receive_newsletter: receiveNewsletter,
-          });
+            ...(nameChanged && { last_display_name_change: new Date().toISOString() }),
+          } as Profile);
         }
         showSuccess(t('common.success'), t('profile.updateSuccess'));
         handleClose();

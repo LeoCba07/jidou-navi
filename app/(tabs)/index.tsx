@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   errorBanner: {
     position: 'absolute',
-    top: 140,
+    top: 190,
     left: 16,
     right: 16,
     backgroundColor: '#EF4444',

@@ -72,7 +72,7 @@ export default function RootLayout() {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id, session.user.email);
+        fetchProfile(session.user.id);
         loadSavedMachines();
         loadVisitedMachines();
         // Track app_open for authenticated user
@@ -94,7 +94,7 @@ export default function RootLayout() {
         if (currentUser) {
           // If email is confirmed, proceed with profile and data loading
           if (currentUser.email_confirmed_at) {
-            fetchProfile(currentUser.id, currentUser.email);
+            fetchProfile(currentUser.id);
             loadSavedMachines();
             loadVisitedMachines();
             registerForPushNotificationsAsync();
@@ -161,7 +161,7 @@ export default function RootLayout() {
   }
 
   // Fetch user profile from database (creates one if missing)
-  async function fetchProfile(userId: string, userEmail?: string) {
+  async function fetchProfile(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -175,13 +175,18 @@ export default function RootLayout() {
 
     // Profile doesn't exist - create one (safety net for edge cases)
     if (error?.code === 'PGRST116') { // "Row not found" error
-      const defaultName = userEmail?.split('@')[0] || 'user';
+      // Get username from auth metadata (set during signup) instead of email prefix
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      const defaultName = authUser?.user_metadata?.username || 'user';
+      const displayName = authUser?.user_metadata?.full_name || defaultName;
       const { data: newProfile, error: createError } = await supabase
         .from('profiles')
         .insert({
           id: userId,
           username: defaultName,
-          display_name: defaultName,
+          display_name: displayName,
+          country: authUser?.user_metadata?.country || null,
+          receive_newsletter: authUser?.user_metadata?.receive_newsletter || false,
           contribution_count: 0,
           visit_count: 0,
           badge_count: 0,

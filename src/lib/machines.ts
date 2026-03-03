@@ -128,6 +128,10 @@ export async function fetchMachinesInBounds(
   limit: number = 200
 ): Promise<NearbyMachine[] | null> {
   try {
+    // RPC requires authenticated role - skip if no session yet
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return [];
+
     const { data, error } = await supabase.rpc('machines_in_bounds', {
       min_lat: bounds.minLat,
       max_lat: bounds.maxLat,
@@ -137,6 +141,10 @@ export async function fetchMachinesInBounds(
     });
 
     if (error) {
+      // Permission denied = session not ready yet, return empty (not error)
+      if (error.code === '42501' || error.message?.includes('permission denied')) {
+        return [];
+      }
       Sentry.captureException(error, { tags: { context: 'fetch_machines_in_bounds' }, extra: { bounds } });
       return null;
     }

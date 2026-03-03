@@ -75,7 +75,11 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (error) {
-      showError(t('auth.errors.loginFailed'), t('common.invalidCredentials'));
+      if (error.message === 'Email not confirmed') {
+        showError(t('auth.errors.loginFailed'), t('auth.errors.emailNotVerified'));
+      } else {
+        showError(t('auth.errors.loginFailed'), t('common.invalidCredentials'));
+      }
     }
     // On success, the auth listener in _layout.tsx will redirect
   }
