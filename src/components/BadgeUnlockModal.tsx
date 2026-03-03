@@ -10,7 +10,6 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
-import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useUIStore } from '../store/uiStore';
 import { useBadgeTranslation } from '../hooks/useBadgeTranslation';
@@ -65,13 +64,6 @@ export default function BadgeUnlockModal() {
     ]).start(() => {
       closeBadgePopup();
     });
-  }
-
-  function handleViewAllBadges() {
-    onDismiss?.();
-    handleClose();
-    // Navigate to profile which shows badges
-    router.push('/(tabs)/profile');
   }
 
   if (!badgePopup) return null;
@@ -131,15 +123,6 @@ export default function BadgeUnlockModal() {
 
           {/* Actions */}
           <View style={styles.actions}>
-            <Pressable
-              style={styles.viewAllButton}
-              onPress={handleViewAllBadges}
-              accessibilityRole="button"
-              accessibilityLabel={t('badges.viewAll')}
-            >
-              <Text style={styles.viewAllText}>{t('badges.viewAll')}</Text>
-            </Pressable>
-
             <Pressable
               style={styles.dismissButton}
               onPress={() => {
@@ -258,15 +241,6 @@ const styles = StyleSheet.create({
   actions: {
     width: '100%',
     gap: 10,
-  },
-  viewAllButton: {
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  viewAllText: {
-    fontSize: FONT_SIZES.md,
-    fontFamily: 'Silkscreen',
-    color: '#3C91E6',
   },
   dismissButton: {
     backgroundColor: '#FF4B4B',
