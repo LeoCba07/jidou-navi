@@ -1,19 +1,16 @@
 // Storage helpers for machine photos
 // Bucket must be created first - already ran supabase/storage.sql in Supabase
-import * as FileSystem from 'expo-file-system';
-import { decode } from 'base64-arraybuffer';
+import { File } from 'expo-file-system';
 
 import { supabase } from './supabase';
 
 const BUCKET = 'machine-photos';
 const AVATAR_BUCKET = 'avatars';
 
-// Read a local file URI as an ArrayBuffer (works reliably on RN native)
+// Read a local file URI as an ArrayBuffer using the new expo-file-system File API
 async function readFileAsArrayBuffer(uri: string): Promise<ArrayBuffer> {
-  const base64 = await FileSystem.readAsStringAsync(uri, {
-    encoding: FileSystem.EncodingType.Base64,
-  });
-  return decode(base64);
+  const file = new File(uri);
+  return file.arrayBuffer();
 }
 
 // Upload a photo, returns the public URL

@@ -3,7 +3,6 @@ import { Analytics } from './analytics';
 import { useAuthStore } from '../store/authStore';
 
 export const XP_VALUES = {
-  PHOTO_UPLOAD: 25,
   ADD_MACHINE: 50,
   VERIFY_MACHINE: 25,
 };

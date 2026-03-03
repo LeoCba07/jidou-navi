@@ -1,8 +1,10 @@
 // Card component for displaying a pending machine in the admin queue
+import { useState } from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { FONT_SIZES, ICON_SIZES } from '../../theme/constants';
+import { CATEGORY_ICONS } from '../../lib/admin';
 import type { PendingMachine } from '../../lib/admin';
 
 interface PendingMachineCardProps {
@@ -12,6 +14,8 @@ interface PendingMachineCardProps {
 
 export default function PendingMachineCard({ machine, onPress }: PendingMachineCardProps) {
   const { t } = useTranslation();
+  const [photoError, setPhotoError] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   const timeSinceSubmission = () => {
     const submitted = new Date(machine.created_at);
@@ -31,8 +35,12 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
 
   return (
     <Pressable style={styles.card} onPress={onPress}>
-      {machine.primary_photo_url ? (
-        <Image source={{ uri: machine.primary_photo_url }} style={styles.photo} />
+      {machine.primary_photo_url && !photoError ? (
+        <Image
+          source={{ uri: machine.primary_photo_url }}
+          style={styles.photo}
+          onError={() => setPhotoError(true)}
+        />
       ) : (
         <View style={[styles.photo, styles.photoPlaceholder]}>
           <Ionicons name="image-outline" size={ICON_SIZES.lg} color="#ccc" />
@@ -52,6 +60,9 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
                 key={cat.id}
                 style={[styles.categoryChip, { backgroundColor: cat.color }]}
               >
+                {CATEGORY_ICONS[cat.slug] && (
+                  <Image source={CATEGORY_ICONS[cat.slug]} style={styles.categoryIcon} />
+                )}
                 <Text style={styles.categoryText}>{cat.name}</Text>
               </View>
             ))}
@@ -62,7 +73,15 @@ export default function PendingMachineCard({ machine, onPress }: PendingMachineC
         )}
 
         <View style={styles.metaRow}>
-          <Ionicons name="person-outline" size={ICON_SIZES.xs} color="#666" />
+          {machine.contributor_avatar_url && !avatarError ? (
+            <Image
+              source={{ uri: machine.contributor_avatar_url }}
+              style={styles.contributorAvatar}
+              onError={() => setAvatarError(true)}
+            />
+          ) : (
+            <Ionicons name="person-outline" size={ICON_SIZES.xs} color="#666" />
+          )}
           <Text style={styles.metaText} numberOfLines={1}>
             {machine.contributor_display_name || machine.contributor_username || t('common.user')}
           </Text>
@@ -134,9 +153,21 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 2,
+  },
+  categoryIcon: {
+    width: 12,
+    height: 12,
+  },
+  contributorAvatar: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
   },
   categoryText: {
     fontSize: FONT_SIZES.xs,

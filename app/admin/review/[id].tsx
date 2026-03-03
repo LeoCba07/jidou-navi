@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Linking,
   Alert,
+  Platform,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,17 +19,22 @@ import { useAuthStore } from '../../../src/store/authStore';
 import { useAdminStore } from '../../../src/store/adminStore';
 import { useAppModal } from '../../../src/hooks/useAppModal';
 import RejectReasonModal from '../../../src/components/admin/RejectReasonModal';
+import { CATEGORY_ICONS } from '../../../src/lib/admin';
 import { FONT_SIZES, ICON_SIZES } from '../../../src/theme/constants';
 
-// Open location in Google Maps with error handling
+// Open location in native maps app
 const openInMaps = async (lat: number, lng: number) => {
-  const url = `https://www.google.com/maps?q=${lat},${lng}`;
+  const url = Platform.select({
+    ios: `maps:?q=${lat},${lng}`,
+    default: `geo:${lat},${lng}?q=${lat},${lng}`,
+  }) ?? `https://www.google.com/maps?q=${lat},${lng}`;
   try {
     const canOpen = await Linking.canOpenURL(url);
     if (canOpen) {
       await Linking.openURL(url);
     } else {
-      Alert.alert('Error', 'Unable to open maps application');
+      // Fallback to Google Maps web URL
+      await Linking.openURL(`https://www.google.com/maps?q=${lat},${lng}`);
     }
   } catch (error) {
     console.error('Error opening maps:', error);
@@ -45,6 +51,7 @@ export default function ReviewMachineScreen() {
     nearbyMachines,
     isLoadingNearby,
     loadNearbyMachines,
+    loadPendingMachines,
     approve,
     reject,
     banUser,
@@ -55,6 +62,8 @@ export default function ReviewMachineScreen() {
   const [isRejecting, setIsRejecting] = useState(false);
   const [isBanning, setIsBanning] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [photoError, setPhotoError] = useState(false);
+  const [nearbyPhotoErrors, setNearbyPhotoErrors] = useState<Set<string>>(new Set());
 
   const isProcessing = isApproving || isRejecting || isBanning;
 
@@ -120,10 +129,19 @@ export default function ReviewMachineScreen() {
           style: 'destructive',
           onPress: async () => {
             setIsBanning(true);
-            const success = await banUser(userId);
+            const result = await banUser(userId);
             setIsBanning(false);
-            if (success) {
-              showSuccess(t('common.success'), t('admin.banSuccess'));
+            if (result) {
+              const message = result.rejected_machines > 0
+                ? t('admin.banSuccessWithRejections', {
+                    machines: result.rejected_machines,
+                  })
+                : t('admin.banSuccess');
+              // Refresh pending list since submissions were auto-rejected
+              loadPendingMachines();
+              showSuccess(t('common.success'), message, () => {
+                router.back();
+              });
             } else {
               showError(t('common.error'), t('admin.banError'));
             }
@@ -182,10 +200,11 @@ export default function ReviewMachineScreen() {
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* Photo */}
-        {selectedMachine.primary_photo_url ? (
+        {selectedMachine.primary_photo_url && !photoError ? (
           <Image
             source={{ uri: selectedMachine.primary_photo_url }}
             style={styles.photo}
+            onError={() => setPhotoError(true)}
           />
         ) : (
           <View style={[styles.photo, styles.photoPlaceholder]}>
@@ -210,6 +229,9 @@ export default function ReviewMachineScreen() {
                   key={cat.id}
                   style={[styles.categoryChip, { backgroundColor: cat.color }]}
                 >
+                  {CATEGORY_ICONS[cat.slug] && (
+                    <Image source={CATEGORY_ICONS[cat.slug]} style={styles.categoryIcon} />
+                  )}
                   <Text style={styles.categoryText}>{cat.name}</Text>
                 </View>
               ))}
@@ -322,65 +344,63 @@ export default function ReviewMachineScreen() {
           )}
         </View>
 
-        {/* Nearby Machines (Duplicate Check) */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('admin.nearbyCheck')}</Text>
-          <Text style={styles.duplicateExplanation}>{t('admin.duplicateExplanation')}</Text>
-          {isLoadingNearby ? (
-            <ActivityIndicator color="#FF4B4B" style={{ marginVertical: 16 }} />
-          ) : nearbyMachines.length === 0 ? (
-            <View style={styles.noDuplicates}>
-              <Ionicons name="checkmark-circle" size={ICON_SIZES.md} color="#22C55E" />
-              <Text style={styles.noDuplicatesText}>{t('admin.noDuplicates')}</Text>
-            </View>
-          ) : (
-            <View style={styles.duplicateWarning}>
-              <View style={styles.duplicateHeader}>
-                <Ionicons name="warning" size={ICON_SIZES.md} color="#D97706" />
-                <Text style={styles.duplicateTitle}>
-                  {t('admin.potentialDuplicates', { count: nearbyMachines.length })}
-                </Text>
-              </View>
-              {nearbyMachines.map((nearby) => (
-                <View key={nearby.id} style={styles.nearbyCard}>
-                  {nearby.primary_photo_url ? (
-                    <Image
-                      source={{ uri: nearby.primary_photo_url }}
-                      style={styles.nearbyPhoto}
-                    />
-                  ) : (
-                    <View style={[styles.nearbyPhoto, styles.nearbyPhotoPlaceholder]}>
-                      <Ionicons name="image-outline" size={ICON_SIZES.sm} color="#ccc" />
-                    </View>
-                  )}
-                  <View style={styles.nearbyInfo}>
-                    <View style={styles.nearbyNameRow}>
-                      <Text style={styles.nearbyName} numberOfLines={1}>
-                        {nearby.name || t('machine.unnamed')}
-                      </Text>
-                      {nearby.name_similarity > 0.3 && (
-                        <View style={[
-                          styles.similarityBadge,
-                          { backgroundColor: nearby.name_similarity > 0.7 ? '#FEE2E2' : '#FEF3C7' }
-                        ]}>
-                          <Text style={[
-                            styles.similarityText,
-                            { color: nearby.name_similarity > 0.7 ? '#EF4444' : '#D97706' }
-                          ]}>
-                            {t('admin.nameMatch', { percent: Math.round(nearby.name_similarity * 100) })}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={styles.nearbyDistance}>
-                      {nearby.distance_meters.toFixed(0)}m {t('admin.away')}
-                    </Text>
-                  </View>
+        {/* Nearby Machines (Duplicate Check) — only shown when loading or duplicates found */}
+        {(isLoadingNearby || nearbyMachines.length > 0) && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('admin.nearbyCheck')}</Text>
+            <Text style={styles.duplicateExplanation}>{t('admin.duplicateExplanation')}</Text>
+            {isLoadingNearby ? (
+              <ActivityIndicator color="#FF4B4B" style={{ marginVertical: 16 }} />
+            ) : (
+              <View style={styles.duplicateWarning}>
+                <View style={styles.duplicateHeader}>
+                  <Ionicons name="warning" size={ICON_SIZES.md} color="#D97706" />
+                  <Text style={styles.duplicateTitle}>
+                    {t('admin.potentialDuplicates', { count: nearbyMachines.length })}
+                  </Text>
                 </View>
-              ))}
-            </View>
-          )}
-        </View>
+                {nearbyMachines.map((nearby) => (
+                  <View key={nearby.id} style={styles.nearbyCard}>
+                    {nearby.primary_photo_url && !nearbyPhotoErrors.has(nearby.id) ? (
+                      <Image
+                        source={{ uri: nearby.primary_photo_url }}
+                        style={styles.nearbyPhoto}
+                        onError={() => setNearbyPhotoErrors((prev) => new Set(prev).add(nearby.id))}
+                      />
+                    ) : (
+                      <View style={[styles.nearbyPhoto, styles.nearbyPhotoPlaceholder]}>
+                        <Ionicons name="image-outline" size={ICON_SIZES.sm} color="#ccc" />
+                      </View>
+                    )}
+                    <View style={styles.nearbyInfo}>
+                      <View style={styles.nearbyNameRow}>
+                        <Text style={styles.nearbyName} numberOfLines={1}>
+                          {nearby.name || t('machine.unnamed')}
+                        </Text>
+                        {nearby.name_similarity > 0.6 && (
+                          <View style={[
+                            styles.similarityBadge,
+                            { backgroundColor: nearby.name_similarity > 0.8 ? '#FEE2E2' : '#FEF3C7' }
+                          ]}>
+                            <Text style={[
+                              styles.similarityText,
+                              { color: nearby.name_similarity > 0.8 ? '#EF4444' : '#D97706' }
+                            ]}>
+                              {t('admin.nameMatch', { percent: Math.round(nearby.name_similarity * 100) })}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text style={styles.nearbyDistance}>
+                        {nearby.distance_meters.toFixed(0)}m {t('admin.away')}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
 
       {/* Action Buttons */}
@@ -698,9 +718,16 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 2,
+  },
+  categoryIcon: {
+    width: 14,
+    height: 14,
   },
   categoryText: {
     fontSize: FONT_SIZES.xs,

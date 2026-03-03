@@ -26,7 +26,6 @@ try {
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import * as Location from 'expo-location';
-import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../src/lib/supabase';
 import { Analytics } from '../../src/lib/analytics';
@@ -38,8 +37,6 @@ import { checkAndAwardBadges } from '../../src/lib/badges';
 import { addXP, XP_VALUES } from '../../src/lib/xp';
 import { saveMachine, unsaveMachine, fetchMachinePhotos, calculateDistance, reportMachine, fetchMachineById, fetchMachineVisitors, type MachineVisitor } from '../../src/lib/machines';
 import type { NearbyMachine, ReportReason } from '../../src/lib/machines';
-import { uploadPhoto } from '../../src/lib/storage';
-import { processImage, COMPRESSION_QUALITY } from '../../src/lib/images';
 import { reverseGeocode, formatCoordinatesAsLocation } from '../../src/lib/geocoding';
 import { tryRequestAppReview } from '../../src/lib/review';
 import { useAppModal } from '../../src/hooks/useAppModal';
@@ -87,7 +84,6 @@ export default function MachineDetailScreen() {
   const [visitCheckDone, setVisitCheckDone] = useState(false);
   const [visitCount, setVisitCount] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ id: string; url: string }[]>([]);
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
@@ -774,158 +770,6 @@ export default function MachineDetailScreen() {
     }
   }
 
-  async function handleAddPhoto() {
-    if (!user) {
-      showError(t('machine.loginRequired'), t('machine.loginToSave'));
-      return;
-    }
-
-    // 1. Check location (unless admin)
-    if (!isAdmin) {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        showError(t('common.error'), t('machine.checkIn.locationRequired'));
-        return;
-      }
-
-      const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      
-      // Basic Haversine for client-side quick feedback
-      const R = 6371e3; // metres
-      const φ1 = location.coords.latitude * Math.PI/180;
-      const φ2 = Number(params.latitude) * Math.PI/180;
-      const Δφ = (Number(params.latitude)-location.coords.latitude) * Math.PI/180;
-      const Δλ = (Number(params.longitude)-location.coords.longitude) * Math.PI/180;
-
-      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ/2) * Math.sin(Δλ/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      const d = R * c;
-
-      if (d > 200) {
-        showError(t('machine.checkIn.tooFar.title'), t('machine.checkIn.tooFar.message'));
-        return;
-      }
-    }
-
-    // 2. Ask user for source
-    showConfirm(
-      t('machine.addPhoto'),
-      '',
-      [
-        {
-          text: t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('addMachine.chooseFromGallery'),
-          style: 'default',
-          onPress: () => pickImage('gallery'),
-        },
-        {
-          text: t('addMachine.takePhoto'),
-          style: 'primary',
-          onPress: () => pickImage('camera'),
-        },
-      ]
-    );
-  }
-
-  async function pickImage(source: 'camera' | 'gallery') {
-    // Check permissions
-    if (source === 'camera') {
-      const permission = await ImagePicker.requestCameraPermissionsAsync();
-      if (!permission.granted) {
-        showError(t('common.error'), t('addMachine.permissionNeeded'));
-        return;
-      }
-    } else {
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permission.granted) {
-        showError(t('common.error'), t('addMachine.permissionNeeded'));
-        return;
-      }
-    }
-
-    try {
-      const options: ImagePicker.ImagePickerOptions = {
-        mediaTypes: ['images'],
-        quality: COMPRESSION_QUALITY,
-        allowsEditing: true,
-        aspect: [4, 3],
-      };
-
-      const result = source === 'camera'
-        ? await ImagePicker.launchCameraAsync(options)
-        : await ImagePicker.launchImageLibraryAsync(options);
-
-      if (!result.canceled && result.assets[0]) {
-        // Process image before upload
-        const processedUri = await processImage(result.assets[0].uri);
-        await uploadPhotoAction(processedUri);
-      }
-    } catch (error) {
-      console.error('Image picker error:', error);
-      Sentry.captureException(error, { tags: { context: 'image_picker', source } });
-      showError(t('common.error'), t('machine.uploadError'));
-    }
-  }
-
-  async function uploadPhotoAction(uri: string) {
-    setUploading(true);
-    try {
-      if (!user) return;
-
-      const fileName = `machine_${params.id}_${Date.now()}.jpg`;
-      
-      // Use the storage helper
-      const publicUrl = await uploadPhoto(
-        user.id, 
-        params.id, 
-        { uri, type: 'image/jpeg', name: fileName }
-      );
-
-      const { error: insertError } = await supabase.from('machine_photos').insert({
-        machine_id: params.id,
-        photo_url: publicUrl,
-        uploaded_by: user.id,
-        status: 'pending',
-      });
-
-      if (insertError) throw insertError;
-
-      // Add XP
-      const xpResult = await addXP(XP_VALUES.PHOTO_UPLOAD, 'photo_upload');
-      if (!xpResult.success) {
-        console.warn('Failed to award XP for photo upload:', xpResult.error);
-      }
-
-      Analytics.track('photo_upload', {
-        machine_id: params.id,
-      });
-
-      let photoSuccessMsg = t('machine.photoSubmittedForReview');
-      if (xpResult.success && xpResult.leveledUp) {
-        photoSuccessMsg = `${t('profile.levelUp', { level: xpResult.newLevel })}\n\n${photoSuccessMsg}`;
-      }
-
-      showSuccess(t('common.success'), photoSuccessMsg, () => {
-        tryRequestAppReview();
-      }, 'OK', XP_VALUES.PHOTO_UPLOAD);
-
-    } catch (error) {
-      console.error('Upload error:', error);
-      Sentry.captureException(error, { 
-        tags: { context: 'photo_upload' },
-        extra: { machineId: params.id }
-      });
-      showError(t('common.error'), t('machine.uploadError'));
-    } finally {
-      setUploading(false);
-    }
-  }
-
   async function handleAdminDeletePhoto() {
     const currentPhoto = photos[activePhotoIndex];
     if (!currentPhoto || currentPhoto.id === 'primary') return;
@@ -1292,27 +1136,6 @@ export default function MachineDetailScreen() {
                 </View>
               )}
             </Pressable>
-            {(isVisited || hasCheckedIn) && (
-              <Pressable
-                style={[
-                  styles.secondaryButton,
-                  uploading && styles.buttonDisabled,
-                ]}
-                onPress={handleAddPhoto}
-                disabled={uploading}
-                accessibilityLabel={t('machine.addPhoto')}
-                accessibilityRole="button"
-              >
-                {uploading ? (
-                  <ActivityIndicator size="small" color={COLORS.text} />
-                ) : (
-                  <View style={styles.buttonContent}>
-                    <Ionicons name="camera-outline" size={ICON_SIZES.sm} color={COLORS.text} />
-                    <Text style={styles.secondaryButtonText} numberOfLines={1}>{t('machine.addPhoto')}</Text>
-                  </View>
-                )}
-              </Pressable>
-            )}
             <Pressable
               style={styles.secondaryButton}
               onPress={openDirections}
