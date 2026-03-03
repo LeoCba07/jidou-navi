@@ -1,5 +1,5 @@
 // Settings modal - account settings, language, support, legal, logout
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -62,6 +62,9 @@ export default function SettingsModal({
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
   const [receiveNewsletter, setReceiveNewsletter] = useState(profile?.receive_newsletter || false);
   const [saving, setSaving] = useState(false);
+  const [usernameTaken, setUsernameTaken] = useState(false);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+  const usernameCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Feedback state
   const [feedbackContent, setFeedbackContent] = useState('');
@@ -102,6 +105,8 @@ export default function SettingsModal({
     if (visible && profile) {
       setDisplayName(profile.display_name || '');
       setReceiveNewsletter(profile.receive_newsletter || false);
+      setUsernameTaken(false);
+      setCheckingUsername(false);
     }
   }, [visible, profile]);
 
@@ -116,6 +121,28 @@ export default function SettingsModal({
   })();
   const isNameChangeDisabled = nameChangeCooldownDays > 0;
   const hasChanges = displayName.trim() !== (profile?.display_name || '') || receiveNewsletter !== (profile?.receive_newsletter || false);
+
+  const checkUsernameAvailability = useCallback((name: string) => {
+    if (usernameCheckTimer.current) clearTimeout(usernameCheckTimer.current);
+    const trimmed = name.trim();
+    // Don't check if it's the current username, too short, or invalid format
+    if (trimmed === (profile?.display_name || '') || trimmed.length < 3 || !/^[a-zA-Z0-9_-]+$/.test(trimmed)) {
+      setUsernameTaken(false);
+      setCheckingUsername(false);
+      return;
+    }
+    setCheckingUsername(true);
+    usernameCheckTimer.current = setTimeout(async () => {
+      const { data } = await supabase.rpc('check_username_available', { p_username: trimmed });
+      setUsernameTaken(data === false);
+      setCheckingUsername(false);
+    }, 500);
+  }, [profile?.display_name]);
+
+  function handleDisplayNameChange(value: string) {
+    setDisplayName(value);
+    checkUsernameAvailability(value);
+  }
 
   // Load pending machines when entering that screen
   useEffect(() => {
@@ -645,26 +672,38 @@ export default function SettingsModal({
 
                 <View style={styles.field}>
                   <Text style={styles.label}>{t('profile.displayName')}</Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isNameChangeDisabled && styles.inputDisabled,
-                      displayName.length > 0 && !isNameChangeDisabled && (
-                        !/^[a-zA-Z0-9_-]+$/.test(displayName) || displayName.trim().length < 3
-                      ) && styles.inputError,
-                    ]}
-                    value={displayName}
-                    onChangeText={setDisplayName}
-                    placeholder={t('auth.usernamePlaceholder')}
-                    maxLength={15}
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                    editable={!isNameChangeDisabled}
-                  />
+                  <View style={[
+                    styles.usernameInputRow,
+                    isNameChangeDisabled && styles.inputDisabled,
+                    displayName.length > 0 && !isNameChangeDisabled && (
+                      usernameTaken || !/^[a-zA-Z0-9_-]+$/.test(displayName) || displayName.trim().length < 3
+                    ) && styles.inputError,
+                  ]}>
+                    <TextInput
+                      style={styles.usernameInput}
+                      value={displayName}
+                      onChangeText={handleDisplayNameChange}
+                      placeholder={t('auth.usernamePlaceholder')}
+                      maxLength={15}
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                      editable={!isNameChangeDisabled}
+                    />
+                    {displayName.trim().length >= 3 && !isNameChangeDisabled && !checkingUsername && displayName.trim() !== (profile?.display_name || '') && !/^[a-zA-Z0-9_-]+$/.test(displayName) === false && (
+                      <Ionicons
+                        name={usernameTaken ? 'close-circle' : 'checkmark-circle'}
+                        size={ICON_SIZES.sm}
+                        color={usernameTaken ? '#EF4444' : '#22C55E'}
+                        style={{ marginRight: 8 }}
+                      />
+                    )}
+                  </View>
                   {displayName.length > 0 && !isNameChangeDisabled && !/^[a-zA-Z0-9_-]+$/.test(displayName) ? (
                     <Text style={styles.validationError}>{t('auth.validation.usernameFormat')}</Text>
                   ) : displayName.length > 0 && !isNameChangeDisabled && displayName.trim().length < 3 ? (
                     <Text style={styles.validationError}>{t('auth.validation.usernameMinLength')}</Text>
+                  ) : usernameTaken && !isNameChangeDisabled ? (
+                    <Text style={styles.validationError}>{t('auth.validation.usernameTaken')}</Text>
                   ) : (
                     <Text style={styles.nameChangeInfo}>
                       {t('profile.nameChangeInfo')}
@@ -691,9 +730,9 @@ export default function SettingsModal({
                 </Pressable>
 
                 <Pressable
-                  style={[styles.saveButton, (saving || !hasChanges) && styles.saveButtonDisabled]}
+                  style={[styles.saveButton, (saving || !hasChanges || usernameTaken || checkingUsername) && styles.saveButtonDisabled]}
                   onPress={handleSaveProfile}
-                  disabled={saving || !hasChanges}
+                  disabled={saving || !hasChanges || usernameTaken || checkingUsername}
                 >
                   {saving ? (
                     <ActivityIndicator size="small" color="#fff" />
@@ -993,6 +1032,21 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderColor: '#FF4B4B',
+  },
+  usernameInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderWidth: 2,
+    borderColor: '#eee',
+    borderRadius: 4,
+  },
+  usernameInput: {
+    flex: 1,
+    padding: 12,
+    fontSize: FONT_SIZES.lg,
+    fontFamily: 'Inter',
+    color: '#2B2B2B',
   },
   validationError: {
     fontSize: FONT_SIZES.sm,

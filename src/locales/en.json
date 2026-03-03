@@ -152,7 +152,7 @@
     "rejected": "Not Approved",
     "pendingHint": "Under review by our team",
     "editProfile": "Edit Profile",
-    "displayName": "Display Name",
+    "displayName": "Username",
     "updateProfile": "Update Profile",
     "updateSuccess": "Profile updated successfully!",
     "updateError": "Failed to update profile.",
