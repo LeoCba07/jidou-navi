@@ -115,6 +115,7 @@ export default function SettingsModal({
     return Math.ceil((cooldownMs - elapsed) / 86400000);
   })();
   const isNameChangeDisabled = nameChangeCooldownDays > 0;
+  const hasChanges = displayName.trim() !== (profile?.display_name || '') || receiveNewsletter !== (profile?.receive_newsletter || false);
 
   // Load pending machines when entering that screen
   useEffect(() => {
@@ -688,9 +689,9 @@ export default function SettingsModal({
                 </Pressable>
 
                 <Pressable
-                  style={[styles.saveButton, saving && styles.saveButtonDisabled]}
+                  style={[styles.saveButton, (saving || !hasChanges) && styles.saveButtonDisabled]}
                   onPress={handleSaveProfile}
-                  disabled={saving}
+                  disabled={saving || !hasChanges}
                 >
                   {saving ? (
                     <ActivityIndicator size="small" color="#fff" />
