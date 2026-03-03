@@ -173,9 +173,23 @@ export default function RootLayout() {
       return;
     }
 
-    // Profile doesn't exist - create one (safety net for edge cases)
-    if (error?.code === 'PGRST116') { // "Row not found" error
-      // Get username from auth metadata (set during signup) instead of email prefix
+    // Profile not found yet — the DB trigger (handle_new_user) creates it on signup
+    // but there's a race condition where this fetch runs before the trigger commits.
+    // Wait briefly and retry before falling back to manual creation.
+    if (error?.code === 'PGRST116') {
+      await new Promise((r) => setTimeout(r, 1000));
+      const { data: retryData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (retryData) {
+        setProfile(retryData);
+        return;
+      }
+
+      // Still not found — create as safety net (e.g. trigger failed)
       const { data: { user: authUser } } = await supabase.auth.getUser();
       const defaultName = authUser?.user_metadata?.username || 'user';
       const displayName = authUser?.user_metadata?.full_name || defaultName;
@@ -196,6 +210,14 @@ export default function RootLayout() {
 
       if (!createError && newProfile) {
         setProfile(newProfile);
+      } else if (createError?.code === '23505') {
+        // Trigger won the race — just fetch the profile it created
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
+        if (existingProfile) setProfile(existingProfile);
       } else {
         console.error('Failed to create missing profile:', createError);
       }

@@ -66,13 +66,15 @@
       "usernameFormat": "Solo letras, números, guiones bajos y guiones",
       "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
       "passwordsNoMatch": "Las contraseñas no coinciden",
-      "selectCountry": "Por favor selecciona tu país"
+      "selectCountry": "Por favor selecciona tu país",
+      "usernameTaken": "Este nombre de usuario ya está en uso"
     },
     "errors": {
       "loginFailed": "Error al iniciar sesión",
       "signupFailed": "Error al registrarse",
       "rateLimitExceeded": "Demasiados intentos. Por favor espera unos minutos e intenta de nuevo.",
-      "emailNotVerified": "Por favor verifica tu correo antes de iniciar sesión. Revisa tu bandeja de entrada para el enlace de confirmación."
+      "emailNotVerified": "Por favor verifica tu correo antes de iniciar sesión. Revisa tu bandeja de entrada para el enlace de confirmación.",
+      "emailAlreadyInUse": "Este correo ya está registrado. Por favor inicia sesión o usa un correo diferente."
     },
           "accountCreated": {
             "title": "¡Cuenta creada!",

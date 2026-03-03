@@ -1,5 +1,5 @@
 // Sign up screen
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -39,9 +39,12 @@ export default function SignupScreen() {
   const [country, setCountry] = useState<string | null>(null);
   const [receiveNewsletter, setReceiveNewsletter] = useState(false);
   const [showCountryPicker, setShowCountryPicker] = useState(false);
+  const [usernameTaken, setUsernameTaken] = useState(false);
+  const [checkingUsername, setCheckingUsername] = useState(false);
   const { showError, showSuccess } = useAppModal();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
+  const usernameCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     Animated.parallel([
@@ -57,6 +60,27 @@ export default function SignupScreen() {
       }),
     ]).start();
   }, []);
+
+  const checkUsernameAvailability = useCallback((name: string) => {
+    if (usernameCheckTimer.current) clearTimeout(usernameCheckTimer.current);
+    const trimmed = name.trim();
+    if (trimmed.length < 3 || !/^[a-zA-Z0-9_-]+$/.test(trimmed)) {
+      setUsernameTaken(false);
+      setCheckingUsername(false);
+      return;
+    }
+    setCheckingUsername(true);
+    usernameCheckTimer.current = setTimeout(async () => {
+      const { data } = await supabase.rpc('check_username_available', { p_username: trimmed });
+      setUsernameTaken(data === false);
+      setCheckingUsername(false);
+    }, 500);
+  }, []);
+
+  function handleUsernameChange(value: string) {
+    setUsername(value);
+    checkUsernameAvailability(value);
+  }
 
   async function handleSignup() {
     if (!checkAuthRateLimit('signup')) {
@@ -109,6 +133,15 @@ export default function SignupScreen() {
 
     setLoading(true);
 
+    // Check if username is already taken (checks profiles + auth.users metadata)
+    const { data: isAvailable } = await supabase.rpc('check_username_available', { p_username: username.trim() });
+
+    if (isAvailable === false) {
+      setLoading(false);
+      showError(t('common.error'), t('auth.validation.usernameTaken'));
+      return;
+    }
+
     // Check for pending referral code
     let referralCode = null;
     try {
@@ -133,6 +166,14 @@ export default function SignupScreen() {
     });
 
     if (error) {
+      setLoading(false);
+      showError(t('auth.errors.signupFailed'), t('common.genericError'));
+      return;
+    }
+
+    // Supabase returns a fake user with empty identities when email already exists
+    // (to prevent user enumeration). Detect this and show generic error.
+    if (data?.user?.identities?.length === 0) {
       setLoading(false);
       showError(t('auth.errors.signupFailed'), t('common.genericError'));
       return;
@@ -193,20 +234,31 @@ export default function SignupScreen() {
           <View style={styles.form}>
             <View style={styles.field}>
               <Text style={styles.label}>{t('auth.username')}</Text>
-              <View style={styles.inputContainer}>
-                <Ionicons name="person-outline" size={ICON_SIZES.sm} color={COLORS.textLight} style={styles.inputIcon} />
+              <View style={[styles.inputContainer, usernameTaken && styles.inputContainerError]}>
+                <Ionicons name="person-outline" size={ICON_SIZES.sm} color={usernameTaken ? COLORS.error : COLORS.textLight} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={username}
-                  onChangeText={setUsername}
+                  onChangeText={handleUsernameChange}
                   placeholder={t('auth.usernamePlaceholder')}
                   placeholderTextColor={COLORS.textLight}
                   autoCapitalize="none"
                   autoCorrect={false}
                   maxLength={15}
                 />
+                {username.trim().length >= 3 && !checkingUsername && (
+                  <Ionicons
+                    name={usernameTaken ? 'close-circle' : 'checkmark-circle'}
+                    size={ICON_SIZES.sm}
+                    color={usernameTaken ? COLORS.error : COLORS.success}
+                  />
+                )}
               </View>
-              <Text style={styles.helperText}>{t('auth.usernameHelper')}</Text>
+              {usernameTaken ? (
+                <Text style={styles.errorText}>{t('auth.validation.usernameTaken')}</Text>
+              ) : (
+                <Text style={styles.helperText}>{t('auth.usernameHelper')}</Text>
+              )}
             </View>
 
             <View style={styles.field}>
@@ -319,6 +371,7 @@ export default function SignupScreen() {
               title={t('auth.createAccount')}
               onPress={handleSignup}
               loading={loading}
+              disabled={usernameTaken || checkingUsername}
               style={styles.submitButton}
             />
           </View>
@@ -405,6 +458,16 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
     marginTop: SPACING.xs,
     lineHeight: 16,
+  },
+  errorText: {
+    fontSize: FONT_SIZES.xs,
+    fontFamily: FONTS.bodySemiBold,
+    color: COLORS.error,
+    marginTop: SPACING.xs,
+    lineHeight: 16,
+  },
+  inputContainerError: {
+    borderColor: COLORS.error,
   },
   inputContainer: {
     flexDirection: 'row',

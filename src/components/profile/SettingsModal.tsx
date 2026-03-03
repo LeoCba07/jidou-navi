@@ -202,6 +202,8 @@ export default function SettingsModal({
         handleClose();
       } else if (result.error === 'name_change_cooldown') {
         showError(t('common.error'), t('profile.nameChangeCooldown', { days: result.days_remaining || 14 }));
+      } else if (result.error === 'username_taken') {
+        showError(t('common.error'), t('auth.validation.usernameTaken'));
       } else {
         showError(t('common.error'), result.error || t('profile.updateError'));
       }

@@ -27,7 +27,7 @@ serve(async (req) => {
       );
     }
 
-    // Create admin client with service role
+    // Create admin client with service role (bypasses RLS)
     const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     // Verify the user's JWT
@@ -41,7 +41,9 @@ serve(async (req) => {
       );
     }
 
-    // Delete profile (cascades to saved_machines, visits, user_badges, etc.)
+    // Delete profile — related tables cascade automatically:
+    // ON DELETE CASCADE: saved_machines, visits, user_badges, friendships, notifications, flags, upvotes
+    // ON DELETE SET NULL: machines.contributor_id, machine_photos.uploaded_by
     const { error: profileError } = await adminClient
       .from('profiles')
       .delete()
@@ -50,18 +52,18 @@ serve(async (req) => {
     if (profileError) {
       console.error('Profile deletion error:', profileError);
       return new Response(
-        JSON.stringify({ error: "Failed to delete profile data" }),
+        JSON.stringify({ error: `Failed to delete profile: ${profileError.message}` }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Delete the auth user completely using admin API
+    // Delete the auth user completely
     const { error: authDeleteError } = await adminClient.auth.admin.deleteUser(user.id);
 
     if (authDeleteError) {
       console.error('Auth user deletion error:', authDeleteError);
       return new Response(
-        JSON.stringify({ error: "Profile deleted but failed to delete auth account" }),
+        JSON.stringify({ error: `Profile deleted but failed to delete auth account: ${authDeleteError.message}` }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -74,7 +76,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Delete account error:', error);
     return new Response(
-      JSON.stringify({ error: "Internal server error" }),
+      JSON.stringify({ error: `Internal server error: ${error.message}` }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
