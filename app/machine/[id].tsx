@@ -660,9 +660,10 @@ export default function MachineDetailScreen() {
       // Success! Update the visit count and disable button
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
-      setLocalLastVerifiedAt(new Date().toISOString());
+      const now = new Date().toISOString();
+      setLocalLastVerifiedAt(now);
       addVisited(params.id as string); // Add to visited machines store
-      updateCachedMachine(params.id as string, { last_verified_at: new Date().toISOString(), visit_count: displayVisitCount + 1 });
+      updateCachedMachine(params.id as string, { last_verified_at: now, visit_count: displayVisitCount + 1 });
       clearCache(); // Invalidate map cache so fresh data is fetched on next map interaction
 
       // Refresh visitors list so current user appears
