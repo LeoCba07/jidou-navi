@@ -66,12 +66,15 @@
       "usernameFormat": "Letters, numbers, underscores, and hyphens only",
       "passwordMinLength": "Password must be at least 6 characters",
       "passwordsNoMatch": "Passwords do not match",
-      "selectCountry": "Please select your country"
+      "selectCountry": "Please select your country",
+      "usernameTaken": "This username is already taken"
     },
     "errors": {
       "loginFailed": "Login failed",
       "signupFailed": "Sign up failed",
-      "rateLimitExceeded": "Too many attempts. Please wait a few minutes and try again."
+      "rateLimitExceeded": "Too many attempts. Please wait a few minutes and try again.",
+      "emailNotVerified": "Please verify your email before logging in. Check your inbox for the confirmation link.",
+      "emailAlreadyInUse": "This email is already registered. Please log in or use a different email."
     },
           "accountCreated": {
             "title": "Account created!",
@@ -149,7 +152,7 @@
     "rejected": "Not Approved",
     "pendingHint": "Under review by our team",
     "editProfile": "Edit Profile",
-    "displayName": "Display Name",
+    "displayName": "Username",
     "updateProfile": "Update Profile",
     "updateSuccess": "Profile updated successfully!",
     "updateError": "Failed to update profile.",

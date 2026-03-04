@@ -124,7 +124,13 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
     // Fetch machines for the expanded bounds
     set({ isFetching: true, fetchError: null });
 
-    const data = await fetchMachinesInBounds(expandedBounds);
+    let data = await fetchMachinesInBounds(expandedBounds);
+
+    if (data === null) {
+      // Retry once after a short delay (handles session not ready on first login)
+      await new Promise((r) => setTimeout(r, 1500));
+      data = await fetchMachinesInBounds(expandedBounds);
+    }
 
     if (data === null) {
       // Network error - keep using cache and set error

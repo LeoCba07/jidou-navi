@@ -1,13 +1,9 @@
--- Migration: Improve duplicate check logic
--- Purpose: Add name similarity scoring and refine radius to reduce false positives
+-- Migration: Filter duplicate check results by proximity OR name similarity
+-- Only show machines that are very close (<15m) or have meaningful name similarity (>0.3)
+-- Prevents false positives like "Dr Pepper" matching "Sevens Crepe" just because they're 49m apart
 
--- 0. Ensure extension is available
-CREATE EXTENSION IF NOT EXISTS pg_trgm;
-
--- 1. Drop existing function to allow changing return columns
 DROP FUNCTION IF EXISTS check_duplicate_machines(UUID, INT);
 
--- 2. Re-create with name similarity
 CREATE OR REPLACE FUNCTION check_duplicate_machines(
     p_machine_id UUID,
     p_radius_meters INT DEFAULT 50
@@ -81,5 +77,4 @@ BEGIN
 END;
 $$;
 
--- 3. Regrant permissions
 GRANT EXECUTE ON FUNCTION check_duplicate_machines TO authenticated;

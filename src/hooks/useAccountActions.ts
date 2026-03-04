@@ -59,11 +59,18 @@ export function useAccountActions() {
 
               await unregisterPushNotificationsAsync();
 
-              // @ts-ignore - RPC function to be added in database
-              const { error } = await supabase.rpc('delete_user_account');
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session) {
+                showError(t('common.error'), t('profile.deleteAccountError'));
+                return;
+              }
+
+              const { data, error } = await supabase.functions.invoke('delete-account', {
+                body: { access_token: session.access_token },
+              });
 
               if (error) {
-                console.error('Delete account error:', error);
+                console.error('Delete account error:', error.message, 'Data:', JSON.stringify(data));
                 showError(t('common.error'), t('profile.deleteAccountError'));
                 return;
               }

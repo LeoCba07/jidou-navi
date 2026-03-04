@@ -126,19 +126,24 @@ export default function MachineDetailScreen() {
 
   // Load machine data if missing (Deep Linking)
   useEffect(() => {
+    let cancelled = false;
     async function loadMissingData() {
       if (!params.id) return;
-      
-      // If we already have the name, we don't STRICTLY need to fetch, 
+
+      // If we already have the name, we don't STRICTLY need to fetch,
       // but for deep links we usually don't.
-      if (params.name && params.name.length > 0 && params.name !== '[id]') {
+      const hasBasicParams = params.name && params.name.length > 0 && params.name !== '[id]';
+      if (hasBasicParams) {
         setIsLoadingData(false);
+        // Still fetch full details (e.g. directions_hint) without blocking the UI
+        fetchMachineById(params.id).then(data => { if (data && !cancelled) setMachineData(data); }).catch(() => {});
         return;
       }
 
       setIsLoadingData(true);
       try {
         const data = await fetchMachineById(params.id);
+        if (cancelled) return;
         if (data) {
           setMachineData(data);
         } else {
@@ -151,7 +156,7 @@ export default function MachineDetailScreen() {
             );
           } else {
             showError(
-              t('common.error'), 
+              t('common.error'),
               t('map.fetchError'),
               () => router.replace('/(tabs)')
             );
@@ -160,7 +165,7 @@ export default function MachineDetailScreen() {
       } catch (err) {
         console.error('[DeepLink] Unexpected error loading deep linked machine:', err);
         showError(
-          t('common.error'), 
+          t('common.error'),
           t('map.fetchError'),
           () => router.replace('/(tabs)')
         );
@@ -170,6 +175,7 @@ export default function MachineDetailScreen() {
     }
 
     loadMissingData();
+    return () => { cancelled = true; };
   }, [params.id, params.name]);
 
   // Consolidate data into a single source of truth for the UI
@@ -213,8 +219,9 @@ export default function MachineDetailScreen() {
     latitude, 
     longitude, 
     primary_photo_url: primaryPhotoUrl, 
-    last_verified_at: lastVerifiedAt 
+    last_verified_at: lastVerifiedAt,
   } = displayData;
+  const directionsHint = machineData?.directions_hint || '';
   
   const initialDistance = displayData.distance_meters;
   const initialVisitCount = displayData.visit_count;
@@ -923,18 +930,6 @@ export default function MachineDetailScreen() {
           {/* Visited stamp */}
           {(isVisited || hasCheckedIn) && <VisitedStamp />}
 
-          {/* Admin: delete current photo */}
-          {isAdmin && photos.length > 0 && photos[activePhotoIndex]?.id !== 'primary' && (
-            <Pressable
-              style={styles.adminDeletePhotoButton}
-              onPress={handleAdminDeletePhoto}
-              accessibilityRole="button"
-              accessibilityLabel={t('admin.deletePhoto')}
-              accessibilityHint={t('admin.deletePhotoHint')}
-            >
-              <Ionicons name="trash-outline" size={ICON_SIZES.sm} color="#fff" />
-            </Pressable>
-          )}
         </View>
 
         {/* Title Card */}
@@ -1006,6 +1001,15 @@ export default function MachineDetailScreen() {
                   </Pressable>
                 )}
               </View>
+              {directionsHint ? (
+                <>
+                  <View style={styles.locationDivider} />
+                  <View style={styles.directionsHintRow}>
+                    <Ionicons name="navigate-outline" size={ICON_SIZES.xs} color={COLORS.textMuted} />
+                    <Text style={styles.directionsHintText}>{directionsHint}</Text>
+                  </View>
+                </>
+              ) : null}
               <View style={styles.locationDivider} />
               <View style={styles.visitCountRow}>
                 <View style={styles.statusItem}>
@@ -1591,6 +1595,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: FONT_SIZES.md,
     fontFamily: FONTS.button,
+  },
+  directionsHintRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  directionsHintText: {
+    flex: 1,
+    color: COLORS.textMuted,
+    fontSize: FONT_SIZES.xs,
+    fontFamily: FONTS.body,
   },
   activityHeader: {
     flexDirection: 'row',

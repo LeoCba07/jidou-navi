@@ -11,6 +11,8 @@ import {
   Linking,
   Alert,
   Platform,
+  Modal,
+  Dimensions,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -64,6 +66,7 @@ export default function ReviewMachineScreen() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [photoError, setPhotoError] = useState(false);
   const [nearbyPhotoErrors, setNearbyPhotoErrors] = useState<Set<string>>(new Set());
+  const [fullScreenPhoto, setFullScreenPhoto] = useState<string | null>(null);
 
   const isProcessing = isApproving || isRejecting || isBanning;
 
@@ -201,11 +204,13 @@ export default function ReviewMachineScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* Photo */}
         {selectedMachine.primary_photo_url && !photoError ? (
-          <Image
-            source={{ uri: selectedMachine.primary_photo_url }}
-            style={styles.photo}
-            onError={() => setPhotoError(true)}
-          />
+          <Pressable onPress={() => setFullScreenPhoto(selectedMachine.primary_photo_url)}>
+            <Image
+              source={{ uri: selectedMachine.primary_photo_url }}
+              style={styles.photo}
+              onError={() => setPhotoError(true)}
+            />
+          </Pressable>
         ) : (
           <View style={[styles.photo, styles.photoPlaceholder]}>
             <Ionicons name="image-outline" size={ICON_SIZES.xxl} color="#ccc" />
@@ -442,6 +447,32 @@ export default function ReviewMachineScreen() {
         onReject={handleReject}
         isSubmitting={isRejecting}
       />
+
+      {/* Fullscreen Photo Modal */}
+      <Modal
+        visible={!!fullScreenPhoto}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setFullScreenPhoto(null)}
+      >
+        <View style={styles.fullScreenOverlay}>
+          <Pressable
+            style={styles.fullScreenClose}
+            onPress={() => setFullScreenPhoto(null)}
+            accessibilityRole="button"
+            accessibilityLabel="Close photo"
+          >
+            <Ionicons name="close" size={28} color="#fff" />
+          </Pressable>
+          {fullScreenPhoto && (
+            <Image
+              source={{ uri: fullScreenPhoto }}
+              style={styles.fullScreenImage}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -795,5 +826,24 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 12,
     lineHeight: 18,
+  },
+  fullScreenOverlay: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenClose: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    zIndex: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+    padding: 8,
+  },
+  fullScreenImage: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
 });
