@@ -77,6 +77,7 @@ export default function MachineDetailScreen() {
   const { showError, showSuccess, showConfirm, showInfo } = useAppModal();
   const toast = useToast();
   const clearCache = useMachinesCacheStore((state) => state.clearCache);
+  const updateCachedMachine = useMachinesCacheStore((state) => state.updateMachine);
   const { removeActivePhoto: adminRemovePhoto } = useAdminStore();
   const isAdmin = profile?.role === 'admin';
   const [checkingIn, setCheckingIn] = useState(false);
@@ -98,6 +99,7 @@ export default function MachineDetailScreen() {
   const [machineData, setMachineData] = useState<NearbyMachine | null>(null);
   const [visitors, setVisitors] = useState<MachineVisitor[]>([]);
   const [loadingVisitors, setLoadingVisitors] = useState(true);
+  const [localLastVerifiedAt, setLocalLastVerifiedAt] = useState<string | null>(null);
 
   const params = useLocalSearchParams<{
     id: string;
@@ -218,9 +220,10 @@ export default function MachineDetailScreen() {
     description, 
     latitude, 
     longitude, 
-    primary_photo_url: primaryPhotoUrl, 
-    last_verified_at: lastVerifiedAt,
+    primary_photo_url: primaryPhotoUrl,
+    last_verified_at: lastVerifiedAtRaw,
   } = displayData;
+  const lastVerifiedAt = localLastVerifiedAt || lastVerifiedAtRaw;
   const directionsHint = machineData?.directions_hint || '';
   
   const initialDistance = displayData.distance_meters;
@@ -657,8 +660,10 @@ export default function MachineDetailScreen() {
       // Success! Update the visit count and disable button
       setVisitCount(displayVisitCount + 1);
       setHasCheckedIn(true);
+      setLocalLastVerifiedAt(new Date().toISOString());
       addVisited(params.id as string); // Add to visited machines store
-      clearCache(); // Invalidate map cache so fresh data (with updated last_verified_at) is fetched
+      updateCachedMachine(params.id as string, { last_verified_at: new Date().toISOString(), visit_count: displayVisitCount + 1 });
+      clearCache(); // Invalidate map cache so fresh data is fetched on next map interaction
 
       // Refresh visitors list so current user appears
       fetchMachineVisitors(params.id, 5).then(setVisitors);

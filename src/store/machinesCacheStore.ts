@@ -26,6 +26,7 @@ interface MachinesCacheState {
   fetchMachinesForBounds: (bounds: MapBounds) => Promise<void>;
   getMachinesInBounds: (bounds: MapBounds) => NearbyMachine[];
   clearCache: () => void;
+  updateMachine: (id: string, patch: Partial<NearbyMachine>) => void;
   setVisibleMachines: (machines: NearbyMachine[]) => void;
   clearError: () => void;
   reset: () => void;
@@ -202,6 +203,22 @@ export const useMachinesCacheStore = create<MachinesCacheState>((set, get) => ({
       tileCache: new Map(),
       lastFetchBounds: null,
     });
+  },
+
+  updateMachine: (id: string, patch: Partial<NearbyMachine>) => {
+    const state = get();
+    const updater = (m: NearbyMachine) => m.id === id ? { ...m, ...patch } : m;
+    // Update visibleMachines
+    set({ visibleMachines: state.visibleMachines.map(updater) });
+    // Update tileCache
+    const newCache = new Map(state.tileCache);
+    for (const [key, tile] of newCache) {
+      const hasMatch = tile.machines.some(m => m.id === id);
+      if (hasMatch) {
+        newCache.set(key, { ...tile, machines: tile.machines.map(updater) });
+      }
+    }
+    set({ tileCache: newCache });
   },
 
   setVisibleMachines: (machines: NearbyMachine[]) => {
