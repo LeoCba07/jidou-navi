@@ -49,6 +49,33 @@ serve(async (req) => {
       )
     }
 
+    // Validate bucket is in allowlist
+    const ALLOWED_BUCKETS = ['machine-photos', 'avatars']
+    if (!ALLOWED_BUCKETS.includes(bucket)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid bucket' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Validate file type is an image
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid file type. Only JPEG, PNG, WebP, and HEIC images are allowed.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Validate file size (max 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024
+    if (file.size > MAX_FILE_SIZE) {
+      return new Response(
+        JSON.stringify({ error: 'File too large. Maximum size is 10MB.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Verify the path starts with the user's ID
     if (!filePath.startsWith(user.id)) {
       return new Response(

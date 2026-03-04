@@ -459,6 +459,8 @@ export default function ReviewMachineScreen() {
           <Pressable
             style={styles.fullScreenClose}
             onPress={() => setFullScreenPhoto(null)}
+            accessibilityRole="button"
+            accessibilityLabel="Close photo"
           >
             <Ionicons name="close" size={28} color="#fff" />
           </Pressable>

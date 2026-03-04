@@ -61,6 +61,12 @@ export default function SignupScreen() {
     ]).start();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (usernameCheckTimer.current) clearTimeout(usernameCheckTimer.current);
+    };
+  }, []);
+
   const checkUsernameAvailability = useCallback((name: string) => {
     if (usernameCheckTimer.current) clearTimeout(usernameCheckTimer.current);
     const trimmed = name.trim();
@@ -71,9 +77,14 @@ export default function SignupScreen() {
     }
     setCheckingUsername(true);
     usernameCheckTimer.current = setTimeout(async () => {
-      const { data } = await supabase.rpc('check_username_available', { p_username: trimmed });
-      setUsernameTaken(data === false);
-      setCheckingUsername(false);
+      try {
+        const { data } = await supabase.rpc('check_username_available', { p_username: trimmed });
+        setUsernameTaken(data === false);
+      } catch {
+        // Keep checkingUsername true on error to prevent false "available" state
+      } finally {
+        setCheckingUsername(false);
+      }
     }, 500);
   }, []);
 
@@ -246,7 +257,7 @@ export default function SignupScreen() {
                   autoCorrect={false}
                   maxLength={15}
                 />
-                {username.trim().length >= 3 && !checkingUsername && (
+                {username.trim().length >= 3 && /^[a-zA-Z0-9_-]+$/.test(username.trim()) && !checkingUsername && (
                   <Ionicons
                     name={usernameTaken ? 'close-circle' : 'checkmark-circle'}
                     size={ICON_SIZES.sm}

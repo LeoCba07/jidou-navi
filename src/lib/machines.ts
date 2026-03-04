@@ -141,9 +141,9 @@ export async function fetchMachinesInBounds(
     });
 
     if (error) {
-      // Permission denied = session not ready yet, return empty (not error)
+      // Permission denied = session not ready yet, return null to trigger retry
       if (error.code === '42501' || error.message?.includes('permission denied')) {
-        return [];
+        return null;
       }
       Sentry.captureException(error, { tags: { context: 'fetch_machines_in_bounds' }, extra: { bounds } });
       return null;

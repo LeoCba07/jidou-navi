@@ -122,6 +122,12 @@ export default function SettingsModal({
   const isNameChangeDisabled = nameChangeCooldownDays > 0;
   const hasChanges = displayName.trim() !== (profile?.display_name || '') || receiveNewsletter !== (profile?.receive_newsletter || false);
 
+  useEffect(() => {
+    return () => {
+      if (usernameCheckTimer.current) clearTimeout(usernameCheckTimer.current);
+    };
+  }, []);
+
   const checkUsernameAvailability = useCallback((name: string) => {
     if (usernameCheckTimer.current) clearTimeout(usernameCheckTimer.current);
     const trimmed = name.trim();
@@ -133,9 +139,14 @@ export default function SettingsModal({
     }
     setCheckingUsername(true);
     usernameCheckTimer.current = setTimeout(async () => {
-      const { data } = await supabase.rpc('check_username_available', { p_username: trimmed });
-      setUsernameTaken(data === false);
-      setCheckingUsername(false);
+      try {
+        const { data } = await supabase.rpc('check_username_available', { p_username: trimmed });
+        setUsernameTaken(data === false);
+      } catch {
+        // Keep checkingUsername true on error to prevent false "available" state
+      } finally {
+        setCheckingUsername(false);
+      }
     }, 500);
   }, [profile?.display_name]);
 

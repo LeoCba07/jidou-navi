@@ -126,6 +126,7 @@ export default function MachineDetailScreen() {
 
   // Load machine data if missing (Deep Linking)
   useEffect(() => {
+    let cancelled = false;
     async function loadMissingData() {
       if (!params.id) return;
 
@@ -135,13 +136,14 @@ export default function MachineDetailScreen() {
       if (hasBasicParams) {
         setIsLoadingData(false);
         // Still fetch full details (e.g. directions_hint) without blocking the UI
-        fetchMachineById(params.id).then(data => { if (data) setMachineData(data); }).catch(() => {});
+        fetchMachineById(params.id).then(data => { if (data && !cancelled) setMachineData(data); }).catch(() => {});
         return;
       }
 
       setIsLoadingData(true);
       try {
         const data = await fetchMachineById(params.id);
+        if (cancelled) return;
         if (data) {
           setMachineData(data);
         } else {
@@ -173,6 +175,7 @@ export default function MachineDetailScreen() {
     }
 
     loadMissingData();
+    return () => { cancelled = true; };
   }, [params.id, params.name]);
 
   // Consolidate data into a single source of truth for the UI
