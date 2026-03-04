@@ -223,6 +223,15 @@ export default function MapScreen() {
     }
   }
 
+  // Keep selectedMachine in sync with cache updates (e.g. after check-in updates last_verified_at/visit_count)
+  useEffect(() => {
+    if (!selectedMachine) return;
+    const updated = machines.find(m => m.id === selectedMachine.id);
+    if (updated && (updated.last_verified_at !== selectedMachine.last_verified_at || updated.visit_count !== selectedMachine.visit_count)) {
+      setSelectedMachine(updated);
+    }
+  }, [machines]);
+
   // Close preview when tapping on empty map area
   function handleMapPress() {
     // Don't clear if a marker was just pressed
