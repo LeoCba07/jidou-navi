@@ -546,8 +546,6 @@ export default function MachineDetailScreen() {
           // Revert on failure
           addSaved(params.id);
           showError(t('common.error'), t('machine.unsaveError'));
-        } else {
-          toast.showInfo(t('machine.unsaveSuccess'));
         }
       } else {
         // Optimistic update - add to store immediately
@@ -557,8 +555,6 @@ export default function MachineDetailScreen() {
           // Revert on failure
           removeSaved(params.id);
           showError(t('common.error'), t('machine.saveError'));
-        } else {
-          toast.showSuccess(t('machine.saveSuccess'));
         }
       }
     } catch (err) {

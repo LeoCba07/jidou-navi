@@ -304,8 +304,6 @@ export default function DiscoverScreen() {
         if (!success) {
           addSaved(machineId);
           showError(t('common.error'), t('machine.unsaveError'));
-        } else {
-          toast.showInfo(t('machine.unsaveSuccess'));
         }
       } else {
         addSaved(machineId);
@@ -313,8 +311,6 @@ export default function DiscoverScreen() {
         if (!success) {
           removeSaved(machineId);
           showError(t('common.error'), t('machine.saveError'));
-        } else {
-          toast.showSuccess(t('machine.saveSuccess'));
         }
       }
     } catch {

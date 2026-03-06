@@ -230,8 +230,6 @@
     "viewPhotoFullScreen": "View photo in full screen",
     "loginToSave": "Please log in to save machines.",
     "loginToCheckIn": "Please log in to check in.",
-    "saveSuccess": "Machine saved!",
-    "unsaveSuccess": "Removed from saved",
     "saveError": "Failed to save machine.",
     "unsaveError": "Failed to unsave machine.",
     "stalePrompt": "This machine hasn't been verified recently. Can you help confirm it's still here?",

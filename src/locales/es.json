@@ -230,8 +230,6 @@
     "viewPhotoFullScreen": "Ver foto en pantalla completa",
     "loginToSave": "Por favor inicia sesión para guardar máquinas.",
     "loginToCheckIn": "Por favor inicia sesión para registrar tu visita.",
-    "saveSuccess": "¡Máquina guardada!",
-    "unsaveSuccess": "Eliminada de guardados",
     "saveError": "Error al guardar la máquina.",
     "unsaveError": "Error al eliminar la máquina de guardados.",
     "stalePrompt": "Esta máquina no ha sido verificada recientemente. ¿Puedes confirmar que sigue aquí?",
