@@ -22,6 +22,9 @@ BEGIN
         RETURN json_build_object('success', false, 'error', 'not_authenticated');
     END IF;
 
+    PERFORM require_verified_email();
+    PERFORM check_rate_limit('record_gone_report', 10, 60);
+
     -- Insert gone report (idempotent per user)
     INSERT INTO machine_gone_reports (machine_id, user_id)
     VALUES (p_machine_id, auth.uid())
@@ -62,7 +65,7 @@ BEGIN
         'flagged', gone_count >= flag_threshold
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ============================================
 -- 2. UPDATE clear_machine_gone_reports
@@ -98,7 +101,10 @@ BEGIN
         WHERE id = p_machine_id;
     END IF;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- Revoke direct call access from authenticated users (only callable from triggers)
+REVOKE EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) FROM authenticated;
 
 -- ============================================
 -- 3. NEW RPC: get_flagged_machines (admin-only)
@@ -142,7 +148,7 @@ BEGIN
         m.address,
         m.latitude,
         m.longitude,
-        m.contributed_by AS contributor_id,
+        m.contributor_id,
         p.username AS contributor_username,
         p.display_name AS contributor_display_name,
         (
@@ -172,13 +178,13 @@ BEGIN
             LIMIT 1
         ) AS flag_details
     FROM machines m
-    LEFT JOIN profiles p ON p.id = m.contributed_by
+    LEFT JOIN profiles p ON p.id = m.contributor_id
     WHERE m.status = 'flagged'
     ORDER BY m.created_at DESC
     LIMIT limit_count
     OFFSET offset_count;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION get_flagged_machines(INT, INT) TO authenticated;
 
@@ -228,7 +234,7 @@ BEGIN
 
     RETURN TRUE;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION admin_restore_machine(UUID) TO authenticated;
 
@@ -253,6 +259,6 @@ BEGIN
 
     RETURN FOUND;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION admin_delete_machine(UUID) TO authenticated;

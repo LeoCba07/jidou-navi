@@ -115,12 +115,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   },
 
   loadFlaggedMachines: async () => {
-    set({ isLoadingFlagged: true });
+    set({ isLoadingFlagged: true, error: null });
     try {
       const machines = await fetchFlaggedMachines();
       set({ flaggedMachines: machines, isLoadingFlagged: false });
     } catch (err) {
-      set({ flaggedMachines: [], isLoadingFlagged: false });
+      set({ error: 'Failed to load flagged machines', isLoadingFlagged: false });
     }
   },
 

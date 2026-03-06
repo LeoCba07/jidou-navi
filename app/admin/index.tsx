@@ -46,11 +46,11 @@ export default function AdminDashboard() {
       loadPendingMachines();
       loadFlaggedMachines();
     }
-  }, [isAdmin]);
+  }, [isAdmin, loadPendingMachines, loadFlaggedMachines]);
 
   const onRefresh = useCallback(async () => {
     await Promise.all([loadPendingMachines(), loadFlaggedMachines()]);
-  }, []);
+  }, [loadPendingMachines, loadFlaggedMachines]);
 
   const handleMachinePress = (machine: typeof pendingMachines[0]) => {
     selectMachine(machine);
