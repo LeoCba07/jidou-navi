@@ -609,7 +609,22 @@
     "banningUser": "Baneando a {{name}}...",
     "banSuccess": "El usuario ha sido baneado.",
     "banSuccessWithRejections": "El usuario ha sido baneado. {{machines}} máquina(s) pendientes fueron rechazadas automáticamente.",
-    "banError": "Error al banear al usuario. Inténtalo de nuevo."
+    "banError": "Error al banear al usuario. Inténtalo de nuevo.",
+    "flagged": {
+      "title": "Máquinas Marcadas",
+      "empty": "No hay máquinas marcadas",
+      "goneReports": "{{count}} reportes de ausencia",
+      "restore": "Restaurar",
+      "delete": "Eliminar",
+      "confirmRestore": "¿Restaurar Máquina?",
+      "confirmRestoreMessage": "Esto reactivará \"{{name}}\" y eliminará todos los reportes de ausencia.",
+      "restoreSuccess": "¡Máquina restaurada y visible en el mapa!",
+      "restoreError": "Error al restaurar la máquina. Inténtalo de nuevo.",
+      "confirmDelete": "¿Eliminar Máquina?",
+      "confirmDeleteMessage": "Esto eliminará permanentemente \"{{name}}\" y todos sus datos. Esta acción no se puede deshacer.",
+      "deleteSuccess": "Máquina eliminada permanentemente.",
+      "deleteError": "Error al eliminar la máquina. Inténtalo de nuevo."
+    }
   },
   "report": {
     "title": "Reportar Problema",

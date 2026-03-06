@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Alert,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,6 +19,7 @@ import { useAdminStore } from '../../src/store/adminStore';
 import { useToast } from '../../src/hooks/useToast';
 import PendingMachineCard from '../../src/components/admin/PendingMachineCard';
 import { FONT_SIZES, ICON_SIZES } from '../../src/theme/constants';
+import type { FlaggedMachine } from '../../src/lib/admin';
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
@@ -30,6 +32,11 @@ export default function AdminDashboard() {
     loadPendingMachines,
     selectMachine,
     banUser,
+    flaggedMachines,
+    isLoadingFlagged,
+    loadFlaggedMachines,
+    restoreMachine,
+    deleteMachine,
   } = useAdminStore();
 
   const isAdmin = profile?.role === 'admin';
@@ -37,12 +44,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (isAdmin) {
       loadPendingMachines();
+      loadFlaggedMachines();
     }
-  }, [isAdmin]);
+  }, [isAdmin, loadPendingMachines, loadFlaggedMachines]);
 
   const onRefresh = useCallback(async () => {
-    await loadPendingMachines();
-  }, []);
+    await Promise.all([loadPendingMachines(), loadFlaggedMachines()]);
+  }, [loadPendingMachines, loadFlaggedMachines]);
 
   const handleMachinePress = (machine: typeof pendingMachines[0]) => {
     selectMachine(machine);
@@ -92,6 +100,55 @@ export default function AdminDashboard() {
     });
   };
 
+  const [actionInProgress, setActionInProgress] = useState<string | null>(null);
+
+  const handleRestoreMachine = (machine: FlaggedMachine) => {
+    Alert.alert(
+      t('admin.flagged.confirmRestore'),
+      t('admin.flagged.confirmRestoreMessage', { name: machine.name || t('machine.unnamed') }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('admin.flagged.restore'),
+          onPress: async () => {
+            setActionInProgress(machine.id);
+            const success = await restoreMachine(machine.id);
+            setActionInProgress(null);
+            if (success) {
+              toast.showSuccess(t('admin.flagged.restoreSuccess'));
+            } else {
+              toast.showError(t('admin.flagged.restoreError'));
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleDeleteMachine = (machine: FlaggedMachine) => {
+    Alert.alert(
+      t('admin.flagged.confirmDelete'),
+      t('admin.flagged.confirmDeleteMessage', { name: machine.name || t('machine.unnamed') }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('admin.flagged.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            setActionInProgress(machine.id);
+            const success = await deleteMachine(machine.id);
+            setActionInProgress(null);
+            if (success) {
+              toast.showSuccess(t('admin.flagged.deleteSuccess'));
+            } else {
+              toast.showError(t('admin.flagged.deleteError'));
+            }
+          },
+        },
+      ]
+    );
+  };
+
   // Access denied for non-admins
   if (!isAdmin) {
     return (
@@ -127,6 +184,11 @@ export default function AdminDashboard() {
         <View style={styles.statItem}>
           <Text style={styles.statNumber}>{pendingMachines.length}</Text>
           <Text style={styles.statLabel}>{t('admin.pendingReview')}</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={[styles.statNumber, { color: '#F59E0B' }]}>{flaggedMachines.length}</Text>
+          <Text style={styles.statLabel}>{t('admin.flagged.title')}</Text>
         </View>
       </View>
 
@@ -167,6 +229,73 @@ export default function AdminDashboard() {
                     machine={machine}
                     onPress={() => handleMachinePress(machine)}
                   />
+                ))}
+              </View>
+            )}
+
+            {/* Flagged Machines */}
+            <Text style={[styles.sectionTitle, styles.sectionTitleSpaced]}>
+              {t('admin.flagged.title')} ({flaggedMachines.length})
+            </Text>
+            {isLoadingFlagged && flaggedMachines.length === 0 ? (
+              <ActivityIndicator size="small" color="#F59E0B" />
+            ) : flaggedMachines.length === 0 ? (
+              <View style={styles.emptySection}>
+                <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.xl} color="#22C55E" />
+                <Text style={styles.emptyText}>{t('admin.flagged.empty')}</Text>
+              </View>
+            ) : (
+              <View style={styles.itemList}>
+                {flaggedMachines.map((machine) => (
+                  <View key={machine.id} style={styles.flaggedCard}>
+                    <View style={styles.flaggedCardHeader}>
+                      {machine.primary_photo_url ? (
+                        <Image source={{ uri: machine.primary_photo_url }} style={styles.flaggedPhoto} />
+                      ) : (
+                        <View style={[styles.flaggedPhoto, styles.flaggedPhotoPlaceholder]}>
+                          <Ionicons name="image-outline" size={20} color="#ccc" />
+                        </View>
+                      )}
+                      <View style={styles.flaggedInfo}>
+                        <Text style={styles.flaggedName} numberOfLines={1}>
+                          {machine.name || t('machine.unnamed')}
+                        </Text>
+                        <Text style={styles.flaggedAddress} numberOfLines={1}>
+                          {machine.address || t('machine.noAddress')}
+                        </Text>
+                        <View style={styles.flaggedBadge}>
+                          <Ionicons name="warning" size={12} color="#F59E0B" />
+                          <Text style={styles.flaggedBadgeText}>
+                            {t('admin.flagged.goneReports', { count: machine.gone_report_count })}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={styles.flaggedActions}>
+                      <Pressable
+                        style={[styles.flaggedButton, styles.restoreButton]}
+                        onPress={() => handleRestoreMachine(machine)}
+                        disabled={actionInProgress === machine.id}
+                      >
+                        {actionInProgress === machine.id ? (
+                          <ActivityIndicator size="small" color="#fff" />
+                        ) : (
+                          <>
+                            <Ionicons name="checkmark-circle" size={16} color="#fff" />
+                            <Text style={styles.flaggedButtonText}>{t('admin.flagged.restore')}</Text>
+                          </>
+                        )}
+                      </Pressable>
+                      <Pressable
+                        style={[styles.flaggedButton, styles.deleteButton]}
+                        onPress={() => handleDeleteMachine(machine)}
+                        disabled={actionInProgress === machine.id}
+                      >
+                        <Ionicons name="trash" size={16} color="#fff" />
+                        <Text style={styles.flaggedButtonText}>{t('admin.flagged.delete')}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
                 ))}
               </View>
             )}
@@ -316,5 +445,76 @@ const styles = StyleSheet.create({
   },
   itemList: {
     gap: 12,
+  },
+  flaggedCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  flaggedCardHeader: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  flaggedPhoto: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+  },
+  flaggedPhotoPlaceholder: {
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flaggedInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  flaggedName: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: '#2B2B2B',
+  },
+  flaggedAddress: {
+    fontSize: 12,
+    fontFamily: 'Inter',
+    color: '#888',
+  },
+  flaggedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  flaggedBadgeText: {
+    fontSize: 11,
+    fontFamily: 'Inter-SemiBold',
+    color: '#F59E0B',
+  },
+  flaggedActions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 10,
+  },
+  flaggedButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  restoreButton: {
+    backgroundColor: '#22C55E',
+  },
+  deleteButton: {
+    backgroundColor: '#EF4444',
+  },
+  flaggedButtonText: {
+    fontSize: 13,
+    fontFamily: 'Inter-SemiBold',
+    color: '#fff',
   },
 });

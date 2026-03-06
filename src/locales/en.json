@@ -609,7 +609,22 @@
     "banningUser": "Banning {{name}}...",
     "banSuccess": "User has been banned.",
     "banSuccessWithRejections": "User has been banned. {{machines}} pending machine(s) were auto-rejected.",
-    "banError": "Failed to ban user. Please try again."
+    "banError": "Failed to ban user. Please try again.",
+    "flagged": {
+      "title": "Flagged Machines",
+      "empty": "No flagged machines",
+      "goneReports": "{{count}} gone reports",
+      "restore": "Restore",
+      "delete": "Delete",
+      "confirmRestore": "Restore Machine?",
+      "confirmRestoreMessage": "This will set \"{{name}}\" back to active and clear all gone reports.",
+      "restoreSuccess": "Machine restored and visible on the map again!",
+      "restoreError": "Failed to restore machine. Please try again.",
+      "confirmDelete": "Delete Machine?",
+      "confirmDeleteMessage": "This will permanently delete \"{{name}}\" and all associated data. This cannot be undone.",
+      "deleteSuccess": "Machine permanently deleted.",
+      "deleteError": "Failed to delete machine. Please try again."
+    }
   },
   "report": {
     "title": "Report Issue",
