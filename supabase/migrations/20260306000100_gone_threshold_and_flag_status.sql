@@ -87,7 +87,7 @@ BEGIN
 
     GET DIAGNOSTICS resolved_count = ROW_COUNT;
 
-    -- Recalculate flag_count if any flags were resolved
+    -- Recalculate flag_count and restore status if any flags were resolved
     IF resolved_count > 0 THEN
         UPDATE machines
         SET flag_count = (
@@ -95,6 +95,13 @@ BEGIN
             WHERE machine_id = p_machine_id AND status = 'pending'
         )
         WHERE id = p_machine_id;
+
+        -- Restore to active if no pending flags left
+        UPDATE machines
+        SET status = 'active'
+        WHERE id = p_machine_id
+          AND status = 'flagged'
+          AND (SELECT COUNT(*) FROM flags WHERE machine_id = p_machine_id AND status = 'pending') = 0;
     END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
