@@ -758,16 +758,15 @@ export default function MachineDetailScreen() {
           earnedXP
         );
       } else {
-        // No badges - use toast and proceed with share card or review
-        toast.showSuccess(successMessage);
-
         if (stillExists) {
-          await sleep(MODAL_SEQUENCE_DELAY_MS);
+          // ShareableCard IS the success feedback — no toast needed
           showShareCard({
             ...shareData,
             onDismiss: () => tryRequestAppReview(),
           });
         } else {
+          // No share card — toast is the only feedback
+          toast.showSuccess(successMessage);
           tryRequestAppReview();
         }
       }
