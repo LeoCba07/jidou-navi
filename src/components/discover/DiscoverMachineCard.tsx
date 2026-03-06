@@ -165,9 +165,9 @@ export default function DiscoverMachineCard({
         />
         <View style={styles.actionButtons}>
           <Pressable
-            style={styles.actionButton}
+            style={[styles.actionButton, (isVisited && !isSaved) && { opacity: 0.3 }]}
             onPress={() => onSavePress(machine.id)}
-            disabled={isSaving}
+            disabled={isSaving || (isVisited && !isSaved)}
             hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel={isSaved ? t('common.unsave') : t('common.save')}

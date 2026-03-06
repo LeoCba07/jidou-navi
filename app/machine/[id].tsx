@@ -1123,10 +1123,10 @@ export default function MachineDetailScreen() {
               style={[
                 styles.secondaryButton,
                 isSaved && styles.savedButton,
-                saving && styles.buttonDisabled,
+                (saving || (isVisited && !isSaved)) && styles.buttonDisabled,
               ]}
               onPress={handleSaveToggle}
-              disabled={saving}
+              disabled={saving || (isVisited && !isSaved)}
               accessibilityLabel={isSaved ? t('common.unsave') : t('common.save')}
               accessibilityRole="button"
             >
@@ -1134,7 +1134,7 @@ export default function MachineDetailScreen() {
                 <ActivityIndicator size="small" color={COLORS.primary} />
               ) : (
                 <View style={styles.buttonContent}>
-                  <Image source={pixelBookmark} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, opacity: isSaved ? 1 : 0.4 }} />
+                  <Image source={pixelBookmark} style={{ width: ICON_SIZES.sm, height: ICON_SIZES.sm, opacity: isSaved ? 1 : (isVisited ? 0.2 : 0.4) }} />
                   <Text style={[styles.secondaryButtonText, isSaved && styles.savedText]} numberOfLines={1}>
                     {isSaved ? t('common.saved') : t('common.save')}
                   </Text>
