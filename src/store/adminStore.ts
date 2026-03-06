@@ -26,6 +26,7 @@ interface AdminState {
   isLoadingNearby: boolean;
   flaggedMachines: FlaggedMachine[];
   isLoadingFlagged: boolean;
+  flaggedError: string | null;
 
   // Actions
   loadPendingMachines: () => Promise<void>;
@@ -51,6 +52,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   isLoadingNearby: false,
   flaggedMachines: [],
   isLoadingFlagged: false,
+  flaggedError: null,
 
   loadPendingMachines: async () => {
     set({ isLoading: true, error: null });
@@ -115,12 +117,12 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   },
 
   loadFlaggedMachines: async () => {
-    set({ isLoadingFlagged: true, error: null });
+    set({ isLoadingFlagged: true, flaggedError: null });
     try {
       const machines = await fetchFlaggedMachines();
       set({ flaggedMachines: machines, isLoadingFlagged: false });
     } catch (err) {
-      set({ error: 'Failed to load flagged machines', isLoadingFlagged: false });
+      set({ flaggedError: 'Failed to load flagged machines', isLoadingFlagged: false });
     }
   },
 
@@ -152,6 +154,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       isLoadingNearby: false,
       flaggedMachines: [],
       isLoadingFlagged: false,
+      flaggedError: null,
     });
   },
 }));
