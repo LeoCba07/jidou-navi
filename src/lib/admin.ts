@@ -209,6 +209,71 @@ export async function banUser(userId: string): Promise<BanUserResult | null> {
   return result as BanUserResult;
 }
 
+// === Flagged machines (gone-reported) ===
+
+export type FlaggedMachine = {
+  id: string;
+  name: string | null;
+  description: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  contributor_id: string | null;
+  contributor_username: string | null;
+  contributor_display_name: string | null;
+  primary_photo_url: string | null;
+  gone_report_count: number;
+  created_at: string;
+  flagged_at: string | null;
+  flag_details: string | null;
+};
+
+// Fetch flagged machines for admin review
+export async function fetchFlaggedMachines(
+  limit: number = 50,
+  offset: number = 0
+): Promise<FlaggedMachine[]> {
+  const { data, error } = await (supabase as any).rpc('get_flagged_machines', {
+    limit_count: limit,
+    offset_count: offset,
+  });
+
+  if (error) {
+    console.error('Error fetching flagged machines:', error);
+    return [];
+  }
+
+  return (data || []) as FlaggedMachine[];
+}
+
+// Restore a flagged machine back to active
+export async function restoreFlaggedMachine(machineId: string): Promise<boolean> {
+  const { data, error } = await (supabase as any).rpc('admin_restore_machine', {
+    p_machine_id: machineId,
+  });
+
+  if (error) {
+    console.error('Error restoring machine:', error);
+    return false;
+  }
+
+  return data === true;
+}
+
+// Permanently delete a flagged machine
+export async function deleteFlaggedMachine(machineId: string): Promise<boolean> {
+  const { data, error } = await (supabase as any).rpc('admin_delete_machine', {
+    p_machine_id: machineId,
+  });
+
+  if (error) {
+    console.error('Error deleting machine:', error);
+    return false;
+  }
+
+  return data === true;
+}
+
 // Unban a user via SECURITY DEFINER RPC — admin role is verified server-side
 // Untyped RPC escape hatch: `unban_user` is not in generated database.types
 export async function unbanUser(userId: string): Promise<boolean> {

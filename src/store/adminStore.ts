@@ -4,6 +4,7 @@ import {
   PendingMachine,
   NearbyMachine,
   BanUserResult,
+  FlaggedMachine,
   fetchPendingMachines,
   checkDuplicateMachines,
   approveMachine,
@@ -11,6 +12,9 @@ import {
   banUser,
   unbanUser,
   removeActivePhoto,
+  fetchFlaggedMachines,
+  restoreFlaggedMachine,
+  deleteFlaggedMachine,
 } from '../lib/admin';
 
 interface AdminState {
@@ -20,6 +24,8 @@ interface AdminState {
   selectedMachine: PendingMachine | null;
   nearbyMachines: NearbyMachine[];
   isLoadingNearby: boolean;
+  flaggedMachines: FlaggedMachine[];
+  isLoadingFlagged: boolean;
 
   // Actions
   loadPendingMachines: () => Promise<void>;
@@ -30,6 +36,9 @@ interface AdminState {
   banUser: (userId: string) => Promise<BanUserResult | null>;
   unbanUser: (userId: string) => Promise<boolean>;
   removeActivePhoto: (photoId: string) => Promise<boolean>;
+  loadFlaggedMachines: () => Promise<void>;
+  restoreMachine: (machineId: string) => Promise<boolean>;
+  deleteMachine: (machineId: string) => Promise<boolean>;
   reset: () => void;
 }
 
@@ -40,6 +49,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   selectedMachine: null,
   nearbyMachines: [],
   isLoadingNearby: false,
+  flaggedMachines: [],
+  isLoadingFlagged: false,
 
   loadPendingMachines: async () => {
     set({ isLoading: true, error: null });
@@ -103,6 +114,34 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     return removeActivePhoto(photoId);
   },
 
+  loadFlaggedMachines: async () => {
+    set({ isLoadingFlagged: true });
+    try {
+      const machines = await fetchFlaggedMachines();
+      set({ flaggedMachines: machines, isLoadingFlagged: false });
+    } catch (err) {
+      set({ flaggedMachines: [], isLoadingFlagged: false });
+    }
+  },
+
+  restoreMachine: async (machineId: string) => {
+    const success = await restoreFlaggedMachine(machineId);
+    if (success) {
+      const { flaggedMachines } = get();
+      set({ flaggedMachines: flaggedMachines.filter((m) => m.id !== machineId) });
+    }
+    return success;
+  },
+
+  deleteMachine: async (machineId: string) => {
+    const success = await deleteFlaggedMachine(machineId);
+    if (success) {
+      const { flaggedMachines } = get();
+      set({ flaggedMachines: flaggedMachines.filter((m) => m.id !== machineId) });
+    }
+    return success;
+  },
+
   reset: () => {
     set({
       pendingMachines: [],
@@ -111,6 +150,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
       selectedMachine: null,
       nearbyMachines: [],
       isLoadingNearby: false,
+      flaggedMachines: [],
+      isLoadingFlagged: false,
     });
   },
 }));

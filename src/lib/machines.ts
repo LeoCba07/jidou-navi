@@ -447,7 +447,7 @@ export async function fetchSavedMachines(): Promise<SavedMachine[]> {
       id,
       machine_id,
       saved_at,
-      machine:machines (
+      machine:machines!inner (
         id,
         name,
         description,
@@ -459,6 +459,7 @@ export async function fetchSavedMachines(): Promise<SavedMachine[]> {
         last_verified_at
       )
     `)
+    .eq('machine.status', 'active')
     .order('saved_at', { ascending: false });
 
   if (error) {
