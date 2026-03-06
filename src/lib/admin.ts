@@ -239,7 +239,8 @@ export async function fetchFlaggedMachines(
   });
 
   if (error) {
-    throw new Error(`Error fetching flagged machines: ${error.message ?? String(error)}`);
+    console.error('Error fetching flagged machines:', error);
+    return [];
   }
 
   return (data || []) as FlaggedMachine[];

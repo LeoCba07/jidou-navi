@@ -34,6 +34,7 @@ export default function AdminDashboard() {
     banUser,
     flaggedMachines,
     isLoadingFlagged,
+    flaggedError,
     loadFlaggedMachines,
     restoreMachine,
     deleteMachine,
@@ -239,6 +240,11 @@ export default function AdminDashboard() {
             </Text>
             {isLoadingFlagged && flaggedMachines.length === 0 ? (
               <ActivityIndicator size="small" color="#F59E0B" />
+            ) : flaggedError ? (
+              <View style={styles.emptySection}>
+                <Ionicons name="alert-circle-outline" size={ICON_SIZES.xl} color="#F59E0B" />
+                <Text style={styles.emptyText}>{flaggedError}</Text>
+              </View>
             ) : flaggedMachines.length === 0 ? (
               <View style={styles.emptySection}>
                 <Ionicons name="checkmark-circle-outline" size={ICON_SIZES.xl} color="#22C55E" />

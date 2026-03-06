@@ -147,14 +147,14 @@ BEGIN
     RETURN QUERY
     SELECT
         m.id,
-        m.name,
-        m.description,
-        m.address,
+        m.name::TEXT,
+        m.description::TEXT,
+        m.address::TEXT,
         m.latitude,
         m.longitude,
         m.contributor_id,
-        p.username AS contributor_username,
-        p.display_name AS contributor_display_name,
+        p.username::TEXT AS contributor_username,
+        p.display_name::TEXT AS contributor_display_name,
         (
             SELECT mp.photo_url
             FROM machine_photos mp
