@@ -18,10 +18,6 @@ DECLARE
     gone_count INT;
     flag_threshold INT := 3;
 BEGIN
-    IF auth.uid() IS NULL THEN
-        RETURN json_build_object('success', false, 'error', 'not_authenticated');
-    END IF;
-
     PERFORM require_verified_email();
     PERFORM check_rate_limit('record_gone_report', 10, 60);
 
@@ -103,8 +99,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
--- Revoke direct call access from authenticated users (only callable from triggers)
-REVOKE EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) FROM authenticated;
+-- Revoke direct call access (only callable from triggers via SECURITY DEFINER)
+REVOKE EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION clear_machine_gone_reports(UUID) FROM anon;
 
 -- ============================================
 -- 3. NEW RPC: get_flagged_machines (admin-only)
@@ -180,6 +177,7 @@ BEGIN
     FROM machines m
     LEFT JOIN profiles p ON p.id = m.contributor_id
     WHERE m.status = 'flagged'
+      AND EXISTS (SELECT 1 FROM flags f WHERE f.machine_id = m.id AND f.reason = 'not_exists')
     ORDER BY m.created_at DESC
     LIMIT limit_count
     OFFSET offset_count;
@@ -262,3 +260,57 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 GRANT EXECUTE ON FUNCTION admin_delete_machine(UUID) TO authenticated;
+
+-- ============================================
+-- 6. UPDATE update_machine_counts trigger
+-- ============================================
+-- Replace inline DELETE with PERFORM clear_machine_gone_reports()
+-- so that flag-resolution logic (resolve not_exists flags, recalculate flag_count)
+-- is also executed when a user verifies a machine as still existing.
+
+CREATE OR REPLACE FUNCTION update_machine_counts()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_TABLE_NAME = 'visits' THEN
+        IF TG_OP = 'INSERT' THEN
+            UPDATE machines SET
+                visit_count = visit_count + 1,
+                verification_count = CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END,
+                last_verified_at = CASE WHEN NEW.still_exists = TRUE THEN NOW() ELSE last_verified_at END,
+                last_verified_by = CASE WHEN NEW.still_exists = TRUE THEN NEW.user_id ELSE last_verified_by END,
+                status = CASE
+                    WHEN status = 'pending' AND (CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END) >= 2
+                    THEN 'active'::machine_status
+                    ELSE status
+                END,
+                auto_activated = CASE
+                    WHEN status = 'pending' AND (CASE WHEN NEW.still_exists = TRUE THEN verification_count + 1 ELSE verification_count END) >= 2
+                    THEN TRUE
+                    ELSE auto_activated
+                END
+            WHERE id = NEW.machine_id;
+
+            -- Clear gone reports and resolve flags if verified as still existing
+            IF NEW.still_exists = TRUE THEN
+                PERFORM clear_machine_gone_reports(NEW.machine_id);
+            END IF;
+        ELSIF TG_OP = 'DELETE' THEN
+            UPDATE machines SET visit_count = visit_count - 1 WHERE id = OLD.machine_id;
+        END IF;
+    ELSIF TG_TABLE_NAME = 'machine_photos' THEN
+        IF TG_OP = 'INSERT' THEN
+            UPDATE machines SET photo_count = photo_count + 1 WHERE id = NEW.machine_id;
+        ELSIF TG_OP = 'DELETE' THEN
+            UPDATE machines SET photo_count = photo_count - 1 WHERE id = OLD.machine_id;
+        END IF;
+    ELSIF TG_TABLE_NAME = 'flags' THEN
+        IF TG_OP = 'INSERT' THEN
+            UPDATE machines SET
+                flag_count = flag_count + 1,
+                status = CASE WHEN flag_count + 1 >= 3 THEN 'flagged'::machine_status ELSE status END
+            WHERE id = NEW.machine_id;
+        END IF;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
